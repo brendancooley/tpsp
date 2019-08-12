@@ -649,7 +649,21 @@ $$
 - $\color{bcOrange} \rho(\bm{W})$: loss of strength gradient
   + $\bm{W}$: minimum geographic distance
 
-. . . 
+## Observables and Unobservables
+
+**Data**
+
+- $\bm{\tau}$: policy barriers to trade (<a href="#/barriers">barriers</a>)
+- $\bm{M}$: military expenditure (<a href="#/milex">milex</a>)
+
+**Structural Parameters**
+$$
+\bm{\theta} = \left\{ \bm{b}, \rho(\bm{W}) \right\}
+$$
+
+- $\bm{b}$: governments' preferences
+- $\rho(\bm{W})$: loss of strength gradient
+  + $\bm{W}$: minimum geographic distance
 
 **Structural Residual**
 $$
