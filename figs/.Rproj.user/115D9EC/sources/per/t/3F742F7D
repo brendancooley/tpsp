@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1565357475293.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1997141245",
+    "id" : "3F742F7D",
+    "lastKnownWriteTime" : 1565370092,
+    "last_content_update" : 1565370092740,
+    "path" : "~/Dropbox (Princeton)/1_Papers/tpsp/figs/milex.R",
+    "project_path" : "milex.R",
+    "properties" : {
+        "cursorPosition" : "24,8",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

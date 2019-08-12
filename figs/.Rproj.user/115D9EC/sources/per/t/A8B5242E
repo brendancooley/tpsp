@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1565363893405.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "299085370",
+    "id" : "A8B5242E",
+    "lastKnownWriteTime" : 1565369186,
+    "last_content_update" : 1565369186084,
+    "path" : "~/Dropbox (Princeton)/1_Papers/tpsp/figs/ccodes.R",
+    "project_path" : "ccodes.R",
+    "properties" : {
+        "cursorPosition" : "15,78",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

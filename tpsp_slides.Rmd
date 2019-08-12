@@ -1,0 +1,756 @@
+---
+title: "Trade Policy in the Shadow of Power"
+subtitle: "Quantifying Military Coercion in the International System"
+date: "1 September 2019"
+author: Brendan Cooley
+position: Ph.D. Candidate
+institution: Princeton University
+email: "bcooley (at) princeton.edu"
+
+bibliography: /Users/bcooley/Dropbox (Princeton)/References/library.bib
+biblio-style: apsr
+
+backgroundTitle: "figs/cover.jpg"
+
+output:
+  revealjs::revealjs_presentation:
+    template: "css/cooley-reveal.html"
+    css: "css/cooley-reveal.css"
+    backgroundTransition: none
+    transition: none
+    self_contained: false
+    # reveal_plugins: ["notes"]
+    lib_dir: index_files
+    reveal_options:
+      slideNumber: false
+      progress: false
+      controls: false      
+    includes:
+      after_body: "css/plugins.html"
+---
+
+```{r libs, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+helperPath <- "~/Dropbox (Princeton)/14_Software/R/"
+helperFiles <- list.files(helperPath)
+for (i in helperFiles) {
+  source(paste0(helperPath, i))
+}
+
+libs <- c("tidyverse", "patchwork")
+ipak(libs)
+
+analysisPath <- "working/analysis/"
+dataPath <- paste0(analysisPath, "tpsp_data/")
+resultsPath <- paste0(analysisPath, "results/")
+
+# data
+ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
+Y <- read_csv(paste0(dataPath, "year.csv"), col_names=FALSE) %>% pull(.)
+tau <- read_csv(paste0(dataPath, "tau.csv"), col_names=FALSE)
+
+# results
+Ghatft <- read_csv(paste0(resultsPath, "Ghatft.csv"), col_names=FALSE)
+rcv0 <- read_csv(paste0(resultsPath, "rcv0.csv"), col_names=FALSE)
+rcv1 <- read_csv(paste0(resultsPath, "rcv1.csv"), col_names=FALSE)
+
+# references from paper
+if (file.exists('references.RData')) load('references.RData')
+
+```
+
+## Power and Preferences {id="introduction"}
+
+**Anarchy and Inference**
+
+- Anarchy $\implies$ powerful governments can impose policies on others by force
+- Bargaining critique: policy adjustment should occur through diplomacy
+  + @Brito1985, @Fearon1995, @Art1996
+- **Question:** Do observed policies reflect **preferences** of their progenitors or **constraints of anarchy?**
+
+. . . 
+
+**Trade Policy: What Do Governments Want?**
+
+- Mercantilist preferences: openness abroad and some closure at home
+  + @Grossman1994, @Gawande2009
+- Coercion: powerful governments impose openness abroad
+  + Gunboat diplomacy [@Findlay2007]
+
+. . . 
+
+**Trade Policy: Does It Matter?**
+
+- Tariffs small, aggregate policy-induced trade frictions large
+  + @Cooley2019b (<a href="#/barriers">barriers</a>)
+- Welfare effects of trade frictions
+  + @Autor2013, @Costinot2015, @Goldberg2016
+
+## Anarchy and Inference: Approach
+
+**Ideal Experiment**
+
+- Dispatch U.S. military (for example) on long-term mission to Pluto
+- Attribute changes in trade policy to latent effect of military coercion
+
+. . . 
+
+**A Coercive International Political Economy**
+
+$$
+\left\{ \bm{\theta}, \bm{M} \right\} \rightarrow \bm{\tau}
+$$
+
+- $\bm{\theta}$ -- structural parameters (power and preferences)
+- $\bm{M}$ -- governments' military endowment (expenditure)
+- $\bm{\tau}$ -- governments' trade policies
+
+. . . 
+
+**Estimation:** $\left\{ \bm{\tau}, \bm{M} \right\} \rightarrow \bm{\theta}$
+
+. . . 
+
+**Counterfactuals**
+
+- Shadow of power
+  + Effect of changing military endowments on trade policy
+- Liberal/commercial peace
+  + Effect of changing preferences for openness on military strategies
+
+## Coercive International Political Economy
+
+- Governments indexed $i \in \left\{ 1, ..., N \right\}$
+
+. . . 
+
+**Sequence**
+
+1. ($\Gamma^{\bm{m}}$) Governments set military strategies
+    + allocations of effort over potential wars
+2. ($\Gamma^{\bm{\tau}}$) Governments make trade policy announcements
+3. ($\Gamma^{\bm{a}}$) Wars
+    + Winners choose trade policies for vanquished governments
+4. ($h(\bm{\tau})$) Economic (general equilibrium) consequences of trade policies
+
+. . . 
+
+**Payoffs**
+
+$$
+G_i \left( h(\bm{\tau}), \bm{a} \right)
+$$
+
+## Model {.aligncenter}
+
+$$
+\left\{ \bm{\theta}, \bm{M} \right\} \rightarrow \bm{\tau}
+$$
+
+## ($h(\bm{\tau})$) Economy
+
+$$
+\bm{\tau} = \begin{pmatrix}
+\tau_{11} & \cdots & \cdots & \cdots & \tau_{1N} \\
+\vdots & \ddots & \vdots & \iddots & \vdots \\
+\vdots & \cdots & \tau_{ij} & \cdots & \vdots \\
+\vdots & \iddots & \vdots & \ddots & \vdots \\
+\tau_{N1} & \cdots & \cdots & \cdots & \tau_{NN}
+\end{pmatrix}
+$$
+
+## ($h(\bm{\tau})$) Economy
+
+$$
+\bm{\tau} = \begin{pmatrix}
+\tau_{11} & \cdots & \cdots & \cdots & \tau_{1N} \\
+\vdots & \ddots & \vdots & \iddots & \vdots \\
+\vdots & \cdots & \color{bcOrange} \tau_{ij} & \cdots & \vdots \\
+\vdots & \iddots & \vdots & \ddots & \vdots \\
+\tau_{N1} & \cdots & \cdots & \cdots & \tau_{NN}
+\end{pmatrix}
+$$
+
+<hr style="height:2em; visibility:hidden;" />
+
+- $\color{bcOrange} \tau_{ij}$: trade barrier government $i$ imposes on imports from $j$
+- $\color{bcOrange} \tau_{ij} \color{black} - 1$: ad-valorem tariff equivalent
+- $\tau_{ij} = 1 \implies$ free trade
+- $\tau_{ii} = 1$ for all $i$
+
+## ($h(\bm{\tau})$) Economy
+
+$$
+\bm{\tau} = \begin{pmatrix}
+\color{bcOrange} \tau_{11} & \color{bcOrange} \cdots & \color{bcOrange} \cdots & \color{bcOrange} \cdots & \color{bcOrange} \tau_{1N} \\
+\vdots & \ddots & \vdots & \iddots & \vdots \\
+\vdots & \cdots & \tau_{ij} & \cdots & \vdots \\
+\vdots & \iddots & \vdots & \ddots & \vdots \\
+\tau_{N1} & \cdots & \cdots & \cdots & \tau_{NN}
+\end{pmatrix}
+$$
+
+<hr style="height:2em; visibility:hidden;" />
+
+$$
+\color{bcOrange} \bm{\tau}_1 = \begin{pmatrix} \tau_{11} & \cdots & \cdots & \cdots & \tau_{1N}
+\end{pmatrix}
+$$
+
+<hr style="height:2em; visibility:hidden;" />
+
+- Government 1's trade policy
+
+## ($h(\bm{\tau})$) Economy
+
+$$
+\color{bcOrange} \bm{\tau} \color{black} = \begin{pmatrix}
+\tau_{11} & \cdots & \cdots & \cdots & \tau_{1N} \\
+\vdots & \ddots & \vdots & \iddots & \vdots \\
+\vdots & \cdots & \tau_{ij} & \cdots & \vdots \\
+\vdots & \iddots & \vdots & \ddots & \vdots \\
+\tau_{N1} & \cdots & \cdots & \cdots & \tau_{NN}
+\end{pmatrix}
+$$
+
+<hr style="height:2em; visibility:hidden;" />
+
+$$
+\color{bcOrange} h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \bm{w}
+$$
+
+## ($h(\bm{\tau})$) Economy
+
+$$
+h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \color{bcOrange} \bm{w}
+$$
+
+. . . 
+
+<hr style="height:1em; visibility:hidden;" />
+
+- $V_i( \color{bcOrange} \bm{w} \color{black})$: welfare of representative consumer in $i$
+- $X_{ij}(\color{bcOrange} \bm{w} \color{black})$: $i$'s imports of goods from $j$
+- Rents (tariff revenue):
+
+$$
+r_i(\color{bcOrange} \bm{w} \color{black}) = \sum_j (\tau_{ij} - 1) X_{ij}(\color{bcOrange} \bm{w} \color{black})
+$$
+
+. . . 
+
+**Government Objective**
+
+$$
+G_i = V_i( \color{bcOrange} \bm{w} \color{black})^{1 - b_i} r_i(\color{bcOrange} \bm{w} \color{black})^{b_i}
+$$
+
+## ($h(\bm{\tau})$) Economy {id="economyLast"}
+
+$$
+h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \bm{w}
+$$
+
+<hr style="height:1em; visibility:hidden;" />
+
+- $V_i(\bm{w})$: welfare of representative consumer in $i$
+- $X_{ij}(\bm{w})$: $i$'s imports of goods from $j$
+- Rents (tariff revenue):
+
+$$
+r_i(\bm{w} \color{black}) = \sum_j (\tau_{ij} - 1) X_{ij}(\bm{w})
+$$
+
+**Government Objective**
+
+$$
+G_i = V_i(\bm{w})^{ \color{bcOrange} 1 - b_i \color{black} } r_i(\bm{w})^{\color{bcOrange} b_i \color{black} }
+$$
+
+. . . 
+
+- $\color{bcOrange} b_i = 0$: government maximizes consumer welfare
+- $\color{bcOrange} b_i = 1$: government maximizes rents
+- <a href="#/freetrade">Free Trade Counterfactual</a>
+
+## ($\Gamma^{\bm{a}}$) Wars
+
+**Optimal Post-Conquest Policies**
+
+$$
+\bm{\tau}_j^{i \star} = \argmax_{\bm{\tau}_j} \quad G_i(\bm{\tau}_j ; \tilde{\bm{\tau}}_{-j})
+$$
+
+## ($\Gamma^{\bm{a}}$) Wars
+
+**Optimal Post-Conquest Policies**
+
+$$
+\color{bcOrange} \bm{\tau}_j^{i \star} \color{black} = \argmax_{\bm{\tau}_j} \quad G_{\color{bcOrange} i} \color{black} (\bm{\tau}_{\color{bcOrange} j} \color{black} ; \tilde{\bm{\tau}}_{-j})
+$$
+
+- $\color{bcOrange} \bm{\tau}_j^{i \star}$: trade policies in $\color{bcOrange} j$ imposed by government $\color{bcOrange} i$ post-conquest
+
+## ($\Gamma^{\bm{a}}$) Wars {id="wars_rcv"}
+
+**Optimal Post-Conquest Policies**
+
+$$
+\color{bcOrange} \bm{\tau}_j^{i \star} \color{black} = \argmax_{\bm{\tau}_j} \quad G_{i}(\bm{\tau}_{j}; \tilde{\bm{\tau}}_{-j})
+$$
+
+- $\color{bcOrange} \bm{\tau}_j^{i \star}$: trade policies in $j$ imposed by government $i$ post-conquest
+
+**Conquest Values**
+
+$$
+G_i(\color{bcOrange} \bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+$$
+
+- <a href="#/rcv">Conquest Values (Empirical)</a>
+
+## ($\Gamma^{\bm{a}}$) Wars
+
+**Conquest Values**
+
+$$
+G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+$$
+
+. . . 
+
+**Contest Function (Dyadic)**
+
+$$
+\chi_{ij}(\bm{m}) = \frac{ \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+$$
+
+## ($\Gamma^{\bm{a}}$) Wars
+
+**Conquest Values**
+
+$$
+G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+$$
+
+**Contest Function (Dyadic)**
+
+$$
+\color{bcOrange} \chi_{ij} \color{black} (\bm{m}) = \frac{ \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+$$
+
+- $\color{bcOrange} \chi_{ij}$: probability $\color{bcOrange} i$ successfully conquers $\color{bcOrange} j$
+
+## ($\Gamma^{\bm{a}}$) Wars
+
+**Conquest Values**
+
+$$
+G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+$$
+
+**Contest Function (Dyadic)**
+
+$$
+\chi_{ij}( \color{bcOrange} \bm{m} \color{black}) = \frac{ \rho_{ij}(\bm{W}; \bm{\alpha}) \color{bcOrange} m_{ij} \color{black} }{ \rho_{ij}(\bm{W}; \bm{\alpha}) \color{bcOrange} m_{ij} \color{black} + \color{bcOrange} m_{jj} \color{black} }
+$$
+
+- $\chi_{ij}$: probability $i$ successfully conquers $j$
+- $\color{bcOrange} \bm{m}$: military effort
+- $\color{bcOrange} m_{ij}$: effort $i$ dedicates toward threatening $j$
+- $\color{bcOrange} m_{jj}$: effort $j$ dedicates toward self-defense
+
+## ($\Gamma^{\bm{a}}$) Wars
+
+**Conquest Values**
+
+$$
+G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+$$
+
+**Contest Function (Dyadic)**
+
+$$
+\chi_{ij}(\bm{m}) = \frac{ \color{bcOrange} \rho_{ij} \color{black} (\bm{W}; \bm{\alpha}) m_{ij} }{ \color{bcOrange} \rho_{ij} \color{black} (\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+$$
+
+- $\chi_{ij}$: probability $i$ successfully conquers $j$
+- $\bm{m}$: military effort
+- $m_{ij}$: effort $i$ dedicates toward threatening $j$
+- $m_{jj}$: effort $j$ dedicates toward self-defense
+- $\color{bcOrange} \rho_{ij} \color{black} \in [0, 1]$: loss of strength gradient
+
+## ($\Gamma^{\bm{a}}$) Wars
+
+**Conquest Values**
+
+$$
+G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+$$
+
+**Contest Function (Dyadic)**
+
+$$
+\chi_{ij}(\bm{m}) = \frac{ \rho_{ij} (\color{bcOrange} \bm{W} \color{black} ; \bm{\alpha}) m_{ij} }{ \rho_{ij} ( \color{bcOrange} \bm{W} \color{black} ; \bm{\alpha}) m_{ij} + m_{jj} }
+$$
+
+- $\chi_{ij}$: probability $i$ successfully conquers $j$
+- $\bm{m}$: military effort
+- $m_{ij}$: effort $i$ dedicates toward threatening $j$
+- $m_{jj}$: effort $j$ dedicates toward self-defense
+- $\rho_{ij} \in [0, 1]$: loss of strength gradient
+- $\color{bcOrange} \bm{W}$: dyadic geography
+
+## ($\Gamma^{\bm{a}}$) Wars
+
+**Conquest Values**
+
+$$
+G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+$$
+
+**Contest Function (Dyadic)**
+
+$$
+\color{bcOrange} \chi_{ij} (\bm{m}) \color{black} = \frac{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+$$
+
+**Reservation Values**
+
+$$
+\color{bcOrange} \chi_{ij} (\bm{m}) \color{black} G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \color{bcOrange}  \left( 1 - \chi_{ij} (\bm{m}) \right) \color{black} G_j(\tilde{\bm{\tau}}) - c_j
+$$
+
+## ($\Gamma^{\bm{a}}$) Wars
+
+**Conquest Values**
+
+$$
+G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+$$
+
+**Contest Function (Dyadic)**
+
+$$
+\chi_{ij} (\bm{m}) = \frac{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+$$
+
+**Reservation Values**
+
+$$
+\chi_{ij} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - \color{bcOrange} c_j
+$$
+
+- $\color{bcOrange} c_j$: war cost
+
+## ($\Gamma^{\bm{a}}$) Wars
+
+**Conquest Values**
+
+$$
+G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+$$
+
+**Contest Function (Dyadic)**
+
+$$
+\chi_{ij} (\bm{m}) = \frac{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+$$
+
+**Reservation Values**
+
+$$
+\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ij} (\bm{m})G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+$$
+
+. . . 
+
+- No war $\implies G_i(\tilde{\bm{\tau}}) \geq \color{bcOrange} \underline{G}_{ji}(\bm{m})$ for all $i, j$
+
+. . . 
+
+- Proposition `r Pc`: $\exists$ $\left\{ c_j^\star \right\}_{j \in \left\{1,..., N \right\}}$ such that no war occurs if $c_j > c_j^\star$ for all $j$.
+
+## ($\Gamma^{\bm{\tau}}$) Trade Policy Announcements
+
+$$
+\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ij} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+$$
+
+. . . 
+
+**Constrained Optimal Policies**
+
+\begin{equation}
+\begin{split}
+\max_{ \tilde{\bm{\tau}}_i } & \quad G_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i})
+\end{split}
+\end{equation}
+
+## ($\Gamma^{\bm{\tau}}$) Trade Policy Announcements
+
+$$
+\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ij} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+$$
+
+**Constrained Optimal Policies**
+
+\begin{equation}
+\begin{split}
+\max_{ \tilde{\bm{\tau}}_i } & \quad G_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \\
+\text{subject to} & \quad G_j(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \geq \color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} \text{ for all } j \neq i
+\end{split}
+\end{equation}
+
+## ($\Gamma^{\bm{\tau}}$) Trade Policy Announcements
+
+$$
+\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ij} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+$$
+
+**Constrained Optimal Policies**
+
+\begin{equation}
+\begin{split}
+\max_{ \tilde{\bm{\tau}}_i } & \quad G_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \\
+\text{subject to} & \quad G_j(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \geq \underline{G}_{ji}( \color{bcOrange} \bm{m} \color{black}) \text{ for all } j \neq i
+\end{split}
+\end{equation}
+
+## ($\Gamma^{\bm{\tau}}$) Trade Policy Announcements
+
+$$
+\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ij} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+$$
+
+**Constrained Optimal Policies**
+
+\begin{equation}
+\begin{split}
+\tilde{\bm{\tau}}_i^\star( \color{bcOrange} \bm{m} \color{black}) = \argmax_{ \tilde{\bm{\tau}}_i } & \quad G_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \\
+\text{subject to} & \quad G_j(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \geq \underline{G}_{ji}( \color{bcOrange} \bm{m} \color{black}) \text{ for all } j \neq i
+\end{split}
+\end{equation}
+
+## ($\Gamma^{\bm{m}}$) Military Strategies
+
+$$
+\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ij} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+$$
+
+**Constrained Optimal Policies**
+
+\begin{equation}
+\begin{split}
+\tilde{\bm{\tau}}_i^\star( \color{bcOrange} \bm{m} \color{black}) = \argmax_{ \tilde{\bm{\tau}}_i } & \quad G_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \\
+\text{subject to} & \quad G_j(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \geq \underline{G}_{ji}( \color{bcOrange} \bm{m} \color{black}) \text{ for all } j \neq i
+\end{split}
+\end{equation}
+
+**Optimal Military Strategies**
+
+\begin{equation}
+\begin{split}
+\max_{ \color{bcOrange} \bm{m}_i \color{black} } & \quad G_i \left(\tilde{\bm{\tau}}^\star( \color{bcOrange} \bm{m}_i \color{black} ; \bm{m}_{-i}) \right)
+\end{split}
+\end{equation}
+
+. . . 
+
+$$
+\color{bcOrange} \bm{m}_i = \begin{pmatrix} m_{i1} & \cdots & m_{iN} \end{pmatrix}
+$$
+
+- $\color{bcOrange} m_{ij}$: military effort $i$ dedicates toward threatening $j$ 
+
+## ($\Gamma^{\bm{m}}$) Military Strategies
+
+$$
+\underline{G}_{ji}(\bm{m}) = \chi_{ij} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+$$
+
+**Constrained Optimal Policies**
+
+\begin{equation}
+\begin{split}
+\tilde{\bm{\tau}}_i^\star(\bm{m}) = \argmax_{ \tilde{\bm{\tau}}_i } & \quad G_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \\
+\text{subject to} & \quad G_j(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \geq \underline{G}_{ji}(\bm{m}) \text{ for all } j \neq i
+\end{split}
+\end{equation}
+
+**Optimal Military Strategies**
+
+\begin{equation}
+\begin{split}
+\max_{ \bm{m}_i } & \quad G_i \left(\tilde{\bm{\tau}}^\star( \bm{m}_i ; \bm{m}_{-i}) \right) \\
+\text{subject to} & \quad \sum_j m_{ij} \leq \color{bcOrange} M_i
+\end{split}
+\end{equation}
+
+## Estimation {.aligncenter}
+
+$$
+\left\{ \bm{\tau}, \bm{M} \right\} \rightarrow \bm{\theta}
+$$
+
+## Observables and Unobservables {id="observables"}
+
+**Data**
+
+- $\bm{\tau}$: policy barriers to trade (<a href="#/barriers">barriers</a>)
+- $\bm{M}$: military expenditure (<a href="#/milex">milex</a>)
+
+. . . 
+
+**Structural Parameters**
+$$
+\bm{\theta} = \left\{ \bm{b}, \rho(\bm{W}) \right\}
+$$
+
+## Observables and Unobservables
+
+**Data**
+
+- $\bm{\tau}$: policy barriers to trade (<a href="#/barriers">barriers</a>)
+- $\bm{M}$: military expenditure (<a href="#/milex">milex</a>)
+
+**Structural Parameters**
+$$
+\bm{\theta} = \left\{ \color{bcOrange} \bm{b} \color{black}, \rho(\bm{W}) \right\}
+$$
+
+- $\color{bcOrange} \bm{b}$: governments' preferences
+
+## Observables and Unobservables
+
+**Data**
+
+- $\bm{\tau}$: policy barriers to trade (<a href="#/barriers">barriers</a>)
+- $\bm{M}$: military expenditure (<a href="#/milex">milex</a>)
+
+**Structural Parameters**
+$$
+\bm{\theta} = \left\{ \bm{b}, \color{bcOrange} \rho(\bm{W}) \color{black} \right\}
+$$
+
+- $\bm{b}$: governments' preferences
+- $\color{bcOrange} \rho(\bm{W})$: loss of strength gradient
+  + $\bm{W}$: minimum geographic distance
+
+. . . 
+
+**Structural Residual**
+$$
+\epsilon_{ij}(\bm{\theta}) = \tilde{\tau_{ij}}^\star(\bm{m}^\star; \bm{\theta}) - \tau_{ij}
+$$
+
+. . . 
+
+**Estimation Problem**
+
+\begin{equation}
+\begin{split}
+\hat{\bm{\theta}} = \argmin_{\bm{\theta}} & \quad \sum_i \sum_j \epsilon_{ij}(\bm{\theta})
+\end{split}
+\end{equation}
+
+. . . 
+
+- Reformulate as mathematical program with equilibrium constraints (MPEC) [@Su2012]
+
+## Conclusion
+
+**Counterfactuals**
+$$
+\left\{ \left\{ \bm{b}^\prime, \rho(\bm{W}) \right\}, \bm{M}^\prime \right\} \rightarrow \left\{ \bm{\tau}^\prime, \bm{m}^\prime \right\}
+$$
+
+## Conclusion
+
+**Counterfactuals**
+$$
+\left\{ \left\{ \bm{b}, \rho(\bm{W}) \right\}, \color{bcOrange} \bm{M}^\prime \color{black} \right\} \rightarrow \left\{ \color{bcOrange} \bm{\tau}^\prime \color{black}, \bm{m}^\prime \right\}
+$$
+
+- Shadow of power ($\color{bcOrange} \bm{M}^\prime \rightarrow \bm{\tau}^\prime$)
+
+## Conclusion
+
+**Counterfactuals**
+$$
+\left\{ \left\{ \color{bcOrange} \bm{b}^\prime \color{black}, \rho(\bm{W}) \right\}, \bm{M} \right\} \rightarrow \left\{ \color{bcOrange} \bm{\tau}^\prime, \bm{m}^\prime \color{black} \right\}
+$$
+
+- Shadow of power ($\bm{M}^\prime \rightarrow \bm{\tau}^\prime$)
+- Liberal peace ($\color{bcOrange} \bm{b}^\prime \color{black} \rightarrow \color{bcOrange} \bm{\tau}^\prime, \bm{m}^\prime \color{black}$)
+
+. . . 
+
+**Results**
+
+- Coming soon...
+
+## Thank You {.aligncenter}
+
+[brendancooley.com](http://brendancooley.com)
+
+[bcooley@princeton.edu](mailto:bcooley@princeton.edu)
+
+## Policy Barriers to Trade, `r Y` {id="barriers"}
+
+```{r tauhm, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
+
+source("figs/tau.R")
+tauhm(tau)
+
+```
+
+<a href="#/introduction">Back (Intro)</a> &nbsp; <a href="#/observables">Back (Estimation)</a>
+
+## Welfare Under Free Trade {id="freetrade"}
+
+```{r Ghatft, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
+
+source("figs/Ghatft.R")
+GhatftFig + theme(aspect.ratio=1)
+
+```
+
+<a href="#/economyLast" style="float: right;">Back</a>
+
+## Conquest Values (Empirical) {id="rcv"}
+
+```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
+
+source("figs/rcv.R")
+rcvhm(rcv0, 0, mint, maxt) + rcvhm(rcv1, 1, mint, maxt)
+
+```
+
+<a href="#/wars_rcv" style="float: right;">Back</a>
+
+## Military Expenditure {id="milex"}
+
+```{r milex, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
+
+source("figs/milex.R")
+milexFig
+
+```
+
+<a href="#/observables" style="float: right;">Back</a>
+
+<!-- hide references -->
+<hr style="height:30em; visibility:hidden;" />

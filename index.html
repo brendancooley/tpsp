@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Brendan Cooley" />
+  <meta name="dcterms.date" content="2019-09-01" />
+  <title>Trade Policy in the Shadow of Power</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="index_files/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+
+<link rel="stylesheet" href="index_files/reveal.js-3.3.0.1/css/theme/simple.css" id="theme">
+
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+    .reveal table {
+      border-width: 0px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 0px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 0px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="css/cooley-reveal.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+
+<!-- add colors for mathjax
+ -->
+ <p style="display:none"> 
+\[
+\require{color}
+\definecolor{bcOrange}{RGB}{189,97,33}
+\newcommand\iddots{\mathinner{
+  \kern1mu\raise1pt{.}
+  \kern2mu\raise4pt{.}
+  \kern2mu\raise7pt{\Rule{0pt}{7pt}{0pt}.}
+  \kern1mu
+}}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\newcommand{\bm}[1]{\boldsymbol{\mathbf{#1}}}
+
+\newcommand{\ubar}[1]{\underaccent{\bar}{#1}}
+\] 
+</p>
+
+</head>
+<body>
+
+  <div class="reveal">
+    <div class="slides">
+
+<section data-background="figs/cover.jpg">
+	<div class="cover-top">
+	  	<h1 class="title">Trade Policy in the Shadow of Power</h1>
+			  	<h2 class="subtitle">Quantifying Military Coercion in the International System</h1>
+						<h3 class="date">1 September 2019</h3>
+			</div>
+	<div class="cover-bottom">
+				<h3>Brendan Cooley</h3>
+						<h3>Ph.D. Candidate</h3>
+						<h3>Princeton University</h3>
+						<h3>bcooley (at) princeton.edu</h3>
+			</div>
+</section>
+
+<section id="introduction" class="slide level2">
+<h2>Power and Preferences</h2>
+<p><strong>Anarchy and Inference</strong></p>
+<ul>
+<li>Anarchy <span class="math inline">\(\implies\)</span> powerful governments can impose policies on others by force</li>
+<li>Bargaining critique: policy adjustment should occur through diplomacy
+<ul>
+<li><span class="citation" data-cites="Brito1985">Brito and Intrilagator (1985)</span>, <span class="citation" data-cites="Fearon1995">Fearon (1995)</span>, <span class="citation" data-cites="Art1996">Art (1996)</span></li>
+</ul></li>
+<li><strong>Question:</strong> Do observed policies reflect <strong>preferences</strong> of their progenitors or <strong>constraints of anarchy?</strong></li>
+</ul>
+<div class="fragment">
+<p><strong>Trade Policy: What Do Governments Want?</strong></p>
+<ul>
+<li>Mercantilist preferences: openness abroad and some closure at home
+<ul>
+<li><span class="citation" data-cites="Grossman1994">Grossman and Helpman (1994)</span>, <span class="citation" data-cites="Gawande2009">Gawande, Krishna, and Olarreaga (2009)</span></li>
+</ul></li>
+<li>Coercion: powerful governments impose openness abroad
+<ul>
+<li>Gunboat diplomacy <span class="citation" data-cites="Findlay2007">(Findlay and O’Rourke 2007)</span></li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<p><strong>Trade Policy: Does It Matter?</strong></p>
+<ul>
+<li>Tariffs small, aggregate policy-induced trade frictions large
+<ul>
+<li><span class="citation" data-cites="Cooley2019b">Cooley (2019)</span> (<a href="#/barriers">barriers</a>)</li>
+</ul></li>
+<li>Welfare effects of trade frictions
+<ul>
+<li><span class="citation" data-cites="Autor2013">Autor, Dorn, and Hanson (2013)</span>, <span class="citation" data-cites="Costinot2015">Costinot and Rodríguez-Clare (2015)</span>, <span class="citation" data-cites="Goldberg2016">Goldberg and Pavcnik (2016)</span></li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="anarchy-and-inference-approach" class="slide level2">
+<h2>Anarchy and Inference: Approach</h2>
+<p><strong>Ideal Experiment</strong></p>
+<ul>
+<li>Dispatch U.S. military (for example) on long-term mission to Pluto</li>
+<li>Attribute changes in trade policy to latent effect of military coercion</li>
+</ul>
+<div class="fragment">
+<p><strong>A Coercive International Political Economy</strong></p>
+<p><span class="math display">\[
+\left\{ \bm{\theta}, \bm{M} \right\} \rightarrow \bm{\tau}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\bm{\theta}\)</span> – structural parameters (power and preferences)</li>
+<li><span class="math inline">\(\bm{M}\)</span> – governments’ military endowment (expenditure)</li>
+<li><span class="math inline">\(\bm{\tau}\)</span> – governments’ trade policies</li>
+</ul>
+</div>
+<div class="fragment">
+<p><strong>Estimation:</strong> <span class="math inline">\(\left\{ \bm{\tau}, \bm{M} \right\} \rightarrow \bm{\theta}\)</span></p>
+</div>
+<div class="fragment">
+<p><strong>Counterfactuals</strong></p>
+<ul>
+<li>Shadow of power
+<ul>
+<li>Effect of changing military endowments on trade policy</li>
+</ul></li>
+<li>Liberal/commercial peace
+<ul>
+<li>Effect of changing preferences for openness on military strategies</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="coercive-international-political-economy" class="slide level2">
+<h2>Coercive International Political Economy</h2>
+<ul>
+<li>Governments indexed <span class="math inline">\(i \in \left\{ 1, ..., N \right\}\)</span></li>
+</ul>
+<div class="fragment">
+<p><strong>Sequence</strong></p>
+<ol type="1">
+<li>(<span class="math inline">\(\Gamma^{\bm{m}}\)</span>) Governments set military strategies
+<ul>
+<li>allocations of effort over potential wars</li>
+</ul></li>
+<li>(<span class="math inline">\(\Gamma^{\bm{\tau}}\)</span>) Governments make trade policy announcements</li>
+<li>(<span class="math inline">\(\Gamma^{\bm{a}}\)</span>) Wars
+<ul>
+<li>Winners choose trade policies for vanquished governments</li>
+</ul></li>
+<li>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economic (general equilibrium) consequences of trade policies</li>
+</ol>
+</div>
+<div class="fragment">
+<p><strong>Payoffs</strong></p>
+<p><span class="math display">\[
+G_i \left( h(\bm{\tau}), \bm{a} \right)
+\]</span></p>
+</div>
+</section>
+<section id="model" class="slide level2 aligncenter">
+<h2>Model</h2>
+<p><span class="math display">\[
+\left\{ \bm{\theta}, \bm{M} \right\} \rightarrow \bm{\tau}
+\]</span></p>
+</section>
+<section id="hbmtau-economy" class="slide level2">
+<h2>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economy</h2>
+<p><span class="math display">\[
+\bm{\tau} = \begin{pmatrix}
+\tau_{11} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{1N} \\
+\vdots &amp; \ddots &amp; \vdots &amp; \iddots &amp; \vdots \\
+\vdots &amp; \cdots &amp; \tau_{ij} &amp; \cdots &amp; \vdots \\
+\vdots &amp; \iddots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\tau_{N1} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{NN}
+\end{pmatrix}
+\]</span></p>
+</section>
+<section id="hbmtau-economy-1" class="slide level2">
+<h2>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economy</h2>
+<p><span class="math display">\[
+\bm{\tau} = \begin{pmatrix}
+\tau_{11} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{1N} \\
+\vdots &amp; \ddots &amp; \vdots &amp; \iddots &amp; \vdots \\
+\vdots &amp; \cdots &amp; \color{bcOrange} \tau_{ij} &amp; \cdots &amp; \vdots \\
+\vdots &amp; \iddots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\tau_{N1} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{NN}
+\end{pmatrix}
+\]</span></p>
+<hr style="height:2em; visibility:hidden;" />
+<ul>
+<li><span class="math inline">\(\color{bcOrange} \tau_{ij}\)</span>: trade barrier government <span class="math inline">\(i\)</span> imposes on imports from <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(\color{bcOrange} \tau_{ij} \color{black} - 1\)</span>: ad-valorem tariff equivalent</li>
+<li><span class="math inline">\(\tau_{ij} = 1 \implies\)</span> free trade</li>
+<li><span class="math inline">\(\tau_{ii} = 1\)</span> for all <span class="math inline">\(i\)</span></li>
+</ul>
+</section>
+<section id="hbmtau-economy-2" class="slide level2">
+<h2>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economy</h2>
+<p><span class="math display">\[
+\bm{\tau} = \begin{pmatrix}
+\color{bcOrange} \tau_{11} &amp; \color{bcOrange} \cdots &amp; \color{bcOrange} \cdots &amp; \color{bcOrange} \cdots &amp; \color{bcOrange} \tau_{1N} \\
+\vdots &amp; \ddots &amp; \vdots &amp; \iddots &amp; \vdots \\
+\vdots &amp; \cdots &amp; \tau_{ij} &amp; \cdots &amp; \vdots \\
+\vdots &amp; \iddots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\tau_{N1} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{NN}
+\end{pmatrix}
+\]</span></p>
+<hr style="height:2em; visibility:hidden;" />
+<p><span class="math display">\[
+\color{bcOrange} \bm{\tau}_1 = \begin{pmatrix} \tau_{11} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{1N}
+\end{pmatrix}
+\]</span></p>
+<hr style="height:2em; visibility:hidden;" />
+<ul>
+<li>Government 1’s trade policy</li>
+</ul>
+</section>
+<section id="hbmtau-economy-3" class="slide level2">
+<h2>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economy</h2>
+<p><span class="math display">\[
+\color{bcOrange} \bm{\tau} \color{black} = \begin{pmatrix}
+\tau_{11} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{1N} \\
+\vdots &amp; \ddots &amp; \vdots &amp; \iddots &amp; \vdots \\
+\vdots &amp; \cdots &amp; \tau_{ij} &amp; \cdots &amp; \vdots \\
+\vdots &amp; \iddots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\tau_{N1} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{NN}
+\end{pmatrix}
+\]</span></p>
+<hr style="height:2em; visibility:hidden;" />
+<p><span class="math display">\[
+\color{bcOrange} h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \bm{w}
+\]</span></p>
+</section>
+<section id="hbmtau-economy-4" class="slide level2">
+<h2>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economy</h2>
+<p><span class="math display">\[
+h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \color{bcOrange} \bm{w}
+\]</span></p>
+<div class="fragment">
+<hr style="height:1em; visibility:hidden;" />
+<ul>
+<li><span class="math inline">\(V_i( \color{bcOrange} \bm{w} \color{black})\)</span>: welfare of representative consumer in <span class="math inline">\(i\)</span></li>
+<li><span class="math inline">\(X_{ij}(\color{bcOrange} \bm{w} \color{black})\)</span>: <span class="math inline">\(i\)</span>’s imports of goods from <span class="math inline">\(j\)</span></li>
+<li>Rents (tariff revenue):</li>
+</ul>
+<p><span class="math display">\[
+r_i(\color{bcOrange} \bm{w} \color{black}) = \sum_j (\tau_{ij} - 1) X_{ij}(\color{bcOrange} \bm{w} \color{black})
+\]</span></p>
+</div>
+<div class="fragment">
+<p><strong>Government Objective</strong></p>
+<p><span class="math display">\[
+G_i = V_i( \color{bcOrange} \bm{w} \color{black})^{1 - b_i} r_i(\color{bcOrange} \bm{w} \color{black})^{b_i}
+\]</span></p>
+</div>
+</section>
+<section id="economyLast" class="slide level2">
+<h2>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economy</h2>
+<p><span class="math display">\[
+h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \bm{w}
+\]</span></p>
+<hr style="height:1em; visibility:hidden;" />
+<ul>
+<li><span class="math inline">\(V_i(\bm{w})\)</span>: welfare of representative consumer in <span class="math inline">\(i\)</span></li>
+<li><span class="math inline">\(X_{ij}(\bm{w})\)</span>: <span class="math inline">\(i\)</span>’s imports of goods from <span class="math inline">\(j\)</span></li>
+<li>Rents (tariff revenue):</li>
+</ul>
+<p><span class="math display">\[
+r_i(\bm{w} \color{black}) = \sum_j (\tau_{ij} - 1) X_{ij}(\bm{w})
+\]</span></p>
+<p><strong>Government Objective</strong></p>
+<p><span class="math display">\[
+G_i = V_i(\bm{w})^{ \color{bcOrange} 1 - b_i \color{black} } r_i(\bm{w})^{\color{bcOrange} b_i \color{black} }
+\]</span></p>
+<div class="fragment">
+<ul>
+<li><span class="math inline">\(\color{bcOrange} b_i = 0\)</span>: government maximizes consumer welfare</li>
+<li><span class="math inline">\(\color{bcOrange} b_i = 1\)</span>: government maximizes rents</li>
+<li><a href="#/freetrade">Free Trade Counterfactual</a></li>
+</ul>
+</div>
+</section>
+<section id="gammabma-wars" class="slide level2">
+<h2>(<span class="math inline">\(\Gamma^{\bm{a}}\)</span>) Wars</h2>
+<p><strong>Optimal Post-Conquest Policies</strong></p>
+<p><span class="math display">\[
+\bm{\tau}_j^{i \star} = \argmax_{\bm{\tau}_j} \quad G_i(\bm{\tau}_j ; \tilde{\bm{\tau}}_{-j})
+\]</span></p>
+</section>
+<section id="gammabma-wars-1" class="slide level2">
+<h2>(<span class="math inline">\(\Gamma^{\bm{a}}\)</span>) Wars</h2>
+<p><strong>Optimal Post-Conquest Policies</strong></p>
+<p><span class="math display">\[
+\color{bcOrange} \bm{\tau}_j^{i \star} \color{black} = \argmax_{\bm{\tau}_j} \quad G_{\color{bcOrange} i} \color{black} (\bm{\tau}_{\color{bcOrange} j} \color{black} ; \tilde{\bm{\tau}}_{-j})
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\color{bcOrange} \bm{\tau}_j^{i \star}\)</span>: trade policies in <span class="math inline">\(\color{bcOrange} j\)</span> imposed by government <span class="math inline">\(\color{bcOrange} i\)</span> post-conquest</li>
+</ul>
+</section>
+<section id="wars_rcv" class="slide level2">
+<h2>(<span class="math inline">\(\Gamma^{\bm{a}}\)</span>) Wars</h2>
+<p><strong>Optimal Post-Conquest Policies</strong></p>
+<p><span class="math display">\[
+\color{bcOrange} \bm{\tau}_j^{i \star} \color{black} = \argmax_{\bm{\tau}_j} \quad G_{i}(\bm{\tau}_{j}; \tilde{\bm{\tau}}_{-j})
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\color{bcOrange} \bm{\tau}_j^{i \star}\)</span>: trade policies in <span class="math inline">\(j\)</span> imposed by government <span class="math inline">\(i\)</span> post-conquest</li>
+</ul>
+<p><strong>Conquest Values</strong></p>
+<p><span class="math display">\[
+G_i(\color{bcOrange} \bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+\]</span></p>
+<ul>
+<li><a href="#/rcv">Conquest Values (Empirical)</a></li>
+</ul>
+</section>
+<section id="gammabma-wars-2" class="slide level2">
+<h2>(<span class="math inline">\(\Gamma^{\bm{a}}\)</span>) Wars</h2>
+<p><strong>Conquest Values</strong></p>
+<p><span class="math display">\[
+G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+\]</span></p>
+<div class="fragment">
+<p><strong>Contest Function (Dyadic)</strong></p>
+<p><span class="math display">\[
+\chi_{ij}(\bm{m}) = \frac{ \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\]</span></p>
+</div>
+</section>
+<section id="gammabma-wars-3" class="slide level2">
+<h2>(<span class="math inline">\(\Gamma^{\bm{a}}\)</span>) Wars</h2>
+<p><strong>Conquest Values</strong></p>
+<p><span class="math display">\[
+G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+\]</span></p>
+<p><strong>Contest Function (Dyadic)</strong></p>
+<p><span class="math display">\[
+\color{bcOrange} \chi_{ij} \color{black} (\bm{m}) = \frac{ \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\color{bcOrange} \chi_{ij}\)</span>: probability <span class="math inline">\(\color{bcOrange} i\)</span> successfully conquers <span class="math inline">\(\color{bcOrange} j\)</span></li>
+</ul>
+</section>
+<section id="gammabma-wars-4" class="slide level2">
+<h2>(<span class="math inline">\(\Gamma^{\bm{a}}\)</span>) Wars</h2>
+<p><strong>Conquest Values</strong></p>
+<p><span class="math display">\[
+G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+\]</span></p>
+<p><strong>Contest Function (Dyadic)</strong></p>
+<p><span class="math display">\[
+\chi_{ij}( \color{bcOrange} \bm{m} \color{black}) = \frac{ \rho_{ij}(\bm{W}; \bm{\alpha}) \color{bcOrange} m_{ij} \color{black} }{ \rho_{ij}(\bm{W}; \bm{\alpha}) \color{bcOrange} m_{ij} \color{black} + \color{bcOrange} m_{jj} \color{black} }
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\chi_{ij}\)</span>: probability <span class="math inline">\(i\)</span> successfully conquers <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(\color{bcOrange} \bm{m}\)</span>: military effort</li>
+<li><span class="math inline">\(\color{bcOrange} m_{ij}\)</span>: effort <span class="math inline">\(i\)</span> dedicates toward threatening <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(\color{bcOrange} m_{jj}\)</span>: effort <span class="math inline">\(j\)</span> dedicates toward self-defense</li>
+</ul>
+</section>
+<section id="gammabma-wars-5" class="slide level2">
+<h2>(<span class="math inline">\(\Gamma^{\bm{a}}\)</span>) Wars</h2>
+<p><strong>Conquest Values</strong></p>
+<p><span class="math display">\[
+G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+\]</span></p>
+<p><strong>Contest Function (Dyadic)</strong></p>
+<p><span class="math display">\[
+\chi_{ij}(\bm{m}) = \frac{ \color{bcOrange} \rho_{ij} \color{black} (\bm{W}; \bm{\alpha}) m_{ij} }{ \color{bcOrange} \rho_{ij} \color{black} (\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\chi_{ij}\)</span>: probability <span class="math inline">\(i\)</span> successfully conquers <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(\bm{m}\)</span>: military effort</li>
+<li><span class="math inline">\(m_{ij}\)</span>: effort <span class="math inline">\(i\)</span> dedicates toward threatening <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(m_{jj}\)</span>: effort <span class="math inline">\(j\)</span> dedicates toward self-defense</li>
+<li><span class="math inline">\(\color{bcOrange} \rho_{ij} \color{black} \in [0, 1]\)</span>: loss of strength gradient</li>
+</ul>
+</section>
+<section id="gammabma-wars-6" class="slide level2">
+<h2>(<span class="math inline">\(\Gamma^{\bm{a}}\)</span>) Wars</h2>
+<p><strong>Conquest Values</strong></p>
+<p><span class="math display">\[
+G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+\]</span></p>
+<p><strong>Contest Function (Dyadic)</strong></p>
+<p><span class="math display">\[
+\chi_{ij}(\bm{m}) = \frac{ \rho_{ij} (\color{bcOrange} \bm{W} \color{black} ; \bm{\alpha}) m_{ij} }{ \rho_{ij} ( \color{bcOrange} \bm{W} \color{black} ; \bm{\alpha}) m_{ij} + m_{jj} }
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\chi_{ij}\)</span>: probability <span class="math inline">\(i\)</span> successfully conquers <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(\bm{m}\)</span>: military effort</li>
+<li><span class="math inline">\(m_{ij}\)</span>: effort <span class="math inline">\(i\)</span> dedicates toward threatening <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(m_{jj}\)</span>: effort <span class="math inline">\(j\)</span> dedicates toward self-defense</li>
+<li><span class="math inline">\(\rho_{ij} \in [0, 1]\)</span>: loss of strength gradient</li>
+<li><span class="math inline">\(\color{bcOrange} \bm{W}\)</span>: dyadic geography</li>
+</ul>
+</section>
+<section id="gammabma-wars-7" class="slide level2">
+<h2>(<span class="math inline">\(\Gamma^{\bm{a}}\)</span>) Wars</h2>
+<p><strong>Conquest Values</strong></p>
+<p><span class="math display">\[
+G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+\]</span></p>
+<p><strong>Contest Function (Dyadic)</strong></p>
+<p><span class="math display">\[
+\color{bcOrange} \chi_{ij} (\bm{m}) \color{black} = \frac{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\]</span></p>
+<p><strong>Reservation Values</strong></p>
+<p><span class="math display">\[
+\color{bcOrange} \chi_{ij} (\bm{m}) \color{black} G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \color{bcOrange}  \left( 1 - \chi_{ij} (\bm{m}) \right) \color{black} G_j(\tilde{\bm{\tau}}) - c_j
+\]</span></p>
+</section>
+<section id="gammabma-wars-8" class="slide level2">
+<h2>(<span class="math inline">\(\Gamma^{\bm{a}}\)</span>) Wars</h2>
+<p><strong>Conquest Values</strong></p>
+<p><span class="math display">\[
+G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+\]</span></p>
+<p><strong>Contest Function (Dyadic)</strong></p>
+<p><span class="math display">\[
+\chi_{ij} (\bm{m}) = \frac{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\]</span></p>
+<p><strong>Reservation Values</strong></p>
+<p><span class="math display">\[
+\chi_{ij} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - \color{bcOrange} c_j
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\color{bcOrange} c_j\)</span>: war cost</li>
+</ul>
+</section>
+<section id="gammabma-wars-9" class="slide level2">
+<h2>(<span class="math inline">\(\Gamma^{\bm{a}}\)</span>) Wars</h2>
+<p><strong>Conquest Values</strong></p>
+<p><span class="math display">\[
+G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+\]</span></p>
+<p><strong>Contest Function (Dyadic)</strong></p>
+<p><span class="math display">\[
+\chi_{ij} (\bm{m}) = \frac{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\]</span></p>
+<p><strong>Reservation Values</strong></p>
+<p><span class="math display">\[
+\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ij} (\bm{m})G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\]</span></p>
+<div class="fragment">
+<ul>
+<li>No war <span class="math inline">\(\implies G_i(\tilde{\bm{\tau}}) \geq \color{bcOrange} \underline{G}_{ji}(\bm{m})\)</span> for all <span class="math inline">\(i, j\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Proposition C1: <span class="math inline">\(\exists\)</span> <span class="math inline">\(\left\{ c_j^\star \right\}_{j \in \left\{1,..., N \right\}}\)</span> such that no war occurs if <span class="math inline">\(c_j &gt; c_j^\star\)</span> for all <span class="math inline">\(j\)</span>.</li>
+</ul>
+</div>
+</section>
+<section id="gammabmtau-trade-policy-announcements" class="slide level2">
+<h2>(<span class="math inline">\(\Gamma^{\bm{\tau}}\)</span>) Trade Policy Announcements</h2>
+<p><span class="math display">\[
+\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ij} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\]</span></p>
+<div class="fragment">
+<p><strong>Constrained Optimal Policies</strong></p>
+<p><span class="math display">\[\begin{equation}
+\begin{split}
+\max_{ \tilde{\bm{\tau}}_i } &amp; \quad G_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i})
+\end{split}
+\end{equation}\]</span></p>
+</div>
+</section>
+<section id="gammabmtau-trade-policy-announcements-1" class="slide level2">
+<h2>(<span class="math inline">\(\Gamma^{\bm{\tau}}\)</span>) Trade Policy Announcements</h2>
+<p><span class="math display">\[
+\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ij} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\]</span></p>
+<p><strong>Constrained Optimal Policies</strong></p>
+<p><span class="math display">\[\begin{equation}
+\begin{split}
+\max_{ \tilde{\bm{\tau}}_i } &amp; \quad G_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \\
+\text{subject to} &amp; \quad G_j(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \geq \color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} \text{ for all } j \neq i
+\end{split}
+\end{equation}\]</span></p>
+</section>
+<section id="gammabmtau-trade-policy-announcements-2" class="slide level2">
+<h2>(<span class="math inline">\(\Gamma^{\bm{\tau}}\)</span>) Trade Policy Announcements</h2>
+<p><span class="math display">\[
+\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ij} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\]</span></p>
+<p><strong>Constrained Optimal Policies</strong></p>
+<p><span class="math display">\[\begin{equation}
+\begin{split}
+\max_{ \tilde{\bm{\tau}}_i } &amp; \quad G_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \\
+\text{subject to} &amp; \quad G_j(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \geq \underline{G}_{ji}( \color{bcOrange} \bm{m} \color{black}) \text{ for all } j \neq i
+\end{split}
+\end{equation}\]</span></p>
+</section>
+<section id="gammabmtau-trade-policy-announcements-3" class="slide level2">
+<h2>(<span class="math inline">\(\Gamma^{\bm{\tau}}\)</span>) Trade Policy Announcements</h2>
+<p><span class="math display">\[
+\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ij} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\]</span></p>
+<p><strong>Constrained Optimal Policies</strong></p>
+<p><span class="math display">\[\begin{equation}
+\begin{split}
+\tilde{\bm{\tau}}_i^\star( \color{bcOrange} \bm{m} \color{black}) = \argmax_{ \tilde{\bm{\tau}}_i } &amp; \quad G_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \\
+\text{subject to} &amp; \quad G_j(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \geq \underline{G}_{ji}( \color{bcOrange} \bm{m} \color{black}) \text{ for all } j \neq i
+\end{split}
+\end{equation}\]</span></p>
+</section>
+<section id="gammabmm-military-strategies" class="slide level2">
+<h2>(<span class="math inline">\(\Gamma^{\bm{m}}\)</span>) Military Strategies</h2>
+<p><span class="math display">\[
+\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ij} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\]</span></p>
+<p><strong>Constrained Optimal Policies</strong></p>
+<p><span class="math display">\[\begin{equation}
+\begin{split}
+\tilde{\bm{\tau}}_i^\star( \color{bcOrange} \bm{m} \color{black}) = \argmax_{ \tilde{\bm{\tau}}_i } &amp; \quad G_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \\
+\text{subject to} &amp; \quad G_j(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \geq \underline{G}_{ji}( \color{bcOrange} \bm{m} \color{black}) \text{ for all } j \neq i
+\end{split}
+\end{equation}\]</span></p>
+<p><strong>Optimal Military Strategies</strong></p>
+<p><span class="math display">\[\begin{equation}
+\begin{split}
+\max_{ \color{bcOrange} \bm{m}_i \color{black} } &amp; \quad G_i \left(\tilde{\bm{\tau}}^\star( \color{bcOrange} \bm{m}_i \color{black} ; \bm{m}_{-i}) \right)
+\end{split}
+\end{equation}\]</span></p>
+<div class="fragment">
+<p><span class="math display">\[
+\color{bcOrange} \bm{m}_i = \begin{pmatrix} m_{i1} &amp; \cdots &amp; m_{iN} \end{pmatrix}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\color{bcOrange} m_{ij}\)</span>: military effort <span class="math inline">\(i\)</span> dedicates toward threatening <span class="math inline">\(j\)</span></li>
+</ul>
+</div>
+</section>
+<section id="gammabmm-military-strategies-1" class="slide level2">
+<h2>(<span class="math inline">\(\Gamma^{\bm{m}}\)</span>) Military Strategies</h2>
+<p><span class="math display">\[
+\underline{G}_{ji}(\bm{m}) = \chi_{ij} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\]</span></p>
+<p><strong>Constrained Optimal Policies</strong></p>
+<p><span class="math display">\[\begin{equation}
+\begin{split}
+\tilde{\bm{\tau}}_i^\star(\bm{m}) = \argmax_{ \tilde{\bm{\tau}}_i } &amp; \quad G_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \\
+\text{subject to} &amp; \quad G_j(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \geq \underline{G}_{ji}(\bm{m}) \text{ for all } j \neq i
+\end{split}
+\end{equation}\]</span></p>
+<p><strong>Optimal Military Strategies</strong></p>
+<p><span class="math display">\[\begin{equation}
+\begin{split}
+\max_{ \bm{m}_i } &amp; \quad G_i \left(\tilde{\bm{\tau}}^\star( \bm{m}_i ; \bm{m}_{-i}) \right) \\
+\text{subject to} &amp; \quad \sum_j m_{ij} \leq \color{bcOrange} M_i
+\end{split}
+\end{equation}\]</span></p>
+</section>
+<section id="estimation" class="slide level2 aligncenter">
+<h2>Estimation</h2>
+<p><span class="math display">\[
+\left\{ \bm{\tau}, \bm{M} \right\} \rightarrow \bm{\theta}
+\]</span></p>
+</section>
+<section id="observables" class="slide level2">
+<h2>Observables and Unobservables</h2>
+<p><strong>Data</strong></p>
+<ul>
+<li><span class="math inline">\(\bm{\tau}\)</span>: policy barriers to trade (<a href="#/barriers">barriers</a>)</li>
+<li><span class="math inline">\(\bm{M}\)</span>: military expenditure (<a href="#/milex">milex</a>)</li>
+</ul>
+<div class="fragment">
+<p><strong>Structural Parameters</strong> <span class="math display">\[
+\bm{\theta} = \left\{ \bm{b}, \rho(\bm{W}) \right\}
+\]</span></p>
+</div>
+</section>
+<section id="observables-and-unobservables" class="slide level2">
+<h2>Observables and Unobservables</h2>
+<p><strong>Data</strong></p>
+<ul>
+<li><span class="math inline">\(\bm{\tau}\)</span>: policy barriers to trade (<a href="#/barriers">barriers</a>)</li>
+<li><span class="math inline">\(\bm{M}\)</span>: military expenditure (<a href="#/milex">milex</a>)</li>
+</ul>
+<p><strong>Structural Parameters</strong> <span class="math display">\[
+\bm{\theta} = \left\{ \color{bcOrange} \bm{b} \color{black}, \rho(\bm{W}) \right\}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\color{bcOrange} \bm{b}\)</span>: governments’ preferences</li>
+</ul>
+</section>
+<section id="observables-and-unobservables-1" class="slide level2">
+<h2>Observables and Unobservables</h2>
+<p><strong>Data</strong></p>
+<ul>
+<li><span class="math inline">\(\bm{\tau}\)</span>: policy barriers to trade (<a href="#/barriers">barriers</a>)</li>
+<li><span class="math inline">\(\bm{M}\)</span>: military expenditure (<a href="#/milex">milex</a>)</li>
+</ul>
+<p><strong>Structural Parameters</strong> <span class="math display">\[
+\bm{\theta} = \left\{ \bm{b}, \color{bcOrange} \rho(\bm{W}) \color{black} \right\}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\bm{b}\)</span>: governments’ preferences</li>
+<li><span class="math inline">\(\color{bcOrange} \rho(\bm{W})\)</span>: loss of strength gradient
+<ul>
+<li><span class="math inline">\(\bm{W}\)</span>: minimum geographic distance</li>
+</ul></li>
+</ul>
+<div class="fragment">
+<p><strong>Structural Residual</strong> <span class="math display">\[
+\epsilon_{ij}(\bm{\theta}) = \tilde{\tau_{ij}}^\star(\bm{m}^\star; \bm{\theta}) - \tau_{ij}
+\]</span></p>
+</div>
+<div class="fragment">
+<p><strong>Estimation Problem</strong></p>
+<p><span class="math display">\[\begin{equation}
+\begin{split}
+\hat{\bm{\theta}} = \argmin_{\bm{\theta}} &amp; \quad \sum_i \sum_j \epsilon_{ij}(\bm{\theta})
+\end{split}
+\end{equation}\]</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>Reformulate as mathematical program with equilibrium constraints (MPEC) <span class="citation" data-cites="Su2012">(Su and Judd 2012)</span></li>
+</ul>
+</div>
+</section>
+<section id="conclusion" class="slide level2">
+<h2>Conclusion</h2>
+<p><strong>Counterfactuals</strong> <span class="math display">\[
+\left\{ \left\{ \bm{b}^\prime, \rho(\bm{W}) \right\}, \bm{M}^\prime \right\} \rightarrow \left\{ \bm{\tau}^\prime, \bm{m}^\prime \right\}
+\]</span></p>
+</section>
+<section id="conclusion-1" class="slide level2">
+<h2>Conclusion</h2>
+<p><strong>Counterfactuals</strong> <span class="math display">\[
+\left\{ \left\{ \bm{b}, \rho(\bm{W}) \right\}, \color{bcOrange} \bm{M}^\prime \color{black} \right\} \rightarrow \left\{ \color{bcOrange} \bm{\tau}^\prime \color{black}, \bm{m}^\prime \right\}
+\]</span></p>
+<ul>
+<li>Shadow of power (<span class="math inline">\(\color{bcOrange} \bm{M}^\prime \rightarrow \bm{\tau}^\prime\)</span>)</li>
+</ul>
+</section>
+<section id="conclusion-2" class="slide level2">
+<h2>Conclusion</h2>
+<p><strong>Counterfactuals</strong> <span class="math display">\[
+\left\{ \left\{ \color{bcOrange} \bm{b}^\prime \color{black}, \rho(\bm{W}) \right\}, \bm{M} \right\} \rightarrow \left\{ \color{bcOrange} \bm{\tau}^\prime, \bm{m}^\prime \color{black} \right\}
+\]</span></p>
+<ul>
+<li>Shadow of power (<span class="math inline">\(\bm{M}^\prime \rightarrow \bm{\tau}^\prime\)</span>)</li>
+<li>Liberal peace (<span class="math inline">\(\color{bcOrange} \bm{b}^\prime \color{black} \rightarrow \color{bcOrange} \bm{\tau}^\prime, \bm{m}^\prime \color{black}\)</span>)</li>
+</ul>
+<div class="fragment">
+<p><strong>Results</strong></p>
+<ul>
+<li>Coming soon…</li>
+</ul>
+</div>
+</section>
+<section id="thank-you" class="slide level2 aligncenter">
+<h2>Thank You</h2>
+<p><a href="http://brendancooley.com">brendancooley.com</a></p>
+<p><a href="mailto:bcooley@princeton.edu">bcooley@princeton.edu</a></p>
+</section>
+<section id="barriers" class="slide level2">
+<h2>Policy Barriers to Trade, 2011</h2>
+<p><img src="index_files/figure-revealjs/tauhm-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><a href="#/introduction">Back (Intro)</a>   <a href="#/observables">Back (Estimation)</a></p>
+</section>
+<section id="freetrade" class="slide level2">
+<h2>Welfare Under Free Trade</h2>
+<p><img src="index_files/figure-revealjs/Ghatft-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><a href="#/economyLast" style="float: right;">Back</a></p>
+</section>
+<section id="rcv" class="slide level2">
+<h2>Conquest Values (Empirical)</h2>
+<p><img src="index_files/figure-revealjs/rcv-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><a href="#/wars_rcv" style="float: right;">Back</a></p>
+</section>
+<section id="milex" class="slide level2">
+<h2>Military Expenditure</h2>
+<p><img src="index_files/figure-revealjs/milex-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><a href="#/observables" style="float: right;">Back</a></p>
+<!-- hide references -->
+<hr style="height:30em; visibility:hidden;" />
+<div id="refs" class="references">
+<div id="ref-Art1996">
+<p>Art, Robert J. 1996. “American foreign policy and the fungibility of force.” <em>Security Studies</em> 5 (4): 7–42.</p>
+</div>
+<div id="ref-Autor2013">
+<p>Autor, David H, David Dorn, and Gordon H Hanson. 2013. “The China syndrome: Local labor market effects of import competition in the United States.” <em>The American Economic Review</em> 103 (6): 2121–68.</p>
+</div>
+<div id="ref-Brito1985">
+<p>Brito, Dagobert L., and Michael D. Intrilagator. 1985. “Conflict, War, and Redistribution.” <em>American Political Science Review</em> 79 (4).</p>
+</div>
+<div id="ref-Cooley2019b">
+<p>Cooley, Brendan. 2019. “Estimating Policy Barriers to Trade.”</p>
+</div>
+<div id="ref-Costinot2015">
+<p>Costinot, Arnaud, and Andrés Rodríguez-Clare. 2015. “Trade Theory with Numbers: Quantifying the Consequences of Globalization.” <em>Handbook of International Economics</em> 4: 197–261.</p>
+</div>
+<div id="ref-Fearon1995">
+<p>Fearon, James D. 1995. “Rationalist explanations for war.” <em>International Organization</em> 49 (03): 379–414.</p>
+</div>
+<div id="ref-Findlay2007">
+<p>Findlay, Ronald., and Kevin H. O’Rourke. 2007. <em>Power and plenty : trade, war, and the world economy in the second millennium</em>. Princeton University Press.</p>
+</div>
+<div id="ref-Gawande2009">
+<p>Gawande, Kishore, Pravin Krishna, and Marcelo Olarreaga. 2009. “What governments maximize and why: the view from trade.” <em>International Organization</em> 63 (03): 491–532.</p>
+</div>
+<div id="ref-Goldberg2016">
+<p>Goldberg, P K, and N Pavcnik. 2016. “The Effects of Trade Policy.” <em>Handbook of Commercial Policy</em> 1: 161–206.</p>
+</div>
+<div id="ref-Grossman1994">
+<p>Grossman, Gene M, and Elhanan Helpman. 1994. “Protection for Sale.” <em>The American Economic Review</em>, 833–50.</p>
+</div>
+<div id="ref-Su2012">
+<p>Su, Che Lin, and Kenneth L. Judd. 2012. “Constrained Optimization Approaches to Estimation of Structural Models.” <em>Econometrica</em> 80 (5): 2213–30.</p>
+</div>
+</div>
+</section>
+    </div>
+  </div>
+
+  <script src="index_files/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="index_files/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: false,
+        // Display a presentation progress bar
+        progress: false,
+        // Display the page number of the current slide
+        slideNumber: false,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+<!-- mathjax change font-->
+<script type="text/x-mathjax-config"> 
+     MathJax.Hub.Config({ 
+         "HTML-CSS" : { 
+             availableFonts : ["STIX-Web","Asana-Math","TeX", "Neo-Euler",], 
+             preferredFont : "TeX", 
+             webFont : "TeX", 
+             imageFont : null 
+         } 
+     }); 
+</script> 
+
+<!-- mathjax colors-->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ TeX: { extensions: ["color.js"] }});
+</script>
+
+<script>
+	Reveal.configure({
+	  keyboard: {
+	    40: 'next', // allow up and down to move slides left and right
+	    38: 'prev'
+	  }
+	});
+</script>
+
+<script>
+ Reveal.initialize({
+    // Optional reveal.js plugins
+    dependencies: [
+        { src: 'index_files/reveal.js-3.3.0.1/plugin/zoom-js/zoom.js', async: true },
+        { src: 'index_files/reveal.js-3.3.0.1/plugin/markdown/marked.js', async: true },
+        { src: 'index_files/reveal.js-3.3.0.1/plugin/notes/notes.js', async: true }
+    ]
+});
+</script>
+
+  </body>
+</html>

@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1565360435277.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3872094745",
+    "id" : "5CA55796",
+    "lastKnownWriteTime" : 1565382377,
+    "last_content_update" : 1565382377020,
+    "path" : "~/Dropbox (Princeton)/1_Papers/tpsp/figs/rcv.R",
+    "project_path" : "rcv.R",
+    "properties" : {
+        "cursorPosition" : "51,0",
+        "scrollLine" : "14",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
