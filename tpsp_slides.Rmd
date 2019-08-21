@@ -700,7 +700,7 @@ $$
 
 \begin{equation}
 \begin{split}
-\hat{\bm{\theta}} = \argmin_{\bm{\theta}} & \quad \sum_i \sum_j \epsilon_{ij}(\bm{\theta})
+\hat{\bm{\theta}} = \argmin_{\bm{\theta}} & \quad \sum_i \sum_j \left( \epsilon_{ij}(\bm{\theta}) \right)^2
 \end{split}
 \end{equation}
 
