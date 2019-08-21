@@ -599,6 +599,30 @@ $$
 \end{split}
 \end{equation}
 
+## ($\Gamma^{\bm{m}}$) Military Strategies
+
+$$
+\underline{G}_{ji}(\bm{m}) = \chi_{ji} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+$$
+
+**Constrained Optimal Policies**
+
+\begin{equation}
+\begin{split}
+\tilde{\bm{\tau}}_i^\star(\bm{m}) = \argmax_{ \tilde{\bm{\tau}}_i } & \quad G_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \\
+\text{subject to} & \quad G_j(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \geq \underline{G}_{ji}(\bm{m}) \text{ for all } j \neq i
+\end{split}
+\end{equation}
+
+**Optimal Military Strategies**
+
+\begin{equation}
+\begin{split}
+\color{bcOrange} \bm{m}_i^\star \color{black} = \argmax_{ \bm{m}_i } & \quad G_i \left(\tilde{\bm{\tau}}^\star( \bm{m}_i ; \bm{m}_{-i}) \right) \\
+\text{subject to} & \quad \sum_j m_{ij} \leq M_i
+\end{split}
+\end{equation}
+
 ## Estimation {.aligncenter}
 
 $$
