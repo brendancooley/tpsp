@@ -667,7 +667,7 @@ $$
 
 **Structural Residual**
 $$
-\epsilon_{ij}(\bm{\theta}) = \tilde{\tau_{ij}}^\star(\bm{m}^\star; \bm{\theta}) - \tau_{ij}
+\epsilon_{ij}(\bm{\theta}) = \tilde{\tau}_{ij}^\star(\bm{m}^\star; \bm{\theta}) - \tau_{ij}
 $$
 
 . . . 
