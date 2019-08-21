@@ -111,12 +111,18 @@ $$
 
 . . . 
 
-**Counterfactuals**
+**Counterfactuals $\left\{ \bm{\theta}^\prime, \bm{M}^\prime \right\} \rightarrow \bm{\tau}^\prime$**
 
 - Shadow of power
   + Effect of changing military endowments on trade policy
 - Liberal/commercial peace
   + Effect of changing preferences for openness on military strategies
+
+## Model {.aligncenter}
+
+$$
+\left\{ \bm{\theta}, \bm{M} \right\} \rightarrow \bm{\tau}
+$$
 
 ## Coercive International Political Economy
 
@@ -139,12 +145,6 @@ $$
 
 $$
 G_i \left( h(\bm{\tau}), \bm{a} \right)
-$$
-
-## Model {.aligncenter}
-
-$$
-\left\{ \bm{\theta}, \bm{M} \right\} \rightarrow \bm{\tau}
 $$
 
 ## ($h(\bm{\tau})$) Economy
@@ -334,7 +334,7 @@ $$
 **Contest Function (Dyadic)**
 
 $$
-\chi_{ij}(\bm{m}) = \frac{ \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\chi_{ji}(\bm{m}) = \frac{ \rho_{ji}(\bm{W}; \bm{\alpha}) m_{ji} }{ \rho_{ji}(\bm{W}; \bm{\alpha}) m_{ji} + m_{ii} }
 $$
 
 ## ($\Gamma^{\bm{a}}$) Wars
@@ -348,10 +348,10 @@ $$
 **Contest Function (Dyadic)**
 
 $$
-\color{bcOrange} \chi_{ij} \color{black} (\bm{m}) = \frac{ \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\color{bcOrange} \chi_{ji} \color{black} (\bm{m}) = \frac{ \rho_{ji}(\bm{W}; \bm{\alpha}) m_{ji} }{ \rho_{ji}(\bm{W}; \bm{\alpha}) m_{ji} + m_{ii} }
 $$
 
-- $\color{bcOrange} \chi_{ij}$: probability $\color{bcOrange} i$ successfully conquers $\color{bcOrange} j$
+- $\color{bcOrange} \chi_{ji}$: probability $\color{bcOrange} j$ successfully conquers $\color{bcOrange} i$
 
 ## ($\Gamma^{\bm{a}}$) Wars
 
@@ -364,13 +364,13 @@ $$
 **Contest Function (Dyadic)**
 
 $$
-\chi_{ij}( \color{bcOrange} \bm{m} \color{black}) = \frac{ \rho_{ij}(\bm{W}; \bm{\alpha}) \color{bcOrange} m_{ij} \color{black} }{ \rho_{ij}(\bm{W}; \bm{\alpha}) \color{bcOrange} m_{ij} \color{black} + \color{bcOrange} m_{jj} \color{black} }
+\chi_{ji}( \color{bcOrange} \bm{m} \color{black}) = \frac{ \rho_{ji}(\bm{W}; \bm{\alpha}) \color{bcOrange} m_{ji} \color{black} }{ \rho_{ji}(\bm{W}; \bm{\alpha}) \color{bcOrange} m_{ji} \color{black} + \color{bcOrange} m_{ii} \color{black} }
 $$
 
-- $\chi_{ij}$: probability $i$ successfully conquers $j$
+- $\chi_{ji}$: probability $j$ successfully conquers $i$
 - $\color{bcOrange} \bm{m}$: military effort
-- $\color{bcOrange} m_{ij}$: effort $i$ dedicates toward threatening $j$
-- $\color{bcOrange} m_{jj}$: effort $j$ dedicates toward self-defense
+- $\color{bcOrange} m_{ji}$: effort $j$ dedicates toward threatening $i$
+- $\color{bcOrange} m_{ii}$: effort $i$ dedicates toward self-defense
 
 ## ($\Gamma^{\bm{a}}$) Wars
 
@@ -383,14 +383,14 @@ $$
 **Contest Function (Dyadic)**
 
 $$
-\chi_{ij}(\bm{m}) = \frac{ \color{bcOrange} \rho_{ij} \color{black} (\bm{W}; \bm{\alpha}) m_{ij} }{ \color{bcOrange} \rho_{ij} \color{black} (\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\chi_{ji}(\bm{m}) = \frac{ \color{bcOrange} \rho_{ji} \color{black} (\bm{W}; \bm{\alpha}) m_{ji} }{ \color{bcOrange} \rho_{ji} \color{black} (\bm{W}; \bm{\alpha}) m_{ji} + m_{ii} }
 $$
 
-- $\chi_{ij}$: probability $i$ successfully conquers $j$
+- $\chi_{ji}$: probability $j$ successfully conquers $i$
 - $\bm{m}$: military effort
-- $m_{ij}$: effort $i$ dedicates toward threatening $j$
-- $m_{jj}$: effort $j$ dedicates toward self-defense
-- $\color{bcOrange} \rho_{ij} \color{black} \in [0, 1]$: loss of strength gradient
+- $m_{ji}$: effort $j$ dedicates toward threatening $i$
+- $m_{ii}$: effort $i$ dedicates toward self-defense
+- $\color{bcOrange} \rho_{ji} \color{black} \in [0, 1]$: loss of strength gradient
 
 ## ($\Gamma^{\bm{a}}$) Wars
 
@@ -403,14 +403,14 @@ $$
 **Contest Function (Dyadic)**
 
 $$
-\chi_{ij}(\bm{m}) = \frac{ \rho_{ij} (\color{bcOrange} \bm{W} \color{black} ; \bm{\alpha}) m_{ij} }{ \rho_{ij} ( \color{bcOrange} \bm{W} \color{black} ; \bm{\alpha}) m_{ij} + m_{jj} }
+\chi_{ji}(\bm{m}) = \frac{ \rho_{ji} (\color{bcOrange} \bm{W} \color{black} ; \bm{\alpha}) m_{ji} }{ \rho_{ji} ( \color{bcOrange} \bm{W} \color{black} ; \bm{\alpha}) m_{ji} + m_{ii} }
 $$
 
-- $\chi_{ij}$: probability $i$ successfully conquers $j$
+- $\chi_{ji}$: probability $j$ successfully conquers $i$
 - $\bm{m}$: military effort
-- $m_{ij}$: effort $i$ dedicates toward threatening $j$
-- $m_{jj}$: effort $j$ dedicates toward self-defense
-- $\rho_{ij} \in [0, 1]$: loss of strength gradient
+- $m_{ji}$: effort $j$ dedicates toward threatening $i$
+- $m_{ii}$: effort $i$ dedicates toward self-defense
+- $\rho_{ji} \in [0, 1]$: loss of strength gradient
 - $\color{bcOrange} \bm{W}$: dyadic geography
 
 ## ($\Gamma^{\bm{a}}$) Wars
@@ -424,13 +424,13 @@ $$
 **Contest Function (Dyadic)**
 
 $$
-\color{bcOrange} \chi_{ij} (\bm{m}) \color{black} = \frac{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\color{bcOrange} \chi_{ji} (\bm{m}) \color{black} = \frac{ \rho_{ji} (\bm{W}; \bm{\alpha}) m_{ji} }{ \rho_{ji} (\bm{W}; \bm{\alpha}) m_{ji} + m_{ii} }
 $$
 
 **Reservation Values**
 
 $$
-\color{bcOrange} \chi_{ij} (\bm{m}) \color{black} G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \color{bcOrange}  \left( 1 - \chi_{ij} (\bm{m}) \right) \color{black} G_j(\tilde{\bm{\tau}}) - c_j
+\color{bcOrange} \chi_{ji} (\bm{m}) \color{black} G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \color{bcOrange}  \left( 1 - \chi_{ji} (\bm{m}) \right) \color{black} G_j(\tilde{\bm{\tau}}) - c_j
 $$
 
 ## ($\Gamma^{\bm{a}}$) Wars
@@ -438,19 +438,19 @@ $$
 **Conquest Values**
 
 $$
-G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+G_j(\bm{\tau}_i^{j \star} \color{black} ; \tilde{\bm{\tau}}_{-i})
 $$
 
 **Contest Function (Dyadic)**
 
 $$
-\chi_{ij} (\bm{m}) = \frac{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\chi_{ji} (\bm{m}) = \frac{ \rho_{ji} (\bm{W}; \bm{\alpha}) m_{ji} }{ \rho_{ji} (\bm{W}; \bm{\alpha}) m_{ji} + m_{ii} }
 $$
 
 **Reservation Values**
 
 $$
-\chi_{ij} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - \color{bcOrange} c_j
+\chi_{ji} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - \color{bcOrange} c_j
 $$
 
 - $\color{bcOrange} c_j$: war cost
@@ -460,24 +460,24 @@ $$
 **Conquest Values**
 
 $$
-G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+G_j(\bm{\tau}_i^{j \star} \color{black} ; \tilde{\bm{\tau}}_{-i})
 $$
 
 **Contest Function (Dyadic)**
 
 $$
-\chi_{ij} (\bm{m}) = \frac{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\chi_{ji} (\bm{m}) = \frac{ \rho_{ji} (\bm{W}; \bm{\alpha}) m_{ji} }{ \rho_{ji} (\bm{W}; \bm{\alpha}) m_{ji} + m_{ii} }
 $$
 
 **Reservation Values**
 
 $$
-\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ij} (\bm{m})G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ji} (\bm{m})G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
 $$
 
 . . . 
 
-- No war $\implies G_i(\tilde{\bm{\tau}}) \geq \color{bcOrange} \underline{G}_{ji}(\bm{m})$ for all $i, j$
+- No war $\implies G_j(\tilde{\bm{\tau}}) \geq \color{bcOrange} \underline{G}_{ji}(\bm{m})$ for all $j, i$
 
 . . . 
 
@@ -486,7 +486,7 @@ $$
 ## ($\Gamma^{\bm{\tau}}$) Trade Policy Announcements
 
 $$
-\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ij} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ji} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
 $$
 
 . . . 
@@ -502,7 +502,7 @@ $$
 ## ($\Gamma^{\bm{\tau}}$) Trade Policy Announcements
 
 $$
-\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ij} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ji} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
 $$
 
 **Constrained Optimal Policies**
@@ -517,7 +517,7 @@ $$
 ## ($\Gamma^{\bm{\tau}}$) Trade Policy Announcements
 
 $$
-\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ij} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ji} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
 $$
 
 **Constrained Optimal Policies**
@@ -532,7 +532,7 @@ $$
 ## ($\Gamma^{\bm{\tau}}$) Trade Policy Announcements
 
 $$
-\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ij} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ji} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
 $$
 
 **Constrained Optimal Policies**
@@ -547,7 +547,7 @@ $$
 ## ($\Gamma^{\bm{m}}$) Military Strategies
 
 $$
-\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ij} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ji} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
 $$
 
 **Constrained Optimal Policies**
@@ -578,7 +578,7 @@ $$
 ## ($\Gamma^{\bm{m}}$) Military Strategies
 
 $$
-\underline{G}_{ji}(\bm{m}) = \chi_{ij} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\underline{G}_{ji}(\bm{m}) = \chi_{ji} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
 $$
 
 **Constrained Optimal Policies**

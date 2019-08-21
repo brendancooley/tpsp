@@ -547,7 +547,7 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <p><strong>Estimation:</strong> <span class="math inline">\(\left\{ \bm{\tau}, \bm{M} \right\} \rightarrow \bm{\theta}\)</span></p>
 </div>
 <div class="fragment">
-<p><strong>Counterfactuals</strong></p>
+<p><strong>Counterfactuals <span class="math inline">\(\left\{ \bm{\theta}^\prime, \bm{M}^\prime \right\} \rightarrow \bm{\tau}^\prime\)</span></strong></p>
 <ul>
 <li>Shadow of power
 <ul>
@@ -559,6 +559,12 @@ document.getElementsByTagName('head')[0].appendChild(style);
 </ul></li>
 </ul>
 </div>
+</section>
+<section id="model" class="slide level2 aligncenter">
+<h2>Model</h2>
+<p><span class="math display">\[
+\left\{ \bm{\theta}, \bm{M} \right\} \rightarrow \bm{\tau}
+\]</span></p>
 </section>
 <section id="coercive-international-political-economy" class="slide level2">
 <h2>Coercive International Political Economy</h2>
@@ -586,12 +592,6 @@ document.getElementsByTagName('head')[0].appendChild(style);
 G_i \left( h(\bm{\tau}), \bm{a} \right)
 \]</span></p>
 </div>
-</section>
-<section id="model" class="slide level2 aligncenter">
-<h2>Model</h2>
-<p><span class="math display">\[
-\left\{ \bm{\theta}, \bm{M} \right\} \rightarrow \bm{\tau}
-\]</span></p>
 </section>
 <section id="hbmtau-economy" class="slide level2">
 <h2>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economy</h2>
@@ -765,7 +765,7 @@ G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
 <div class="fragment">
 <p><strong>Contest Function (Dyadic)</strong></p>
 <p><span class="math display">\[
-\chi_{ij}(\bm{m}) = \frac{ \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\chi_{ji}(\bm{m}) = \frac{ \rho_{ji}(\bm{W}; \bm{\alpha}) m_{ji} }{ \rho_{ji}(\bm{W}; \bm{\alpha}) m_{ji} + m_{ii} }
 \]</span></p>
 </div>
 </section>
@@ -777,10 +777,10 @@ G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
 \]</span></p>
 <p><strong>Contest Function (Dyadic)</strong></p>
 <p><span class="math display">\[
-\color{bcOrange} \chi_{ij} \color{black} (\bm{m}) = \frac{ \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\color{bcOrange} \chi_{ji} \color{black} (\bm{m}) = \frac{ \rho_{ji}(\bm{W}; \bm{\alpha}) m_{ji} }{ \rho_{ji}(\bm{W}; \bm{\alpha}) m_{ji} + m_{ii} }
 \]</span></p>
 <ul>
-<li><span class="math inline">\(\color{bcOrange} \chi_{ij}\)</span>: probability <span class="math inline">\(\color{bcOrange} i\)</span> successfully conquers <span class="math inline">\(\color{bcOrange} j\)</span></li>
+<li><span class="math inline">\(\color{bcOrange} \chi_{ji}\)</span>: probability <span class="math inline">\(\color{bcOrange} j\)</span> successfully conquers <span class="math inline">\(\color{bcOrange} i\)</span></li>
 </ul>
 </section>
 <section id="gammabma-wars-4" class="slide level2">
@@ -791,13 +791,13 @@ G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
 \]</span></p>
 <p><strong>Contest Function (Dyadic)</strong></p>
 <p><span class="math display">\[
-\chi_{ij}( \color{bcOrange} \bm{m} \color{black}) = \frac{ \rho_{ij}(\bm{W}; \bm{\alpha}) \color{bcOrange} m_{ij} \color{black} }{ \rho_{ij}(\bm{W}; \bm{\alpha}) \color{bcOrange} m_{ij} \color{black} + \color{bcOrange} m_{jj} \color{black} }
+\chi_{ji}( \color{bcOrange} \bm{m} \color{black}) = \frac{ \rho_{ji}(\bm{W}; \bm{\alpha}) \color{bcOrange} m_{ji} \color{black} }{ \rho_{ji}(\bm{W}; \bm{\alpha}) \color{bcOrange} m_{ji} \color{black} + \color{bcOrange} m_{ii} \color{black} }
 \]</span></p>
 <ul>
-<li><span class="math inline">\(\chi_{ij}\)</span>: probability <span class="math inline">\(i\)</span> successfully conquers <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(\chi_{ji}\)</span>: probability <span class="math inline">\(j\)</span> successfully conquers <span class="math inline">\(i\)</span></li>
 <li><span class="math inline">\(\color{bcOrange} \bm{m}\)</span>: military effort</li>
-<li><span class="math inline">\(\color{bcOrange} m_{ij}\)</span>: effort <span class="math inline">\(i\)</span> dedicates toward threatening <span class="math inline">\(j\)</span></li>
-<li><span class="math inline">\(\color{bcOrange} m_{jj}\)</span>: effort <span class="math inline">\(j\)</span> dedicates toward self-defense</li>
+<li><span class="math inline">\(\color{bcOrange} m_{ji}\)</span>: effort <span class="math inline">\(j\)</span> dedicates toward threatening <span class="math inline">\(i\)</span></li>
+<li><span class="math inline">\(\color{bcOrange} m_{ii}\)</span>: effort <span class="math inline">\(i\)</span> dedicates toward self-defense</li>
 </ul>
 </section>
 <section id="gammabma-wars-5" class="slide level2">
@@ -808,14 +808,14 @@ G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
 \]</span></p>
 <p><strong>Contest Function (Dyadic)</strong></p>
 <p><span class="math display">\[
-\chi_{ij}(\bm{m}) = \frac{ \color{bcOrange} \rho_{ij} \color{black} (\bm{W}; \bm{\alpha}) m_{ij} }{ \color{bcOrange} \rho_{ij} \color{black} (\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\chi_{ji}(\bm{m}) = \frac{ \color{bcOrange} \rho_{ji} \color{black} (\bm{W}; \bm{\alpha}) m_{ji} }{ \color{bcOrange} \rho_{ji} \color{black} (\bm{W}; \bm{\alpha}) m_{ji} + m_{ii} }
 \]</span></p>
 <ul>
-<li><span class="math inline">\(\chi_{ij}\)</span>: probability <span class="math inline">\(i\)</span> successfully conquers <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(\chi_{ji}\)</span>: probability <span class="math inline">\(j\)</span> successfully conquers <span class="math inline">\(i\)</span></li>
 <li><span class="math inline">\(\bm{m}\)</span>: military effort</li>
-<li><span class="math inline">\(m_{ij}\)</span>: effort <span class="math inline">\(i\)</span> dedicates toward threatening <span class="math inline">\(j\)</span></li>
-<li><span class="math inline">\(m_{jj}\)</span>: effort <span class="math inline">\(j\)</span> dedicates toward self-defense</li>
-<li><span class="math inline">\(\color{bcOrange} \rho_{ij} \color{black} \in [0, 1]\)</span>: loss of strength gradient</li>
+<li><span class="math inline">\(m_{ji}\)</span>: effort <span class="math inline">\(j\)</span> dedicates toward threatening <span class="math inline">\(i\)</span></li>
+<li><span class="math inline">\(m_{ii}\)</span>: effort <span class="math inline">\(i\)</span> dedicates toward self-defense</li>
+<li><span class="math inline">\(\color{bcOrange} \rho_{ji} \color{black} \in [0, 1]\)</span>: loss of strength gradient</li>
 </ul>
 </section>
 <section id="gammabma-wars-6" class="slide level2">
@@ -826,14 +826,14 @@ G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
 \]</span></p>
 <p><strong>Contest Function (Dyadic)</strong></p>
 <p><span class="math display">\[
-\chi_{ij}(\bm{m}) = \frac{ \rho_{ij} (\color{bcOrange} \bm{W} \color{black} ; \bm{\alpha}) m_{ij} }{ \rho_{ij} ( \color{bcOrange} \bm{W} \color{black} ; \bm{\alpha}) m_{ij} + m_{jj} }
+\chi_{ji}(\bm{m}) = \frac{ \rho_{ji} (\color{bcOrange} \bm{W} \color{black} ; \bm{\alpha}) m_{ji} }{ \rho_{ji} ( \color{bcOrange} \bm{W} \color{black} ; \bm{\alpha}) m_{ji} + m_{ii} }
 \]</span></p>
 <ul>
-<li><span class="math inline">\(\chi_{ij}\)</span>: probability <span class="math inline">\(i\)</span> successfully conquers <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(\chi_{ji}\)</span>: probability <span class="math inline">\(j\)</span> successfully conquers <span class="math inline">\(i\)</span></li>
 <li><span class="math inline">\(\bm{m}\)</span>: military effort</li>
-<li><span class="math inline">\(m_{ij}\)</span>: effort <span class="math inline">\(i\)</span> dedicates toward threatening <span class="math inline">\(j\)</span></li>
-<li><span class="math inline">\(m_{jj}\)</span>: effort <span class="math inline">\(j\)</span> dedicates toward self-defense</li>
-<li><span class="math inline">\(\rho_{ij} \in [0, 1]\)</span>: loss of strength gradient</li>
+<li><span class="math inline">\(m_{ji}\)</span>: effort <span class="math inline">\(j\)</span> dedicates toward threatening <span class="math inline">\(i\)</span></li>
+<li><span class="math inline">\(m_{ii}\)</span>: effort <span class="math inline">\(i\)</span> dedicates toward self-defense</li>
+<li><span class="math inline">\(\rho_{ji} \in [0, 1]\)</span>: loss of strength gradient</li>
 <li><span class="math inline">\(\color{bcOrange} \bm{W}\)</span>: dyadic geography</li>
 </ul>
 </section>
@@ -845,26 +845,26 @@ G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
 \]</span></p>
 <p><strong>Contest Function (Dyadic)</strong></p>
 <p><span class="math display">\[
-\color{bcOrange} \chi_{ij} (\bm{m}) \color{black} = \frac{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\color{bcOrange} \chi_{ji} (\bm{m}) \color{black} = \frac{ \rho_{ji} (\bm{W}; \bm{\alpha}) m_{ji} }{ \rho_{ji} (\bm{W}; \bm{\alpha}) m_{ji} + m_{ii} }
 \]</span></p>
 <p><strong>Reservation Values</strong></p>
 <p><span class="math display">\[
-\color{bcOrange} \chi_{ij} (\bm{m}) \color{black} G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \color{bcOrange}  \left( 1 - \chi_{ij} (\bm{m}) \right) \color{black} G_j(\tilde{\bm{\tau}}) - c_j
+\color{bcOrange} \chi_{ji} (\bm{m}) \color{black} G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \color{bcOrange}  \left( 1 - \chi_{ji} (\bm{m}) \right) \color{black} G_j(\tilde{\bm{\tau}}) - c_j
 \]</span></p>
 </section>
 <section id="gammabma-wars-8" class="slide level2">
 <h2>(<span class="math inline">\(\Gamma^{\bm{a}}\)</span>) Wars</h2>
 <p><strong>Conquest Values</strong></p>
 <p><span class="math display">\[
-G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+G_j(\bm{\tau}_i^{j \star} \color{black} ; \tilde{\bm{\tau}}_{-i})
 \]</span></p>
 <p><strong>Contest Function (Dyadic)</strong></p>
 <p><span class="math display">\[
-\chi_{ij} (\bm{m}) = \frac{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\chi_{ji} (\bm{m}) = \frac{ \rho_{ji} (\bm{W}; \bm{\alpha}) m_{ji} }{ \rho_{ji} (\bm{W}; \bm{\alpha}) m_{ji} + m_{ii} }
 \]</span></p>
 <p><strong>Reservation Values</strong></p>
 <p><span class="math display">\[
-\chi_{ij} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - \color{bcOrange} c_j
+\chi_{ji} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - \color{bcOrange} c_j
 \]</span></p>
 <ul>
 <li><span class="math inline">\(\color{bcOrange} c_j\)</span>: war cost</li>
@@ -874,19 +874,19 @@ G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
 <h2>(<span class="math inline">\(\Gamma^{\bm{a}}\)</span>) Wars</h2>
 <p><strong>Conquest Values</strong></p>
 <p><span class="math display">\[
-G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+G_j(\bm{\tau}_i^{j \star} \color{black} ; \tilde{\bm{\tau}}_{-i})
 \]</span></p>
 <p><strong>Contest Function (Dyadic)</strong></p>
 <p><span class="math display">\[
-\chi_{ij} (\bm{m}) = \frac{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} }{ \rho_{ij} (\bm{W}; \bm{\alpha}) m_{ij} + m_{jj} }
+\chi_{ji} (\bm{m}) = \frac{ \rho_{ji} (\bm{W}; \bm{\alpha}) m_{ji} }{ \rho_{ji} (\bm{W}; \bm{\alpha}) m_{ji} + m_{ii} }
 \]</span></p>
 <p><strong>Reservation Values</strong></p>
 <p><span class="math display">\[
-\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ij} (\bm{m})G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ji} (\bm{m})G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
 \]</span></p>
 <div class="fragment">
 <ul>
-<li>No war <span class="math inline">\(\implies G_i(\tilde{\bm{\tau}}) \geq \color{bcOrange} \underline{G}_{ji}(\bm{m})\)</span> for all <span class="math inline">\(i, j\)</span></li>
+<li>No war <span class="math inline">\(\implies G_j(\tilde{\bm{\tau}}) \geq \color{bcOrange} \underline{G}_{ji}(\bm{m})\)</span> for all <span class="math inline">\(j, i\)</span></li>
 </ul>
 </div>
 <div class="fragment">
@@ -898,7 +898,7 @@ G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
 <section id="gammabmtau-trade-policy-announcements" class="slide level2">
 <h2>(<span class="math inline">\(\Gamma^{\bm{\tau}}\)</span>) Trade Policy Announcements</h2>
 <p><span class="math display">\[
-\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ij} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ji} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
 \]</span></p>
 <div class="fragment">
 <p><strong>Constrained Optimal Policies</strong></p>
@@ -912,7 +912,7 @@ G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
 <section id="gammabmtau-trade-policy-announcements-1" class="slide level2">
 <h2>(<span class="math inline">\(\Gamma^{\bm{\tau}}\)</span>) Trade Policy Announcements</h2>
 <p><span class="math display">\[
-\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ij} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ji} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
 \]</span></p>
 <p><strong>Constrained Optimal Policies</strong></p>
 <span class="math display">\[\begin{equation}
@@ -925,7 +925,7 @@ G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
 <section id="gammabmtau-trade-policy-announcements-2" class="slide level2">
 <h2>(<span class="math inline">\(\Gamma^{\bm{\tau}}\)</span>) Trade Policy Announcements</h2>
 <p><span class="math display">\[
-\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ij} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ji} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
 \]</span></p>
 <p><strong>Constrained Optimal Policies</strong></p>
 <span class="math display">\[\begin{equation}
@@ -938,7 +938,7 @@ G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
 <section id="gammabmtau-trade-policy-announcements-3" class="slide level2">
 <h2>(<span class="math inline">\(\Gamma^{\bm{\tau}}\)</span>) Trade Policy Announcements</h2>
 <p><span class="math display">\[
-\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ij} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ji} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
 \]</span></p>
 <p><strong>Constrained Optimal Policies</strong></p>
 <span class="math display">\[\begin{equation}
@@ -951,7 +951,7 @@ G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
 <section id="gammabmm-military-strategies" class="slide level2">
 <h2>(<span class="math inline">\(\Gamma^{\bm{m}}\)</span>) Military Strategies</h2>
 <p><span class="math display">\[
-\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ij} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\underline{G}_{ji}(\color{bcOrange} \bm{m} \color{black}) = \chi_{ji} (\color{bcOrange} \bm{m} \color{black}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\color{bcOrange}  \bm{m} \color{black}) \right) G_j(\tilde{\bm{\tau}}) - c_j
 \]</span></p>
 <p><strong>Constrained Optimal Policies</strong></p>
 <span class="math display">\[\begin{equation}
@@ -978,7 +978,7 @@ G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
 <section id="gammabmm-military-strategies-1" class="slide level2">
 <h2>(<span class="math inline">\(\Gamma^{\bm{m}}\)</span>) Military Strategies</h2>
 <p><span class="math display">\[
-\underline{G}_{ji}(\bm{m}) = \chi_{ij} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\underline{G}_{ji}(\bm{m}) = \chi_{ji} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
 \]</span></p>
 <p><strong>Constrained Optimal Policies</strong></p>
 <span class="math display">\[\begin{equation}
