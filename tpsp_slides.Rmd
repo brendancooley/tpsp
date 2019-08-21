@@ -7,7 +7,7 @@ position: Ph.D. Candidate
 institution: Princeton University
 email: "bcooley (at) princeton.edu"
 
-bibliography: /Users/bcooley/Dropbox (Princeton)/References/library.bib
+bibliography: /Users/brendancooley/Dropbox (Princeton)/References/library.bib
 biblio-style: apsr
 
 backgroundTitle: "figs/cover.jpg"
@@ -66,7 +66,7 @@ if (file.exists('references.RData')) load('references.RData')
 - Anarchy $\implies$ powerful governments can impose policies on others by force
 - Bargaining critique: policy adjustment should occur through diplomacy
   + @Brito1985, @Fearon1995, @Art1996
-- **Question:** Do observed policies reflect **preferences** of their progenitors or **constraints of anarchy?**
+- **Question:** Do observed policies reflect **preferences** of the governments that adopted them or **constraints of anarchy?**
 
 . . . 
 
