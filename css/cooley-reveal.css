@@ -100,6 +100,27 @@ body {
   text-align: center !important;
 }
 
+
+.reveal .centercontent ol {
+  position: fixed;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+/*only currently formatted for ordered lists...need to experiment with other types
+*/
+/*.reveal .centercontent h1,
+.reveal .centercontent h2,
+.reveal .centercontent h3,
+.reveal .centercontent h4,
+.reveal .centercontent h5,
+.reveal .centercontent h6 {
+  vertical-align: top !important;
+  display: inline-block;
+  width: 50%;
+}*/
+
 #left {
   left:-8.33%;
   text-align: left;

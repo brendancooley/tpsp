@@ -90,7 +90,7 @@ if (file.exists('references.RData')) load('references.RData')
 
 **Ideal Experiment**
 
-- Dispatch U.S. military (for example) on long-term mission to Pluto
+- Exogenously manipulate governments military capacity
 - Attribute changes in trade policy to latent effect of military coercion
 
 . . . 
@@ -117,6 +117,12 @@ $$
   + Effect of changing military endowments on trade policy
 - Liberal/commercial peace
   + Effect of changing preferences for openness on military strategies
+
+## Agenda {.centercontent}
+
+1. Model
+2. Preliminary Results
+3. Identification
 
 ## Model {.aligncenter}
 
@@ -200,6 +206,24 @@ $$
 <hr style="height:2em; visibility:hidden;" />
 
 - Government 1's trade policy
+
+## ($h(\bm{\tau})$) Economy
+
+```{r tauhm1, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
+
+source("figs/tau.R")
+tauhm(tau)
+
+```
+
+## ($h(\bm{\tau})$) Economy
+
+```{r tauhm2, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
+
+source("figs/tau.R")
+tauhm(tau, highlight="USA")
+
+```
 
 ## ($h(\bm{\tau})$) Economy
 
@@ -319,9 +343,37 @@ $$
 G_i(\color{bcOrange} \bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
 $$
 
-- <a href="#/rcv">Conquest Values (Empirical)</a>
+## ($\Gamma^{\bm{a}}$) Wars
+
+**Conquest Values**
+
+$$
+G_j(\bm{\tau}_i^{j \star} \color{black} ; \tilde{\bm{\tau}}_{-i})
+$$
+
+```{r rcv1, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
+
+source("figs/rcv.R")
+rcvhm(rcv0, 0, mint, maxt) + plot_spacer()
+
+```
 
 ## ($\Gamma^{\bm{a}}$) Wars
+
+**Conquest Values**
+
+$$
+G_j(\bm{\tau}_i^{j \star} \color{black} ; \tilde{\bm{\tau}}_{-i})
+$$
+
+```{r rcv2, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
+
+source("figs/rcv.R")
+rcvhm(rcv0, 0, mint, maxt) + rcvhm(rcv1, 1, mint, maxt)
+
+```
+
+## ($\Gamma^{\bm{a}}$) Wars {id="contest"}
 
 **Conquest Values**
 
@@ -331,7 +383,7 @@ $$
 
 . . . 
 
-**Contest Function (Dyadic)**
+**Contest Function (Dyadic)** (<a href="#/multilateralcontest">Multilateral Version</a>)
 
 $$
 \chi_{ji}(\bm{m}) = \frac{ \rho_{ji}(\bm{W}; \bm{\alpha}) m_{ji} }{ \rho_{ji}(\bm{W}; \bm{\alpha}) m_{ji} + m_{ii} }
@@ -348,7 +400,7 @@ $$
 **Contest Function (Dyadic)**
 
 $$
-\color{bcOrange} \chi_{ji} \color{black} (\bm{m}) = \frac{ \rho_{ji}(\bm{W}; \bm{\alpha}) m_{ji} }{ \rho_{ji}(\bm{W}; \bm{\alpha}) m_{ji} + m_{ii} }
+\color{bcOrange} \chi_{ij}(\bm{m}) \color{black} = \frac{ a_{ij} \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} }{ \sum_k a_{kj} \rho_{kj}(\bm{W}; \bm{\alpha}) m_{kj} }
 $$
 
 - $\color{bcOrange} \chi_{ji}$: probability $\color{bcOrange} j$ successfully conquers $\color{bcOrange} i$
@@ -412,6 +464,28 @@ $$
 - $m_{ii}$: effort $i$ dedicates toward self-defense
 - $\rho_{ji} \in [0, 1]$: loss of strength gradient
 - $\color{bcOrange} \bm{W}$: dyadic geography
+
+## ($\Gamma^{\bm{a}}$) Wars
+
+**Conquest Values**
+
+$$
+G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+$$
+
+**Contest Function (Dyadic)**
+
+$$
+\chi_{ji}(\bm{m}) = \frac{ \rho_{ji} (\bm{W}; \color{bcOrange} \bm{\alpha} \color{black}) m_{ji} }{ \rho_{ji} ( \bm{W}; \color{bcOrange} \bm{\alpha} \color{black}) m_{ji} + m_{ii} }
+$$
+
+- $\chi_{ji}$: probability $j$ successfully conquers $i$
+- $\bm{m}$: military effort
+- $m_{ji}$: effort $j$ dedicates toward threatening $i$
+- $m_{ii}$: effort $i$ dedicates toward self-defense
+- $\rho_{ji} \in [0, 1]$: loss of strength gradient
+- $\bm{W}$: dyadic geography
+- $\color{bcOrange} \bm{\alpha}$: structural parameters
 
 ## ($\Gamma^{\bm{a}}$) Wars
 
@@ -623,7 +697,7 @@ $$
 \end{split}
 \end{equation}
 
-## Estimation {.aligncenter}
+## Estimation and Identification {.aligncenter}
 
 $$
 \left\{ \bm{\tau}, \bm{M} \right\} \rightarrow \bm{\theta}
@@ -634,9 +708,28 @@ $$
 **Data**
 
 - $\bm{\tau}$: policy barriers to trade (<a href="#/barriers">barriers</a>)
-- $\bm{M}$: military expenditure (<a href="#/milex">milex</a>)
+- $\bm{M}$: military expenditure
 
-. . . 
+## Observables and Unobservables {id="observables"}
+
+**Data**
+
+- $\bm{\tau}$: policy barriers to trade (<a href="#/barriers">barriers</a>)
+- $\bm{M}$: military expenditure
+
+```{r milex, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5}
+
+source("figs/milex.R")
+milexFig
+
+```
+
+## Observables and Unobservables {id="observables"}
+
+**Data**
+
+- $\bm{\tau}$: policy barriers to trade (<a href="#/barriers">barriers</a>)
+- $\bm{M}$: military expenditure
 
 **Structural Parameters**
 $$
@@ -648,7 +741,7 @@ $$
 **Data**
 
 - $\bm{\tau}$: policy barriers to trade (<a href="#/barriers">barriers</a>)
-- $\bm{M}$: military expenditure (<a href="#/milex">milex</a>)
+- $\bm{M}$: military expenditure
 
 **Structural Parameters**
 $$
@@ -662,7 +755,7 @@ $$
 **Data**
 
 - $\bm{\tau}$: policy barriers to trade (<a href="#/barriers">barriers</a>)
-- $\bm{M}$: military expenditure (<a href="#/milex">milex</a>)
+- $\bm{M}$: military expenditure
 
 **Structural Parameters**
 $$
@@ -678,7 +771,7 @@ $$
 **Data**
 
 - $\bm{\tau}$: policy barriers to trade (<a href="#/barriers">barriers</a>)
-- $\bm{M}$: military expenditure (<a href="#/milex">milex</a>)
+- $\bm{M}$: military expenditure
 
 **Structural Parameters**
 $$
@@ -687,11 +780,11 @@ $$
 
 - $\bm{b}$: governments' preferences
 - $\rho(\bm{W})$: loss of strength gradient
-  + $\bm{W}$: minimum geographic distance
+  <!-- + $\bm{W}$: minimum geographic distance -->
 
-**Structural Residual**
+**Measurement Error**
 $$
-\epsilon_{ij}(\bm{\theta}) = \tilde{\tau}_{ij}^\star(\bm{m}^\star; \bm{\theta}) - \tau_{ij}
+\tau_{ij} = \tilde{\tau}_{ij}^\star(\bm{m}^\star; \bm{\theta}) - \epsilon_{ij} 
 $$
 
 . . . 
@@ -708,37 +801,23 @@ $$
 
 - Reformulate as mathematical program with equilibrium constraints (MPEC) [@Su2012]
 
-## Conclusion
+## Identification
 
-**Counterfactuals**
-$$
-\left\{ \left\{ \bm{b}^\prime, \hat{\rho}(\bm{W}) \right\}, \bm{M}^\prime \right\} \rightarrow \left\{ \bm{\tau}^\prime, \bm{m}^\prime \right\}
-$$
+```{r tauhmI1, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
 
-## Conclusion
+source("figs/tau.R")
+tauhm(tau)
 
-**Counterfactuals**
-$$
-\left\{ \left\{ \hat{\bm{b}}, \hat{\rho}(\bm{W}) \right\}, \color{bcOrange} \bm{M}^\prime \color{black} \right\} \rightarrow \left\{ \color{bcOrange} \bm{\tau}^\prime \color{black}, \bm{m}^\prime \right\}
-$$
+```
 
-- Shadow of power ($\color{bcOrange} \bm{M}^\prime \rightarrow \bm{\tau}^\prime$)
+## Identification
 
-## Conclusion
+```{r tauhmI2, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
 
-**Counterfactuals**
-$$
-\left\{ \left\{ \color{bcOrange} \bm{b}^\prime \color{black}, \hat{\rho}(\bm{W}) \right\}, \bm{M} \right\} \rightarrow \left\{ \color{bcOrange} \bm{\tau}^\prime, \bm{m}^\prime \color{black} \right\}
-$$
+source("figs/tau.R")
+tauhm(tau, highlight="KOR")
 
-- Shadow of power ($\bm{M}^\prime \rightarrow \bm{\tau}^\prime$)
-- Liberal peace ($\color{bcOrange} \bm{b}^\prime \color{black} \rightarrow \color{bcOrange} \bm{\tau}^\prime, \bm{m}^\prime \color{black}$)
-
-. . . 
-
-**Results**
-
-- Coming soon...
+```
 
 ## Thank You {.aligncenter}
 
@@ -746,9 +825,17 @@ $$
 
 [bcooley@princeton.edu](mailto:bcooley@princeton.edu)
 
+## Multilateral Contest Function {.centercontent id="multilateralcontest"}
+
+$$
+\chi_{ij}(\bm{a}, \bm{m}) = \frac{ a_{ij} \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} }{ \sum_k a_{kj} \rho_{kj}(\bm{W}; \bm{\alpha}) m_{kj} }
+$$
+
+<a href="#/contest">Back</a>
+
 ## Policy Barriers to Trade, `r Y` {id="barriers"}
 
-```{r tauhm, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
+```{r tauhmA, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
 
 source("figs/tau.R")
 tauhm(tau)
@@ -767,28 +854,6 @@ GhatftFig + theme(aspect.ratio=1)
 ```
 
 <a href="#/economyLast" style="float: right;">Back</a>
-
-## Conquest Values (Empirical) {id="rcv"}
-
-```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
-
-source("figs/rcv.R")
-rcvhm(rcv0, 0, mint, maxt) + rcvhm(rcv1, 1, mint, maxt)
-
-```
-
-<a href="#/wars_rcv" style="float: right;">Back</a>
-
-## Military Expenditure {id="milex"}
-
-```{r milex, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
-
-source("figs/milex.R")
-milexFig
-
-```
-
-<a href="#/observables" style="float: right;">Back</a>
 
 <!-- hide references -->
 <hr style="height:30em; visibility:hidden;" />
