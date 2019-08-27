@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1566874791965.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "53026480",
+    "id" : "BBEB4E42",
+    "lastKnownWriteTime" : 1566875607,
+    "last_content_update" : 1566875607372,
+    "path" : "~/Dropbox (Princeton)/1_Papers/tpsp/figs/tau.R",
+    "project_path" : "tau.R",
+    "properties" : {
+        "cursorPosition" : "53,1",
+        "scrollLine" : "40"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -35,7 +35,7 @@ rcvhm <- function(rcv, b, minTau, maxTau) {
     scale_fill_gradient(low=hmColors[1], high=hmColors[length(hmColors)], 
                         breaks=c(minTau, maxTau), limits=c(minTau, maxTau), labels=c("Low", "High"), 
                         guide="colorbar", na.value=naColor) +
-    labs(x='Defender', y='Attacker', title=paste0("Regime Change Values, b=", as.character(b))) +
+    labs(x='Defender', y='Attacker', title=paste0("Conquest Values, b=", as.character(b))) +
     labs(fill="Value") +
     theme_classic() +
     coord_fixed() +
