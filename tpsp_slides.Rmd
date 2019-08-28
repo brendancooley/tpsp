@@ -7,7 +7,7 @@ position: Ph.D. Candidate
 institution: Princeton University
 email: "bcooley (at) princeton.edu"
 
-bibliography: /Users/bcooley/Dropbox (Princeton)/References/library.bib
+bibliography: /Users/brendancooley/Dropbox (Princeton)/References/library.bib
 biblio-style: apsr
 
 backgroundTitle: "figs/cover.jpg"
@@ -90,7 +90,7 @@ if (file.exists('references.RData')) load('references.RData')
 
 **Ideal Experiment**
 
-- Exogenously manipulate governments military capacity
+- Exogenously manipulate governments' military capacity
 - Attribute changes in trade policy to latent effect of military coercion
 
 . . . 
@@ -378,7 +378,7 @@ rcvhm(rcv0, 0, mint, maxt) + rcvhm(rcv1, 1, mint, maxt)
 **Conquest Values**
 
 $$
-G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+G_j(\bm{\tau}_i^{j \star} \color{black} ; \tilde{\bm{\tau}}_{-i})
 $$
 
 . . . 
@@ -394,13 +394,13 @@ $$
 **Conquest Values**
 
 $$
-G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+G_j(\bm{\tau}_i^{j \star} \color{black} ; \tilde{\bm{\tau}}_{-i})
 $$
 
 **Contest Function (Dyadic)**
 
 $$
-\color{bcOrange} \chi_{ij}(\bm{m}) \color{black} = \frac{ a_{ij} \rho_{ij}(\bm{W}; \bm{\alpha}) m_{ij} }{ \sum_k a_{kj} \rho_{kj}(\bm{W}; \bm{\alpha}) m_{kj} }
+\color{bcOrange} \chi_{ji}(\bm{m}) \color{black} = \frac{ \rho_{ji}(\bm{W}; \bm{\alpha}) m_{ji} }{ \rho_{ji}(\bm{W}; \bm{\alpha}) m_{ji} + m_{ii} }
 $$
 
 - $\color{bcOrange} \chi_{ji}$: probability $\color{bcOrange} j$ successfully conquers $\color{bcOrange} i$
@@ -410,7 +410,7 @@ $$
 **Conquest Values**
 
 $$
-G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+G_j(\bm{\tau}_i^{j \star} \color{black} ; \tilde{\bm{\tau}}_{-i})
 $$
 
 **Contest Function (Dyadic)**
@@ -429,7 +429,7 @@ $$
 **Conquest Values**
 
 $$
-G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+G_j(\bm{\tau}_i^{j \star} \color{black} ; \tilde{\bm{\tau}}_{-i})
 $$
 
 **Contest Function (Dyadic)**
@@ -449,7 +449,7 @@ $$
 **Conquest Values**
 
 $$
-G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+G_j(\bm{\tau}_i^{j \star} \color{black} ; \tilde{\bm{\tau}}_{-i})
 $$
 
 **Contest Function (Dyadic)**
@@ -470,7 +470,7 @@ $$
 **Conquest Values**
 
 $$
-G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+G_j(\bm{\tau}_i^{j \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
 $$
 
 **Contest Function (Dyadic)**
@@ -492,7 +492,7 @@ $$
 **Conquest Values**
 
 $$
-G_i(\bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+G_j(\bm{\tau}_i^{j \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
 $$
 
 **Contest Function (Dyadic)**
@@ -524,7 +524,7 @@ $$
 **Reservation Values**
 
 $$
-\chi_{ji} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ij} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - \color{bcOrange} c_j
+\chi_{ji} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - \color{bcOrange} c_j
 $$
 
 - $\color{bcOrange} c_j$: war cost
@@ -710,7 +710,7 @@ $$
 - $\bm{\tau}$: policy barriers to trade (<a href="#/barriers">barriers</a>)
 - $\bm{M}$: military expenditure
 
-## Observables and Unobservables {id="observables"}
+## Observables and Unobservables
 
 **Data**
 
@@ -724,7 +724,7 @@ milexFig
 
 ```
 
-## Observables and Unobservables {id="observables"}
+## Observables and Unobservables
 
 **Data**
 
