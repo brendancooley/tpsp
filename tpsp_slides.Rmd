@@ -101,7 +101,7 @@ $$
 \left\{ \bm{\theta}, \bm{M} \right\} \rightarrow \bm{\tau}
 $$
 
-- $\bm{\theta}$ -- structural parameters (power and preferences)
+- $\bm{\theta}$ -- structural parameters (preferences and power projection)
 - $\bm{M}$ -- governments' military endowment (expenditure)
 - $\bm{\tau}$ -- governments' trade policies
 
