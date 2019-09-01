@@ -1123,10 +1123,7 @@ G_j(\bm{\tau}_i^{j \star} \color{black} ; \tilde{\bm{\tau}}_{-i})
 \]</span></p>
 <ul>
 <li><span class="math inline">\(\bm{b}\)</span>: governments’ preferences</li>
-<li><span class="math inline">\(\color{bcOrange} \rho(\bm{W})\)</span>: loss of strength gradient
-<ul>
-<li><span class="math inline">\(\bm{W}\)</span>: minimum geographic distance</li>
-</ul></li>
+<li><span class="math inline">\(\color{bcOrange} \rho(\bm{W})\)</span>: loss of strength gradient <!--   + $\bm{W}$: minimum geographic distance --></li>
 </ul>
 </section>
 <section id="observables-and-unobservables-4" class="slide level2">
@@ -1137,12 +1134,27 @@ G_j(\bm{\tau}_i^{j \star} \color{black} ; \tilde{\bm{\tau}}_{-i})
 <li><span class="math inline">\(\bm{M}\)</span>: military expenditure</li>
 </ul>
 <p><strong>Structural Parameters</strong> <span class="math display">\[
+\bm{\theta} = \left\{ \bm{b}, \color{bcOrange} \rho(\bm{W}) \color{black} \right\}
+\]</span></p>
+<p><strong>Unobservables</strong></p>
+<p><span class="math display">\[
+\bm{m}^\star(\bm{\theta}, \bm{M})
+\]</span></p>
+</section>
+<section id="observables-and-unobservables-5" class="slide level2">
+<h2>Observables and Unobservables</h2>
+<p><strong>Data</strong></p>
+<ul>
+<li><span class="math inline">\(\bm{\tau}\)</span>: policy barriers to trade (<a href="#/barriers">barriers</a>)</li>
+<li><span class="math inline">\(\bm{M}\)</span>: military expenditure</li>
+</ul>
+<p><strong>Structural Parameters</strong> <span class="math display">\[
 \bm{\theta} = \left\{ \bm{b}, \rho(\bm{W}) \right\}
 \]</span></p>
-<ul>
-<li><span class="math inline">\(\bm{b}\)</span>: governments’ preferences</li>
-<li><span class="math inline">\(\rho(\bm{W})\)</span>: loss of strength gradient <!-- + $\bm{W}$: minimum geographic distance --></li>
-</ul>
+<p><strong>Unobservables</strong></p>
+<p><span class="math display">\[
+\bm{m}^\star(\bm{\theta}, \bm{M})
+\]</span></p>
 <p><strong>Measurement Error</strong> <span class="math display">\[
 \tau_{ij} = \tilde{\tau}_{ij}^\star(\bm{m}^\star; \bm{\theta}) - \epsilon_{ij} 
 \]</span></p>
