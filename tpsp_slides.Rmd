@@ -37,7 +37,7 @@ for (i in helperFiles) {
   source(paste0(helperPath, i))
 }
 
-libs <- c("tidyverse", "patchwork")
+libs <- c("tidyverse", "patchwork", "countrycode", "knitr", "kableExtra")
 ipak(libs)
 
 analysisPath <- "working/analysis/"
@@ -64,7 +64,7 @@ if (file.exists('references.RData')) load('references.RData')
 **Anarchy and Inference**
 
 - Anarchy $\implies$ powerful governments can impose policies on others by force
-- Bargaining critique: policy adjustment should occur through diplomacy
+- Bargaining critique: policies reflect shadow of power
   + @Brito1985, @Fearon1995, @Art1996
 - **Question:** Do observed policies reflect **preferences** of the governments that adopted them or **constraints of anarchy?**
 
@@ -72,21 +72,21 @@ if (file.exists('references.RData')) load('references.RData')
 
 **Trade Policy: What Do Governments Want?**
 
-- Mercantilist preferences: openness abroad and some closure at home
+- **Heterogeneity** in desired protectionism
   + @Grossman1994, @Gawande2009
-- Coercion: powerful governments impose openness abroad
-  + Gunboat diplomacy [@Findlay2007]
+- Mercantilism induces **conflicts of interest** between governments
+  + Gunboat diplomacy: powerful impose openness abroad [@Findlay2007]
 
 . . . 
 
 **Trade Policy: Does It Matter?**
 
 - Tariffs small, aggregate policy-induced trade frictions large
-  + @Cooley2019b (<a href="#/barriers">barriers</a>)
+  + ~order of magnitude larger than tariffs [@Cooley2019b] (<a href="#/barriers">barriers</a>)
 - Welfare effects of trade frictions
   + @Autor2013, @Costinot2015, @Goldberg2016
 
-## Anarchy and Inference: Approach
+## Anarchy and Inference: Approach {id="approach"}
 
 **Ideal Experiment**
 
@@ -130,7 +130,7 @@ $$
 \left\{ \bm{\theta}, \bm{M} \right\} \rightarrow \bm{\tau}
 $$
 
-## Coercive International Political Economy
+## Coercive International Political Economy {id="cipe"}
 
 - Governments indexed $i \in \left\{ 1, ..., N \right\}$
 
@@ -153,7 +153,7 @@ $$
 G_i \left( h(\bm{\tau}), \bm{a} \right)
 $$
 
-## ($h(\bm{\tau})$) Economy
+## ($h(\bm{\tau})$) Economy {id="economy"}
 
 $$
 \bm{\tau} = \begin{pmatrix}
@@ -309,7 +309,7 @@ $$
 - $\color{bcOrange} b_i = 1$: government maximizes rents
 - <a href="#/freetrade">Free Trade Counterfactual</a>
 
-## ($\Gamma^{\bm{a}}$) Wars
+## ($\Gamma^{\bm{a}}$) Wars {id="wars"}
 
 **Optimal Post-Conquest Policies**
 
@@ -557,7 +557,7 @@ $$
 
 - Proposition `r Pc`: $\exists$ $\left\{ c_j^\star \right\}_{j \in \left\{1,..., N \right\}}$ such that no war occurs if $c_j > c_j^\star$ for all $j$.
 
-## ($\Gamma^{\bm{\tau}}$) Trade Policy Announcements
+## ($\Gamma^{\bm{\tau}}$) Trade Policy Announcements {id="policies"}
 
 $$
 \color{bcOrange} \underline{G}_{ji}(\bm{m}) \color{black} = \chi_{ji} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
@@ -649,7 +649,7 @@ $$
 
 - $\color{bcOrange} m_{ij}$: military effort $i$ dedicates toward threatening $j$ 
 
-## ($\Gamma^{\bm{m}}$) Military Strategies
+## ($\Gamma^{\bm{m}}$) Military Strategies {id="military"}
 
 $$
 \underline{G}_{ji}(\bm{m}) = \chi_{ji} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \chi_{ji} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
@@ -801,7 +801,7 @@ $$
 
 - Reformulate as mathematical program with equilibrium constraints (MPEC) [@Su2012]
 
-## Identification
+## Identification {id="identification"}
 
 ```{r tauhmI1, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
 
@@ -825,6 +825,161 @@ tauhm(tau, highlight="KOR")
 
 [bcooley@princeton.edu](mailto:bcooley@princeton.edu)
 
+## Table of Contents {id="toc"}
+
+<div id="left">
+1. <a href="#/introduction">Introduction</a>
+2. <a href="#/approach">Approach</a>
+3. <a href="#/cipe">Model</a>
+4. <a href="#/economy">Economy</a>
+5. <a href="#/wars">Wars</a>
+6. <a href="#/policies">Policies</a>
+7. <a href="#/military">Military Strategies</a>
+8. <a href="#/observables">Estimation</a>
+9. <a href="#/identification">Identification</a>
+</div>
+
+<div id="right">
+1. <a href="#/economyA">Economy</a>
+2. <a href="#/economyHats">Economy in Changes</a>
+3. <a href="#/policyHats">Policy Problem in Changes</a>
+3. <a href="#/multilateralcontest">Multilateral Contest Function</a>
+4. <a href="#/sampleCountries">Sample Countries</a>
+5. <a href="#/barriers">Policy Barriers</a>
+6. <a href="#/freetrade">Free Trade</a>
+7. <a href="#/mpec">MPEC</a>
+</div>
+
+## Economy (Consumption) {id="economyA"}
+
+**Consumer's Problem**
+
+\begin{equation*} \label{eq:consumer}
+\begin{split}
+\max & \quad U_i = Q_i^{\nu_i} S_i^{1 - \nu_i} \\
+\text{subject to} & \quad P_i Q_i + P_i^s S_i \leq w_i L_i
+\end{split}
+\end{equation*}
+
+**CES Preferences over Tradable Varieties**
+
+$$
+Q_i = \left( \int_{[0,1]} \alpha_{h(\omega)}^{\frac{1}{\sigma}} q_i(\omega)^{\frac{\sigma - 1}{\sigma}} d \omega \right)^{\frac{\sigma}{\sigma - 1}}
+$$
+
+**Tradable Price Index**
+
+$$
+P_i = \left( \int_{[0,1]} \alpha_{h(\omega)} p_i(\omega)^{1 - \sigma} d \omega \right)^{\frac{1}{1 - \sigma}}
+$$
+
+**Expenditure on Tradables**
+
+$$
+E_i^q = \nu_i I_i + D_i = P_i Q_i^\star
+$$
+
+<a href="#/moverview" style="float: right;">Back</a>
+
+## Economy (Production)
+
+**Costs**
+
+\begin{equation} \label{eq:c}
+c_i = w_i^{1 - \beta} P_i^{\beta}
+\end{equation}
+
+- $w_i$ - cost of labor
+- $P_i$ - cost of composite intermediate good
+  + equivalent to composite consumption good
+
+$$
+E_i^x = \beta X_i
+$$
+
+**Local Prices**
+
+$$
+p_{ii}(\omega) = \frac{c_i}{z_i(\omega)}
+$$
+
+**Technology (Frechet)**
+
+$$
+F_i(z) = \text{Pr} \left\{ z_i(\omega) \leq z \right\} = \exp \left\{ - T_i z^{-\theta} \right\}
+$$
+
+## Economy (Equilibrium)
+
+**Total Expenditure on Tradables**
+
+$$
+X_i = \underbrace{E_i^q + E_i^x}_{E_i} - D_i
+$$
+
+**Trade Shares**
+
+$$
+\Omega_{ij}^\star = \left\{ \omega \in [0,1] \left. \right\vert p_{ij}(\omega) \leq \min_{k \neq j} \left\{ p_{ik} \right\} \right\}
+$$
+
+$$
+\lambda_{ij}(\boldsymbol{w}) = \frac{1}{E_i} \int_{\Omega_{ij}^\star} p_{ij}(\omega) q_i \left( p_{ij} (\omega) \right) d \omega
+$$
+
+**Market Clearing**
+
+$$
+X_i = \sum_{j=1}^N \lambda_{ji}(\boldsymbol{w}) E_j
+$$
+
+## Economy (Equilibrium in Changes) {id="economyHats"}
+
+$$
+\hat{r}_i = \frac{1}{r_i} \left( E_i \hat{E}_i(\hat{\bm{w}}) - \sum_j X_{ij}^{\text{cif}} \hat{X}_{ij}^{\text{cif}}(\hat{\bm{w}}) \right)
+$$
+$$
+\hat{w}_i = \frac{1}{\nu_i w_i L_i} \left( \sum_j \left( (1 - \beta) X_{ji}^{\text{cif}} \hat{X}_{ji}^{\text{cif}}(\hat{\bm{w}}) \right) + (1 - \nu_i) r_i \hat{r}_i(\hat{\bm{w}}) \right)
+$$
+$$
+\hat{E}_i(\hat{\bm{w}}) = \frac{1}{E_i} \left( E_i^q \hat{E}_i^q(\hat{\bm{w}}) + E_i^x \hat{E}_i^x(\hat{\bm{w}}) \right)
+$$
+$$
+\hat{x}_{ij}(\hat{\bm{w}}) = \left( \hat{\tau}_{ij} \hat{w}_j^{1 - \beta} \hat{P}_j(\hat{\bm{w}})^\beta \right)^{-\theta} \hat{P}_i(\hat{\bm{w}})^{\theta}
+$$
+$$
+\hat{P}_i(\hat{\bm{w}}) = \left( \sum_j x_{ij} \left( \hat{\tau}_{ij} \hat{w}_j^{1 - \beta} \hat{P}_j(\hat{\bm{w}})^\beta \right)^{-\theta} \right)^{-\frac{1}{\theta}}
+$$
+$$
+1 = \sum_i y_i \hat{w}_i
+$$
+
+## Policy Problem in Changes {id="policyHats"}
+
+**Government Welfare**
+
+$$
+\hat{G}_i(\hat{\bm{\tau}}; b_i) = \hat{V}_i \left( \hat{h}(\hat{\bm{\tau}}) \right)^{1 - b_i} \hat{r}_i \left(\hat{h}(\hat{\bm{\tau}}) \right)^{b_i}
+$$
+
+**Optimal Post-Conquest Policies**
+
+\begin{equation*}
+\begin{split}
+\max_{\hat{\bm{\tau}}_j} & \quad \hat{G}_i(\hat{\bm{\tau}}_j; \hat{\tilde{\bm{\tau}}}_{-j}) \\
+\text{subject to} & \quad \hat{\tau}_{jj} = 1
+\end{split}
+\end{equation*}
+
+**Constrained Policy Problem in Changes**
+
+\begin{equation*}
+\begin{split}
+\max_{ \hat{\tilde{\bm{\tau}}}_i } & \quad \hat{G}_i(\hat{\tilde{\bm{\tau}}}_i; \hat{\tilde{\bm{\tau}}}_{-i}) \\
+\text{subject to} & \quad \hat{G}_j(\hat{\tilde{\bm{\tau}}}) - \hat{G}_j(\hat{\bm{\tau}}_i^{j \star}) + \hat{c} \left( \chi_{ji}(1; \bm{0}_{-j, -i}, \bm{m}) \right)^{-1} \geq 0 \quad \text{for all } j \neq i
+\end{split}
+\end{equation*}
+
 ## Multilateral Contest Function {.centercontent id="multilateralcontest"}
 
 $$
@@ -832,6 +987,16 @@ $$
 $$
 
 <a href="#/contest">Back</a>
+
+## Sample Countries {id="sampleCountries"}
+
+```{r ccodes, echo=FALSE, warning=FALSE, message=FALSE}
+
+source("figs/ccodes.R")
+
+kable(ccodesT) %>% kable_styling(bootstrap_options = c("striped"))
+
+```
 
 ## Policy Barriers to Trade, `r Y` {id="barriers"}
 
@@ -854,6 +1019,27 @@ GhatftFig + theme(aspect.ratio=1)
 ```
 
 <a href="#/economyLast" style="float: right;">Back</a>
+
+## Mathematical Program with Equilibrium Constraints {id="mpec"}
+
+**Equilibrium Constraints**
+
+\begin{align*}
+\nabla_{\hat{\bm{x}}_i} \mathcal{L}_i^{\hat{\bm{x}}}(\hat{\bm{x}}_i; \bm{m}, \bm{\lambda}_i^{\bm{\chi}}, \bm{\lambda}_i^{\hat{\bm{w}}}, \bm{\theta}_m) &= \bm{0} \quad \text{for all } i \\
+\lambda_{ij}^{\bm{\chi}} \left( \hat{G}_j(\hat{\bm{w}}; \bm{\theta}_m) - \hat{G}_j \left( \hat{\bm{\tau}}_i^{j \star}(\bm{\theta}_m) \right) + \hat{c} \left( \chi_{ji}(\bm{m}, \bm{\theta}_m) \right)^{-1} \right) &= 0 \quad \text{for all } i, j \\
+\hat{\bm{w}} - \hat{h}(\hat{\tilde{\bm{\tau}}}) &= \bm{0} \\
+\nabla_{\bm{m}} \mathcal{L}_i^{\bm{m}}(\bm{m}; \bm{\lambda}^{\bm{m}}, \bm{\theta}_m) &= \bm{0} \quad \text{for all } i \\
+\lambda_i^{\bm{m}} \left( M_i - \sum_k m_{jk} \right) &= 0 \quad \text{for all } i
+\end{align*}
+
+**Estimation Problem**
+
+\begin{equation*}
+\begin{split}
+\min_{\bm{\theta}_m, \bm{m}, \bm{\lambda}^{\bm{\chi}}, \bm{\lambda}^{\bm{w}}, \bm{\lambda}^{\bm{m}}} & \quad \sum_i \sum_j \epsilon_{ij}(\bm{\theta}_m)^2 \\
+\text{subject to} & \quad g(\bm{1}, \bm{\theta}_m, \bm{m}, \bm{\lambda}^{\bm{\chi}}, \bm{\lambda}^{\bm{w}}, \bm{\lambda}^{\bm{m}}) = \bm{0}
+\end{split}
+\end{equation*}
 
 <!-- hide references -->
 <hr style="height:30em; visibility:hidden;" />

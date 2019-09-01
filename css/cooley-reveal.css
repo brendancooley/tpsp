@@ -66,6 +66,14 @@ body {
   background: #fff;
   background-color: #fff; }
 
+body:after {
+  position: fixed;
+  right: 0%;
+  width: 20px;
+  height: 20px;
+  margin: 5px;
+  background: #BD6121; }
+
 .reveal {
   font-family: "Roboto", sans-serif;
   font-size: 28px;
@@ -93,6 +101,24 @@ body {
 /*********************************************
  * BC ADDS
  *********************************************/
+
+.reveal .slides .box {
+  position: fixed;
+  right: 0%;
+  width: 20px;
+  height: 20px;
+  margin: 5px;
+  background: #BD6121;
+}
+
+.reveal .slides .boxwhite {
+  position: fixed;
+  right: 0%;
+  width: 21px;
+  height: 21px;
+  margin: 5px;
+  background: #fff;
+}
 
 .reveal .aligncenter {
   position: fixed;
