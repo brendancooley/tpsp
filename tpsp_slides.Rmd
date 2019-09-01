@@ -314,7 +314,7 @@ $$
 **Optimal Post-Conquest Policies**
 
 $$
-\bm{\tau}_j^{i \star} = \argmax_{\bm{\tau}_j} \quad G_i(\bm{\tau}_j ; \tilde{\bm{\tau}}_{-j})
+\bm{\tau}_i^{j \star} = \argmax_{\bm{\tau}_i} \quad G_j(\bm{\tau}_i ; \tilde{\bm{\tau}}_{-i})
 $$
 
 ## ($\Gamma^{\bm{a}}$) Wars
@@ -322,25 +322,25 @@ $$
 **Optimal Post-Conquest Policies**
 
 $$
-\color{bcOrange} \bm{\tau}_j^{i \star} \color{black} = \argmax_{\bm{\tau}_j} \quad G_{\color{bcOrange} i} \color{black} (\bm{\tau}_{\color{bcOrange} j} \color{black} ; \tilde{\bm{\tau}}_{-j})
+\color{bcOrange} \bm{\tau}_i^{j \star} \color{black} = \argmax_{\bm{\tau}_i} \quad G_{\color{bcOrange} j} \color{black} (\bm{\tau}_{\color{bcOrange} i} \color{black} ; \tilde{\bm{\tau}}_{-i})
 $$
 
-- $\color{bcOrange} \bm{\tau}_j^{i \star}$: trade policies in $\color{bcOrange} j$ imposed by government $\color{bcOrange} i$ post-conquest
+- $\color{bcOrange} \bm{\tau}_i^{j \star}$: trade policies in $\color{bcOrange} i$ imposed by government $\color{bcOrange} j$ post-conquest
 
 ## ($\Gamma^{\bm{a}}$) Wars {id="wars_rcv"}
 
 **Optimal Post-Conquest Policies**
 
 $$
-\color{bcOrange} \bm{\tau}_j^{i \star} \color{black} = \argmax_{\bm{\tau}_j} \quad G_{i}(\bm{\tau}_{j}; \tilde{\bm{\tau}}_{-j})
+\color{bcOrange} \bm{\tau}_i^{j \star} \color{black} = \argmax_{\bm{\tau}_i} \quad G_{j}(\bm{\tau}_{i}; \tilde{\bm{\tau}}_{-i})
 $$
 
-- $\color{bcOrange} \bm{\tau}_j^{i \star}$: trade policies in $j$ imposed by government $i$ post-conquest
+- $\color{bcOrange} \bm{\tau}_i^{j \star}$: trade policies in $j$ imposed by government $i$ post-conquest
 
 **Conquest Values**
 
 $$
-G_i(\color{bcOrange} \bm{\tau}_j^{i \star} \color{black} ; \tilde{\bm{\tau}}_{-j})
+G_j(\color{bcOrange} \bm{\tau}_i^{j \star} \color{black} ; \tilde{\bm{\tau}}_{-i})
 $$
 
 ## ($\Gamma^{\bm{a}}$) Wars
