@@ -2,11 +2,16 @@ import autograd.numpy as np
 import math
 
 def find_nearest(array, value):
-    idx = np.searchsorted(array, value, side="left")
-    if idx > 0 and (idx == len(array) or math.fabs(value - array[idx-1]) < math.fabs(value - array[idx])):
-        return array[idx-1]
-    else:
-        return array[idx]
+    # https://stackoverflow.com/questions/2566412/find-nearest-value-in-numpy-array
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return array[idx]
+
+def which_nearest(array, value):
+    # https://stackoverflow.com/questions/2566412/find-nearest-value-in-numpy-array
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return idx
 
 # find_nearest(np.arange(0, 1.1, .1), .54)
 

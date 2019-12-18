@@ -8,6 +8,8 @@ import time
 import os
 # import nlopt # NOTE: something wrong with build of this on laptop
 
+# TODO: remove b from theta dict, need to track preferences separately
+
 class policies:
 
     def __init__(self, data, params, b, rcv_path=None):
@@ -208,11 +210,13 @@ class policies:
 
         return(L_i)
 
-    def war_vals(self, m, theta_dict, c_bar=10):
+    def war_vals(self, b, m, theta_dict, epsilon, c_bar=10):
         """Calculate war values (regime change value minus war costs)
 
         Parameters
         ----------
+        b : vector
+            length N vector of preference parameters
         m : matrix
             N times N matrix of military deployments.
         theta_dict : dict
@@ -229,13 +233,13 @@ class policies:
 
         """
 
-        rhoM = self.rhoM(theta_dict)
+        rhoM = self.rhoM(theta_dict, epsilon)
         wv = np.zeros_like(m)
 
         for i in range(self.N):
             for j in range(self.N):
                 if i != j:
-                    b_j = theta_dict["b"][j]
+                    b_j = b[j]
                     b_j_nearest = helpers.find_nearest(self.b_vals, b_j)
                     rcv_ji = self.rcv[b_j_nearest][j, i]  # get regime change value for j controlling i's policy
                     m_x = self.unwrap_m(m)
@@ -1010,7 +1014,7 @@ class policies:
 
         return(chi_ji)
 
-    def rhoM(self, theta_dict):
+    def rhoM(self, theta_dict, epsilon):
         """Calculate loss of strength gradient given alphas and distance matrix (W)
 
         Parameters
@@ -1024,7 +1028,7 @@ class policies:
             N times N symmetric matrix loss of strength gradient
 
         """
-        rhoM = 1 / (1 + np.exp(-1 * theta_dict["alpha"][0] - self.W * theta_dict["alpha"][1]))
+        rhoM = 1 / (1 + np.exp(-1 * theta_dict["alpha"][0] - self.W * theta_dict["alpha"][1] + epsilon))
         return(rhoM)
 
     def Lsolve(self, tau_hat, m, theta_dict, id, ft=False, mtd="lm"):
@@ -1396,6 +1400,72 @@ class policies:
         #     thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(self.b, np.array([id]), -1, False, ), method="SLSQP", options={"maxiter":mxit})
 
         return(thistar['x'])
+
+    def loss_tau_i(self, tau_i):
+        """Loss function for b estimation, absolute log loss
+
+        Parameters
+        ----------
+        tau_i : vector length N
+            i's policies
+
+        Returns
+        -------
+        float
+            loss
+
+        """
+
+        out = np.sum(np.abs(np.log(tau_i)))
+
+        return(out)
+
+    def est_b_i_grid(self, id, b_init, m, theta_dict, epsilon):
+
+        bmax = np.max(self.b_vals)
+        bmin = np.min(self.b_vals)
+        b_vec = np.copy(b_init)
+
+        b = b_vec[id]
+
+        stop = False
+        while stop is False:
+
+            # first
+            idx_first = helpers.which_nearest(self.b_vals, b)
+            idx_up = idx_first + 1
+            idx_down = idx_first - 1
+
+            b = self.b_vals[idx_first]
+
+            Loss = []
+            for idx in [idx_down, idx_first, idx_up]:
+                b_idx = self.b_vals[idx]
+                print(b_idx)
+                b_vec[id] = b_idx
+                wv = self.war_vals(b_vec, m, theta_dict, epsilon)
+                ids_j = np.delete(np.arange(self.N), id)
+                wv_i = wv[:,id][ids_j]
+                br = self.br(np.ones(self.x_len), b_vec, m, wv_i, id)
+                br_dict = self.ecmy.rewrap_ge_dict(br)
+                tau_i = br_dict["tau_hat"][id, ]
+                print(tau_i)
+                loss = self.loss_tau_i(tau_i)
+                Loss.append(loss)
+
+            print(Loss)
+            if Loss[1] < Loss[2] and Loss[1] < Loss[0]:
+                stop = True
+            else:
+                if Loss[2] < Loss[1]:
+                    bmin = b
+                    b = (bmax - b) / 2
+                if Loss[0] < Loss[1]:
+                    bmax = b
+                    b = (b - bmin) / 2
+
+        return(b)
+
 
     def br_cor(self, ge_x, m, mpec=True):
         """Best response correspondence. Given current policies, calculates best responses for all govs and returns new ge_x flattened vector.
