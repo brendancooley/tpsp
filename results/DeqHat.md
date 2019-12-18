@@ -1,0 +1,1 @@
+A peaceful subgame perfect equilibrium of $\hat{\Gamma}^{\bm{m}}$ is a pair $\bm{m}^\star$, $\hat{\tilde{\bm{\tau}}}^\star(\bm{m}^\star)$ such that $\hat{\tilde{\bm{\tau}}}_i^\star(\bm{m}^\star)$ solves (\ref{eq:tauTildeStarHat}) and $\bm{m}_i^\star$ solves (\ref{eq:mStarHat}) for all governments $i$.

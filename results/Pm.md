@@ -1,0 +1,1 @@
+If $m_{ji}^\star > 0$ then $\lambda_{ij}^{\chi} > 0$.

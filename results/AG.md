@@ -1,0 +1,1 @@
+$G_i(\bm{\tau}; b_i)$ is quasiconcave in its own policies, $\tau_{ij} \in [1, \bar{\tau}]$, $j \neq i$.

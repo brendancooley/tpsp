@@ -1,0 +1,49 @@
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+yDF <- bind_cols(ccodes, y)
+colnames(yDF) <- c("iso3", "y")
+
+yAll <- sum(yDF$y)
+yROW <- yDF %>% filter(iso3=="ROW") %>% pull(y)
+
+```
+
+I estimate the model on a set of `r N` governments in the year `r Y`. These governments are listed in Table \ref{tab:ccodes}. I aggregate all European Union governments into a single entity and collapse all countries not included in the analysis into a "Rest of World" (ROW) aggregate. Non-ROW countries make up `r round( (yAll - yROW) / yAll * 100 )` percent of world GDP. 
+
+```{r ccodes, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+source("../figs/ccodes.R")
+
+kable(ccodesT, "latex", booktabs = T, caption = "\\label{tab:ccodes}") %>% kable_styling(position = "center")
+
+```
+
+Table \ref{tab:data} summarizes the data required to jointly estimate $\bm{\theta}_m$ and calculate equilibrium-consistent military strategies. The data required to calibrate the economy ($\hat{h}$) are discussed in Appendix `r AeconomyC`.^[These include trade flows, cross national price indices, and national accounts data.] The same data are also used to produce estimates of policy barriers to trade ($\bm{\tau}$). I report the magnitude of these estimates in Figure \ref{fig:tauhm} in Appendix `r AeconomyC`.
+
+
+\begin{center}
+\begin{table}[ht]
+\caption{Data Requirements and Estimation Targets \label{tab:data}}
+\centering
+\begin{tabular}{ccccc}
+\multicolumn{2}{c@{\quad}}{Observables} 
+&& 
+\multicolumn{2}{c}{Unobservables} \\\cline{1-2}\cline{4-5} 
+$\bm{M}$ & Military Endowments & & $\bm{\theta}_m$ & Parameters \\
+$\bm{W}$ & Dyadic Geography & & $\bm{m}$ & Military Strategies \\
+$\bm{\tau}$ & Policy Barriers to Trade & & &  \\
+$\hat{h}$ & Calibrated Economy & & & 
+\end{tabular}
+\end{table}
+\end{center}
+
+With the economy calibrated and policy barrier estimates in hand, I require only a measure of each government's military endowment ($M_i$) and data on dyadic geography ($\bm{W}$). I use [SIPRI](https://www.sipri.org/)'s data on military expenditure to measure governments' military capacity. These values are displayed in Figure \ref{fig:milex}.
+
+```{r milex, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste("Military expenditure for in-sample governments. Values for ROW and EU are obtained by summing expenditure of all member countries. \\label{fig:milex}"), fig.height=5, dpi=300, fig.pos="t"}
+
+source("../figs/milex.R")
+milexFig + theme(aspect.ratio=1)
+
+```
+
+Finally, I use data from @Weidmann2010 to calculate the minimum geographic distance between all countries in my sample. This constitutes the only variable affecting power projection capacity in $\bm{W}$. 

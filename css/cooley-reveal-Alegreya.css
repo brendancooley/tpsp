@@ -60,12 +60,13 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
   }
 
 :root {
-  --font_body: "Roboto";
-  --font_head: "Roboto";
-  --color_head: #BD6121;
-  --color_front: #FFF;
-  --color_accent: #818431;
-  --color_accent_hover: #818431;
+  --font_body: "AlegreyaSans";
+  --font_head: "AlegreyaSC";
+  --font_head_bold: "AlegreyaSC Bold";
+  --color_front: #fff;
+  --color_head: #0C1A38;
+  --color_accent: #bd8e28;
+  --color_accent_hover: #8b681d;
 }
 
 /*********************************************
@@ -137,10 +138,6 @@ body {
   transform: translateY(-50%);
 }
 
-.math-center-align .mjx-chtml.MJXc-display{
-    text-align: center !important;
- }
-
 /*only currently formatted for ordered lists...need to experiment with other types
 */
 /*.reveal .centercontent h1,
@@ -153,17 +150,6 @@ body {
   display: inline-block;
   width: 50%;
 }*/
-
-img[src*='#left'] {
-    float: left;
-}
-img[src*='#right'] {
-    float: right;
-}
-img[src*='#center'] {
-    display: block;
-    margin: auto;
-}
 
 #left {
   left:-8.33%;
@@ -183,11 +169,18 @@ img[src*='#center'] {
 }
 
 .reveal .cover-top {
-  border-left: 4px solid #FFF;
+  border-left: 4px solid var(--color_front);
   padding-left: 10px;
 }
+
 .reveal .cover-top h1 {
   font-size: 1.5em;
+  text-align: left;
+  font-family: var(--font_head);
+  color: var(--color_front);
+}
+.reveal .cover-top h2 {
+  font-size: 1em;
   text-align: left;
   font-family: var(--font_head);
   color: var(--color_front);
@@ -201,7 +194,7 @@ img[src*='#center'] {
 
 .reveal .cover-bottom {
   position: fixed;
-  bottom: 10%;
+  bottom: 60%;
   border-left: 4px solid var(--color_front);
   padding-left: 10px;
 }
@@ -259,7 +252,7 @@ img[src*='#center'] {
         font-size: 1.5em;
         text-align: left;
         font-family: var(--font_head);
-        color: var(--color_front);
+        color: var(--color_head);
         margin-top: 0px;
      }
 
@@ -267,13 +260,13 @@ img[src*='#center'] {
         font-size: 1em;
         text-align: left;
         font-family: var(--font_head);
-        color: var(--color_front);
+        color: var(--color_head);
      }
 .reveal .date {
         font-size: .75em;
         text-align: left;
         font-family: var(--font_head);
-        color: var(--color_front);
+        color: var(--color_head);
      }
 
 /*********************************************
@@ -304,7 +297,7 @@ img[src*='#center'] {
 .reveal strong,
 .reveal b {
   font-weight: bold;
-  color: var(--color_head);
+  color: var(--color_accent);
   }
 
 .reveal em {

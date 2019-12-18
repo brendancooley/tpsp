@@ -1,0 +1,39 @@
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+rcv0max <- max(rcv0)
+coords <- which(rcv0 == max(rcv0), arr.ind = TRUE)
+
+ccodesL <- ccodes %>% pull(.)
+
+rcv0j <- ccodesL[coords[1]]
+rcv0i <- ccodesL[coords[2]]
+
+rcv0jName <- ccodesT %>% filter(iso3==rcv0j) %>% pull(`Country Name`)
+rcv0iName <- ccodesT %>% filter(iso3==rcv0i) %>% pull(`Country Name`)
+
+```
+
+*NOTE: Estimation remains a work-in-progress. Here, I present the welfare effects of two experiments relevant to the model that are possible once the economy has been calibrated.*
+
+
+First, suppose all governments are welfare-maximizing ($b_i=0$ for all $i$). It is straightforward to calculate their gains from moving to a world of free trade ($\tau_{ij} = 1$ for all $i, j$).^[In "hats", we have $\hat{\bm{\tau}}^{\text{ft}} = \bm{\tau}^{-1}$.] These come from two sources. First, prices fall and consumers benefit when the levels of factual barriers are significantly greater than welfare-optimal levels. Second, increasing market access through reducing trade barriers abroad increases real wages at home. Figure \ref{fig:Vhat} displays the empirical magnitudes of these gains. 
+
+```{r Vhat, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Consumer welfare gains from moving to global free trade, $\\hat{V}_i(h(\\hat{\\bm{\\tau}}^{\\text{ft}}))$, for each country. Recall that changes are expressed in multiples from utility in the factual equilibrium, where this value is normalized to one $\\hat{V}_i(h(\\bm{1})) = 1$. \\label{fig:Vhat}"), fig.height=5, dpi=300, fig.pos="t"}
+
+source("../figs/Ghatft.R")
+GhatftFig + theme(aspect.ratio=1)
+
+```
+
+All governments gain substantially from moving to free trade. Those that face the largest barriers to foreign market access, such as Turkey and Russia, gain the most. This provides suggestive evidence that governments are not welfare-maximizers ($b_i > 0$). 
+
+I can also solve the optimal policy change problem (\ref{eq:optTaujHat}) and calculate the welfare changes associated with successful wars. Recall that $\hat{\bm{\tau}}_i^{j \star}$ is the set of policies government $j$ would impose on $i$ if it successfully prosecuted a war against the latter. Then, $j$'s counterfactual utility in this scenario can be readily calculated given knowledge of its objective function (\ref{eq:Ghat}). I calculate counterfactual government utilities for each possible war under two assumptions on governments' motivations. First, I consider the case in which governments maximize consumer welfare ($b_i = 0$), followed by the case in which governments maximize rents ($b_i = 1$). The results are shown in Figure \ref{fig:rcv}.
+
+```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Government utility changes associated with successful wars. Each cell represents the welfare gain an attacker (y-axis) accrues when it wins a war against a given defender (x-axis). The left panel shows the case in which $b_i = 0$ for all $i$ (welfare-maximizers), while the right panel shows the case in which $b_i = 1$ for all $i$ (revenue-maximizers). Darker values indicate higher welfare changes. \\label{fig:rcv}"), fig.height=4, dpi=300, fig.pos="t"}
+
+source("../figs/rcv.R")
+rcvhm(rcv0, 0, mint, maxt) + rcvhm(rcv1, 1, mint, maxt)
+
+```
+
+Again, governments that face poor market access conditions gain the most from successful wars. Comparing the left panel to the right shows that the value of war depends crucially on the governments' preferences. When they win wars, rent-maximizing governments impose policies designed to direct trade into their borders. As imports go up, revenue collection potential also increases. The value of war is lower for welfare-maximizing governments. Still, welfare-maximizing governments facing poor market access benefit substantially from winning wars against countries with large markets and high barriers to trade. At the extreme, the welfare of consumers in `r rcv0jName` increases by a factor of `r round(rcv0max, 2)` when their government wins a war against `r rcv0iName`. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These values assist in the identification of the power projection and preference parameters in $\bm{\theta}_m$.

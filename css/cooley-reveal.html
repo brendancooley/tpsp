@@ -31,9 +31,9 @@ $highlighting-css$
 </style>
 $endif$
 
-$if(theme)$
+<!-- $if(theme)$
 <link rel="stylesheet" href="$revealjs-url$/css/theme/$theme$.css" id="theme">
-$endif$
+$endif$ -->
 
 $if(theme-dark)$
 <style type="text/css">
@@ -99,6 +99,9 @@ $for(css)$
     <link rel="stylesheet" href="$css$"/>
 $endfor$
 $endif$
+
+<!-- add verticator css-->
+<link rel="stylesheet" href="css/verticator.css">
 
 <!-- Printing and PDF exports -->
 <script id="paper-css" type="application/dynamic-css">
@@ -304,12 +307,12 @@ $endif$
 		font-size: 0.8em;
 	}
 
-}  
+}
 </script>
 
 
 <script id="pdf-css" type="application/dynamic-css">
-    
+
 /**
  * This stylesheet is used to print reveal.js
  * presentations to PDF.
@@ -488,10 +491,11 @@ $endfor$
 
 <!-- add colors for mathjax
  -->
- <p style="display:none"> 
+ <p style="display:none">
 \[
 \require{color}
 \definecolor{bcOrange}{RGB}{189,97,33}
+\definecolor{bcYellow}{RGB}{189,142,40}
 \newcommand\iddots{\mathinner{
   \kern1mu\raise1pt{.}
   \kern2mu\raise4pt{.}
@@ -503,7 +507,9 @@ $endfor$
 \DeclareMathOperator*{\argmin}{arg\,min}
 
 \newcommand{\bm}[1]{\boldsymbol{\mathbf{#1}}}
-\] 
+\newcommand{\ubar}[1]{\underline{#1}}
+
+\]
 </p>
 
 </head>
@@ -513,6 +519,7 @@ $for(include-before)$
 $include-before$
 $endfor$
   <div class="reveal">
+  	<ul class="verticator"></ul>
     <div class="slides">
 
 $if(title)$
@@ -693,28 +700,28 @@ $if(plugin-menu)$
         menu: {
 $if(menu-side)$
           side: $menu-side$,
-$endif$   
+$endif$
 $if(menu-numbers)$
           numbers: $menu-numbers$,
-$endif$    
+$endif$
 $if(menu-titleSelector)$
           titleSelector: $menu-titleSelector$,
-$endif$    
+$endif$
 $if(menu-hideMissingTitles)$
           hideMissingTitles: $menu-hideMissingTitles$,
-$endif$    
+$endif$
 $if(menu-markers)$
           markers: $menu-markers$,
-$endif$    
+$endif$
 $if(menu-openButton)$
           openButton: $menu-openButton$,
-$endif$    
+$endif$
 $if(menu-openSlideNumber)$
           openSlideNumber: $menu-openSlideNumber$,
-$endif$    
+$endif$
 $if(menu-keyboard)$
           keyboard: $menu-keyboard$,
-$endif$ 
+$endif$
           custom: false,
           themes: false,
           transitions: false
@@ -762,24 +769,30 @@ $endif$
           68: function() { RevealChalkboard.download() }, // downlad recorded chalkboard drawing when 'd' is pressed
         },
 $endif$
+		
+		// verticator options
+		verticator: {
+
+		},
 
         // Optional reveal.js plugins
         dependencies: [
-$if(plugin-notes)$
-          { src: '$revealjs-url$/plugin/notes/notes.js', async: true },
-$endif$
-$if(plugin-search)$
-          { src: '$revealjs-url$/plugin/search/search.js', async: true },
-$endif$
-$if(plugin-zoom)$
-          { src: '$revealjs-url$/plugin/zoom-js/zoom.js', async: true },
-$endif$
-$if(plugin-chalkboard)$
-          { src: '$revealjs-url$/plugin/chalkboard/chalkboard.js', async: true },
-$endif$
-$if(plugin-menu)$
-          { src: '$revealjs-url$/plugin/menu/menu.js', async: true },
-$endif$
+			$if(plugin-notes)$
+			          { src: '$revealjs-url$/plugin/notes/notes.js', async: true },
+			$endif$
+			$if(plugin-search)$
+			          { src: '$revealjs-url$/plugin/search/search.js', async: true },
+			$endif$
+			$if(plugin-zoom)$
+			          { src: '$revealjs-url$/plugin/zoom-js/zoom.js', async: true },
+			$endif$
+			$if(plugin-chalkboard)$
+			          { src: '$revealjs-url$/plugin/chalkboard/chalkboard.js', async: true },
+			$endif$
+			$if(plugin-menu)$
+			          { src: '$revealjs-url$/plugin/menu/menu.js', async: true },
+			$endif$
+	        { src: 'index_files/reveal.js-3.3.0.1/plugin/verticator/verticator.js'}
         ]
       });
     </script>
@@ -798,7 +811,7 @@ $endif$
 <script>
   (function() {
     if (window.jQuery) {
-      Reveal.addEventListener( 'slidechanged', function(event) {  
+      Reveal.addEventListener( 'slidechanged', function(event) {
         window.jQuery(event.previousSlide).trigger('hidden');
         window.jQuery(event.currentSlide).trigger('shown');
       });
@@ -807,30 +820,34 @@ $endif$
 </script>
 
 <!-- mathjax change font-->
-<script type="text/x-mathjax-config"> 
-     MathJax.Hub.Config({ 
-         "HTML-CSS" : { 
-             availableFonts : ["STIX-Web","Asana-Math","TeX", "Neo-Euler",], 
-             preferredFont : "TeX", 
-             webFont : "TeX", 
-             imageFont : null 
-         } 
-     }); 
-</script> 
+<script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+         "HTML-CSS" : {
+             availableFonts : ["STIX-Web","Asana-Math","TeX", "Neo-Euler",],
+             preferredFont : "TeX",
+             webFont : "TeX",
+             imageFont : null
+         },
+         TeX: {  }
+     });
+</script>
 
 <!-- mathjax colors-->
 <script type="text/x-mathjax-config">
-  MathJax.Hub.Config({ TeX: { extensions: ["color.js"] }});
+  MathJax.Hub.Config({ TeX: { 
+  						extensions: ["color.js"],
+  						equationNumbers: { autoNumber: "AMS" } 
+  					}});
 </script>
 
-<script>
+<!-- <script>
 	Reveal.configure({
 	  keyboard: {
 	    40: 'next', // allow up and down to move slides left and right
 	    38: 'prev'
 	  }
 	});
-</script>
+</script> -->
 
 $for(include-after)$
 $include-after$

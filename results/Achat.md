@@ -1,0 +1,1 @@
+$\hat{c}_i = \hat{c}$ for all $i$.

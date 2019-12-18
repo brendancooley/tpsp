@@ -1,0 +1,1 @@
+There exists a $c^\star$ such that if $c_i > c^\star$ for each $c_i \in \bm{c}$, there exists a peaceful subgame perfect equilibrium of $\Gamma^{\bm{\tau}}(\bm{c})$. 

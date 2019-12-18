@@ -1,0 +1,201 @@
+---
+title: | 
+	| Trade Policy in the Shadow of Power
+	| \tiny \hfill
+    | \Large Quantifying Military Coercion in the International System
+author:
+	- name: Brendan Cooley
+      affiliation: Ph.D. Candidate, Department of Politics, Princeton University
+date: \today
+abstract: In international relations, how does latent military coercion affect governments’ policy choices? Because militarily powerful governments can credibly threaten to impose their policy preferences by force, weaker governments may adjust their policy choices to avoid costly conflict. This setting raises an inference problem -- do observed policies reflect the preferences of the governmnets that adopted them or the military constraints of the anarchic international system? Here, I investigate the role of this “shadow of power” in determining trade policy. Specifically, I build a model of trade policy choice under threat that allows me to measure empirically governments’ underlying trade policy preferences and the magnitude of policy appeasement attributable to latent military coercion. Once estimated, the model can be used to conduct counterfactual experiments – such as assessing the international economic effects of Chinese military growth or the military strategic effects of Chinese political liberalization. These and other exercises shed light on how military power affects international economic exchange, and how expectations about exchange affect governments’ military strategies.
+thanks: Ph.D. Candidate, Department of Politics, Princeton University. Version 0. Estimation in progress. Feedback welcome.
+# jelcodes: JEL codes go here
+
+bibliography: /Users/bcooley/Dropbox (Princeton)/References/library.bib
+biblio-style: apsr
+
+papersize: letter
+documentclass: article
+geometry: margin=1.25in
+link-citations: true
+
+output:
+	fig_caption: yes
+    citation_package: natbib
+
+---
+
+```{r libs, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+helperPath <- "~/Dropbox (Princeton)/14_Software/R/"
+helperFiles <- list.files(helperPath)
+for (i in helperFiles) {
+  source(paste0(helperPath, i))
+}
+
+libs <- c("knitr", "tidyverse", "countrycode", "kableExtra", "latex2exp", "patchwork")
+ipak(libs)
+
+# not available
+AwarEntry <- "NA"
+DGammac <- "NA"
+Pc <- "NA"
+Pm <- "NA"
+Aeconomy <- "NA"
+AeconomyC <- "NA"
+Achat <- "NA"
+Aproofs <- "NA"
+
+# load references picked up later in document
+if (file.exists('references.RData')) load('references.RData')
+
+# setup definition, assumption, proposition, lemma tickers
+Dtick <- 1
+Atick <- 1
+Ptick <- 1
+Ltick <- 1
+
+dataPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/tpsp_data/"
+resultsPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results/"
+
+# parameters 
+theta <- read_csv(paste0(dataPath, "theta.csv"), col_names=FALSE) %>% pull(.)
+beta <- read_csv(paste0(dataPath, "beta.csv"), col_names=FALSE) %>% pull(.)
+ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
+y <- read_csv(paste0(dataPath, "y.csv"), col_names=FALSE)
+Y <- read_csv(paste0(dataPath, "year.csv"), col_names=FALSE) %>% pull(.)
+N <- length(ccodes %>% pull(.))
+
+# data
+tauM <- read_csv(paste0(dataPath, "tau.csv"), col_names=FALSE) %>% as.matrix()
+tau <- read_csv(paste0(dataPath, "tau.csv"), col_names=FALSE)
+milex <- read_csv(paste0(dataPath, "milex.csv"), col_names=FALSE)
+
+# results
+Ghatft <- read_csv(paste0(resultsPath, "Ghatft.csv"), col_names=FALSE)
+rcv0 <- read_csv(paste0(resultsPath, "rcv0.csv"), col_names=FALSE)
+rcv1 <- read_csv(paste0(resultsPath, "rcv1.csv"), col_names=FALSE)
+
+```
+
+\newpage
+
+# Introduction
+
+```{r, child = "sections/introduction.rmd"}
+```
+
+
+## Literature
+
+```{r, child = "sections/literature.md"}
+```
+
+# Model
+
+```{r, child = "sections/model.md"}
+```
+
+# Calibration and Estimation
+
+```{r, child = "sections/estimation.md"}
+```
+
+# Data 
+
+```{r, child = "sections/data.rmd"}
+```
+
+# Results
+
+```{r, child = "sections/results.rmd"}
+```
+
+\clearpage
+
+# Appendix
+
+```{r Appendix Numbering, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+a <- 1
+
+# reset definition, assumption, proposition, lemma tickers
+Dtick <- 1
+Atick <- 1
+Ptick <- 1
+Ltick <- 1
+
+Aeconomy <- LETTERS[a]
+```
+
+## `r Aeconomy`: Economy
+
+```{r, child = "sections/Aeconomy.md"}
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+a <- a + 1
+
+# reset definition, assumption, proposition, lemma tickers
+Dtick <- 1
+Atick <- 1
+Ptick <- 1
+Ltick <- 1
+
+AeconomyC <- LETTERS[a]
+
+```
+
+## `r AeconomyC`: Calibration of Economy
+
+```{r, child = "sections/AeconomyC.rmd"}
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+a <- a + 1
+
+# reset definition, assumption, proposition, lemma tickers
+Dtick <- 1
+Atick <- 1
+Ptick <- 1
+Ltick <- 1
+
+AwarEntry <- LETTERS[a]
+
+```
+
+## `r AwarEntry`: War Entry
+
+```{r, child = "sections/AwarEntry.md"}
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+a <- a + 1
+
+# reset definition, assumption, proposition, lemma tickers
+Dtick <- 1
+Atick <- 1
+Ptick <- 1
+Ltick <- 1
+
+Aproofs <- LETTERS[a]
+
+```
+
+## `r Aproofs`: Proofs
+
+```{r, child = "sections/Aproofs.md"}
+```
+
+\clearpage
+
+# References
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+save.image('references.RData')
+
+```

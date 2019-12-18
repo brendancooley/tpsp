@@ -1,0 +1,244 @@
+---
+title: Trade Policy in the Shadow of Power
+subtitle: Quantifying Military Coercion in the International System
+author: Brendan Cooley
+date: 5 December 2019
+titlegraphic:
+fontsize: 10pt
+
+bibliography: /Users/bcooley/Dropbox (Princeton)/References/library.bib
+biblio-style: apsr
+
+output:
+ beamer_presentation:
+    template: "templates/cooley-latex-beamer.tex"
+    fig_caption: true
+# toc: true
+ slide_level: 2
+---
+
+## Model (Overview)
+
+- Governments indexed $i \in \left\{ 1, ..., N \right\}$
+
+**Sequence**
+
+1. ($\Gamma^{\bm{m}}$) Governments set military strategies
+    + allocations of effort over potential wars
+2. ($\Gamma^{\bm{\tau}}$) Governments make trade policy announcements
+3. ($\Gamma^{\bm{a}}$) Wars
+    + Winners choose trade policies for vanquished governments
+4. ($h(\bm{\tau})$) Economic (general equilibrium) consequences of trade policies
+
+**Payoffs**
+
+$$
+G_i \left( h(\bm{\tau}), \bm{a} \right)
+$$ 
+
+## Preferences
+
+$$
+h(\bm{\tau}) = \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \bm{w}
+$$
+
+- $V_i(\bm{w})$: welfare of representative consumer in $i$
+- $X_{ij}(\bm{w})$: $i$'s imports of goods from $j$
+- Rents (tariff revenue):
+
+$$
+r_i(\bm{w}) = \sum_j (\tau_{ij} - 1) X_{ij}(\bm{w})
+$$
+
+**Government Objective**
+
+$$
+G_i(\bm{w}) = V_i(\bm{w})^{1 - b_i} r_i(\bm{w})^{b_i}
+$$
+
+## Wars (I)
+
+**Optimal Post-Conquest Policies**
+
+$$
+\hat{\bm{\tau}}_i^{j \star}(b_j) = \argmax_{\bm{\tau}_i} \quad G_{j}(\bm{\tau}_{i}; \tilde{\bm{\tau}}_{-i})
+$$
+
+- $\bm{\tau}_i^{j \star}$: trade policies in $j$ imposed by government $i$ post-conquest
+
+**Conquest Values**
+
+$$
+G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-i})
+$$
+
+**Contest Function (Dyadic)**
+
+$$
+\chi_{ji}(\bm{m}) = \frac{ \rho_{ji}(\bm{W}_{ji}; \bm{\alpha}_{ji}, \epsilon_{ji}) m_{ji} }{ \rho_{ji}(\bm{W}_{ji}; \bm{\alpha}_{ji}, \epsilon_{ji}) m_{ji} + m_{ii} }
+$$
+
+**Loss of Strength Gradient**
+
+$$
+\rho_{ji}(\bm{W}_{ji}; \bm{\alpha}_{ji}, \epsilon_{ji}) = e^{-\bm{\alpha}_{ji}^T \bm{W}_{ji} + \epsilon_{ji}}
+$$
+$$
+\epsilon_{ji} \sim \mathcal{N}(0, \sigma_\epsilon^2)
+$$
+
+## Wars (II)
+
+**Reservation Values**
+
+$$
+\underline{G}_{ji}(\bm{m}) = \chi_{ji} (\bm{m}) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) +  \left( 1 - \chi_{ji} (\bm{m}) \right) G_j(\tilde{\bm{\tau}}) - c_j
+$$
+
+## Constrained Policy Setting Problem (I)
+
+\begin{equation}
+\begin{split}
+\tilde{\bm{\tau}}_i^\star(\bm{m}) = \argmax_{ \tilde{\bm{\tau}}_i } & \quad G_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) + \sum_j \xi_{ij} G_j(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \\
+\text{subject to} & \quad G_j(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \geq \underline{G}_{ji}( \bm{m} ) \text{ for all } j \neq i
+\end{split}
+\end{equation}
+
+**In Differences (Hats)**
+
+\begin{equation}
+\begin{split}
+\max_{ \hat{\tilde{\bm{\tau}}}_i } & \quad \hat{G}_i(\hat{\tilde{\bm{\tau}}}_i; \hat{\tilde{\bm{\tau}}}_{-i}) + \sum_j \xi_{ij} \frac{G_j(\bm{\tau})}{G_i(\bm{\tau})} \hat{G}_j(\hat{\tilde{\bm{\tau}}}_i; \hat{\tilde{\bm{\tau}}}_{-i}) \\
+\text{subject to} & \quad \hat{G}_j(\hat{\tilde{\bm{\tau}}}) - \hat{G}_j(\hat{\bm{\tau}}_i^{j \star}) + \hat{c} \left( \chi_{ji}(\bm{m}) \right)^{-1} \geq 0 \quad \text{for all } j \neq i
+\end{split}
+\end{equation}
+
+**Assumptions**
+
+$$
+\hat{c} = \frac{c_i}{G_i(\bm{\tau})}
+$$
+$$
+\E \left[ \xi_{ij} \frac{G_j(\bm{\tau})}{G_i(\bm{\tau})} \right] = 0
+$$
+
+## Constrained Policy Setting Problem (II)
+
+**MPEC**
+
+\begin{equation}
+\begin{split}
+\max_{ \hat{\tilde{\bm{\tau}}}, \bm{w} } & \quad \hat{G}_i(\hat{\tilde{\bm{\tau}}}_i; \hat{\tilde{\bm{\tau}}}_{-i}) + \sum_j \xi_{ij} \frac{G_j(\bm{\tau})}{G_i(\bm{\tau})} \hat{G}_j(\hat{\tilde{\bm{\tau}}}_i; \hat{\tilde{\bm{\tau}}}_{-i}) \\
+\text{subject to} & \quad \hat{G}_j(\hat{\tilde{\bm{\tau}}}) - \hat{G}_j(\hat{\bm{\tau}}_i^{j \star}) + \hat{c} \left( \chi_{ji}(\bm{m}) \right)^{-1} \geq 0 \quad \text{for all } j \neq i \\
+& \quad \hat{\tilde{\bm{\tau}}}_{j \neq i} = \bm{1} \\
+& \quad \bm{w} = h(\hat{\tilde{\bm{\tau}}})
+\end{split}
+\end{equation}
+
+**Unconstrained, Affinity-Less Policies**
+
+\begin{equation}
+\hat{\tilde{\bm{\tau}}}_i^{\prime}(b_i) = \argmax_{ \hat{\tilde{\bm{\tau}}}_i } \hat{G}_i \left( h( \hat{\tilde{\bm{\tau}}} ); b_i \right)
+\end{equation}
+
+Constraint binds in expectation if 
+$$
+\underbrace{\hat{G}_j(\hat{\tilde{\bm{\tau}}}_i^{\prime}(b_i)) - \hat{G}_j(\hat{\bm{\tau}}_i^{j \star}(b_j))}_{W_{ji}(b_i, b_j)} + \hat{c} \chi_{ji}(\bm{m})^{-1} \geq 0
+$$
+
+## Military Strategies (I)
+
+- Affinity shocks ($\xi_{ij}$) and power projection shocks ($\epsilon_{ji}$) realized *after* military allocations set
+$$
+\epsilon_{ji}^\star(\bm{m}) = - \ln \left( \frac{m_{ji}}{m_{ii}} \right) + \ln \left( \frac{W_{ji}(b_i, b_j)}{\hat{c} - W_{ji}(b_i, b_j)} \right) + \bm{\alpha}_{ji}^T \bm{W}_{ji}
+$$
+$$
+\varphi_{ji}(\bm{m}) = \text{Pr}(\epsilon_{ji} > \epsilon_{ji}^\star(\bm{m}))
+$$
+
+**Optimal Military Strategies**
+
+\begin{equation}
+\begin{split}
+\bm{m}_j^\star = \argmax_{ \bm{m}_j } & \quad \E \left[ \hat{G}_j \left( \hat{\tilde{\bm{\tau}}}^\star( \bm{m}_i ; \bm{m}_{-j}) \right) \right] \\
+\text{subject to} & \quad \sum_i m_{ji} \leq M_j
+\end{split}
+\end{equation}
+
+## Military Strategies (II)
+
+**First Order Conditions**
+
+$$
+\frac{\partial \varphi_{ji}(\bm{m})}{\partial m_{ji}} \hat{c} \chi_{ji}(\bm{m})^{-1}  - \varphi_{ji}(\bm{m}) \hat{c} \chi_{ji}(\bm{m})^{-1} \frac{\partial \chi_{ji}(\bm{m})}{\partial m_{ji}} = \lambda_j^{\bm{m}} \qquad \text{for all } i \neq j
+$$
+$$
+\sum_i \varphi_{ij}(\bm{m}) \E \left[ \lambda_{ij}^{\chi} | \epsilon_{ji} > \epsilon_{ji}^\star(\bm{m}) \right] = \lambda_j^{\bm{m}} 
+$$
+$$
+\sum_i m_{ji} = M_j
+$$
+
+## Observables, Unobservables
+
+**Data**
+
+- $\bm{\tau}$: policy barriers to trade
+- $\bm{M}$: military expenditure
+
+**Structural Parameters**
+
+$$
+\bm{\theta} = \left\{ \bm{b}, \bm{\alpha}, \hat{c}, \sigma_{\epsilon}^2 \right\}
+$$
+
+**Unobservables**
+
+$$
+\bm{m}^\star(\bm{\theta}, \bm{M})
+$$
+
+## Estimation Problem
+
+\begin{equation}
+\begin{split}
+\min_{\bm{\theta}, \bm{m}} & \quad \sum_i \sum_j \ell_{\xi}(\xi_{ij}) + \sum_i \sum_j \ell_{\epsilon}(\epsilon_{ij}) \\
+\text{subject to} & \quad \bm{m} = \bm{m}^\star(\bm{\theta}) \\
+& \quad \hat{\tilde{\bm{\tau}}}^\star(\bm{m}; \bm{\theta}) = \bm{1}_{N \times N} \\
+& \quad \hat{h} \left( \hat{\tilde{\bm{\tau}}}^\star(\bm{m}) \right) = \bm{1}_{N \times 1}
+\end{split}
+\end{equation}
+
+## Estimation Algorithm
+
+1. Initialize $\bm{\theta} = \tilde{\bm{\theta}}_0$ and $\bm{m}_i = \frac{M_i}{N}$ for all $i$
+
+**Loop** (indexed $r$)
+
+1. Draw $\bm{\epsilon}_r$ war shocks
+	- Large sample as we get closer to convergence?
+2. Recover $\tilde{\bm{b}}_r$ through grid search and udpate $\tilde{\bm{\theta}}_r$
+	- Minimize deviations from FOCs
+3. Calculate $\varphi_{ji}(\bm{m}; \tilde{\bm{\theta}}_r)$
+4. Weighted least squares on constraints with $\varphi_{ji}(\bm{m}; \tilde{\bm{\theta}}_r)$ as weights to recover $\tilde{\bm{\alpha}}_r, \tilde{\hat{c}}_r, \tilde{\sigma}_{\epsilon, r}^2$ and update $\tilde{\bm{\theta}}_r$
+5. Calculate $\E \left[ \bm{\lambda}_{ij}^{\chi} | \epsilon_{ji} > \epsilon_{ji}^\star(\bm{m}) \right]$
+	- Simulation to calculate $\E \left[ \chi_{ij}(\bm{m}; \tilde{\bm{\theta}}_r) \right]$, then solve constrained policy problem
+6. Calculate $m^\star(\tilde{\bm{\theta}}_r)$
+
+Repeat 1-6 until convergence
+
+## Questions and Notes \label{notes}
+
+**Questions**
+
+- $\E \left[ \bm{\lambda}_{ij}^{\chi} | \epsilon_{ji} > \epsilon_{ji}^\star(\bm{m}) \right]$ is actually constraint evaluated at expected value of contest function. Equivalent? Alternatives?
+- Are $\bm{\epsilon}_r$ draws going to throw off consistency/convergence?
+
+**Notes**
+
+- Measurement error model implies constraints bind exactly at $\hat{\tilde{\bm{\tau}}}^\star(\bm{m}; \tilde{\bm{\theta}}_0)$
+- Think Bayesian?
