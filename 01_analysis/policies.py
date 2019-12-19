@@ -1438,6 +1438,9 @@ class policies:
 
             b = self.b_vals[idx_first]
 
+            print("bmax: " + str(bmax))
+            print("bmin: " + str(bmin))
+
             Loss = []
             for idx in [idx_down, idx_first, idx_up]:
                 b_idx = self.b_vals[idx]
@@ -1459,11 +1462,12 @@ class policies:
             else:
                 if Loss[2] < Loss[1]:
                     bmin = b
-                    b = (bmax - b) / 2
+                    b = (bmax - b) / 2 + bmin
                 if Loss[0] < Loss[1]:
                     bmax = b
-                    b = (b - bmin) / 2
-            print("bmin: " + str(bmax))
+                    b = (b - bmin) / 2 + bmin
+            print("b: " + str(b))
+            print("bmin: " + str(bmin))
             print("bmax: " + str(bmax))
 
         return(b)
