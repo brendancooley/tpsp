@@ -12,12 +12,17 @@ import economy
 # import economyOld
 import policies
 
+# TODO: Japan's policies impossible to reconcile from perspective of revenue maximization...what to do here?
+
 ### IMPORT DATA ###
 
 # dataFiles = os.listdir("tpsp_data/")
 basePath = os.path.expanduser('~')
 projectPath = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 dataPath = projectPath + "tpsp_data_mini/"
+resultsPath = projectPath + "results/"
+
+rcvPath = resultsPath + "rcv.csv"
 
 # Economic Parameters
 beta = np.genfromtxt(dataPath + 'beta.csv', delimiter=',')
@@ -59,13 +64,55 @@ E = Eq + Ex
 
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M}  # Note: log distance (plus 1)
 
+theta_dict = dict()
+# theta_dict["b"] = b
+theta_dict["alpha"] = np.array([alpha_0, alpha_1])
+theta_dict["c_hat"] = .2
+
 ### TEST B ESTIMATOR ###
 
+m = M / np.ones_like(tau) / N
+m = m.T
+
+# m = np.diag(M)
+
+sigma_epsilon = .25
+epsilon = np.reshape(np.random.normal(0, sigma_epsilon, N ** 2), (N, N))
+np.fill_diagonal(epsilon, 0)
+
+imp.reload(policies)
+pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
+b_init = np.repeat(.5, N)
+# pecmy.est_b_i_grid(0, b_init, m, theta_dict, epsilon)
+pecmy.est_b_grid(b_init, m, theta_dict, epsilon)
+
+# Q: is tau_ij invariant to coerion from k?
+id = 0
+
+m = np.diag(M)
+m_prime = np.copy(m)
+m_prime[5, 0] = m[5,5]
+m_prime[5, 5] = 0  # U.S. spends all effort coercing China
+
+wv_m = pecmy.war_vals(b_init, m, theta_dict, epsilon) # calculate war values
+ids_j = np.delete(np.arange(pecmy.N), id)
+wv_m_i = wv_m[:,id][ids_j]
+
+wv_m_prime = pecmy.war_vals(b_init, m_prime, theta_dict, epsilon) # calculate war values
+wv_m_prime_i = wv_m_prime[:,id][ids_j]
+
+pecmy.br(np.ones(pecmy.x_len), b_init, m, wv_m_i, id)
+pecmy.br(np.ones(pecmy.x_len), b_init, m_prime, wv_m_prime_i, id)
+
+# A: no, substantial spillovers, China liberalizes toward everybody in response to US coercion
 
 
 
 
-# just need to evaluate Lagrange tau = w = 1 given b...do we need mil lambdas?
+
+
+
+
 
 
 ### NO CHANGES ###
