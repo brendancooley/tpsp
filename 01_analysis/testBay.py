@@ -80,13 +80,17 @@ np.fill_diagonal(epsilon, 0)
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
-b_init = np.repeat(.74, N)
+b_init = np.repeat(.11, N)
 pecmy.est_b_i_grid(0, b_init, m, theta_dict, epsilon)
 
 
 # NOTE: not getting the monotonicity in b that we need for binary search to work (at least with positive M)
 # if we prevent br from searching extreme values might still work ok
+    # in other words we need interior tau always, otherwise we're going to throw off the loss function
 # works as expected when no military constraints at play
+
+# some cycling at the current numbers
+# TODO: something wrong with bmin, bmax
 
 # pecmy.rhoM(theta_dict, epsilon)
 # pecmy.rhoM(theta_dict, 0)

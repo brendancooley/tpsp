@@ -1463,6 +1463,8 @@ class policies:
                 if Loss[0] < Loss[1]:
                     bmax = b
                     b = (b - bmin) / 2
+            print("bmin: " + str(bmax))
+            print("bmax: " + str(bmax))
 
         return(b)
 
