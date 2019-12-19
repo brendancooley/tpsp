@@ -1449,7 +1449,16 @@ class policies:
                 wv = self.war_vals(b_vec, m, theta_dict, epsilon)
                 ids_j = np.delete(np.arange(self.N), id)
                 wv_i = wv[:,id][ids_j]
-                br = self.br(np.ones(self.x_len), b_vec, m, wv_i, id)
+
+                # starting values
+                tau_hat_ft = 1 / self.ecmy.tau
+                ge_x_sv = np.ones(self.x_len)
+                ge_dict_sv = self.ecmy.rewrap_ge_dict(ge_x_sv)
+                ge_dict_sv["tau_hat"][id] = tau_hat_ft[id] + .1
+                ge_dict_sv["tau_hat"][id, id] = 1
+                ge_x_sv = self.ecmy.unwrap_ge_dict(ge_dict_sv)
+
+                br = self.br(ge_x_sv, b_vec, m, wv_i, id)
                 br_dict = self.ecmy.rewrap_ge_dict(br)
                 tau_i = br_dict["tau_hat"][id, ]
                 print(tau_i)
