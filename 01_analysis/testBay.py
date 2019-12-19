@@ -12,6 +12,8 @@ import economy
 # import economyOld
 import policies
 
+# TODO: Japan's policies impossible to reconcile from perspective of revenue maximization...what to do here?
+
 ### IMPORT DATA ###
 
 # dataFiles = os.listdir("tpsp_data/")
@@ -81,20 +83,28 @@ np.fill_diagonal(epsilon, 0)
 imp.reload(policies)
 pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
 b_init = np.repeat(.5, N)
-pecmy.est_b_i_grid(1, b_init, m, theta_dict, epsilon)
+# pecmy.est_b_i_grid(0, b_init, m, theta_dict, epsilon)
+pecmy.est_b_grid(b_init, m, theta_dict, epsilon)
 
+# Q: is tau_ij invariant to coerion from k?
+id = 0
 
-# NOTE: not getting the monotonicity in b that we need for binary search to work (at least with positive M)
-# if we prevent br from searching extreme values might still work ok
-    # in other words we need interior tau always, otherwise we're going to throw off the loss function
-    # try starting at lower taus
-# works as expected when no military constraints at play
+m = np.diag(M)
+m_prime = np.copy(m)
+m_prime[5, 0] = m[5,5]
+m_prime[5, 5] = 0  # U.S. spends all effort coercing China
 
-# some cycling at the current numbers
-# TODO: something wrong with bmin, bmax
+wv_m = pecmy.war_vals(b_init, m, theta_dict, epsilon) # calculate war values
+ids_j = np.delete(np.arange(pecmy.N), id)
+wv_m_i = wv_m[:,id][ids_j]
 
-# pecmy.rhoM(theta_dict, epsilon)
-# pecmy.rhoM(theta_dict, 0)
+wv_m_prime = pecmy.war_vals(b_init, m_prime, theta_dict, epsilon) # calculate war values
+wv_m_prime_i = wv_m_prime[:,id][ids_j]
+
+pecmy.br(np.ones(pecmy.x_len), b_init, m, wv_m_i, id)
+pecmy.br(np.ones(pecmy.x_len), b_init, m_prime, wv_m_prime_i, id)
+
+# A: no, substantial spillovers, China liberalizes toward everybody in response to US coercion
 
 
 
