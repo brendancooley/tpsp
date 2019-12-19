@@ -69,19 +69,19 @@ theta_dict["c_hat"] = .2
 
 ### TEST B ESTIMATOR ###
 
-# m = M / np.ones_like(tau) / N
-# m = m.T
+m = M / np.ones_like(tau) / N
+m = m.T
 
-m = np.diag(M)
+# m = np.diag(M)
 
-sigma_epsilon = .1
+sigma_epsilon = .25
 epsilon = np.reshape(np.random.normal(0, sigma_epsilon, N ** 2), (N, N))
 np.fill_diagonal(epsilon, 0)
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
-b_init = np.repeat(.11, N)
-pecmy.est_b_i_grid(0, b_init, m, theta_dict, epsilon)
+b_init = np.repeat(.5, N)
+pecmy.est_b_i_grid(1, b_init, m, theta_dict, epsilon)
 
 
 # NOTE: not getting the monotonicity in b that we need for binary search to work (at least with positive M)

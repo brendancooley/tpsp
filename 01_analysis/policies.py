@@ -68,7 +68,9 @@ class policies:
         self.lambda_i_len = self.hhat_len + 1 + (self.N - 1)
         # self.lambda_i_len_td = self.lambda_i_len + self.N ** 2 - self.N # add constraints on others' policies
 
-        self.b_vals = np.arange(0, 1.1, .1)  # preference values for which to generate regime change value matrix. NOTE: currently only 0 and 1
+        # self.b_vals = np.arange(-.5, 1.6, .1)  # preference values for which to generate regime change value matrix.
+        self.b_vals = np.arange(0, 1.1, .1)
+
         if not os.path.isfile(rcv_path):
             rcv = self.pop_rc_vals()
             self.rc_vals_to_csv(rcv, rcv_path)
@@ -1429,6 +1431,11 @@ class policies:
         b = b_vec[id]
 
         stop = False
+
+        # turn these flags on if we're searching one of the lower or upper bounds of the b space
+        lb = False
+        ub = False
+
         while stop is False:
 
             # first
@@ -1436,15 +1443,21 @@ class policies:
             idx_up = idx_first + 1
             idx_down = idx_first - 1
 
+            if idx_up == len(self.b_vals) - 1:
+                ub = True
+            if idx_down == 0:
+                lb = True
+
             b = self.b_vals[idx_first]
 
             print("bmax: " + str(bmax))
             print("bmin: " + str(bmin))
+            print("ub: " + str(ub))
+            print("lb: " + str(lb))
 
             Loss = []
             for idx in [idx_down, idx_first, idx_up]:
                 b_idx = self.b_vals[idx]
-                print(b_idx)
                 b_vec[id] = b_idx
                 wv = self.war_vals(b_vec, m, theta_dict, epsilon)
                 ids_j = np.delete(np.arange(self.N), id)
@@ -1466,7 +1479,7 @@ class policies:
                 Loss.append(loss)
 
             print(Loss)
-            if Loss[1] < Loss[2] and Loss[1] < Loss[0]:
+            if Loss[1] <= Loss[2] and Loss[1] <= Loss[0]:
                 stop = True
             else:
                 if Loss[2] < Loss[1]:
@@ -1475,9 +1488,16 @@ class policies:
                 if Loss[0] < Loss[1]:
                     bmax = b
                     b = (b - bmin) / 2 + bmin
-            print("b: " + str(b))
-            print("bmin: " + str(bmin))
-            print("bmax: " + str(bmax))
+
+            # check bounds
+            if lb is True:
+                if Loss[0] < Loss[1]:
+                    b = self.b_vals[idx_down]
+                    stop = True
+            if ub is True:
+                if Loss[2] < Loss[1]:
+                    b = self.b_vals[idx_up]
+                    stop = True
 
         return(b)
 
