@@ -83,6 +83,8 @@ np.fill_diagonal(epsilon, 0)
 imp.reload(policies)
 pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
 pecmy.rhoM(theta_dict, epsilon) # testing new rho function
+pecmy.rhoM(theta_dict, 0)
+# positive shocks give better war performance
 b_init = np.repeat(.5, N)
 # pecmy.est_b_i_grid(0, b_init, m, theta_dict, epsilon)
 pecmy.est_b_grid(b_init, m, theta_dict, epsilon)
