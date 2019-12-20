@@ -32,7 +32,7 @@ nu = np.genfromtxt(dataPath + 'nu.csv', delimiter=',')
 
 # Military Parameters
 alpha_0 = 0  # force gained (lost) in offensive operations, regardless of distance
-alpha_1 = -.1   # extra force gained (lost) for every log km traveled
+alpha_1 = .1   # extra force gained (lost) for every log km traveled
 gamma = 1
 c_hat = .2  # relative cost of war
 
