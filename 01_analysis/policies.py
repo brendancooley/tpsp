@@ -1026,9 +1026,9 @@ class policies:
             # first
             idx_first = helpers.which_nearest(self.b_vals, b)
             # start away from corners
-            if idx_first == bmax:
+            if idx_first == len(self.b_vals) - 1:
                 idx_first -= 1
-            if idx_first == bmin:
+            if idx_first == 0:
                 idx_first += 1
             idx_up = idx_first + 1
             idx_down = idx_first - 1
