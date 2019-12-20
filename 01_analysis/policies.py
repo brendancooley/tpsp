@@ -1162,14 +1162,34 @@ class policies:
         return(b_vec)
 
     def epsilon_star(self, b, m, theta_dict, W):
+        """Return critical epsilon (row's critical value for invading column, all epsilon greater than epsilon star will trigger invasion)
+
+        Parameters
+        ----------
+        b : vector
+            N times 1 vector of preference parameters
+        m : matrix
+            N times N matrix of military allocations
+        theta_dict : dict
+            military parameters
+        W : matrix
+            distance between belligerents
+
+        Returns
+        -------
+        matrix
+            N times N matrix of critical war shocks (nans on diagonal)
+
+        """
 
         m_diag = np.diagonal(m)
         m_frac = m / m_diag
 
-        rcv = np.zeros((self.N, self.N))
+        rcv = np.zeros((self.N, self.N))  # empty regime change value matrix (row's value for invading column)
         for i in range(self.N):
             b_nearest = helpers.find_nearest(self.b_vals, b[i])
             rcv[i, ] = self.rcv[b_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
+            # (i's value for invading all others)
 
         out = theta_dict["alpha"][0] + theta_dict["alpha"][1] * W - np.log(m_frac) + np.log( 1 / theta_dict["c_hat"] ** -1 * (rcv - 1) )
 

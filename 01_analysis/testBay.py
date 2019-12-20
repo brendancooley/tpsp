@@ -76,7 +76,7 @@ m = M / np.ones_like(tau) / N
 m = m.T
 
 # m_diag = np.diagonal(m)
-m_frac = m / m_diag
+# m_frac = m / m_diag
 # m = np.diag(M)
 
 sigma_epsilon = .1
@@ -85,6 +85,7 @@ np.fill_diagonal(epsilon, 0)
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
+# pecmy.rcv[1]
 b_init = np.repeat(.5, N)
 
 pecmy.epsilon_star(b_init, m, theta_dict, W)
