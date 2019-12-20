@@ -1161,9 +1161,19 @@ class policies:
 
         return(b_vec)
 
-    def epsilon_star(self):
+    def epsilon_star(self, b, m, theta_dict, W):
 
-        return(0)
+        m_diag = np.diagonal(m)
+        m_frac = m / m_diag
+
+        rcv = np.zeros((self.N, self.N))
+        for i in range(self.N):
+            b_nearest = helpers.find_nearest(self.b_vals, b[i])
+            rcv[i, ] = self.rcv[b_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
+
+        out = theta_dict["alpha"][0] + theta_dict["alpha"][1] * W - np.log(m_frac) + np.log( 1 / theta_dict["c_hat"] ** -1 * (rcv - 1) )
+
+        return(out)
 
 
     def br_cor(self, ge_x, m, mpec=True):

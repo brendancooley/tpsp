@@ -11,6 +11,7 @@ import autograd as ag
 import economy
 # import economyOld
 import policies
+import helpers
 
 # TODO: Japan's policies impossible to reconcile from perspective of revenue maximization...what to do here?
 
@@ -74,6 +75,8 @@ theta_dict["c_hat"] = .2
 m = M / np.ones_like(tau) / N
 m = m.T
 
+# m_diag = np.diagonal(m)
+m_frac = m / m_diag
 # m = np.diag(M)
 
 sigma_epsilon = .1
@@ -82,10 +85,14 @@ np.fill_diagonal(epsilon, 0)
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
+b_init = np.repeat(.5, N)
+
+pecmy.epsilon_star(b_init, m, theta_dict, W)
+
+pecmy.rcv[0]
 pecmy.rhoM(theta_dict, epsilon) # testing new rho function
 pecmy.rhoM(theta_dict, 0)
 # positive shocks give better war performance
-b_init = np.repeat(.5, N)
 # pecmy.est_b_i_grid(0, b_init, m, theta_dict, epsilon)
 pecmy.est_b_grid(b_init, m, theta_dict, epsilon)
 
