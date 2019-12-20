@@ -590,7 +590,9 @@ class policies:
             N times N symmetric matrix loss of strength gradient
 
         """
-        rhoM = 1 / (1 + np.exp(-1 * theta_dict["alpha"][0] - self.W * theta_dict["alpha"][1] + epsilon))
+
+        rhoM = np.exp(-1 * (theta_dict["alpha"][0] + self.W * theta_dict["alpha"][1] + epsilon))
+
         return(rhoM)
 
     def Lsolve(self, tau_hat, m, theta_dict, id, ft=False, mtd="lm"):
