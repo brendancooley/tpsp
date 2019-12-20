@@ -868,7 +868,7 @@ class policies:
             ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
 
-            mxit = 100000
+            mxit = 1000
             ftol = 1e-06
             wv_null = np.repeat(0, self.N - 1)
             cons = self.constraints_tau(ge_dict, i, wv_null, b, mil=False)
@@ -949,15 +949,47 @@ class policies:
 
         """
 
-        # initialize starting values of ge_x to equilibrium
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
-        ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
-        ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-        mxit = 100000
-        # if mpec == True:
+        tau_hat_ft = 1 / self.ecmy.tau
+
+        # initialize starting values of ge_x to equilibrium
+        # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
+        # ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
+        # NOTE: don't want to repeat this for every iteration of br
+
+        mxit = 1000
 
         cons = self.constraints_tau(ge_dict, id, wv_i, b, m=m, mil=mil)
         thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), -1, True, ), method="SLSQP", options={"maxiter":mxit})
+
+        # try new starting values if we don't converge
+        while thistar['success'] is False:
+            print("br unsuccessful, iterating...")
+            ge_dict["tau_hat"][id, ] += .1  # bump up starting taus
+            ge_dict["tau_hat"][id, id] = 1
+            ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
+            ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), -1, True, ), method="SLSQP", options={"maxiter":mxit})
+
+        thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
+        taustar = thistar_dict["tau_hat"]*self.ecmy.tau
+        while np.any(taustar > self.tauMax):
+            print("extreme tau values found, iterating...")
+            print("taustar[id]: " + str(taustar[id]))
+            # for j in range(self.N):
+            #     if taustar[id, j] > self.tauMax:
+            #         ge_dict["tau_hat"][id, j] = tau_hat_ft[id, j]
+            # print(ge_dict["tau_hat"] * self.ecmy.tau)
+            # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
+            # ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
+            b[id] += .01  # jitter b value
+            print("b: " + str(b[id]))
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), -1, True, ), method="SLSQP", options={"maxiter":mxit})
+            taustar = thistar_dict["tau_hat"]*self.ecmy.tau
+
+
+
+
         # else:
         #     cons = self.constraints_tau(ge_dict, id, ge=False, mil=True)
         #     bnds = self.bounds()
@@ -1021,6 +1053,16 @@ class policies:
         lb = False
         ub = False
 
+        # starting values (nearft)
+        tau_hat_nft = 1.1 / self.ecmy.tau
+        np.fill_diagonal(tau_hat_nft, 1)
+        ge_x_sv = np.ones(self.x_len)
+        ge_dict = self.ecmy.rewrap_ge_dict(ge_x_sv)
+        tau_hat_sv = ge_dict["tau_hat"]
+        tau_hat_sv[id] = tau_hat_nft[id] # start slightly above free trade
+        ge_dict_sv = self.ecmy.geq_solve(tau_hat_sv, np.ones(self.N))
+        ge_x_sv = self.ecmy.unwrap_ge_dict(ge_dict_sv)
+
         while stop is False:
 
             # first
@@ -1048,14 +1090,7 @@ class policies:
                 wv = self.war_vals(b_vec, m, theta_dict, epsilon) # calculate war values
                 ids_j = np.delete(np.arange(self.N), id)
                 wv_i = wv[:,id][ids_j]
-
-                # starting values
-                tau_hat_ft = 1 / self.ecmy.tau
-                ge_x_sv = np.ones(self.x_len)
-                ge_dict_sv = self.ecmy.rewrap_ge_dict(ge_x_sv)
-                ge_dict_sv["tau_hat"][id] = tau_hat_ft[id] + .1 # start slightly above free trade
-                ge_dict_sv["tau_hat"][id, id] = 1
-                ge_x_sv = self.ecmy.unwrap_ge_dict(ge_dict_sv)
+                print("wv_i: " + str(wv_i))
 
                 br = self.br(ge_x_sv, b_vec, m, wv_i, id)  # calculate best response
                 br_dict = self.ecmy.rewrap_ge_dict(br)

@@ -31,7 +31,7 @@ mu = np.genfromtxt(dataPath + 'mu.csv', delimiter=',')
 nu = np.genfromtxt(dataPath + 'nu.csv', delimiter=',')
 
 # Military Parameters
-alpha_0 = 0  # force gained (lost) in offensive operations, regardless of distance
+alpha_0 = 1  # force gained (lost) in offensive operations, regardless of distance
 alpha_1 = .1   # extra force gained (lost) for every log km traveled
 gamma = 1
 c_hat = .2  # relative cost of war
@@ -76,15 +76,39 @@ m = m.T
 
 # m = np.diag(M)
 
-sigma_epsilon = .25
+sigma_epsilon = .1
 epsilon = np.reshape(np.random.normal(0, sigma_epsilon, N ** 2), (N, N))
 np.fill_diagonal(epsilon, 0)
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
+pecmy.rhoM(theta_dict, epsilon) # testing new rho function
 b_init = np.repeat(.5, N)
 # pecmy.est_b_i_grid(0, b_init, m, theta_dict, epsilon)
 pecmy.est_b_grid(b_init, m, theta_dict, epsilon)
+
+# Japan's BR is getting screwed up sometimes with positive m
+# Looks like this is because ROW is extremely threatening to Japan at trial values, hard to satisfy constraint
+    # bumping up alpha_0 seems to fix the problem
+id = 2
+b_test = np.repeat(.4, pecmy.N)
+# starting values
+tau_hat_nft = 1.1 / pecmy.ecmy.tau
+np.fill_diagonal(tau_hat_nft, 1)
+# tau_hat_nft * pecmy.ecmy.tau
+ge_x_sv = np.ones(pecmy.x_len)
+ge_dict = pecmy.ecmy.rewrap_ge_dict(ge_x_sv)
+tau_hat_sv = ge_dict["tau_hat"]
+tau_hat_sv[id] = tau_hat_nft[id] # start slightly above free trade
+ge_dict_sv = pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
+ge_x_sv = pecmy.ecmy.unwrap_ge_dict(ge_dict_sv)
+
+wv_m = pecmy.war_vals(b_test, m, theta_dict, epsilon) # calculate war values
+ids_j = np.delete(np.arange(pecmy.N), id)
+wv_m_i = wv_m[:,id][ids_j]
+
+test = pecmy.br(ge_x_sv, b_test, m, wv_m_i, id)
+
 
 # Q: is tau_ij invariant to coerion from k?
 id = 0
@@ -94,9 +118,11 @@ m_prime = np.copy(m)
 m_prime[5, 0] = m[5,5]
 m_prime[5, 5] = 0  # U.S. spends all effort coercing China
 
+
 wv_m = pecmy.war_vals(b_init, m, theta_dict, epsilon) # calculate war values
 ids_j = np.delete(np.arange(pecmy.N), id)
 wv_m_i = wv_m[:,id][ids_j]
+
 
 wv_m_prime = pecmy.war_vals(b_init, m_prime, theta_dict, epsilon) # calculate war values
 wv_m_prime_i = wv_m_prime[:,id][ids_j]
