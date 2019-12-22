@@ -1,6 +1,7 @@
 import autograd as ag
 import autograd.numpy as np
 import scipy.optimize as opt
+import scipy.stats as stats
 import economy
 import csv
 import helpers
@@ -1162,7 +1163,7 @@ class policies:
         return(b_vec)
 
     def epsilon_star(self, b, m, theta_dict, W):
-        """Return critical epsilon (row's critical value for invading column, all epsilon greater than epsilon star will trigger invasion)
+        """Return critical epsilon (row's critical value for invading column, all epsilon greater than epsilon star will trigger invasion). If war costs exceed value of winning the war for sure then this value is infty
 
         Parameters
         ----------
@@ -1178,7 +1179,7 @@ class policies:
         Returns
         -------
         matrix
-            N times N matrix of critical war shocks (nans on diagonal)
+            N times N matrix of critical war shocks (zeros on diagonal)
 
         """
 
@@ -1191,10 +1192,32 @@ class policies:
             rcv[i, ] = self.rcv[b_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
             # (i's value for invading all others)
 
-        out = theta_dict["alpha"][0] + theta_dict["alpha"][1] * W - np.log(m_frac) + np.log( 1 / theta_dict["c_hat"] ** -1 * (rcv - 1) )
+        out = theta_dict["alpha"][0] + theta_dict["alpha"][1] * W - np.log(m_frac) + np.log( 1 / ( theta_dict["c_hat"] ** -1 * (rcv - 1) - 1 ) )
+        out[np.isnan(out)] = np.inf
 
         return(out)
 
+    def weights(self, epsilon, sigma_epsilon):
+        """Calculate weights for constraint regressions. If row, column constraint is active with some probability, then column's constraint vis a vis row will be included in regression.
+
+        Parameters
+        ----------
+        epsilon : matrix
+            N times N matrix of epsilon_star values (0s along diagonal)
+        sigma_epsilon : float
+            Variance of war shocks
+
+        Returns
+        -------
+        matrix
+            N times N matrix of weights (sum to 1)
+
+        """
+
+        out = 1 - stats.norm.cdf(epsilon, loc=0, scale=sigma_epsilon)
+        out = out / np.sum(out)
+
+        return(out)
 
     def br_cor(self, ge_x, m, mpec=True):
         """Best response correspondence. Given current policies, calculates best responses for all govs and returns new ge_x flattened vector.

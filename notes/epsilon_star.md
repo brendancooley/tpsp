@@ -30,7 +30,12 @@ Returning to the constraint
 \begin{align*}
 \chi_{ji}(\bm{m}; \bm{\alpha}) &= \hat{c} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right)^{-1} \\
 \frac{ \chi_{ji}(\bm{m}; \bm{\alpha}) }{ 1 - \chi_{ji}(\bm{m}; \bm{\alpha}) } &= \frac{\hat{c} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right)^{-1}}{1 - \hat{c} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right)^{-1}} \\
-\rho_{ji}(\bm{\alpha}) \frac{ m_{ji} }{ m_{ii} } &= \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right) } \\
-- \bm{\alpha}^T W_{ji} + \epsilon_{ji} + \ln \left( \frac{ m_{ji} }{ m_{ii} } \right) &= \ln \left( \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right) } \right) \\
-\epsilon_{ji}^\star &= \bm{\alpha}^T W_{ji} - \ln \left( \frac{ m_{ji} }{ m_{ii} } \right) + \ln \left( \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right) } \right)
+\rho_{ji}(\bm{\alpha}) \frac{ m_{ji} }{ m_{ii} } &= \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right) - 1 } \\
+- \bm{\alpha}^T W_{ji} + \epsilon_{ji} + \ln \left( \frac{ m_{ji} }{ m_{ii} } \right) &= \ln \left( \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right) - 1 } \right) \\
+\epsilon_{ji}^\star &= \bm{\alpha}^T W_{ji} - \ln \left( \frac{ m_{ji} }{ m_{ii} } \right) + \ln \left( \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right) - 1 } \right)
 \end{align*}
+
+## Estimation of military paramters
+
+- simulated method of moments with $\hat{c}$ values in unit interval to get right hand side as data (subtract fixed mil values)
+- Then we have a simple regression of the alphas on these values. Pick $\hat{c}$ to minimize squared war shocks.

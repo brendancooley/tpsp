@@ -13,7 +13,7 @@ import economy
 import policies
 import helpers
 
-# TODO: Japan's policies impossible to reconcile from perspective of revenue maximization...what to do here?
+# TODO: Japan's policies hard to reconcile from perspective of revenue maximization...what to do here?
 
 ### IMPORT DATA ###
 
@@ -69,14 +69,15 @@ theta_dict = dict()
 # theta_dict["b"] = b
 theta_dict["alpha"] = np.array([alpha_0, alpha_1])
 theta_dict["c_hat"] = .2
+theta_dict["sigma_epsilon"] = .1
 
-### TEST B ESTIMATOR ###
+""### TEST B ESTIMATOR ###
 
 m = M / np.ones_like(tau) / N
 m = m.T
 
-# m_diag = np.diagonal(m)
-# m_frac = m / m_diag
+m_diag = np.diagonal(m)
+m_frac = m / m_diag
 # m = np.diag(M)
 
 sigma_epsilon = .1
@@ -88,7 +89,8 @@ pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
 # pecmy.rcv[1]
 b_init = np.repeat(.5, N)
 
-pecmy.epsilon_star(b_init, m, theta_dict, W)
+estars = pecmy.epsilon_star(b_init, m, theta_dict, W)
+weights = pecmy.weights(estars, sigma_epsilon)
 
 pecmy.rcv[0]
 pecmy.rhoM(theta_dict, epsilon) # testing new rho function
