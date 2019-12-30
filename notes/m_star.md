@@ -56,3 +56,9 @@ Change of variables to integrate over values of $\chi$?
 If we know the distribution of $\chi$ then we don't even have to calculate $\epsilon^\star$...just simulate distribution of $\chi$ from epsilons. Then draw from this induced distribution and solve the problem many times. 
 
 Still not sure where to fix $\bm{m}$ values...bounds of integration depend indirectly on these through effect on $\bm{\tau}^\star$
+
+-----
+
+If we drop allocation stage altogether does this help? Just assume all wars are bilateral and all or nothing (war stage is Schlieffen's dream). Then $m$s are data (strengths) and we only have to iterate on stages 2 and 3. I think try this for first cut.
+
+Alternative model that preserves some of what I have now assumes that all troops return home to fight defensive wars...interpretation is a little more strained though I think.
