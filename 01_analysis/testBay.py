@@ -34,9 +34,9 @@ nu = np.genfromtxt(dataPath + 'nu.csv', delimiter=',')
 
 # Military Parameters
 # alpha_0 = 1  # force gained (lost) in offensive operations, regardless of distance
-alpha_1 = .1   # extra force gained (lost) for every log km traveled
-gamma = 1
-c_hat = .2  # relative cost of war
+# alpha_1 = .1   # extra force gained (lost) for every log km traveled
+# gamma = 1
+# c_hat = .2  # relative cost of war
 
 # params = {"beta":beta,"theta":theta,"mu":mu,"nu":nu, "alpha_0":alpha_0, "alpha_1":alpha_1, "c_hat":c_hat, "gamma":gamma}
 params = {"beta":beta,"theta":theta,"mu":mu,"nu":nu, "alpha_1":alpha_1, "c_hat":c_hat, "gamma":gamma}
@@ -69,10 +69,10 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M}  # Note: log 
 
 theta_dict = dict()
 # theta_dict["b"] = b
-theta_dict["alpha"] = alpha_1
+theta_dict["alpha"] = .3
 theta_dict["c_hat"] = .2
 theta_dict["sigma_epsilon"] = .1
-theta_dict["gamma"] = .9
+theta_dict["gamma"] = .5
 
 theta_vec = [i for i in theta_dict.values()]
 
@@ -97,6 +97,7 @@ imp.reload(policies)
 pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
 # pecmy.rcv[1]
 b_init = np.repeat(.5, N)
+pecmy.est_b_grid(b_init, m, theta_dict, epsilon)
 
 out = pecmy.est_loop(b_init, theta_dict)
 
@@ -119,7 +120,6 @@ pecmy.rhoM(theta_dict, epsilon) # testing new rho function
 pecmy.rhoM(theta_dict, 0)
 # positive shocks give better war performance
 # pecmy.est_b_i_grid(0, b_init, m, theta_dict, epsilon)
-pecmy.est_b_grid(b_init, m, theta_dict, epsilon)
 
 # Japan's BR is getting screwed up sometimes with positive m
 # Looks like this is because ROW is extremely threatening to Japan at trial values, hard to satisfy constraint

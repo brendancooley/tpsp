@@ -568,10 +568,11 @@ class policies:
         m_ii = m[i, i]
         m_ji = m[j, i]
 
-        # num_ji = (m_ji * rhoM[j, i]) ** theta_dict["gamma"][0]  # numerator
-        # den_ji = (num_ji + m_ii ** theta_dict["gamma"][0])  # denominator
-        num_ji = (m_ji * rhoM[j, i])  # numerator
-        den_ji = (num_ji + m_ii)  # denominator
+
+        # num_ji = (m_ji * rhoM[j, i])  # numerator
+        # den_ji = (num_ji + m_ii)  # denominator
+        num_ji = (m_ji ** theta_dict["gamma"] * rhoM[j, i])  # numerator
+        den_ji = (num_ji + m_ii ** theta_dict["gamma"])  # denominator
         if den_ji != 0:
             chi_ji = num_ji / den_ji
         else:
@@ -1099,12 +1100,12 @@ class policies:
                 br = self.br(ge_x_sv, b_vec, m, wv_i, id)  # calculate best response
                 br_dict = self.ecmy.rewrap_ge_dict(br)
                 tau_i = br_dict["tau_hat"][id, ]
-                # print("b_idx: " + str(b_idx))
-                # print(tau_i)
+                print("b_idx: " + str(b_idx))
+                print(tau_i)
                 loss = self.loss_tau_i(tau_i)
                 Loss.append(loss)
 
-            print(Loss)
+            # print(Loss)
             # if median value is a valley, return it as estimate
             if Loss[1] <= Loss[2] and Loss[1] <= Loss[0]:
                 stop = True
@@ -1156,7 +1157,7 @@ class policies:
             b_out = np.copy(b_vec)  # current values of b
             # print("b_out: " + str(b_out))
             for id in range(0, self.N):  # update values by iteratively calculating best estimates, holding other values fixed
-                # print("id: " + str(id))
+                print("id: " + str(id))
                 b_star = self.est_b_i_grid(id, b_vec, m, theta_dict, epsilon)
                 b_vec[id] = b_star  # update vector
             # print("b_vec: " + str(b_vec))
@@ -1223,6 +1224,23 @@ class policies:
         return(out)
 
     def est_theta(self, b, m, theta_dict):
+        """Estimate military parameters from constraints
+
+        Parameters
+        ----------
+        b : vector
+            N times 1 vector of preference parameters
+        m : matrix
+            N times N matrix of military allocations
+        theta_dict : dict
+            Starting values of parameters (to calculate weights)
+
+        Returns
+        -------
+        dict
+            Updated parameter values
+
+        """
 
         m_diag = np.diagonal(m)
         m_frac = m / m_diag
@@ -1240,11 +1258,10 @@ class policies:
         # lhs = np.log(m_frac) - np.log( 1 / (chat ** -1 * (rcv - 1) - 1) )
         lhs = np.log( 1 / (theta_dict["c_hat"] ** -1 * (rcv - 1) - 1) )
         lhs = np.nan_to_num(lhs)
-        print("lhs vals: " + str(lhs))
-        # TODO: need to recompute weights at different trial values of c...we're turning off more and more constraints as c_hat increases
+        # print("lhs vals: " + str(lhs))
         Y = lhs.ravel()
         X = np.column_stack((m_frac.ravel(), self.W.ravel()))
-        print("regressors: " + str(X))
+        # print("regressors: " + str(X))
 
         ests = sm.WLS(Y, X, weights=weights.ravel()).fit()
 
@@ -1257,13 +1274,37 @@ class policies:
 
         return(theta_dict)
 
-    def est_loop(self, b_init, theta_dict_init, thres=.1):
+    def est_loop(self, b_init, theta_dict_init, thres=.1, est_c=False, c_step=.1):
+        """Short summary.
+
+        Parameters
+        ----------
+        b_init : type
+            Description of parameter `b_init`.
+        theta_dict_init : type
+            Description of parameter `theta_dict_init`.
+        thres : type
+            Description of parameter `thres`.
+        est_c : type
+            Description of parameter `est_c`.
+        c_step : type
+            Description of parameter `c_step`.
+
+        Returns
+        -------
+        type
+            Description of returned object.
+
+        """
 
         m = self.M / np.ones((self.N, self.N))
         m = m.T
 
         b_k = np.copy(b_init)
         theta_dict_k = copy.deepcopy(theta_dict_init)
+
+        if est_c is True:
+            c_hat_vec = np.arange(0, 1 + c_step, c_step)
 
         diffs = 10
         k = 1
