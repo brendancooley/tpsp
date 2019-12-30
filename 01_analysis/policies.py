@@ -2,6 +2,7 @@ import autograd as ag
 import autograd.numpy as np
 import scipy.optimize as opt
 import scipy.stats as stats
+import statsmodels.api as sm
 import economy
 import csv
 import helpers
@@ -1218,6 +1219,62 @@ class policies:
         out = out / np.sum(out)
 
         return(out)
+
+    def est_theta(self, b, m, theta_dict_init, W, c_step=.1):
+
+        m_diag = np.diagonal(m)
+        m_frac = m / m_diag
+
+        rcv = np.zeros((self.N, self.N))  # empty regime change value matrix (row's value for invading column)
+        for i in range(self.N):
+            b_nearest = helpers.find_nearest(self.b_vals, b[i])
+            rcv[i, ] = self.rcv[b_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
+            # (i's value for invading all others)
+
+        # NOTE: for now, just fix c_hat
+        # NOTE: might be able to estimate this in outer loop...identification on how responsive policies are to threat environment overall
+        # chat_vec = np.arange(c_step, 1.1, c_step)
+        chat_vec = [c_step]
+
+        w_err = []
+        alpha_vec = []
+        sigma_epsilon_vec = []
+
+        for chat in chat_vec:
+
+            theta_dict_init["c_hat"] = chat
+            epsilon_star = self.epsilon_star(b, m, theta_dict_init, W)
+            weights = self.weights(epsilon_star, theta_dict_init["sigma_epsilon"])
+            print("c_hat: " + str(chat))
+            print("----")
+            print("sum weights: " + str(np.sum(weights)))
+            print("----")
+            print(weights)
+            print("----")
+            # NOTE: overfitting problem here...eventually no constraints are active
+
+            # chat = .2
+            lhs = np.log(m_frac) - np.log( 1 / (chat ** -1 * (rcv - 1) - 1) )
+            lhs = np.nan_to_num(lhs)
+            print("lhs vals: " + str(lhs))
+            # TODO: need to recompute weights at different trial values of c...we're turning off more and more constraints as c_hat increases
+            Y = lhs.ravel()
+            # X = sm.add_constant(W.ravel())
+            X = W.ravel()
+            ests = sm.WLS(Y, X, weights=weights.ravel()).fit()
+            w_err.append(np.dot(ests.resid ** 2, weights.ravel()))
+            alpha_vec.append(ests.params)
+            sigma_epsilon_vec.append(np.dot(ests.resid ** 2, weights.ravel()))
+
+        print("w_err: " + str(w_err))
+        print("alpha_vec: " + str(alpha_vec))
+        chat_est = chat_vec[np.argmin(w_err)]
+        print("chat_est: " + str(chat_est))
+
+        # alpha = ests.params()
+        # sigma_epsilon = np.dot(ests.resid ** 2, weights.ravel())
+
+        return(ests)
 
     def br_cor(self, ge_x, m, mpec=True):
         """Best response correspondence. Given current policies, calculates best responses for all govs and returns new ge_x flattened vector.

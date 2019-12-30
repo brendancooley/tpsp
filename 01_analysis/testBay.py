@@ -89,6 +89,14 @@ pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
 # pecmy.rcv[1]
 b_init = np.repeat(.5, N)
 
+out = pecmy.est_theta(b_init, m, theta_dict, W, c_step=.05)
+
+out.summary()
+out.params
+out.bse
+out.resid
+out.fittedvalues
+
 estars = pecmy.epsilon_star(b_init, m, theta_dict, W)
 weights = pecmy.weights(estars, sigma_epsilon)
 

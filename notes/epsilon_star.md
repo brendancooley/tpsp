@@ -37,5 +37,10 @@ Returning to the constraint
 
 ## Estimation of military paramters
 
+\begin{align*}
+\ln \left( \frac{ m_{ji} }{ m_{ii} } \right) - \ln \left( \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right) - 1 } \right) &= \bm{\alpha}^T W_{ji} - \epsilon_{ji}
+\end{align*}
+
 - simulated method of moments with $\hat{c}$ values in unit interval to get right hand side as data (subtract fixed mil values)
 - Then we have a simple regression of the alphas on these values. Pick $\hat{c}$ to minimize squared war shocks.
+- Think $\alpha_0$ can be separately identified from $\hat{c}$ because the latter doesn't enter linearly
