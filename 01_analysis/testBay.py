@@ -69,10 +69,15 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M}  # Note: log 
 
 theta_dict = dict()
 # theta_dict["b"] = b
-theta_dict["alpha"] = np.array([alpha_1])
+theta_dict["alpha"] = alpha_1
 theta_dict["c_hat"] = .2
 theta_dict["sigma_epsilon"] = .1
 theta_dict["gamma"] = .9
+
+theta_vec = [i for i in theta_dict.values()]
+
+np.append(theta_vec, b)
+print(str(theta_dict))
 
 ### TEST B ESTIMATOR ###
 
@@ -93,7 +98,12 @@ pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
 # pecmy.rcv[1]
 b_init = np.repeat(.5, N)
 
-out = pecmy.est_theta(b_init, m, theta_dict, W, c_step=.05)
+out = pecmy.est_loop(b_init, theta_dict)
+
+
+
+
+out = pecmy.est_theta(b_init, m, theta_dict)
 
 out.summary()
 out.params

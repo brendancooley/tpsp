@@ -8,6 +8,7 @@ import csv
 import helpers
 import time
 import os
+import copy
 # import nlopt # NOTE: something wrong with build of this on laptop
 
 # TODO: remove b from theta dict, need to track preferences separately
@@ -593,7 +594,8 @@ class policies:
 
         """
 
-        rhoM = np.exp(-1 * (theta_dict["alpha"][0] + self.W * theta_dict["alpha"][1]) + epsilon)
+        # rhoM = np.exp(-1 * (theta_dict["alpha"][0] + self.W * theta_dict["alpha"][1]) + epsilon)
+        rhoM = np.exp(-1 * (self.W * theta_dict["alpha"]) + epsilon)
 
         return(rhoM)
 
@@ -1092,13 +1094,13 @@ class policies:
                 wv = self.war_vals(b_vec, m, theta_dict, epsilon) # calculate war values
                 ids_j = np.delete(np.arange(self.N), id)
                 wv_i = wv[:,id][ids_j]
-                print("wv_i: " + str(wv_i))
+                # print("wv_i: " + str(wv_i))
 
                 br = self.br(ge_x_sv, b_vec, m, wv_i, id)  # calculate best response
                 br_dict = self.ecmy.rewrap_ge_dict(br)
                 tau_i = br_dict["tau_hat"][id, ]
-                print("b_idx: " + str(b_idx))
-                print(tau_i)
+                # print("b_idx: " + str(b_idx))
+                # print(tau_i)
                 loss = self.loss_tau_i(tau_i)
                 Loss.append(loss)
 
@@ -1152,12 +1154,12 @@ class policies:
 
         while converged is False:
             b_out = np.copy(b_vec)  # current values of b
-            print("b_out: " + str(b_out))
+            # print("b_out: " + str(b_out))
             for id in range(0, self.N):  # update values by iteratively calculating best estimates, holding other values fixed
-                print("id: " + str(id))
+                # print("id: " + str(id))
                 b_star = self.est_b_i_grid(id, b_vec, m, theta_dict, epsilon)
                 b_vec[id] = b_star  # update vector
-            print("b_vec: " + str(b_vec))
+            # print("b_vec: " + str(b_vec))
             if np.all(b_out == b_vec):  # if all values of b_vec constant since last trial, return as estimate
                 converged = True
 
@@ -1220,7 +1222,7 @@ class policies:
 
         return(out)
 
-    def est_theta(self, b, m, theta_dict_init, W, c_step=.1):
+    def est_theta(self, b, m, theta_dict):
 
         m_diag = np.diagonal(m)
         m_frac = m / m_diag
@@ -1231,52 +1233,65 @@ class policies:
             rcv[i, ] = self.rcv[b_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
             # (i's value for invading all others)
 
-        # NOTE: for now, just fix c_hat
-        # NOTE: might be able to estimate this in outer loop...identification on how responsive policies are to threat environment overall
-        # chat_vec = np.arange(c_step, 1.1, c_step)
-        chat_vec = [c_step]
+        epsilon_star = self.epsilon_star(b, m, theta_dict, self.W)
+        weights = self.weights(epsilon_star, theta_dict["sigma_epsilon"])
 
-        w_err = []
-        alpha_vec = []
-        sigma_epsilon_vec = []
+        # chat = .2
+        # lhs = np.log(m_frac) - np.log( 1 / (chat ** -1 * (rcv - 1) - 1) )
+        lhs = np.log( 1 / (theta_dict["c_hat"] ** -1 * (rcv - 1) - 1) )
+        lhs = np.nan_to_num(lhs)
+        print("lhs vals: " + str(lhs))
+        # TODO: need to recompute weights at different trial values of c...we're turning off more and more constraints as c_hat increases
+        Y = lhs.ravel()
+        X = np.column_stack((m_frac.ravel(), self.W.ravel()))
+        print("regressors: " + str(X))
 
-        for chat in chat_vec:
+        ests = sm.WLS(Y, X, weights=weights.ravel()).fit()
 
-            theta_dict_init["c_hat"] = chat
-            epsilon_star = self.epsilon_star(b, m, theta_dict_init, W)
-            weights = self.weights(epsilon_star, theta_dict_init["sigma_epsilon"])
-            print("c_hat: " + str(chat))
-            print("----")
-            print("sum weights: " + str(np.sum(weights)))
-            print("----")
-            print(weights)
-            print("----")
-            # NOTE: overfitting problem here...eventually no constraints are active
-
-            # chat = .2
-            # lhs = np.log(m_frac) - np.log( 1 / (chat ** -1 * (rcv - 1) - 1) )
-            lhs = np.log( 1 / (chat ** -1 * (rcv - 1) - 1) )
-            lhs = np.nan_to_num(lhs)
-            print("lhs vals: " + str(lhs))
-            # TODO: need to recompute weights at different trial values of c...we're turning off more and more constraints as c_hat increases
-            Y = lhs.ravel()
-            X = np.column_stack((m_frac.ravel(), W.ravel()))
-            print("regressors: " + str(X))
-            ests = sm.WLS(Y, X, weights=weights.ravel()).fit()
-            w_err.append(np.dot(ests.resid ** 2, weights.ravel()))
-            alpha_vec.append(ests.params)
-            sigma_epsilon_vec.append(np.dot(ests.resid ** 2, weights.ravel()))
-
-        print("w_err: " + str(w_err))
-        print("gamma: " + str(alpha_vec[0][0]))
-        print("alpha: " + str(-alpha_vec[0][1]))
-        chat_est = chat_vec[np.argmin(w_err)]
-        print("chat_est: " + str(chat_est))
+        theta_dict["gamma"] = ests.params[0]
+        theta_dict["alpha"] = -ests.params[1]
+        theta_dict["sigma_epsilon"] = np.dot(ests.resid ** 2, weights.ravel())
 
         # alpha = ests.params()
         # sigma_epsilon = np.dot(ests.resid ** 2, weights.ravel())
 
-        return(ests)
+        return(theta_dict)
+
+    def est_loop(self, b_init, theta_dict_init, thres=.1):
+
+        m = self.M / np.ones((self.N, self.N))
+        m = m.T
+
+        b_k = np.copy(b_init)
+        theta_dict_k = copy.deepcopy(theta_dict_init)
+
+        diffs = 10
+        k = 1
+        while diffs > thres:
+
+            print("k: " + str(k))
+
+            b_km1 = np.copy(b_k)
+            theta_km1 = np.copy(np.array([i for i in theta_dict_k.values()]))
+            vals_km1 = np.append(b_km1, theta_km1)
+
+            epsilon_k = np.reshape(np.random.normal(0, theta_dict_k["sigma_epsilon"], self.N ** 2), (self.N, self.N))
+            b_k = self.est_b_grid(b_k, m, theta_dict_k, epsilon_k)
+            theta_dict_k = self.est_theta(b_k, m, theta_dict_k)
+
+            print("b_k: " + str(b_k))
+            print("theta_dict_k: " + str(theta_dict_k))
+
+            theta_k = np.array([i for i in theta_dict_k.values()])
+            vals_k = np.append(b_k, theta_k)
+
+            diffs = np.sum((vals_k - vals_km1) ** 2)
+            k += 1
+
+        return(b_k, theta_dict_k)
+
+
+
 
     def br_cor(self, ge_x, m, mpec=True):
         """Best response correspondence. Given current policies, calculates best responses for all govs and returns new ge_x flattened vector.
