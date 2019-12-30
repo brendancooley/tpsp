@@ -11,14 +11,14 @@ In the data, $\hat{\tilde{\tau}} = 1 \implies \hat{G}_j(\hat{\tilde{\tau}}) = 1$
 
 Note that 
 \begin{align*}
-1 - \chi_{ji}(\bm{m}; \bm{\alpha}) &= 1 - \frac{ \rho_{ji}(\bm{\alpha}) m_{ji} }{ \rho_{ji}(\bm{\alpha}) m_{ji} + m_{ii} } \\
-&= \frac{ { \rho_{ji}(\bm{\alpha}) m_{ji} + m_{ii} } }{ { \rho_{ji}(\bm{\alpha}) m_{ji} + m_{ii} } } - \frac{ \rho_{ji}(\bm{\alpha}) m_{ji} }{ \rho_{ji}(\bm{\alpha}) m_{ji} + m_{ii} } \\
-&= \frac{ m_{ii} }{ \rho_{ji}(\bm{\alpha}) m_{ji} + m_{ii} }
+1 - \chi_{ji}(\bm{m}; \bm{\alpha}) &= 1 - \frac{ \rho_{ji}(\bm{\alpha}) m_{ji}^\gamma }{ \rho_{ji}(\bm{\alpha}) m_{ji}^\gamma + m_{ii}^\gamma } \\
+&= \frac{ { \rho_{ji}(\bm{\alpha}) m_{ji}^\gamma + m_{ii}^\gamma } }{ { \rho_{ji}(\bm{\alpha}) m_{ji}^\gamma + m_{ii}^\gamma } } - \frac{ \rho_{ji}(\bm{\alpha}) m_{ji}^\gamma }{ \rho_{ji}(\bm{\alpha}) m_{ji}^\gamma + m_{ii}^\gamma } \\
+&= \frac{ m_{ii}^\gamma }{ \rho_{ji}(\bm{\alpha}) m_{ji}^\gamma + m_{ii}^\gamma }
 \end{align*}
 
 Applying the logit transformation, 
 $$
-\frac{\chi_{ji}(\bm{\alpha}, \bm{W}_{ij}, \epsilon_{ij})}{1 - \chi_{ji}(\bm{\alpha}, \bm{W}_{ij}, \epsilon_{ij})} = \rho_{ji}(\bm{\alpha}) \frac{ m_{ji} }{ m_{ii} }
+\frac{\chi_{ji}(\bm{\alpha}, \bm{W}_{ij}, \epsilon_{ij})}{1 - \chi_{ji}(\bm{\alpha}, \bm{W}_{ij}, \epsilon_{ij})} = \rho_{ji}(\bm{\alpha}) \left( \frac{ m_{ji} }{ m_{ii} } \right)^\gamma
 $$
 
 Recall that 
@@ -30,15 +30,15 @@ Returning to the constraint
 \begin{align*}
 \chi_{ji}(\bm{m}; \bm{\alpha}) &= \hat{c} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right)^{-1} \\
 \frac{ \chi_{ji}(\bm{m}; \bm{\alpha}) }{ 1 - \chi_{ji}(\bm{m}; \bm{\alpha}) } &= \frac{\hat{c} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right)^{-1}}{1 - \hat{c} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right)^{-1}} \\
-\rho_{ji}(\bm{\alpha}) \frac{ m_{ji} }{ m_{ii} } &= \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right) - 1 } \\
-- \bm{\alpha}^T W_{ji} + \epsilon_{ji} + \ln \left( \frac{ m_{ji} }{ m_{ii} } \right) &= \ln \left( \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right) - 1 } \right) \\
-\epsilon_{ji}^\star &= \bm{\alpha}^T W_{ji} - \ln \left( \frac{ m_{ji} }{ m_{ii} } \right) + \ln \left( \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right) - 1 } \right)
+\rho_{ji}(\bm{\alpha}) \left( \frac{ m_{ji} }{ m_{ii} } \right)^\gamma &= \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right) - 1 } \\
+- \bm{\alpha}^T W_{ji} + \epsilon_{ji} + \gamma \ln \left( \frac{ m_{ji} }{ m_{ii} } \right) &= \ln \left( \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right) - 1 } \right) \\
+\epsilon_{ji}^\star &= \bm{\alpha}^T W_{ji} - \gamma \ln \left( \frac{ m_{ji} }{ m_{ii} } \right) + \ln \left( \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right) - 1 } \right)
 \end{align*}
 
 ## Estimation of military paramters
 
 \begin{align*}
-\ln \left( \frac{ m_{ji} }{ m_{ii} } \right) - \ln \left( \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right) - 1 } \right) &= \bm{\alpha}^T W_{ji} - \epsilon_{ji}
+\ln \left( \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right) - 1 } \right) &= \gamma \ln \left( \frac{ m_{ji} }{ m_{ii} } \right) - \bm{\alpha}^T W_{ji} + \epsilon_{ji}
 \end{align*}
 
 - simulated method of moments with $\hat{c}$ values in unit interval to get right hand side as data (subtract fixed mil values)

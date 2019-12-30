@@ -7,6 +7,7 @@ import imp
 import timeit
 import time
 import autograd as ag
+import statsmodels.api as sm
 
 import economy
 # import economyOld
@@ -32,12 +33,13 @@ mu = np.genfromtxt(dataPath + 'mu.csv', delimiter=',')
 nu = np.genfromtxt(dataPath + 'nu.csv', delimiter=',')
 
 # Military Parameters
-alpha_0 = 1  # force gained (lost) in offensive operations, regardless of distance
+# alpha_0 = 1  # force gained (lost) in offensive operations, regardless of distance
 alpha_1 = .1   # extra force gained (lost) for every log km traveled
 gamma = 1
 c_hat = .2  # relative cost of war
 
-params = {"beta":beta,"theta":theta,"mu":mu,"nu":nu, "alpha_0":alpha_0, "alpha_1":alpha_1, "c_hat":c_hat, "gamma":gamma}
+# params = {"beta":beta,"theta":theta,"mu":mu,"nu":nu, "alpha_0":alpha_0, "alpha_1":alpha_1, "c_hat":c_hat, "gamma":gamma}
+params = {"beta":beta,"theta":theta,"mu":mu,"nu":nu, "alpha_1":alpha_1, "c_hat":c_hat, "gamma":gamma}
 
 # welfare weights
 b = np.repeat(0, len(nu))
@@ -56,7 +58,7 @@ ccodes = np.genfromtxt(dataPath + 'ccodes.csv', delimiter=',', dtype="str")
 dists = np.genfromtxt(dataPath + 'mDists.csv', delimiter=',')
 M = np.genfromtxt(dataPath + "milex.csv", delimiter=",")
 
-M = M / np.min(M)  # normalize milex
+M = M / np.max(M)  # normalize milex
 W = np.log(dists+1)
 
 N = len(Y)
@@ -67,18 +69,20 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M}  # Note: log 
 
 theta_dict = dict()
 # theta_dict["b"] = b
-theta_dict["alpha"] = np.array([alpha_0, alpha_1])
+theta_dict["alpha"] = np.array([alpha_1])
 theta_dict["c_hat"] = .2
 theta_dict["sigma_epsilon"] = .1
+theta_dict["gamma"] = .9
 
-""### TEST B ESTIMATOR ###
+### TEST B ESTIMATOR ###
 
-m = M / np.ones_like(tau) / N
+m = M / np.ones_like(tau)
 m = m.T
 
 m_diag = np.diagonal(m)
 m_frac = m / m_diag
 # m = np.diag(M)
+
 
 sigma_epsilon = .1
 epsilon = np.reshape(np.random.normal(0, sigma_epsilon, N ** 2), (N, N))

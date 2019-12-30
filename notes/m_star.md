@@ -59,6 +59,6 @@ Still not sure where to fix $\bm{m}$ values...bounds of integration depend indir
 
 -----
 
-If we drop allocation stage altogether does this help? Just assume all wars are bilateral and all or nothing (war stage is Schlieffen's dream). Then $m$s are data (strengths) and we only have to iterate on stages 2 and 3. I think try this for first cut.
+If we drop allocation stage altogether does this help? Just assume all wars are bilateral and all or nothing (war stage is Schlieffen's dream). Then $m$s are data (strengths) and we only have to iterate on stages 2 and 3. I think try this for first cut. We could easily add gamma back. This setup would also potentially let us estimate strengths.
 
 Alternative model that preserves some of what I have now assumes that all troops return home to fight defensive wars...interpretation is a little more strained though I think.

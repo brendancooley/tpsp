@@ -52,7 +52,7 @@ class policies:
         self.b = b
 
         # power projection parameters
-        self.alpha_0 = params["alpha_0"]
+        # self.alpha_0 = params["alpha_0"]
         self.alpha_1 = params["alpha_1"]
         self.gamma = params["gamma"]
         self.c_hat = params["c_hat"]
@@ -1193,7 +1193,7 @@ class policies:
             rcv[i, ] = self.rcv[b_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
             # (i's value for invading all others)
 
-        out = theta_dict["alpha"][0] + theta_dict["alpha"][1] * W - np.log(m_frac) + np.log( 1 / ( theta_dict["c_hat"] ** -1 * (rcv - 1) - 1 ) )
+        out = theta_dict["alpha"][0] * W - theta_dict["gamma"] * np.log(m_frac) + np.log( 1 / ( theta_dict["c_hat"] ** -1 * (rcv - 1) - 1 ) )
         out[np.isnan(out)] = np.inf
 
         return(out)
@@ -1254,20 +1254,22 @@ class policies:
             # NOTE: overfitting problem here...eventually no constraints are active
 
             # chat = .2
-            lhs = np.log(m_frac) - np.log( 1 / (chat ** -1 * (rcv - 1) - 1) )
+            # lhs = np.log(m_frac) - np.log( 1 / (chat ** -1 * (rcv - 1) - 1) )
+            lhs = np.log( 1 / (chat ** -1 * (rcv - 1) - 1) )
             lhs = np.nan_to_num(lhs)
             print("lhs vals: " + str(lhs))
             # TODO: need to recompute weights at different trial values of c...we're turning off more and more constraints as c_hat increases
             Y = lhs.ravel()
-            # X = sm.add_constant(W.ravel())
-            X = W.ravel()
+            X = np.column_stack((m_frac.ravel(), W.ravel()))
+            print("regressors: " + str(X))
             ests = sm.WLS(Y, X, weights=weights.ravel()).fit()
             w_err.append(np.dot(ests.resid ** 2, weights.ravel()))
             alpha_vec.append(ests.params)
             sigma_epsilon_vec.append(np.dot(ests.resid ** 2, weights.ravel()))
 
         print("w_err: " + str(w_err))
-        print("alpha_vec: " + str(alpha_vec))
+        print("gamma: " + str(alpha_vec[0][0]))
+        print("alpha: " + str(-alpha_vec[0][1]))
         chat_est = chat_vec[np.argmin(w_err)]
         print("chat_est: " + str(chat_est))
 
