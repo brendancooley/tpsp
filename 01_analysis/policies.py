@@ -250,6 +250,7 @@ class policies:
                     rcv_ji = self.rcv[b_j_nearest][j, i]  # get regime change value for j controlling i's policy
                     m_x = self.unwrap_m(m)
                     chi_ji = self.chi(m_x, j, i, theta_dict, rhoM)
+                    # print(chi_ji)
                     if chi_ji != 0:  # calculate war costs
                         c_ji = theta_dict["c_hat"] / chi_ji
                     else:
@@ -567,7 +568,6 @@ class policies:
 
         m_ii = m[i, i]
         m_ji = m[j, i]
-
 
         # num_ji = (m_ji * rhoM[j, i])  # numerator
         # den_ji = (num_ji + m_ii)  # denominator
@@ -992,9 +992,6 @@ class policies:
             thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), -1, True, ), method="SLSQP", options={"maxiter":mxit})
             taustar = thistar_dict["tau_hat"]*self.ecmy.tau
 
-
-
-
         # else:
         #     cons = self.constraints_tau(ge_dict, id, ge=False, mil=True)
         #     bnds = self.bounds()
@@ -1002,7 +999,7 @@ class policies:
 
         return(thistar['x'])
 
-    def loss_tau_i(self, tau_i):
+    def loss_tau(self, tau):
         """Loss function for b estimation, absolute log loss
 
         Parameters
@@ -1017,7 +1014,7 @@ class policies:
 
         """
 
-        out = np.sum(np.abs(np.log(tau_i)))
+        out = np.sum(np.abs(np.log(tau)))
 
         return(out)
 
@@ -1102,7 +1099,7 @@ class policies:
                 tau_i = br_dict["tau_hat"][id, ]
                 print("b_idx: " + str(b_idx))
                 print(tau_i)
-                loss = self.loss_tau_i(tau_i)
+                loss = self.loss_tau(tau_i)
                 Loss.append(loss)
 
             # print(Loss)
@@ -1305,34 +1302,57 @@ class policies:
 
         if est_c is True:
             c_hat_vec = np.arange(0, 1 + c_step, c_step)
+        else:
+            c_hat_vec = [theta_dict_k["c_hat"]]
 
-        diffs = 10
-        k = 1
-        while diffs > thres:
+        Loss = []
+        Theta = []
+        b = []
+        for c_hat in c_hat_vec:
 
-            print("k: " + str(k))
+            theta_dict_k["c_hat"] = c_hat
 
-            b_km1 = np.copy(b_k)
-            theta_km1 = np.copy(np.array([i for i in theta_dict_k.values()]))
-            vals_km1 = np.append(b_km1, theta_km1)
+            diffs = 10
+            k = 1
+            while diffs > thres:
 
-            epsilon_k = np.reshape(np.random.normal(0, theta_dict_k["sigma_epsilon"], self.N ** 2), (self.N, self.N))
-            b_k = self.est_b_grid(b_k, m, theta_dict_k, epsilon_k)
-            theta_dict_k = self.est_theta(b_k, m, theta_dict_k)
+                print("k: " + str(k))
 
-            print("b_k: " + str(b_k))
-            print("theta_dict_k: " + str(theta_dict_k))
+                b_km1 = np.copy(b_k)
+                theta_km1 = np.copy(np.array([i for i in theta_dict_k.values()]))
+                vals_km1 = np.append(b_km1, theta_km1)
 
-            theta_k = np.array([i for i in theta_dict_k.values()])
-            vals_k = np.append(b_k, theta_k)
+                epsilon_k = np.reshape(np.random.normal(0, theta_dict_k["sigma_epsilon"], self.N ** 2), (self.N, self.N))
+                b_k = self.est_b_grid(b_k, m, theta_dict_k, epsilon_k)
+                theta_dict_k = self.est_theta(b_k, m, theta_dict_k)
 
-            diffs = np.sum((vals_k - vals_km1) ** 2)
-            k += 1
+                print("b_k: " + str(b_k))
+                print("theta_dict_k: " + str(theta_dict_k))
 
-        return(b_k, theta_dict_k)
+                theta_k = np.array([i for i in theta_dict_k.values()])
+                vals_k = np.append(b_k, theta_k)
 
+                diffs = np.sum((vals_k - vals_km1) ** 2)
+                k += 1
 
+            Loss_k = 0
+            for id in range(self.N):
+                wv = self.war_vals(b_k, m, theta_dict_k, np.zeros((self.N, self.N))) # calculate war values
+                ids_j = np.delete(np.arange(self.N), id)
+                wv_i = wv[:,id][ids_j]
 
+                br = self.br(ge_x_sv, b_k, m, wv_i, id)  # calculate best response
+                br_dict = self.ecmy.rewrap_ge_dict(br)
+                tau_i = br_dict["tau_hat"][id, ]
+                Loss_k += self.loss_tau(tau_i)
+
+            Loss.append(Loss_k)
+            Theta.append(theta_dict_k)
+            b.append(b_k)
+
+        out_id = np.argmin(Loss)
+
+        return(b[out_id], Theta[out_id], c_hat_vec[out_id])
 
     def br_cor(self, ge_x, m, mpec=True):
         """Best response correspondence. Given current policies, calculates best responses for all govs and returns new ge_x flattened vector.

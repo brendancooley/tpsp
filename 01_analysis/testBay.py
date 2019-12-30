@@ -70,9 +70,9 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M}  # Note: log 
 theta_dict = dict()
 # theta_dict["b"] = b
 theta_dict["alpha"] = .3
-theta_dict["c_hat"] = .2
+theta_dict["c_hat"] = .3
 theta_dict["sigma_epsilon"] = .1
-theta_dict["gamma"] = .5
+theta_dict["gamma"] = 1
 
 theta_vec = [i for i in theta_dict.values()]
 
@@ -98,6 +98,34 @@ pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
 # pecmy.rcv[1]
 b_init = np.repeat(.5, N)
 pecmy.est_b_grid(b_init, m, theta_dict, epsilon)
+
+
+Theta = []
+b = []
+b.append(b_init)
+b.append(b_init)
+
+tau
+pecmy.rcv[.5]
+
+id = 3
+b_test = np.repeat(.5, pecmy.N)
+b_test[id] = .4
+wv_m = pecmy.war_vals(b_test, m, theta_dict, epsilon) # calculate war values
+ids_j = np.delete(np.arange(pecmy.N), id)
+wv_m_i = wv_m[:,id][ids_j]
+wv_m
+wv_m_i
+
+ge_x_sv = np.ones(pecmy.x_len)
+test = pecmy.br(ge_x_sv, b_test, m, wv_m_i, id)
+test
+ccodes
+
+
+pecmy.G_hat(test, b_test)
+
+
 
 out = pecmy.est_loop(b_init, theta_dict)
 
@@ -137,9 +165,7 @@ tau_hat_sv[id] = tau_hat_nft[id] # start slightly above free trade
 ge_dict_sv = pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
 ge_x_sv = pecmy.ecmy.unwrap_ge_dict(ge_dict_sv)
 
-wv_m = pecmy.war_vals(b_test, m, theta_dict, epsilon) # calculate war values
-ids_j = np.delete(np.arange(pecmy.N), id)
-wv_m_i = wv_m[:,id][ids_j]
+
 
 test = pecmy.br(ge_x_sv, b_test, m, wv_m_i, id)
 
