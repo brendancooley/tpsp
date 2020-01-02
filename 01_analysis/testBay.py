@@ -76,33 +76,34 @@ m_frac = m / m_diag
 # m = np.diag(M)
 
 
-sigma_epsilon = .1
-epsilon = np.reshape(np.random.normal(0, sigma_epsilon, N ** 2), (N, N))
-np.fill_diagonal(epsilon, 0)
+# sigma_epsilon = .1
+# epsilon = np.reshape(np.random.normal(0, sigma_epsilon, N ** 2), (N, N))
+# np.fill_diagonal(epsilon, 0)
 
 theta_dict = dict()
 # theta_dict["b"] = b
-theta_dict["alpha"] = .5
-theta_dict["c_hat"] = .1
+theta_dict["alpha"] = .2
+theta_dict["c_hat"] = .2
 theta_dict["sigma_epsilon"] = 1
-theta_dict["gamma"] = .2
+theta_dict["gamma"] = .5
 
 # TODO: check if est_theta is invariant to starting values
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
 b_k1 = np.array([0.3, 1.,  1.,  1.,  0.1, 0.7])
-b_init = np.repeat(.5, N)
-# out = pecmy.est_loop(b_k1, theta_dict)
+out = pecmy.est_loop(b_k1, theta_dict)
+
 # print(pecmy.W)
 # pecmy.rhoM(theta_dict, np.zeros((pecmy.N, pecmy.N)))
 #
 # ccodes
 # m_frac
 # m
+# pecmy.rcv[1]
 pecmy.est_theta(b_k1, m, theta_dict)
-pecmy.rcv[1]
-ccodes
+# pecmy.rcv[1]
+# ccodes
 
 
 # pecmy.est_theta(b_init, m, theta_dict)

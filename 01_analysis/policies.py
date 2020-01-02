@@ -92,7 +92,7 @@ class policies:
         self.clock = 0
         self.minute = 0
 
-    def G_hat(self, x, b, affinity=None, ids=None, sign=1, mpec=True, jitter=True, log=False):
+    def G_hat(self, x, b, ids=None, affinity=None, sign=1, mpec=True, jitter=True, log=False):
         """Calculate changes in government welfare given ge inputs and outputs
 
         Parameters
@@ -975,7 +975,7 @@ class policies:
         b_perturb = .01
 
         cons = self.constraints_tau(ge_dict, id, wv_i, b, m=m, mil=mil)
-        thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), -1, True, ), method="SLSQP", options={"maxiter":mxit})
+        thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit})
 
         thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
         taustar = thistar_dict["tau_hat"]*self.ecmy.tau
@@ -989,7 +989,7 @@ class policies:
             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
             b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
             print(b)
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), -1, True, ), method="SLSQP", options={"maxiter":mxit})
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, None, np.array([id]), -1, True, ), method="SLSQP", options={"maxiter":mxit})
 
         # NOTE: sometimes extreme values due to difficulties in satisfying particular mil constraints
         while np.any(taustar > self.tauMax):
@@ -1218,6 +1218,9 @@ class policies:
             rcv[i, ] = self.rcv[b_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
             # (i's value for invading all others)
 
+        # rcv = rcv.T
+        # print("rcv: " + str(rcv))
+
         out = theta_dict["alpha"] * W - theta_dict["gamma"] * np.log(m_frac) + np.log( 1 / ( theta_dict["c_hat"] ** -1 * (rcv - 1) - 1 ) )
         out[np.isnan(out)] = np.inf
 
@@ -1273,7 +1276,8 @@ class policies:
             b_nearest = helpers.find_nearest(self.b_vals, b[i])
             rcv[i, ] = self.rcv[b_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
             # (i's value for invading all others)
-        rcv = rcv.T
+        # rcv = rcv.T
+        print(rcv)
 
         diffs = 10
         k = 1
@@ -1291,17 +1295,16 @@ class policies:
             # lhs = np.log(m_frac) - np.log( 1 / (chat ** -1 * (rcv - 1) - 1) )
             lhs = np.log( 1 / (theta_dict["c_hat"] ** -1 * (rcv - 1) - 1) )
             lhs = np.nan_to_num(lhs)
-            # print("lhs vals: " + str(lhs))
             Y = lhs.ravel()
             X = np.column_stack((np.log(m_frac.ravel()), self.W.ravel()))
-            print("regressors: " + str(X))
-            print("lhs: " + str(Y))
+            # print("regressors: " + str(X))
+            # print("lhs: " + str(Y))
 
             ests = sm.WLS(Y, X, weights=weights.ravel()).fit()
 
             theta_dict["gamma"] = ests.params[0]
             theta_dict["alpha"] = -ests.params[1]
-            theta_dict["sigma_epsilon"] = np.dot(ests.resid ** 2, weights.ravel())
+            # theta_dict["sigma_epsilon"] = np.dot(ests.resid ** 2, weights.ravel())
 
             theta_k = np.array([i for i in theta_dict.values()])
             theta_km1 = np.array([i for i in theta_dict_last.values()])
@@ -1352,6 +1355,7 @@ class policies:
         Theta = []
         b = []
         for c_hat in c_hat_vec:
+            # TODO search over values for variance
 
             theta_dict_k["c_hat"] = c_hat
 
