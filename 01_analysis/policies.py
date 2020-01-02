@@ -1236,7 +1236,7 @@ class policies:
 
         return(out)
 
-    def est_theta(self, b, m, theta_dict):
+    def est_theta(self, b, m, theta_dict, thres=.0001):
         """Estimate military parameters from constraints
 
         Parameters
@@ -1257,6 +1257,7 @@ class policies:
 
         m_diag = np.diagonal(m)
         m_frac = m / m_diag
+        print(m_frac)
 
         rcv = np.zeros((self.N, self.N))  # empty regime change value matrix (row's value for invading column)
         for i in range(self.N):
@@ -1264,23 +1265,37 @@ class policies:
             rcv[i, ] = self.rcv[b_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
             # (i's value for invading all others)
 
-        epsilon_star = self.epsilon_star(b, m, theta_dict, self.W)
-        weights = self.weights(epsilon_star, theta_dict["sigma_epsilon"])
+        diffs = 10
+        k = 1
+        while diffs > thres:
+            print("k: " + str(k))
+            theta_dict_last = copy.deepcopy(theta_dict)
 
-        # chat = .2
-        # lhs = np.log(m_frac) - np.log( 1 / (chat ** -1 * (rcv - 1) - 1) )
-        lhs = np.log( 1 / (theta_dict["c_hat"] ** -1 * (rcv - 1) - 1) )
-        lhs = np.nan_to_num(lhs)
-        # print("lhs vals: " + str(lhs))
-        Y = lhs.ravel()
-        X = np.column_stack((m_frac.ravel(), self.W.ravel()))
-        # print("regressors: " + str(X))
+            epsilon_star = self.epsilon_star(b, m, theta_dict, self.W)
+            weights = self.weights(epsilon_star, theta_dict["sigma_epsilon"])
+            print(weights)
+            # NOTE: weights are affected by values of theta_dict, iterate on this until convergence
 
-        ests = sm.WLS(Y, X, weights=weights.ravel()).fit()
+            # chat = .2
+            # lhs = np.log(m_frac) - np.log( 1 / (chat ** -1 * (rcv - 1) - 1) )
+            lhs = np.log( 1 / (theta_dict["c_hat"] ** -1 * (rcv - 1) - 1) )
+            lhs = np.nan_to_num(lhs)
+            # print("lhs vals: " + str(lhs))
+            Y = lhs.ravel()
+            X = np.column_stack((np.log(m_frac.ravel()), self.W.ravel()))
+            # print("regressors: " + str(X))
 
-        theta_dict["gamma"] = ests.params[0]
-        theta_dict["alpha"] = -ests.params[1]
-        theta_dict["sigma_epsilon"] = np.dot(ests.resid ** 2, weights.ravel())
+            ests = sm.WLS(Y, X, weights=weights.ravel()).fit()
+
+            theta_dict["gamma"] = ests.params[0]
+            theta_dict["alpha"] = -ests.params[1]
+            theta_dict["sigma_epsilon"] = np.dot(ests.resid ** 2, weights.ravel())
+
+            theta_k = np.array([i for i in theta_dict.values()])
+            theta_km1 = np.array([i for i in theta_dict_last.values()])
+
+            diffs = np.sum((theta_k - theta_km1) ** 2)
+            k += 1
 
         # alpha = ests.params()
         # sigma_epsilon = np.dot(ests.resid ** 2, weights.ravel())

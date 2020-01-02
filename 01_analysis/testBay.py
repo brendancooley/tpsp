@@ -66,12 +66,7 @@ E = Eq + Ex
 
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M}  # Note: log distance (plus 1)
 
-theta_dict = dict()
-# theta_dict["b"] = b
-theta_dict["alpha"] = .3
-theta_dict["c_hat"] = .3
-theta_dict["sigma_epsilon"] = .1
-theta_dict["gamma"] = 1
+
 
 theta_vec = [i for i in theta_dict.values()]
 
@@ -92,10 +87,21 @@ sigma_epsilon = .1
 epsilon = np.reshape(np.random.normal(0, sigma_epsilon, N ** 2), (N, N))
 np.fill_diagonal(epsilon, 0)
 
+theta_dict = dict()
+# theta_dict["b"] = b
+theta_dict["alpha"] = .3
+theta_dict["c_hat"] = .3
+theta_dict["sigma_epsilon"] = .1
+theta_dict["gamma"] = 1
+
 imp.reload(policies)
 pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
+b_k1 = np.array([0.3, 1.,  1.,  1.,  0.1, 0.7])
 b_init = np.repeat(.5, N)
-out = pecmy.est_loop(b_init, theta_dict)
+out = pecmy.est_loop(b_k1, theta_dict)
+
+
+pecmy.est_theta(b_k1, m, theta_dict)
 
 # pecmy.est_theta(b_init, m, theta_dict)
 # pecmy.rcv[1]
