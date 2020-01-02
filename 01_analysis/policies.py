@@ -92,7 +92,7 @@ class policies:
         self.clock = 0
         self.minute = 0
 
-    def G_hat(self, x, b, ids=None, sign=1, mpec=True, jitter=True, log=False):
+    def G_hat(self, x, b, affinity=None, ids=None, sign=1, mpec=True, jitter=True, log=False):
         """Calculate changes in government welfare given ge inputs and outputs
 
         Parameters
@@ -101,6 +101,7 @@ class policies:
             1d numpy array storing flattened ge inputs and outputs. See function for order of values.
         b : vector
             Length N vector of government preference parameters.
+        affinity : matrix
         ids : vector
             ids of governments for which to return welfare changes. Defaults to all.
         sign : scalar
@@ -114,6 +115,9 @@ class policies:
             G changes for selected governments
 
         """
+
+        if affinity is None:
+            affinity = np.zeros((self.N, self.N))
 
         # if len(x) > self.ecmy.ge_x_len:  # convert input vector to ge vars if dealing with full vector
         #     ge_x = self.rewrap_x(x)["ge_x"]
@@ -1014,13 +1018,15 @@ class policies:
 
         return(thistar['x'])
 
-    def loss_tau(self, tau):
+    def loss_tau(self, tau, weights=None):
         """Loss function for b estimation, absolute log loss
 
         Parameters
         ----------
-        tau_i : vector length N
-            i's policies
+        tau_i : vector
+            length N vector of i's policies
+        weights : vector
+            length N vector of weights on loss (most natural thing would be to weight based on gdp)
 
         Returns
         -------
@@ -1028,8 +1034,11 @@ class policies:
             loss
 
         """
+        if weights is None:
+            weights = np.ones(self.N)
+        weights = weights / np.sum(weights)  # normalize
 
-        out = np.sum(np.abs(np.log(tau)))
+        out = np.sum(np.abs(np.log(tau)) * weights)
 
         return(out)
 
@@ -1237,7 +1246,7 @@ class policies:
         return(out)
 
     def est_theta(self, b, m, theta_dict, thres=.0001):
-        """Estimate military parameters from constraints
+        """Estimate military parameters from constraints. Iteratively recalculate parameters and weights until convergence.
 
         Parameters
         ----------
@@ -1264,6 +1273,7 @@ class policies:
             b_nearest = helpers.find_nearest(self.b_vals, b[i])
             rcv[i, ] = self.rcv[b_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
             # (i's value for invading all others)
+        rcv = rcv.T
 
         diffs = 10
         k = 1
@@ -1272,6 +1282,7 @@ class policies:
             theta_dict_last = copy.deepcopy(theta_dict)
 
             epsilon_star = self.epsilon_star(b, m, theta_dict, self.W)
+            print(epsilon_star)
             weights = self.weights(epsilon_star, theta_dict["sigma_epsilon"])
             print(weights)
             # NOTE: weights are affected by values of theta_dict, iterate on this until convergence
@@ -1283,7 +1294,8 @@ class policies:
             # print("lhs vals: " + str(lhs))
             Y = lhs.ravel()
             X = np.column_stack((np.log(m_frac.ravel()), self.W.ravel()))
-            # print("regressors: " + str(X))
+            print("regressors: " + str(X))
+            print("lhs: " + str(Y))
 
             ests = sm.WLS(Y, X, weights=weights.ravel()).fit()
 
@@ -1302,7 +1314,7 @@ class policies:
 
         return(theta_dict)
 
-    def est_loop(self, b_init, theta_dict_init, thres=.1, est_c=False, c_step=.1):
+    def est_loop(self, b_init, theta_dict_init, thres=.001, est_c=False, c_step=.1):
         """Estimate model. For each trial c_hat, iterate over estimates of b and alpha, gamma until convergence. Choose c_hat and associated parameters with lowest loss on predicted policies.
 
         Parameters
@@ -1353,7 +1365,9 @@ class policies:
                 theta_km1 = np.copy(np.array([i for i in theta_dict_k.values()]))
                 vals_km1 = np.append(b_km1, theta_km1)
 
-                epsilon_k = np.reshape(np.random.normal(0, theta_dict_k["sigma_epsilon"], self.N ** 2), (self.N, self.N))
+                # epsilon_k = np.reshape(np.random.normal(0, theta_dict_k["sigma_epsilon"], self.N ** 2), (self.N, self.N))
+                # NOTE: no convergence if we keep tweaking shocks, simulate after we've converged on good starting values
+                epsilon_k = np.zeros((self.N, self.N))
                 b_k = self.est_b_grid(b_k, m, theta_dict_k, epsilon_k)
                 theta_dict_k = self.est_theta(b_k, m, theta_dict_k)
 
@@ -1363,6 +1377,8 @@ class policies:
                 theta_k = np.array([i for i in theta_dict_k.values()])
                 vals_k = np.append(b_k, theta_k)
 
+                print("vals_km1: " + str(vals_km1))
+                print("vals_k: " + str(vals_k))
                 diffs = np.sum((vals_k - vals_km1) ** 2)
                 k += 1
 
@@ -1372,7 +1388,7 @@ class policies:
                 ids_j = np.delete(np.arange(self.N), id)
                 wv_i = wv[:,id][ids_j]
 
-                br = self.br(ge_x_sv, b_k, m, wv_i, id)  # calculate best response
+                br = self.br(np.ones(self.pecmy.x_len), b_k, m, wv_i, id)  # calculate best response
                 br_dict = self.ecmy.rewrap_ge_dict(br)
                 tau_i = br_dict["tau_hat"][id, ]
                 Loss_k += self.loss_tau(tau_i)

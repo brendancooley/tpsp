@@ -54,7 +54,7 @@ Ex = np.genfromtxt(dataPath + 'Ex.csv', delimiter=',')
 r = np.genfromtxt(dataPath + 'r.csv', delimiter=',')
 D = np.genfromtxt(dataPath + 'D.csv', delimiter=',')
 ccodes = np.genfromtxt(dataPath + 'ccodes.csv', delimiter=',', dtype="str")
-dists = np.genfromtxt(dataPath + 'mDists.csv', delimiter=',')
+dists = np.genfromtxt(dataPath + 'cDists.csv', delimiter=',')
 M = np.genfromtxt(dataPath + "milex.csv", delimiter=",")
 
 M = M / np.max(M)  # normalize milex
@@ -65,13 +65,6 @@ N = len(Y)
 E = Eq + Ex
 
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M}  # Note: log distance (plus 1)
-
-
-
-theta_vec = [i for i in theta_dict.values()]
-
-np.append(theta_vec, b)
-print(str(theta_dict))
 
 ### TEST B ESTIMATOR ###
 
@@ -89,19 +82,28 @@ np.fill_diagonal(epsilon, 0)
 
 theta_dict = dict()
 # theta_dict["b"] = b
-theta_dict["alpha"] = .3
-theta_dict["c_hat"] = .3
-theta_dict["sigma_epsilon"] = .1
-theta_dict["gamma"] = 1
+theta_dict["alpha"] = .5
+theta_dict["c_hat"] = .1
+theta_dict["sigma_epsilon"] = 1
+theta_dict["gamma"] = .2
+
+# TODO: check if est_theta is invariant to starting values
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
 b_k1 = np.array([0.3, 1.,  1.,  1.,  0.1, 0.7])
 b_init = np.repeat(.5, N)
-out = pecmy.est_loop(b_k1, theta_dict)
-
-
+# out = pecmy.est_loop(b_k1, theta_dict)
+# print(pecmy.W)
+# pecmy.rhoM(theta_dict, np.zeros((pecmy.N, pecmy.N)))
+#
+# ccodes
+# m_frac
+# m
 pecmy.est_theta(b_k1, m, theta_dict)
+pecmy.rcv[1]
+ccodes
+
 
 # pecmy.est_theta(b_init, m, theta_dict)
 # pecmy.rcv[1]
