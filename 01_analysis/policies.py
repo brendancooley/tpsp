@@ -150,13 +150,12 @@ class policies:
         Ghat = Uhat ** (1 - b) * ge_dict["r_hat"] ** b
 
         Ghat_a = affinity * Ghat
-
         Ghat_out = Ghat + np.sum(Ghat_a, axis=1)
 
         if log==False:
-            return(Ghat[ids]*sign)
+            return(Ghat_out[ids]*sign)
         else:
-            return(np.log(Ghat[ids])*sign)
+            return(np.log(Ghat_out[ids])*sign)
 
     def tau_diffs(self, tau_hat_x, tau_hat, id):
         """Short summary.
