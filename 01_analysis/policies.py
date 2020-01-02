@@ -64,6 +64,7 @@ class policies:
 
         self.tauMin = 1  # enforce lower bound on policies
         self.tauMax = 15
+        self.tau_nft = 1.25  # where to begin search for best response
 
         self.hhat_len = self.N**2+4*self.N
         self.tauj_len = self.N**2-self.N
@@ -993,7 +994,7 @@ class policies:
             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
             b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
             print(b)
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, None, np.array([id]), -1, True, ), method="SLSQP", options={"maxiter":mxit})
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit})
 
         # NOTE: sometimes extreme values due to difficulties in satisfying particular mil constraints
         while np.any(taustar > self.tauMax):
@@ -1012,7 +1013,7 @@ class policies:
             ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
             print(ge_dict)
             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), -1, True, ), method="SLSQP", options={"maxiter":mxit})
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit})
             taustar = thistar_dict["tau_hat"]*self.ecmy.tau
 
         # else:
@@ -1084,7 +1085,7 @@ class policies:
         ub = False
 
         # starting values (nearft)
-        tau_hat_nft = 1.1 / self.ecmy.tau
+        tau_hat_nft = self.tau_nft / self.ecmy.tau
         np.fill_diagonal(tau_hat_nft, 1)
         ge_x_sv = np.ones(self.x_len)
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x_sv)
@@ -1339,7 +1340,7 @@ class policies:
 
         Returns
         -------
-        vec, dict, float
+        dict
             Estimates for preference parameters, military parameters, and war costs (respectively)
 
         """
@@ -1402,7 +1403,7 @@ class policies:
                 Loss_k += self.loss_tau(tau_i)
 
             Loss.append(Loss_k)
-            Theta.append(theta_dict_k)
+            Theta.append(theta_k)  # vector
             b.append(b_k)
 
             print("c_hat: " + str(c_hat))
@@ -1412,7 +1413,9 @@ class policies:
 
         out_id = np.argmin(Loss)
 
-        return(b[out_id], Theta[out_id], c_hat_vec[out_id])
+        out_dict = {"b":b[out_id], "Theta":Theta[out_id], "c_hat": c_hat_vec["out_id"]}
+
+        return(out_dict)
 
     def br_cor(self, ge_x, m, mpec=True):
         """Best response correspondence. Given current policies, calculates best responses for all govs and returns new ge_x flattened vector.

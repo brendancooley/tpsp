@@ -42,7 +42,7 @@ Ex = np.genfromtxt(dataPath + 'Ex.csv', delimiter=',')
 r = np.genfromtxt(dataPath + 'r.csv', delimiter=',')
 D = np.genfromtxt(dataPath + 'D.csv', delimiter=',')
 ccodes = np.genfromtxt(dataPath + 'ccodes.csv', delimiter=',', dtype="str")
-dists = np.genfromtxt(dataPath + 'mDists.csv', delimiter=',')
+dists = np.genfromtxt(dataPath + 'cDists.csv', delimiter=',')
 M = np.genfromtxt(dataPath + "milex.csv", delimiter=",")
 
 M = M / np.min(M)  # normalize milex
@@ -76,3 +76,20 @@ G_hat_ft = pecmy.G_hat(ge_x_ft, np.zeros(pecmy.N))
 
 # export free trade vals (b=0)
 # np.savetxt("results/Ghatft.csv", G_hat_ft, delimiter=",")
+
+theta_dict_init = dict()
+# theta_dict["b"] = b
+theta_dict_init["alpha"] = .5
+theta_dict_init["c_hat"] = .2
+theta_dict_init["sigma_epsilon"] = 1
+theta_dict_init["gamma"] = .1
+
+b_init = np.repeat(.5, pecmy.N)
+
+out_dict = pecmy.est_loop(b_init, theta_dict_init)
+# out_dict = pecmy.est_loop(b_init, theta_dict_init, est_c=True)
+
+with open(resultsPath + 'estimates.csv', 'w', newline="") as csv_file:
+    writer = csv.writer(csv_file)
+    for key, value in out_dict.items():
+       writer.writerow([key, value])

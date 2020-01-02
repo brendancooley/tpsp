@@ -90,12 +90,37 @@ theta_dict["gamma"] = .1
 imp.reload(policies)
 pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
 b_k1 = np.array([.7, 0, .5, .2, 1, .3])
+
 out = pecmy.est_loop(b_k1, theta_dict)
+
+
+# TODO: test affinity shocks on nonzero other values
+id = 5
+b_test = np.array([0.3, 1.,  1., 1.,  0.1, 0.4])
+epsilon = np.zeros((pecmy.N, pecmy.N))
+wv_m = pecmy.war_vals(b_test, m, theta_dict, epsilon) # calculate war values
+ids_j = np.delete(np.arange(pecmy.N), id)
+wv_m_i = wv_m[:,id][ids_j]
+
+tau_hat_nft = 1.25 / pecmy.ecmy.tau
+np.fill_diagonal(tau_hat_nft, 1)
+ge_x_sv = np.ones(pecmy.x_len)
+ge_dict = pecmy.ecmy.rewrap_ge_dict(ge_x_sv)
+tau_hat_sv = ge_dict["tau_hat"]
+tau_hat_sv[id] = tau_hat_nft[id] # start slightly above free trade
+ge_dict_sv = pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
+ge_x_sv = pecmy.ecmy.unwrap_ge_dict(ge_dict_sv)
+
+test = pecmy.br(ge_x_sv, b_test, m, wv_m_i, id)
+test
+# wv_m
+# wv_m_i
+
 
 # pecmy.ecmy.tau * 4.5
 
 # print(pecmy.W)
-# pecmy.rhoM(theta_dict, np.zeros((pecmy.N, pecmy.N)))
+pecmy.rhoM(theta_dict, np.zeros((pecmy.N, pecmy.N)))
 #
 # ccodes
 # m_frac
