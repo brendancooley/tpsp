@@ -82,17 +82,17 @@ m_frac = m / m_diag
 
 theta_dict = dict()
 # theta_dict["b"] = b
-theta_dict["alpha"] = .2
+theta_dict["alpha"] = .5
 theta_dict["c_hat"] = .2
 theta_dict["sigma_epsilon"] = 1
-theta_dict["gamma"] = .5
-
-# TODO: check if est_theta is invariant to starting values
+theta_dict["gamma"] = .1
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
-b_k1 = np.array([0.3, 1.,  1.,  1.,  0.1, 0.7])
+b_k1 = np.array([.7, 0, .5, .2, 1, .3])
 out = pecmy.est_loop(b_k1, theta_dict)
+
+# pecmy.ecmy.tau * 4.5
 
 # print(pecmy.W)
 # pecmy.rhoM(theta_dict, np.zeros((pecmy.N, pecmy.N)))

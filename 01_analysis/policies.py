@@ -63,7 +63,7 @@ class policies:
         # self.rhoM = self.rho()  # loss of strength gradient
 
         self.tauMin = 1  # enforce lower bound on policies
-        self.tauMax = 20
+        self.tauMax = 15
 
         self.hhat_len = self.N**2+4*self.N
         self.tauj_len = self.N**2-self.N
@@ -102,6 +102,7 @@ class policies:
         b : vector
             Length N vector of government preference parameters.
         affinity : matrix
+            N times N matrix of affinity shocks
         ids : vector
             ids of governments for which to return welfare changes. Defaults to all.
         sign : scalar
@@ -147,6 +148,10 @@ class policies:
 
         Uhat = self.ecmy.U_hat(ge_dict)
         Ghat = Uhat ** (1 - b) * ge_dict["r_hat"] ** b
+
+        Ghat_a = affinity * Ghat
+
+        Ghat_out = Ghat + np.sum(Ghat_a, axis=1)
 
         if log==False:
             return(Ghat[ids]*sign)
@@ -1317,7 +1322,7 @@ class policies:
 
         return(theta_dict)
 
-    def est_loop(self, b_init, theta_dict_init, thres=.001, est_c=False, c_step=.1):
+    def est_loop(self, b_init, theta_dict_init, thres=.01, est_c=False, c_step=.1):
         """Estimate model. For each trial c_hat, iterate over estimates of b and alpha, gamma until convergence. Choose c_hat and associated parameters with lowest loss on predicted policies.
 
         Parameters
@@ -1347,7 +1352,7 @@ class policies:
         theta_dict_k = copy.deepcopy(theta_dict_init)
 
         if est_c is True:
-            c_hat_vec = np.arange(0, 1 + c_step, c_step)
+            c_hat_vec = np.arange(c_step, 1 + c_step, c_step)
         else:
             c_hat_vec = [theta_dict_k["c_hat"]]
 
@@ -1355,7 +1360,7 @@ class policies:
         Theta = []
         b = []
         for c_hat in c_hat_vec:
-            # TODO search over values for variance
+            # TODO search over values for war shock variance
 
             theta_dict_k["c_hat"] = c_hat
 
@@ -1392,7 +1397,7 @@ class policies:
                 ids_j = np.delete(np.arange(self.N), id)
                 wv_i = wv[:,id][ids_j]
 
-                br = self.br(np.ones(self.pecmy.x_len), b_k, m, wv_i, id)  # calculate best response
+                br = self.br(np.ones(self.x_len), b_k, m, wv_i, id)  # calculate best response
                 br_dict = self.ecmy.rewrap_ge_dict(br)
                 tau_i = br_dict["tau_hat"][id, ]
                 Loss_k += self.loss_tau(tau_i)
@@ -1400,6 +1405,11 @@ class policies:
             Loss.append(Loss_k)
             Theta.append(theta_dict_k)
             b.append(b_k)
+
+            print("c_hat: " + str(c_hat))
+            print("Loss: " + str(Loss_k))
+            print("b:" + str(b_k))
+            print("theta: " + str(theta_dict_k))
 
         out_id = np.argmin(Loss)
 
