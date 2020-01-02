@@ -14,7 +14,6 @@ import economy
 import policies
 import helpers
 
-# TODO: Japan's policies hard to reconcile from perspective of revenue maximization...what to do here?
 
 ### IMPORT DATA ###
 
@@ -34,9 +33,9 @@ nu = np.genfromtxt(dataPath + 'nu.csv', delimiter=',')
 
 # Military Parameters
 # alpha_0 = 1  # force gained (lost) in offensive operations, regardless of distance
-# alpha_1 = .1   # extra force gained (lost) for every log km traveled
-# gamma = 1
-# c_hat = .2  # relative cost of war
+alpha_1 = .1   # extra force gained (lost) for every log km traveled
+gamma = 1
+c_hat = .2  # relative cost of war
 
 # params = {"beta":beta,"theta":theta,"mu":mu,"nu":nu, "alpha_0":alpha_0, "alpha_1":alpha_1, "c_hat":c_hat, "gamma":gamma}
 params = {"beta":beta,"theta":theta,"mu":mu,"nu":nu, "alpha_1":alpha_1, "c_hat":c_hat, "gamma":gamma}
@@ -95,10 +94,13 @@ np.fill_diagonal(epsilon, 0)
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
-# pecmy.rcv[1]
 b_init = np.repeat(.5, N)
-pecmy.est_b_grid(b_init, m, theta_dict, epsilon)
+out = pecmy.est_loop(b_init, theta_dict)
 
+# pecmy.est_theta(b_init, m, theta_dict)
+# pecmy.rcv[1]
+# pecmy.est_b_grid(b_init, m, theta_dict, epsilon)
+# np.any(np.array([-1, 1]) < 0)
 
 Theta = []
 b = []
@@ -110,16 +112,18 @@ pecmy.rcv[.5]
 
 id = 3
 b_test = np.repeat(.5, pecmy.N)
-b_test[id] = .4
+b_test[id] = .7
 wv_m = pecmy.war_vals(b_test, m, theta_dict, epsilon) # calculate war values
 ids_j = np.delete(np.arange(pecmy.N), id)
 wv_m_i = wv_m[:,id][ids_j]
-wv_m
-wv_m_i
+# wv_m
+# wv_m_i
 
 ge_x_sv = np.ones(pecmy.x_len)
 test = pecmy.br(ge_x_sv, b_test, m, wv_m_i, id)
 test
+
+np.random.choice([1, -1])
 ccodes
 
 
@@ -127,7 +131,6 @@ pecmy.G_hat(test, b_test)
 
 
 
-out = pecmy.est_loop(b_init, theta_dict)
 
 
 

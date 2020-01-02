@@ -863,6 +863,8 @@ class policies:
         vector
             Flattened array of ge inputs and outputs at optimal values for j choosing i's policies
 
+
+        NOTE: seems a lot more stable after updating scipy to 1.3.2
         """
 
         ge_x = np.copy(ge_x)
@@ -938,6 +940,8 @@ class policies:
         ----------
         ge_x : vector
             1d numpy array storing flattened ge inputs and outputs. See function for order of values.
+        b : vector
+            N times 1 vector of preference parameters
         m : matrix
             N times N matrix of military deployments.
         wv_i : vector
@@ -956,28 +960,34 @@ class policies:
 
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
         tau_hat_ft = 1 / self.ecmy.tau
+        b = np.copy(b)
 
         # initialize starting values of ge_x to equilibrium
         # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
         # ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
         # NOTE: don't want to repeat this for every iteration of br
 
-        mxit = 1000
+        mxit = 500
+        b_perturb = .01
 
         cons = self.constraints_tau(ge_dict, id, wv_i, b, m=m, mil=mil)
         thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), -1, True, ), method="SLSQP", options={"maxiter":mxit})
 
+        thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
+        taustar = thistar_dict["tau_hat"]*self.ecmy.tau
         # try new starting values if we don't converge
-        while thistar['success'] is False:
+        while thistar['success'] is False or np.any(np.isnan(thistar['x'])) or np.any(thistar_dict["tau_hat"] < 0):
             print("br unsuccessful, iterating...")
             ge_dict["tau_hat"][id, ] += .1  # bump up starting taus
             ge_dict["tau_hat"][id, id] = 1
             ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
+            print(ge_dict)
             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
+            b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
+            print(b)
             thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), -1, True, ), method="SLSQP", options={"maxiter":mxit})
 
-        thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
-        taustar = thistar_dict["tau_hat"]*self.ecmy.tau
+        # NOTE: sometimes extreme values due to difficulties in satisfying particular mil constraints
         while np.any(taustar > self.tauMax):
             print("extreme tau values found, iterating...")
             print("taustar[id]: " + str(taustar[id]))
@@ -987,8 +997,13 @@ class policies:
             # print(ge_dict["tau_hat"] * self.ecmy.tau)
             # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
             # ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-            b[id] += .01  # jitter b value
-            print("b: " + str(b[id]))
+            b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
+            ge_dict = self.ecmy.geq_solve(tau_hat_ft, ge_dict["D_hat"])
+            ge_dict["tau_hat"][id, ] += .1  # bump up starting taus
+            ge_dict["tau_hat"][id, id] = 1
+            ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
+            print(ge_dict)
+            ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
             thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), -1, True, ), method="SLSQP", options={"maxiter":mxit})
             taustar = thistar_dict["tau_hat"]*self.ecmy.tau
 
@@ -1157,6 +1172,7 @@ class policies:
                 print("id: " + str(id))
                 b_star = self.est_b_i_grid(id, b_vec, m, theta_dict, epsilon)
                 b_vec[id] = b_star  # update vector
+                print("b_vec: " + str(b_vec))
             # print("b_vec: " + str(b_vec))
             if np.all(b_out == b_vec):  # if all values of b_vec constant since last trial, return as estimate
                 converged = True
@@ -1193,7 +1209,7 @@ class policies:
             rcv[i, ] = self.rcv[b_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
             # (i's value for invading all others)
 
-        out = theta_dict["alpha"][0] * W - theta_dict["gamma"] * np.log(m_frac) + np.log( 1 / ( theta_dict["c_hat"] ** -1 * (rcv - 1) - 1 ) )
+        out = theta_dict["alpha"] * W - theta_dict["gamma"] * np.log(m_frac) + np.log( 1 / ( theta_dict["c_hat"] ** -1 * (rcv - 1) - 1 ) )
         out[np.isnan(out)] = np.inf
 
         return(out)
@@ -1272,25 +1288,25 @@ class policies:
         return(theta_dict)
 
     def est_loop(self, b_init, theta_dict_init, thres=.1, est_c=False, c_step=.1):
-        """Short summary.
+        """Estimate model. For each trial c_hat, iterate over estimates of b and alpha, gamma until convergence. Choose c_hat and associated parameters with lowest loss on predicted policies.
 
         Parameters
         ----------
-        b_init : type
-            Description of parameter `b_init`.
-        theta_dict_init : type
-            Description of parameter `theta_dict_init`.
-        thres : type
-            Description of parameter `thres`.
-        est_c : type
-            Description of parameter `est_c`.
-        c_step : type
-            Description of parameter `c_step`.
+        b_init : vector
+            N times 1 vector of starting values for preference parameters
+        theta_dict_init : dict
+            Dictionary of starting values for gamma, alpha
+        thres : float
+            Convergence criterion, stop iteration when sum of squared changes in parameter values is less than thres
+        est_c : bool
+            if True then search over vector of possible c_hat values, if not then fix at initial value
+        c_step : float
+            step size for c estimation
 
         Returns
         -------
-        type
-            Description of returned object.
+        vec, dict, float
+            Estimates for preference parameters, military parameters, and war costs (respectively)
 
         """
 
