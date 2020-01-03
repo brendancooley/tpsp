@@ -1023,6 +1023,19 @@ class policies:
 
         return(thistar['x'])
 
+    def nft_sv(self, id):
+
+        tau_hat_nft = self.tau_nft / self.ecmy.tau
+        np.fill_diagonal(tau_hat_nft, 1)
+        ge_x_sv = np.ones(self.x_len)
+        ge_dict = self.ecmy.rewrap_ge_dict(ge_x_sv)
+        tau_hat_sv = ge_dict["tau_hat"]
+        tau_hat_sv[id] = tau_hat_nft[id] # start slightly above free trade
+        ge_dict_sv = self.ecmy.geq_solve(tau_hat_sv, np.ones(self.N))
+        ge_x_sv = self.ecmy.unwrap_ge_dict(ge_dict_sv)
+
+        return(ge_x_sv)
+
     def loss_tau(self, tau, weights=None):
         """Loss function for b estimation, absolute log loss
 
@@ -1085,14 +1098,7 @@ class policies:
         ub = False
 
         # starting values (nearft)
-        tau_hat_nft = self.tau_nft / self.ecmy.tau
-        np.fill_diagonal(tau_hat_nft, 1)
-        ge_x_sv = np.ones(self.x_len)
-        ge_dict = self.ecmy.rewrap_ge_dict(ge_x_sv)
-        tau_hat_sv = ge_dict["tau_hat"]
-        tau_hat_sv[id] = tau_hat_nft[id] # start slightly above free trade
-        ge_dict_sv = self.ecmy.geq_solve(tau_hat_sv, np.ones(self.N))
-        ge_x_sv = self.ecmy.unwrap_ge_dict(ge_dict_sv)
+        ge_x_sv = self.nft_sv(id)
 
         while stop is False:
 
@@ -1393,11 +1399,16 @@ class policies:
 
             Loss_k = 0
             for id in range(self.N):
+
+                # war values
                 wv = self.war_vals(b_k, m, theta_dict_k, np.zeros((self.N, self.N))) # calculate war values
                 ids_j = np.delete(np.arange(self.N), id)
                 wv_i = wv[:,id][ids_j]
 
-                br = self.br(np.ones(self.x_len), b_k, m, wv_i, id)  # calculate best response
+                # starting values
+                ge_x_sv = self.nft_sv(id)
+
+                br = self.br(ge_x_sv, b_k, m, wv_i, id)  # calculate best response
                 br_dict = self.ecmy.rewrap_ge_dict(br)
                 tau_i = br_dict["tau_hat"][id, ]
                 Loss_k += self.loss_tau(tau_i)
