@@ -5,10 +5,11 @@ import scipy.stats as stats
 import statsmodels.api as sm
 import economy
 import csv
-import helpers
+import helpers_tpsp as hp
 import time
 import os
 import copy
+import multiprocessing as mp
 # import nlopt # NOTE: something wrong with build of this on laptop
 
 # TODO: remove b from theta dict, need to track preferences separately
@@ -255,7 +256,7 @@ class policies:
             for j in range(self.N):
                 if i != j:
                     b_j = b[j]
-                    b_j_nearest = helpers.find_nearest(self.b_vals, b_j)
+                    b_j_nearest = hp.find_nearest(self.b_vals, b_j)
                     rcv_ji = self.rcv[b_j_nearest][j, i]  # get regime change value for j controlling i's policy
                     m_x = self.unwrap_m(m)
                     chi_ji = self.chi(m_x, j, i, theta_dict, rhoM)
@@ -572,6 +573,8 @@ class policies:
             probability j wins offensive war against i
 
         """
+
+        # TODO: make sure this is bounded above at 1 and below at zero
 
         m = self.rewrap_m(m_x)
 
@@ -1103,7 +1106,7 @@ class policies:
         while stop is False:
 
             # first
-            idx_first = helpers.which_nearest(self.b_vals, b)
+            idx_first = hp.which_nearest(self.b_vals, b)
             # start away from corners
             if idx_first == len(self.b_vals) - 1:
                 idx_first -= 1
@@ -1161,7 +1164,7 @@ class policies:
 
         return(b)
 
-    def est_b_grid(self, b_sv, m, theta_dict, epsilon):
+    def est_b_grid(self, b_sv, m, theta_dict, epsilon, thres=.01):
         """Estimate vector of b values through grid search
 
         Parameters
@@ -1174,6 +1177,7 @@ class policies:
             Dictionary storing values of military paramters
         epsilon : matrix
             N times N matrix of war shocks
+        thres : threshold for concluding search
 
         Returns
         -------
@@ -1194,7 +1198,7 @@ class policies:
                 b_vec[id] = b_star  # update vector
                 print("b_vec: " + str(b_vec))
             # print("b_vec: " + str(b_vec))
-            if np.all(b_out == b_vec):  # if all values of b_vec constant since last trial, return as estimate
+            if np.sum((b_vec - b_out) ** 2) < thres:  # if change in values less than threshold then terminate search
                 converged = True
 
         return(b_vec)
@@ -1225,7 +1229,7 @@ class policies:
 
         rcv = np.zeros((self.N, self.N))  # empty regime change value matrix (row's value for invading column)
         for i in range(self.N):
-            b_nearest = helpers.find_nearest(self.b_vals, b[i])
+            b_nearest = hp.find_nearest(self.b_vals, b[i])
             rcv[i, ] = self.rcv[b_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
             # (i's value for invading all others)
 
@@ -1284,7 +1288,7 @@ class policies:
 
         rcv = np.zeros((self.N, self.N))  # empty regime change value matrix (row's value for invading column)
         for i in range(self.N):
-            b_nearest = helpers.find_nearest(self.b_vals, b[i])
+            b_nearest = hp.find_nearest(self.b_vals, b[i])
             rcv[i, ] = self.rcv[b_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
             # (i's value for invading all others)
         # rcv = rcv.T
@@ -1328,7 +1332,7 @@ class policies:
 
         return(theta_dict)
 
-    def est_loop(self, b_init, theta_dict_init, thres=.01, est_c=False, c_step=.1):
+    def est_loop(self, b_init, theta_dict_init, thres=.01, est_c=False, c_step=.1, P=1, epsilon_zeros=True):
         """Estimate model. For each trial c_hat, iterate over estimates of b and alpha, gamma until convergence. Choose c_hat and associated parameters with lowest loss on predicted policies.
 
         Parameters
@@ -1343,6 +1347,10 @@ class policies:
             if True then search over vector of possible c_hat values, if not then fix at initial value
         c_step : float
             step size for c estimation
+        P : int
+            number of epsilons to draw
+        epsilon_zeros : bool
+            force epsilon to zero
 
         Returns
         -------
@@ -1354,79 +1362,130 @@ class policies:
         m = self.M / np.ones((self.N, self.N))
         m = m.T
 
-        b_k = np.copy(b_init)
-        theta_dict_k = copy.deepcopy(theta_dict_init)
-
         if est_c is True:
             c_hat_vec = np.arange(c_step, 1 + c_step, c_step)
         else:
-            c_hat_vec = [theta_dict_k["c_hat"]]
+            c_hat_vec = [theta_dict_init["c_hat"]]
 
         Loss = []
-        Theta = []
         b = []
+        alpha = []
+        gamma = []
         for c_hat in c_hat_vec:
-            # TODO search over values for war shock variance
 
-            theta_dict_k["c_hat"] = c_hat
+            theta_dict_init["c_hat"] = c_hat
 
-            diffs = 10
-            k = 1
-            while diffs > thres:
+            Loss_c = []
+            b_c = []
+            alpha_c = []
+            gamma_c = []
 
-                print("k: " + str(k))
+            epsilon = []
+            for p in range(P):
+                if epsilon_zeros is True:
+                    epsilon_p = np.zeros((self.N, self.N))
+                else:
+                    epsilon_p = np.reshape(np.random.normal(0, theta_dict_k["sigma_epsilon"], self.N ** 2), (self.N, self.N))
+                epsilon.append(epsilon_p)
 
-                b_km1 = np.copy(b_k)
-                theta_km1 = np.copy(np.array([i for i in theta_dict_k.values()]))
-                vals_km1 = np.append(b_km1, theta_km1)
+            # pool = mp.Pool(mp.cpu_count())
+            # for e in epsilon:
+            #     pool.apply_async(self.est_loop_interior, args=(e, b_init, theta_dict_init, m, b_c, alpha_c, gamma_c, Loss_c))
+            # pool.close()
+            # pool.join()
+            for e in epsilon:
+                self.est_loop_interior(e, b_init, theta_dict_init, m, b_c, alpha_c, gamma_c, Loss_c)
 
-                # epsilon_k = np.reshape(np.random.normal(0, theta_dict_k["sigma_epsilon"], self.N ** 2), (self.N, self.N))
-                # NOTE: no convergence if we keep tweaking shocks, simulate after we've converged on good starting values
-                epsilon_k = np.zeros((self.N, self.N))
-                b_k = self.est_b_grid(b_k, m, theta_dict_k, epsilon_k)
-                theta_dict_k = self.est_theta(b_k, m, theta_dict_k)
+            print(Loss_c)
+            print(b_c)
+            print(alpha_c)
+            print(gamma_c)
 
-                print("b_k: " + str(b_k))
-                print("theta_dict_k: " + str(theta_dict_k))
-
-                theta_k = np.array([i for i in theta_dict_k.values()])
-                vals_k = np.append(b_k, theta_k)
-
-                print("vals_km1: " + str(vals_km1))
-                print("vals_k: " + str(vals_k))
-                diffs = np.sum((vals_k - vals_km1) ** 2)
-                k += 1
-
-            Loss_k = 0
-            for id in range(self.N):
-
-                # war values
-                wv = self.war_vals(b_k, m, theta_dict_k, np.zeros((self.N, self.N))) # calculate war values
-                ids_j = np.delete(np.arange(self.N), id)
-                wv_i = wv[:,id][ids_j]
-
-                # starting values
-                ge_x_sv = self.nft_sv(id)
-
-                br = self.br(ge_x_sv, b_k, m, wv_i, id)  # calculate best response
-                br_dict = self.ecmy.rewrap_ge_dict(br)
-                tau_i = br_dict["tau_hat"][id, ]
-                Loss_k += self.loss_tau(tau_i)
-
-            Loss.append(Loss_k)
-            Theta.append(theta_k)  # vector
-            b.append(b_k)
-
-            print("c_hat: " + str(c_hat))
-            print("Loss: " + str(Loss_k))
-            print("b:" + str(b_k))
-            print("theta: " + str(theta_dict_k))
+            b.append(np.mean(b_c, axis=0))
+            alpha.append(np.mean(alpha_c))
+            gamma.append(np.mean(gamma_c))
+            Loss.append(np.mean(Loss_c))
 
         out_id = np.argmin(Loss)
 
-        out_dict = {"b":b[out_id], "Theta":Theta[out_id], "c_hat": c_hat_vec["out_id"]}
+        out_dict = {"b":b[out_id], "alpha":alpha[out_id], "gamma":gamma[out_id], "c_hat":c_hat_vec[out_id], "sigma_epsilon":theta_dict_init["sigma_epsilon"]}
 
         return(out_dict)
+
+    def est_loop_interior(self, epsilon, b_init, theta_dict_init, m, b, alpha, gamma, Loss, thres=.01):
+        """For fixed values of epsilon and c_hat, estimate preference parameters and alpha, gamma
+
+        Parameters
+        ----------
+        b_init : vector
+            N times 1 vector of initial preference parameters
+        theta_dict_init : dict
+            Dictionary storing values of alpha, gamma, c_hat, sigma_epsilon
+        m : matrix
+            N times N matrix of military deployments
+        epsilon : matrix
+            N times N matrix of war shocks
+        b : list
+            List to append values for b estimates
+        alpha : list
+            List to append values for alpha estimates
+        gamma : list
+            List to append values for alpha estimates
+        Loss : list
+            List to append values for empirical loss
+        thres : float
+            Convergence criterion for inner loop
+
+        """
+
+        b_k = np.copy(b_init)
+        theta_dict_k = copy.deepcopy(theta_dict_init)
+
+        diffs = 10
+        k = 1
+        while diffs > thres:
+
+            print("k: " + str(k))
+
+            b_km1 = np.copy(b_k)
+            theta_km1 = np.copy(np.array([i for i in theta_dict_k.values()]))
+            vals_km1 = np.append(b_km1, theta_km1)
+
+            b_k = self.est_b_grid(b_k, m, theta_dict_k, epsilon)
+            theta_dict_k = self.est_theta(b_k, m, theta_dict_k)
+
+            print("b_k: " + str(b_k))
+            print("theta_dict_k: " + str(theta_dict_k))
+
+            theta_k = np.array([i for i in theta_dict_k.values()])
+            vals_k = np.append(b_k, theta_k)
+
+            print("vals_km1: " + str(vals_km1))
+            print("vals_k: " + str(vals_k))
+            diffs = np.sum((vals_k - vals_km1) ** 2)
+            k += 1
+
+        b.append(b_k)
+        alpha.append(theta_dict_k["alpha"])
+        gamma.append(theta_dict_k["gamma"])
+
+        Loss_k = 0
+        for id in range(self.N):
+
+            # war values
+            wv = self.war_vals(b_k, m, theta_dict_k, np.zeros((self.N, self.N))) # calculate war values
+            ids_j = np.delete(np.arange(self.N), id)
+            wv_i = wv[:,id][ids_j]
+
+            # starting values
+            ge_x_sv = self.nft_sv(id)
+
+            br = self.br(ge_x_sv, b_k, m, wv_i, id)  # calculate best response
+            br_dict = self.ecmy.rewrap_ge_dict(br)
+            tau_i = br_dict["tau_hat"][id, ]
+            Loss_k += self.loss_tau(tau_i)
+
+        Loss.append(Loss_k)
 
     def br_cor(self, ge_x, m, mpec=True):
         """Best response correspondence. Given current policies, calculates best responses for all govs and returns new ge_x flattened vector.

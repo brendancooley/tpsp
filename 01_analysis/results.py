@@ -1,16 +1,34 @@
 import numpy as np
 import os
 import imp
+import timeit
+import time
+import csv
+import sys
 
 import economy
 import policies
+
+helpersPath = os.path.expanduser("~/Dropbox (Princeton)/14_Software/python/")
+sys.path.insert(1, helpersPath)
+
+import helpers
+imp.reload(helpers)
+
+mini = True
 
 # dataFiles = os.listdir("tpsp_data/")
 
 basePath = os.path.expanduser('~')
 projectPath = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
-dataPath = projectPath + "tpsp_data_mini/"
-resultsPath = projectPath + "results/"
+
+if mini is True:
+    dataPath = projectPath + "tpsp_data_mini/"
+    resultsPath = projectPath + "results_mini/"
+else:
+    dataPath = projectPath + "tpsp_data/"
+    resultsPath = projectPath + "results/"
+helpers.mkdir(resultsPath)
 
 rcvPath = resultsPath + "rcv.csv"
 
@@ -65,8 +83,8 @@ pecmy = policies.policies(data, params, b, rcv_path=rcvPath)  # generate pecmy a
 # pecmy.rcv
 
 # export regime change vals
-# np.savetxt("results/rcv0.csv", pecmy.rcv[0], delimiter=",")
-# np.savetxt("results/rcv1.csv", pecmy.rcv[1], delimiter=",")
+# np.savetxt(resultsPath + "rcv0.csv", pecmy.rcv[0], delimiter=",")
+# np.savetxt(resultsPath + "rcv1.csv", pecmy.rcv[1], delimiter=",")
 
 # calculate free trade vals
 tau_hat_ft = 1 / pecmy.ecmy.tau
@@ -77,19 +95,48 @@ G_hat_ft = pecmy.G_hat(ge_x_ft, np.zeros(pecmy.N))
 # export free trade vals (b=0)
 # np.savetxt("results/Ghatft.csv", G_hat_ft, delimiter=",")
 
-theta_dict_init = dict()
-# theta_dict["b"] = b
-theta_dict_init["alpha"] = .5
-theta_dict_init["c_hat"] = .2
-theta_dict_init["sigma_epsilon"] = 1
-theta_dict_init["gamma"] = .1
 
-b_init = np.repeat(.5, pecmy.N)
 
-out_dict = pecmy.est_loop(b_init, theta_dict_init)
+if not os.path.exists(resultsPath + "estimates_sv.csv"):
+
+    theta_dict_init = dict()
+    theta_dict_init["alpha"] = .122
+    theta_dict_init["c_hat"] = .2
+    theta_dict_init["sigma_epsilon"] = 1
+    theta_dict_init["gamma"] = .105
+
+    b_init = np.array([.3, 1, 1, 1, .1, .7])
+
+    theta_dict_sv = pecmy.est_loop(b_init, theta_dict_init)
+    for id in range(pecmy.N):
+        theta_dict_sv["b" + str(id)] = theta_dict_sv["b"][id]
+    try:
+        del theta_dict_sv["b"]
+    except KeyError:
+        print("Key 'b' not found")
+
+    with open(resultsPath + 'estimates_sv.csv', 'w', newline="") as csv_file:
+        writer = csv.writer(csv_file)
+        for key, value in theta_dict_sv.items():
+           writer.writerow([key, value])
+else:
+    with open(resultsPath + 'estimates_sv.csv') as csv_file:
+        reader = csv.reader(csv_file)
+        theta_dict_sv = dict(reader)
+
+    b_init = np.zeros(pecmy.N)
+    for key in theta_dict_sv.keys():
+        if key[0] == 'b':
+            b_init[int(key[1])] = theta_dict_sv[key]
+    keys_del = ['b' + str(i) for i in range(pecmy.N)]
+    for key in keys_del:
+        try:
+            del theta_dict_sv[key]
+        except KeyError:
+            print("key not found")
+
+
+start_time = time.time()
+out_dict =
+print("--- %s seconds ---" % (time.time() - start_time))
 # out_dict = pecmy.est_loop(b_init, theta_dict_init, est_c=True)
-
-with open(resultsPath + 'estimates.csv', 'w', newline="") as csv_file:
-    writer = csv.writer(csv_file)
-    for key, value in out_dict.items():
-       writer.writerow([key, value])

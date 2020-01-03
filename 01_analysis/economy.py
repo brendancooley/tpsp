@@ -3,7 +3,7 @@ from scipy import optimize as opt
 import imp
 import autograd as ag
 
-import helpers as hp
+import helpers_tpsp as hp
 
 class economy:
 
