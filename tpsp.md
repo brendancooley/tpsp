@@ -8,7 +8,7 @@ author:
       affiliation: Ph.D. Candidate, Department of Politics, Princeton University
 date: \today
 abstract: In international relations, how does latent military coercion affect governments’ policy choices? Because militarily powerful governments can credibly threaten to impose their policy preferences by force, weaker governments may adjust their policy choices to avoid costly conflict. This setting raises an inference problem -- do observed policies reflect the preferences of the governmnets that adopted them or the military constraints of the anarchic international system? Here, I investigate the role of this “shadow of power” in determining trade policy. Specifically, I build a model of trade policy choice under threat that allows me to measure empirically governments’ underlying trade policy preferences and the magnitude of policy appeasement attributable to latent military coercion. Once estimated, the model can be used to conduct counterfactual experiments – such as assessing the international economic effects of Chinese military growth or the military strategic effects of Chinese political liberalization. These and other exercises shed light on how military power affects international economic exchange, and how expectations about exchange affect governments’ military strategies.
-thanks: Ph.D. Candidate, Department of Politics, Princeton University. Version 0. Estimation in progress. Feedback welcome.
+thanks: Thanks go here.
 # jelcodes: JEL codes go here
 
 bibliography: /Users/bcooley/Dropbox (Princeton)/References/library.bib
@@ -26,6 +26,17 @@ output:
 ---
 
 
+```
+## Error: '~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results/Ghatft.csv' does not exist.
+```
+
+```
+## Error: '~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results/rcv0.csv' does not exist.
+```
+
+```
+## Error: '~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results/rcv1.csv' does not exist.
+```
 
 \newpage
 
@@ -160,7 +171,7 @@ Proposition 1 states that constraints in problem \ref{eq:tauTildeStar} will hold
 **Proposition 1:** 
 If $m_{ji}^\star > 0$ then $\lambda_{ij}^{\chi} > 0$.
 
-**Proof:** See Appendix D.
+**Proof:** See Appendix E.
 
 ## Policy Equilibrium in Changes
 
@@ -219,9 +230,9 @@ A peaceful subgame perfect equilibrium of $\hat{\Gamma}^{\bm{m}}$ is a pair $\bm
 Solving the economy in changes for a set of $\hat{\bm{\tau}}$ requires values for a vector of economic parameters $\bm{\theta}_h$ and data on trade flows, policy barriers, and and national accounts. I discuss how I calibrate the economy in Appendix B. With $\hat{h}(\hat{\bm{\tau}}; \bm{\theta}_h)$ calibrated, $\hat{G}_i(\hat{\bm{\tau}})$ can be calculated for any set of trade policies and the optimal policy change problem (\ref{eq:optTaujHat}) can be solved, yielding $\hat{\bm{\tau}}_i^{j \star}$ for all $i, j$. I can then focus attention on $\hat{\Gamma}^{\bm{m}}$. The equilibrium of this game depends on a vector of parameters $\bm{\theta}_m = \left\{ \bm{b}, \bm{\alpha}, \hat{c} \right\}$. While military allocations $\bm{m}^\star$ are unobserved, total military capacity ($M_i$) for each government is observable. Because I work with an equilibrium in changes, a prediction $\hat{\tilde{\tau}}_{ij} = 1$ is consistent with the data -- the model predicts that in equilibrium, government $i$ would make no changes to its factual trade policy toward $j$.
 
 The ability of military allocations to distort choices depends on the power projection function $\rho_{ij}$. I adopt a simple logistic functional form for this function where
-$$
-\rho_{ij}(\bm{W}; \bm{\alpha}) = \frac{ 1 }{ 1 + e^{- \alpha_0 - \sum_k \alpha_k W_{ij, k} } }
-$$
+\begin{equation} \label{eq:rho}
+\rho_{ji}(W_{ji}; \bm{\alpha}) = e^{ -\bm{\alpha}^T W_{ji} + \epsilon_{ji} }
+\end{equation}
 Here, $W_{ij, k}$ stores the $k$th dyadic geographic feature of the $ij$ dyad, such as minimum distance, and $\alpha_k$ is the effect of this feature on power projection capacity. If military power degrades with distance, the associated $\alpha_k$ would take a negative sign. 
 
 Variation in policies unexplained by preference parameters $b_i$ is informative about the vector of power projection parameters $\bm{\alpha}$ and $\gamma$. Note that the Legrangian corresponding to the governments' constrained policy problem (\ref{eq:tauTildeStarHat}) function is a weighted average of the governments own utility and others' utility, where the weights are given by the Legrange multipliers. Constraints on policy choice are more likely to bind when a threatening government $j$ a) has a larger military allocation ($m_{ji}$ high) and b) when power projection costs are lower ($\rho_{ij}$ high). Therefore, the extent to which $i$'s policy choices favor government $j$ helps pin down power projection parameters. 
@@ -657,7 +668,62 @@ Finally, let $c^\star = \max \left\{ c^{\bm{\tau}}, c^{\bm{a}} \right\}$. Since 
 
 
 
-## D: Proofs
+## D: Estimation of $\gamma$ and $\bm{\alpha}$
+
+
+Government $i$'s war constraint vis a vis $j$ is slack when
+$$
+\hat{G}_j(\hat{\tilde{\bm{\tau}}}; b_j) - \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{c} \chi_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \right) \geq 0
+$$
+for some proposed $\hat{\tilde{\bm{\tau}}}$. In the data, $\hat{\tilde{\bm{\tau}}}^\star = \bm{1} \implies \hat{G}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) = 1$. The constraint is therefore empirically slack so long as
+\begin{align*}
+1 - \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{c} \chi_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \right) &\geq 0 \\
+\chi_{ji}(\bm{Z}; \bm{\theta}_m) &\leq \hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - 1 \right)^{-1}
+\end{align*}
+
+Note that
+$$
+1 - \chi_{ji}(\bm{Z}; \bm{\theta}_m) = \frac{ m_i^\gamma }{ \rho_{ji}(\bm{W}; \bm{\theta}_m) m_j^\gamma + m_i^\gamma }
+$$
+which implies
+$$
+\frac{\chi_{ji}(\bm{Z}; \bm{\theta}_m)}{1 - \chi_{ji}(\bm{Z}; \bm{\theta}_m)} =\rho_{ji}(W_{ji}; \bm{\alpha}) \left( \frac{ m_{ji} }{ m_{ii} } \right)^\gamma
+$$.
+
+Recall from Equation \ref{eq:rho} that
+$$
+\rho_{ji}(\bm{W}_{ji}; \bm{\alpha}) = e^{ -\bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ji} }
+$$.
+We can therefore rewrite the empirical slackness condition as
+\begin{align*}
+\chi_{ji}(\bm{Z}; \bm{\theta}_m) &\leq \hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - 1 \right)^{-1} \\
+\frac{\chi_{ji}(\bm{Z}; \bm{\theta}_m)}{1 - \chi_{ji}(\bm{Z}; \bm{\theta}_m)} &\leq \frac{\hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}) - 1 \right)^{-1}}{1 - \hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - 1 \right)^{-1}} \\ 
+\rho_{ji}(\bm{W}_{ji}; \bm{\alpha}) \left( \frac{ m_{ji} }{ m_{ii} } \right)^\gamma &\leq \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - 1 \right) - 1} \\
+- \bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ji} + \gamma \left( \frac{ m_{ji} }{ m_{ii} } \right) &\leq \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - 1 \right) - 1} \right) \\
+\epsilon_{ij} &\leq \bm{\alpha}^T \bm{W}_{ji} - \gamma \left( \frac{ m_{ji} }{ m_{ii} } \right) + \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - 1 \right) - 1} \right)
+\end{align*}.
+Let $\epsilon_{ji}^\star$ solve this with equality,
+\begin{equation} \label{eq:epsilon_star}
+\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) = \bm{\alpha}^T \bm{W}_{ji} - \gamma \left( \frac{ m_{ji} }{ m_{ii} } \right) + \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - 1 \right) - 1} \right)
+\end{equation}
+With $\epsilon_{ij}$ distributed normal, the probability that the constraint is slack can be computed as 
+$$
+\text{Pr} \left( \epsilon_{ij} < \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right) = \Phi \left( \frac{\epsilon_{ij}(\bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right)
+$$
+where $\Phi$ is the standard normal c.d.f.
+
+Let $\tilde{Y}_{ji}(\hat{c}, b_j) = \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - 1 \right) - 1} \right)$. With the above quantities in hand, we can write
+\begin{align*}
+\E_{\epsilon} \left[ \tilde{Y}_{ji} \right] =& \Phi \left( \frac{\epsilon_{ij}^\star(\bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \E \left[ \tilde{Y}_{ji} | \epsilon_{ji} < \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right] + \left( 1 - \Phi \left( \frac{\epsilon_{ij}^\star(\bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \right) \E \left[ \tilde{Y}_{ji} | \epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right] \\
+=& \Phi \left( \frac{\epsilon_{ij}^\star(\bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \E \left[ \tilde{Y}_{ji} | \epsilon_{ji} < \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right] + \\
+& \left( 1 - \Phi \left( \frac{\epsilon_{ij}^\star(\bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \right) \left( \gamma \left( \frac{ m_{ji} }{ m_{ii} } \right) - \bm{\alpha}^T \bm{W}_{ji} + \E \left[ \epsilon_{ji} |  \epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right] \right)
+\end{align*}
+
+Replacing $\E_{\epsilon} \left[ \tilde{Y}_{ji} \right]$ and $\E \left[ \tilde{Y}_{ji} | \epsilon_{ji} < \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right]$ with their simulated sample analogues, we have
+
+
+
+## E: Proofs
 
 
 **Proposition 1:** 

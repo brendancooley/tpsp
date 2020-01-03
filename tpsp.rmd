@@ -8,7 +8,7 @@ author:
       affiliation: Ph.D. Candidate, Department of Politics, Princeton University
 date: \today
 abstract: In international relations, how does latent military coercion affect governments’ policy choices? Because militarily powerful governments can credibly threaten to impose their policy preferences by force, weaker governments may adjust their policy choices to avoid costly conflict. This setting raises an inference problem -- do observed policies reflect the preferences of the governmnets that adopted them or the military constraints of the anarchic international system? Here, I investigate the role of this “shadow of power” in determining trade policy. Specifically, I build a model of trade policy choice under threat that allows me to measure empirically governments’ underlying trade policy preferences and the magnitude of policy appeasement attributable to latent military coercion. Once estimated, the model can be used to conduct counterfactual experiments – such as assessing the international economic effects of Chinese military growth or the military strategic effects of Chinese political liberalization. These and other exercises shed light on how military power affects international economic exchange, and how expectations about exchange affect governments’ military strategies.
-thanks: Ph.D. Candidate, Department of Politics, Princeton University. Version 0. Estimation in progress. Feedback welcome.
+thanks: Thanks go here.
 # jelcodes: JEL codes go here
 
 bibliography: /Users/bcooley/Dropbox (Princeton)/References/library.bib
@@ -45,6 +45,7 @@ Aeconomy <- "NA"
 AeconomyC <- "NA"
 Achat <- "NA"
 Aproofs <- "NA"
+Aalphagamma <- "NA"
 
 # load references picked up later in document
 if (file.exists('references.RData')) load('references.RData')
@@ -169,6 +170,19 @@ AwarEntry <- LETTERS[a]
 ## `r AwarEntry`: War Entry
 
 ```{r, child = "sections/AwarEntry.md"}
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+a <- a + 1
+
+Aalphagamma <- LETTERS[a]
+
+```
+
+## `r Aalphagamma`: Estimation of $\gamma$ and $\bm{\alpha}$
+
+```{r, child = "sections/Aalphagamma.md"}
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
