@@ -887,12 +887,12 @@ class policies:
             ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
 
-            mxit = 1000
+            mxit = 500
             ftol = 1e-06
             wv_null = np.repeat(0, self.N - 1)
             cons = self.constraints_tau(ge_dict, i, wv_null, b, mil=False)
             bnds = self.bounds()
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(b, np.array([j]), -1, True, ), method="SLSQP", options={"maxiter":mxit, "ftol":ftol})
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(b, np.array([j]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit, "ftol":ftol})
 
             return(thistar['x'])
         else:

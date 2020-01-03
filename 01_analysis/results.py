@@ -15,7 +15,7 @@ sys.path.insert(1, helpersPath)
 import helpers
 imp.reload(helpers)
 
-mini = True
+mini = False
 
 # dataFiles = os.listdir("tpsp_data/")
 
@@ -87,56 +87,65 @@ pecmy = policies.policies(data, params, b, rcv_path=rcvPath)  # generate pecmy a
 # np.savetxt(resultsPath + "rcv1.csv", pecmy.rcv[1], delimiter=",")
 
 # calculate free trade vals
-tau_hat_ft = 1 / pecmy.ecmy.tau
-ge_dict_ft = pecmy.ecmy.geq_solve(tau_hat_ft, np.ones(pecmy.N))
-ge_x_ft = pecmy.ecmy.unwrap_ge_dict(ge_dict_ft)
-G_hat_ft = pecmy.G_hat(ge_x_ft, np.zeros(pecmy.N))
+# tau_hat_ft = 1 / pecmy.ecmy.tau
+# ge_dict_ft = pecmy.ecmy.geq_solve(tau_hat_ft, np.ones(pecmy.N))
+# ge_x_ft = pecmy.ecmy.unwrap_ge_dict(ge_dict_ft)
+# G_hat_ft = pecmy.G_hat(ge_x_ft, np.zeros(pecmy.N))
+#
+# # export free trade vals (b=0)
+# # np.savetxt("results/Ghatft.csv", G_hat_ft, delimiter=",")
+#
+# theta_dict_init = dict()
+# theta_dict_init["alpha"] = .122
+# theta_dict_init["c_hat"] = .2
+# theta_dict_init["sigma_epsilon"] = 1
+# theta_dict_init["gamma"] = .105
+#
+# b_init = np.repeat(.5, pecmy.N)
+#
+# start_time = time.time()
+# out_dict = pecmy.est_loop(b_init, theta_dict_init)
+# print("--- %s seconds ---" % (time.time() - start_time))
+#
+# if not os.path.exists(resultsPath + "estimates_sv.csv"):
+#
+#     theta_dict_init = dict()
+#     theta_dict_init["alpha"] = .122
+#     theta_dict_init["c_hat"] = .2
+#     theta_dict_init["sigma_epsilon"] = 1
+#     theta_dict_init["gamma"] = .105
+#
+#     b_init = np.array([.3, 1, 1, 1, .1, .7])
+#
+#     theta_dict_sv = pecmy.est_loop(b_init, theta_dict_init)
+#     for id in range(pecmy.N):
+#         theta_dict_sv["b" + str(id)] = theta_dict_sv["b"][id]
+#     try:
+#         del theta_dict_sv["b"]
+#     except KeyError:
+#         print("Key 'b' not found")
+#
+#     with open(resultsPath + 'estimates_sv.csv', 'w', newline="") as csv_file:
+#         writer = csv.writer(csv_file)
+#         for key, value in theta_dict_sv.items():
+#            writer.writerow([key, value])
+# else:
+#     with open(resultsPath + 'estimates_sv.csv') as csv_file:
+#         reader = csv.reader(csv_file)
+#         theta_dict_sv = dict(reader)
+#
+#     b_init = np.zeros(pecmy.N)
+#     for key in theta_dict_sv.keys():
+#         if key[0] == 'b':
+#             b_init[int(key[1])] = theta_dict_sv[key]
+#     keys_del = ['b' + str(i) for i in range(pecmy.N)]
+#     for key in keys_del:
+#         try:
+#             del theta_dict_sv[key]
+#         except KeyError:
+#             print("key not found")
+#
+# out_test = pecmy.est_loop(b_init, theta_dict_sv)
 
-# export free trade vals (b=0)
-# np.savetxt("results/Ghatft.csv", G_hat_ft, delimiter=",")
 
-
-
-if not os.path.exists(resultsPath + "estimates_sv.csv"):
-
-    theta_dict_init = dict()
-    theta_dict_init["alpha"] = .122
-    theta_dict_init["c_hat"] = .2
-    theta_dict_init["sigma_epsilon"] = 1
-    theta_dict_init["gamma"] = .105
-
-    b_init = np.array([.3, 1, 1, 1, .1, .7])
-
-    theta_dict_sv = pecmy.est_loop(b_init, theta_dict_init)
-    for id in range(pecmy.N):
-        theta_dict_sv["b" + str(id)] = theta_dict_sv["b"][id]
-    try:
-        del theta_dict_sv["b"]
-    except KeyError:
-        print("Key 'b' not found")
-
-    with open(resultsPath + 'estimates_sv.csv', 'w', newline="") as csv_file:
-        writer = csv.writer(csv_file)
-        for key, value in theta_dict_sv.items():
-           writer.writerow([key, value])
-else:
-    with open(resultsPath + 'estimates_sv.csv') as csv_file:
-        reader = csv.reader(csv_file)
-        theta_dict_sv = dict(reader)
-
-    b_init = np.zeros(pecmy.N)
-    for key in theta_dict_sv.keys():
-        if key[0] == 'b':
-            b_init[int(key[1])] = theta_dict_sv[key]
-    keys_del = ['b' + str(i) for i in range(pecmy.N)]
-    for key in keys_del:
-        try:
-            del theta_dict_sv[key]
-        except KeyError:
-            print("key not found")
-
-
-start_time = time.time()
-out_dict =
-print("--- %s seconds ---" % (time.time() - start_time))
 # out_dict = pecmy.est_loop(b_init, theta_dict_init, est_c=True)
