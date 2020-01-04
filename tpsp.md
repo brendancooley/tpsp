@@ -133,7 +133,18 @@ If $i$ is successful in defending itself against all attackers, its announced po
 \end{split}
 \end{equation}
 
-Governments' ability to prosecute wars against one another depend on dyadic geographic factors $\bm{W}$, such as geographic distance. For every unit of force $i$ allocates toward attacking $j$, $\rho_{ji}(W_{ji}; \bm{\alpha}) > 0$ units arrive. I normalize $\rho_{jj} = 1$ -- defensive operations do not result in any loss of strength. $\bm{\alpha}$ is a vector of structural parameters governing this relationship to be estimated. War outcomes are determined by a contest function 
+Governments' ability to prosecute wars against one another depend on dyadic geographic factors $\bm{W}$, such as geographic distance. For every unit of force $i$ allocates toward attacking $j$, $\rho_{ji}(W_{ji}; \bm{\alpha}) > 0$ units arrive. I normalize $\rho_{jj} = 1$ -- defensive operations do not result in any loss of strength. $\bm{\alpha}$ is a vector of structural parameters governing this relationship to be estimated. I adopt a simple exponential functional form for this function where
+\begin{equation} \label{eq:rho}
+\rho_{ji}(W_{ji}; \bm{\alpha}) = e^{ -\bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ji} }
+\end{equation}
+. $\bm{W}_{ij}$ is a vector of dyadic geographic features such as centroid-centroid distance, and $\bm{\alpha}$ parameterizes the effect of these features on power projection capacity. $\epsilon_{ij}$ is a *war shock* that captures determinants of power projection capacity not included in $\bm{W}_{ji}$.
+
+
+
+**Assumption 3**: 
+$\E [ \epsilon_{ji} ] = 0$.
+
+War outcomes are determined by a contest function 
 \begin{equation} \label{eq:chi}
 \chi_{ij}(\bm{a}) = \frac{ a_{ij} \rho_{ij}(\bm{W}; \bm{\alpha}) M_i^{\gamma} }{ \sum_k a_{kj} \rho_{kj}(\bm{W}; \bm{\alpha}) M_k^{\gamma} }
 \end{equation}.
@@ -202,7 +213,7 @@ is the *share* of factual utility each government pays if a war occurs. Let $\ma
 
 
 
-**Assumption 3 (Constant Relative War Costs):** 
+**Assumption 4 (Constant Relative War Costs):** 
 $\hat{c}_i = \hat{c}$ for all $i$.
 
 Military allocations (\ref{eq:mStar}) are then designed to induce favorable *changes* in trade policy abroad, solving
@@ -224,11 +235,9 @@ A peaceful subgame perfect equilibrium of $\hat{\Gamma}^{\bm{m}}$ is a pair $\bm
 
 Solving the economy in changes for a set of $\hat{\bm{\tau}}$ requires values for a vector of economic parameters $\bm{\theta}_h$ and data on trade flows, policy barriers, and and national accounts. I discuss how I calibrate the economy in Appendix B. With $\hat{h}(\hat{\bm{\tau}}; \bm{\theta}_h)$ calibrated, $\hat{G}_i(\hat{\bm{\tau}})$ can be calculated for any set of trade policies and the optimal policy change problem (\ref{eq:optTaujHat}) can be solved, yielding $\hat{\bm{\tau}}_i^{j \star}$ for all $i, j$. I can then focus attention on $\hat{\Gamma}^{\bm{m}}$. The equilibrium of this game depends on a vector of parameters $\bm{\theta}_m = \left\{ \bm{b}, \bm{\alpha}, \hat{c} \right\}$. While military allocations $\bm{m}^\star$ are unobserved, total military capacity ($M_i$) for each government is observable. Because I work with an equilibrium in changes, a prediction $\hat{\tilde{\tau}}_{ij} = 1$ is consistent with the data -- the model predicts that in equilibrium, government $i$ would make no changes to its factual trade policy toward $j$.
 
-The ability of military allocations to distort choices depends on the power projection function $\rho_{ij}$. I adopt a simple logistic functional form for this function where
-\begin{equation} \label{eq:rho}
-\rho_{ji}(W_{ji}; \bm{\alpha}) = e^{ -\bm{\alpha}^T W_{ji} + \epsilon_{ji} }
-\end{equation}
-Here, $W_{ij, k}$ stores the $k$th dyadic geographic feature of the $ij$ dyad, such as minimum distance, and $\alpha_k$ is the effect of this feature on power projection capacity. If military power degrades with distance, the associated $\alpha_k$ would take a negative sign. 
+The ability of military allocations to distort choices depends on the power projection function $\rho_{ij}$. 
+
+...
 
 Variation in policies unexplained by preference parameters $b_i$ is informative about the vector of power projection parameters $\bm{\alpha}$ and $\gamma$. Note that the Legrangian corresponding to the governments' constrained policy problem (\ref{eq:tauTildeStarHat}) function is a weighted average of the governments own utility and others' utility, where the weights are given by the Legrange multipliers. Constraints on policy choice are more likely to bind when a threatening government $j$ a) has a larger military allocation ($m_{ji}$ high) and b) when power projection costs are lower ($\rho_{ij}$ high). Therefore, the extent to which $i$'s policy choices favor government $j$ helps pin down power projection parameters. 
 
