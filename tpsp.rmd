@@ -46,6 +46,7 @@ AeconomyC <- "NA"
 Achat <- "NA"
 Aproofs <- "NA"
 Aalphagamma <- "NA"
+Ampec <- "NA"
 
 # load references picked up later in document
 if (file.exists('references.RData')) load('references.RData')
@@ -170,6 +171,19 @@ AwarEntry <- LETTERS[a]
 ## `r AwarEntry`: War Entry
 
 ```{r, child = "sections/AwarEntry.md"}
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+a <- a + 1
+
+Ampec <- LETTERS[a]
+
+```
+
+## `r Ampec`: Best Responses as Mathematical Programs with Equilibrium Constraints
+
+```{r, child = "sections/Ampec.md"}
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
