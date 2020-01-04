@@ -48,6 +48,7 @@ If $i$ is successful in defending itself against all attackers, its announced po
 \text{subject to} & \quad \tau_{jj} = 1
 \end{split}
 \end{equation}
+I refer to $G_i(\bm{\tau}_j^{i \star}; \tilde{\bm{\tau}}_{-j})$ as $i$'s *regime change value* vis-à-vis $j$.
 
 Governments' ability to prosecute wars against one another depend on dyadic geographic factors $\bm{W}$, such as geographic distance. For every unit of force $i$ allocates toward attacking $j$, $\rho_{ji}(W_{ji}; \bm{\alpha}) > 0$ units arrive. I normalize $\rho_{jj} = 1$ -- defensive operations do not result in any loss of strength. $\bm{\alpha}$ is a vector of structural parameters governing this relationship to be estimated. I adopt a simple exponential functional form for this function where
 \begin{equation} \label{eq:rho}
@@ -97,7 +98,7 @@ Optimal trade policies proposals for $i$ in this case solve
 \text{subject to} & \quad \tilde{G}_j(\tilde{\bm{\tau}}) - G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-i}) + c \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \geq 0 \quad \text{for all } j \neq i
 \end{split}
 \end{equation}
-where the constraints can be derived by rearranging \ref{eq:AwarConstraint}. Formulated in this manner, it becomes clear that military allocations affect trade policy through their effect on the $i$'s war constraints. As $M_j$ increases, $\chi_{ji}$ increases as well (for $\gamma > 0$), tightening the constraint on $i$'s policy choice. Let $\tilde{\bm{\tau}}_i^\star(\tilde{\bm{\tau}}_{-i})$ denote a solution to this problem and $\tilde{\bm{\tau}}^\star$ a Nash equilibrium of the constrained policy announcement game.
+where the constraints can be derived by rearranging \ref{eq:AwarConstraint}. Formulated in this manner, it becomes clear that military allocations affect trade policy through their effect on the $i$'s war constraints. As $M_j$ increases, $\tilde{\chi}_{ji}$ increases as well (for $\gamma > 0$), tightening the constraint on $i$'s policy choice. Let $\tilde{\bm{\tau}}_i^\star(\tilde{\bm{\tau}}_{-i})$ denote a solution to this problem and $\tilde{\bm{\tau}}^\star$ a Nash equilibrium of the constrained policy announcement game.
 
 ## Policy Equilibrium in Changes
 
@@ -135,7 +136,7 @@ where
 $$
 \hat{c} = \frac{c_i}{G_i(\bm{\tau}; b_i)}
 $$
-is the *share* of factual utility each government pays if a war occurs. Assumption `r Achat` requires that governments pay the same share of their factual utility in any war.^[While not innocuous, this assumption is more tenable than assumption constant absolute costs. It formalizes the idea that larger countries (that collect more rents and have high real incomes than their smaller counterparts) also pay more in military operations. It avoids the complications inherent in the more realistic but less tractable assumption that war costs depend on power ($\chi$).]
+is the *share* of factual utility each government pays if a war occurs. Assumption `r Achat` requires that governments pay the same share of their factual utility in any war.^[While not innocuous, this assumption is more tenable than assumption constant absolute costs. It formalizes the idea that larger countries (that collect more rents and have high real incomes than their smaller counterparts) also pay more in military operations. It avoids the complications inherent in the more realistic but less tractable assumption that war costs depend on power ($\tilde{\chi}$).]
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 Achat <- Atick

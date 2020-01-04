@@ -132,6 +132,7 @@ If $i$ is successful in defending itself against all attackers, its announced po
 \text{subject to} & \quad \tau_{jj} = 1
 \end{split}
 \end{equation}
+I refer to $G_i(\bm{\tau}_j^{i \star}; \tilde{\bm{\tau}}_{-j})$ as $i$'s *regime change value* vis-à-vis $j$.
 
 Governments' ability to prosecute wars against one another depend on dyadic geographic factors $\bm{W}$, such as geographic distance. For every unit of force $i$ allocates toward attacking $j$, $\rho_{ji}(W_{ji}; \bm{\alpha}) > 0$ units arrive. I normalize $\rho_{jj} = 1$ -- defensive operations do not result in any loss of strength. $\bm{\alpha}$ is a vector of structural parameters governing this relationship to be estimated. I adopt a simple exponential functional form for this function where
 \begin{equation} \label{eq:rho}
@@ -177,7 +178,7 @@ Optimal trade policies proposals for $i$ in this case solve
 \text{subject to} & \quad \tilde{G}_j(\tilde{\bm{\tau}}) - G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-i}) + c \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \geq 0 \quad \text{for all } j \neq i
 \end{split}
 \end{equation}
-where the constraints can be derived by rearranging \ref{eq:AwarConstraint}. Formulated in this manner, it becomes clear that military allocations affect trade policy through their effect on the $i$'s war constraints. As $M_j$ increases, $\chi_{ji}$ increases as well (for $\gamma > 0$), tightening the constraint on $i$'s policy choice. Let $\tilde{\bm{\tau}}_i^\star(\tilde{\bm{\tau}}_{-i})$ denote a solution to this problem and $\tilde{\bm{\tau}}^\star$ a Nash equilibrium of the constrained policy announcement game.
+where the constraints can be derived by rearranging \ref{eq:AwarConstraint}. Formulated in this manner, it becomes clear that military allocations affect trade policy through their effect on the $i$'s war constraints. As $M_j$ increases, $\tilde{\chi}_{ji}$ increases as well (for $\gamma > 0$), tightening the constraint on $i$'s policy choice. Let $\tilde{\bm{\tau}}_i^\star(\tilde{\bm{\tau}}_{-i})$ denote a solution to this problem and $\tilde{\bm{\tau}}^\star$ a Nash equilibrium of the constrained policy announcement game.
 
 ## Policy Equilibrium in Changes
 
@@ -215,7 +216,7 @@ where
 $$
 \hat{c} = \frac{c_i}{G_i(\bm{\tau}; b_i)}
 $$
-is the *share* of factual utility each government pays if a war occurs. Assumption 4 requires that governments pay the same share of their factual utility in any war.^[While not innocuous, this assumption is more tenable than assumption constant absolute costs. It formalizes the idea that larger countries (that collect more rents and have high real incomes than their smaller counterparts) also pay more in military operations. It avoids the complications inherent in the more realistic but less tractable assumption that war costs depend on power ($\chi$).]
+is the *share* of factual utility each government pays if a war occurs. Assumption 4 requires that governments pay the same share of their factual utility in any war.^[While not innocuous, this assumption is more tenable than assumption constant absolute costs. It formalizes the idea that larger countries (that collect more rents and have high real incomes than their smaller counterparts) also pay more in military operations. It avoids the complications inherent in the more realistic but less tractable assumption that war costs depend on power ($\tilde{\chi}$).]
 
 
 
@@ -225,7 +226,7 @@ $\hat{c}_i = \hat{c}$ for all $i$.
 # Calibration and Estimation
 
 
-Solving the economy in changes for a set of $\hat{\bm{\tau}}$ requires values for a vector of economic parameters $\bm{\theta}_h$ and data on trade flows, policy barriers, and and national accounts. I discuss how I calibrate the economy in Appendix B. With $\hat{h}(\hat{\bm{\tau}}; \bm{\theta}_h)$ calibrated, $\hat{G}_i(\hat{\bm{\tau}})$ can be calculated for any set of trade policies and the optimal policy change problem (\ref{eq:optTaujHat}) can be solved, yielding $\hat{\bm{\tau}}_i^{j \star}$ for all $i, j$. I can then focus attention on $\hat{\Gamma}^{\bm{\tau}}$. The equilibrium of this game depends on a vector of parameters $\bm{\theta}_m = \left\{ \bm{b}, \bm{\alpha}, \gamma \hat{c} \right\}$, as well as the values of the shocks $\left\{ \xi_{ij} \right\}_{i,j \in \left\{ 1, \dots, N \right\}}$ and $\left\{ \epsilon_{ij} \right\}_{i,j \in \left\{ 1, \dots, N \right\}}$. Because I work with an equilibrium in changes, a prediction $\hat{\tilde{\tau}}_{ij}^\star = 1$ is consistent with the data -- the model predicts that in equilibrium, government $i$ would make no changes to its factual trade policy toward $j$.
+Solving the economy in changes for a set of $\hat{\bm{\tau}}$ requires values for a vector of economic parameters $\bm{\theta}_h$ and data on trade flows, policy barriers, and and national accounts. I discuss how I calibrate the economy in Appendix B. With $\hat{h}(\hat{\bm{\tau}}; \bm{\theta}_h)$ calibrated, $\hat{G}_i(\hat{\bm{\tau}})$ can be calculated for any set of trade policies and the optimal policy change problem (\ref{eq:optTaujHat}) can be solved, yielding $\hat{\bm{\tau}}_i^{j \star}$ for all $i, j$. I can then focus attention on $\hat{\Gamma}^{\bm{\tau}}$. The equilibrium of this game depends on a vector of parameters $\bm{\theta}_m = \left\{ \bm{b}, \bm{\alpha}, \gamma, \hat{c}, \sigma_{\epsilon}^2 \right\}$, as well as the values of the shocks $\left\{ \xi_{ij} \right\}_{i,j \in \left\{ 1, \dots, N \right\}}$ and $\left\{ \epsilon_{ij} \right\}_{i,j \in \left\{ 1, \dots, N \right\}}$. Because I work with an equilibrium in changes, a prediction $\hat{\tilde{\tau}}_{ij}^\star = 1$ is consistent with the data -- the model predicts that in equilibrium, government $i$ would make no changes to its factual trade policy toward $j$.
 
 Estimation leverages Assumptions 2 and 3. First, note that Assumption 2 implies
 \begin{equation*}
@@ -234,16 +235,27 @@ Estimation leverages Assumptions 2 and 3. First, note that Assumption 2 implies
 \text{subject to} & \quad \hat{G}_j(\hat{\tilde{\bm{\tau}}}) - \hat{G}_j(\hat{\bm{\tau}}_i^{j \star}) + \hat{c} \E_{\epsilon} \left[ \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \right] \geq 0 \quad \text{for all } j \neq i
 \end{split}
 \end{equation*}
-where the affinity shocks drop out of the maximand. For any guess of the parameter vector $\bm{\theta}_m$, we can calculate $\E \left[ \hat{\tilde{\bm{\tau}}}_i^\star(\bm{1}; \bm{\theta}_m) \right]$ for each $i$. In practice, I compute this quantity by recasting \ref{eq:tauTildeStarHat} as a mathematical program with equilibrium constraints, which I discuss further in Appendix NA. From here, we can construct the loss function
+where the affinity shocks drop out of the maximand. For any guess of the parameter vector $\bm{\theta}_m$, we can calculate $\E \left[ \hat{\tilde{\bm{\tau}}}_i^\star(\bm{1}; \bm{\theta}_m) \right]$ for each $i$. In practice, I compute this quantity by recasting \ref{eq:tauTildeStarHat} as a mathematical program with equilibrium constraints, which I discuss further in Appendix D. From here, we can construct the loss function
 $$
-\ell(\bm{\theta}_m) = \sum_i \sum_j \lvert \ln \left( \E \left[ \hat{\tilde{\tau}}_{ij}^\star(\bm{1}; \bm{\theta}_m) \right] \right) \rvert
+\ell_{\bm{\tau}}(\bm{\theta}_m) = \sum_i \sum_j \left| \ln \left( \E \left[ \hat{\tilde{\tau}}_{ij}^\star(\bm{1}; \bm{\theta}_m) \right] \right) \right|
 $$
 where the theoretical prediction is implicitly divided by the empirical policy $\hat{\tilde{\tau}}_{ij}^\star = 1$. Absolute log loss is a natural loss function to use in this setting. If $\hat{\tilde{\tau}}_{ij}^\star = 1 / 2$ then $i$'s best response features a tariff on imports from $j$ that is half its facutal value. If $\hat{\tilde{\tau}}_{ij}^\star = 2$ then this tariff is twice it's factual value. The considered loss function penalizes each of these deviations equally.
 
-The war constraints are informative about the value of the parameters $\bm{\alpha}$ and $\gamma$. In Appendix D, ...
+The war constraints are informative about the value of the parameters $\bm{\alpha}$ and $\gamma$. Consider the case in which the $i$'s war constraint vis-à-vis $j$ holds with certainty. Then,
+\begin{align*}
+\hat{G}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) - \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{c} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \right) &= 0 \\
+1 - \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{c} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \right) &= 0
+\end{align*}
+which can be rearranged as
+\begin{equation} \label{eq:constraintRegression}
+\ln \left( \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right) - 1 } \right) = \gamma \ln \left( \frac{ M_j }{ M_i } \right) - \bm{\alpha}^T W_{ji} + \epsilon_{ji}
+\end{equation}
+. The left side is a measure of the difference between $j$'s factual utility difference ($1$) and it's regime change value ($\hat{G}_j(\hat{\tau}_i^{j\star})$). The extent to which this correlates with $j$'s military advantage over $i$ ($M_j / M_i$) is informative about the returns to military power, $\gamma$. The extent to which this correlates with dyadic geography is informative about the power projection parameters $\bm{\alpha}$.
 
-I show that there exists an $\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$ such that for all $\epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$, 
+In Appendix E I show that if the regime change value is sufficiently high, there exists an $\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$ such that for all $\epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$, $i$'s constraint vis-à-vis $j$ holds. Given $\sigma_{\epsilon}$, I can then construct a stochastic variant of \ref{eq:constraintRegression} which can be used as a second moment condition. 
 
+
+epsilon tilde?
 
 Variation in policies unexplained by preference parameters $b_i$ is informative about the vector of power projection parameters $\bm{\alpha}$ and $\gamma$. Note that the Legrangian corresponding to the governments' constrained policy problem (\ref{eq:tauTildeStarHat}) function is a weighted average of the governments own utility and others' utility, where the weights are given by the Legrange multipliers. Constraints on policy choice are more likely to bind when a threatening government $j$ a) has a larger military allocation ($m_{ji}$ high) and b) when power projection costs are lower ($\rho_{ij}$ high). Therefore, the extent to which $i$'s policy choices favor government $j$ helps pin down power projection parameters. 
 
