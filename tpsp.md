@@ -121,7 +121,7 @@ $$.
 
 
 **Assumption 2**: 
-$\E [ \xi_{ij} ] = 0$
+$\E [ \xi_{ij} ] = 0$.
 
 After trade policies announcements are made, governments decide whether or not they would like to wage war against other governments. Wars are fought in order to impose more favorable trade policies abroad. Each government is endowed with military capacity $M_i$ which can be used in wars with other governments. Wars are offensive and *directed*. Formally, let $\bm{a}_i = \left\{ a_{i1}, ..., a_{iN} \right\}$ denote $i$'s war entry choices, where $a_{ij} \in \left\{ 0 , 1 \right\}$ denotes whether or not $i$ choose to attack $j$.^[Note that this formulation leaves open the possibility that two governments launch directed wars against one another, $a_{ij} = a_{ji} = 1$.] $a_{ii} = 1$ for all $i$ by assumption -- governments always choose to defend themselves.
 
@@ -141,7 +141,7 @@ $\chi_{ij} \in [0, 1]$ is the probability that $i$ is successful in an offensive
 
 For the moment, fix $a_{jk} = 0$ for all $k \neq i$, $j \neq k$. $i$ is the only government that faces the possibility of attack. Then, all other policy proposal vectors $\tilde{\bm{\tau}}_{-i}$ are implemented with certainty and $i$'s utility as a function of war entry decisions is 
 $$
-G_i^{\bm{a}}(\bm{a}) = \chi_{ii}(\bm{a}) G_i(\tilde{\bm{\tau}}) + \sum_{j \neq i} \left( \chi_{ji}(\bm{a}) G_i(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-i}) - a_{ji} c_i \right)
+\tilde{G}_i^{\bm{a}}(\bm{a}) = \chi_{ii}(\bm{a}) \tilde{G}_i(\tilde{\bm{\tau}}) + \sum_{j \neq i} \left( \chi_{ji}(\bm{a}) \tilde{G}_i(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-i}) - a_{ji} c_i \right)
 $$
 
 Attackers consider the effect of their war entry on the anticipated policy outcome. Now consider an attacker $j$'s war entry decision vis-à-vis a defender $i$, assuming no other country launches a war. Let 
@@ -152,43 +152,21 @@ denote the probability that $j$ is successful in this contingency.
 
 Government $j$ prefers not to attack $i$ so long as
 \begin{equation} \label{eq:AwarConstraint}
-G_j(\tilde{\bm{\tau}}) \geq \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) \right) G_j(\tilde{\bm{\tau}}) - c_j
+\tilde{G}_j(\tilde{\bm{\tau}}) \geq \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) \tilde{G}_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) \right) \tilde{G}_j(\tilde{\bm{\tau}}) - c_j
 \end{equation}. 
 
 Let $\bm{a}^\star : \tilde{\bm{\tau}} \rightarrow \left\{ 0, 1 \right\}_{N - 1 \times N - 1}$ denote equilibrium war entry decisions as a function of announced policies and $a_{ij}^\star(\tilde{\bm{\tau}})$ denote $i$'s equilibrium decision of whether or not to attack $j$. Governments choose whether or not to enter wars simultaneously. When peace prevails, $a_{ij}^\star(\tilde{\bm{\tau}}) = 0$ for all $i \neq j$. 
 
-To recap, governments make policy announcements, $\tilde{\bm{\tau}}$, and then launch wars $\bm{a}$.  At each stage, actions are taken simultaneously. The solution concept is subgame perfect equilibrium. In Appendix C, I show that there exist peaceful equilibria of the subgame consisting of policy announcements and war entry decisions as long as war costs are large enough (Proposition C1).^[This result mirrors @Fearon1995's proof of the existence of a bargaining range in a unidimensional model. Here, because the governments' objective functions are not necessarily concave, war costs may need to be larger than zero in order to guarantee peace.] I assume each $\left\{ c_i \right\}_{i \in \left\{1,\dots,N\right\}}$ is large enough and restrict attention to these equilibria. I can then analyze the subgame consisting policy announcements only, while ensuring that inequality \ref{eq:AwarConstraint} holds for every attacker $k$ and potential target $i$.
+To recap, governments make policy announcements, $\tilde{\bm{\tau}}$, and then launch wars $\bm{a}$.  At each stage, actions are taken simultaneously. The solution concept is subgame perfect equilibrium. In Appendix C, I show that there exist peaceful equilibria of the subgame consisting of policy announcements and war entry decisions as long as war costs are large enough (Proposition C1).^[This result mirrors @Fearon1995's proof of the existence of a bargaining range in a unidimensional model. Here, because the governments' objective functions are not necessarily concave, war costs may need to be larger than zero in order to guarantee peace.] I assume the values of $\left\{ c_i \right\}_{ i \in \left\{ 1, \dots, N \right\} }$ are large enough to deliver peace and restrict attention to these equilibria. I can then analyze the subgame consisting policy announcements only, while ensuring that inequality \ref{eq:AwarConstraint} holds for every attacker $k$ and potential target $i$.
 
 Optimal trade policies proposals for $i$ in this case solve
 \begin{equation} \label{eq:tauTildeStar}
 \begin{split}
-\max_{ \tilde{\bm{\tau}}_i } & \quad G_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \\
-\text{subject to} & \quad G_j(\tilde{\bm{\tau}}) - G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-i}) + c \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \geq 0 \quad \text{for all } j \neq i
+\max_{ \tilde{\bm{\tau}}_i } & \quad \tilde{G}_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \\
+\text{subject to} & \quad \tilde{G}_j(\tilde{\bm{\tau}}) - \tilde{G}_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-i}) + c \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \geq 0 \quad \text{for all } j \neq i
 \end{split}
 \end{equation}
-where the constraints can be derived by rearranging \ref{eq:AwarConstraint}. Let $\mathcal{L}_i^{\bm{\tau}}(\tilde{\bm{\tau}}_i, \bm{m}; \bm{\lambda}^{\chi})$ denote the Lagrangian associated with this problem, where $\lambda_{ij}^{\chi}$ corresponds to the $j$th Lagrange multiplier in $i$'s Legrangian. Formulated in this manner, it becomes clear that military allocations affect trade policy through their effect on the $i$'s war constraints. As $m_{ji}$ increases, $\chi_{ji}$ increases as well, tightening the constraint on $i$'s policy choice. Let $\tilde{\bm{\tau}}_i^\star(\bm{m})$ denote a solution to this problem and $\tilde{\bm{\tau}}^\star(\bm{m})$ a Nash equilibrium of the constrained policy announcement game.
-
-Optimal military allocations then solve
-\begin{equation} \label{eq:mStar}
-\begin{split}
-\max_{\bm{m}_i} & \quad G_i \left(\tilde{\bm{\tau}}^\star(\bm{m}_i; \bm{m}_{-i}) \right) - \sum_{j \neq i} m_{ij} \epsilon^m \\
-\text{subject to} & \quad \sum_j m_{ij} \leq M_i
-\end{split}
-\end{equation}
-
-
-
-**Definition 1:** 
-A peaceful subgame perfect equilibrium of $\Gamma^{\bm{m}}$ is a pair $\bm{m}^\star$, $\tilde{\bm{\tau}}^\star(\bm{m}^\star)$ such that $\tilde{\bm{\tau}}_i^\star(\bm{m}^\star)$ solves (\ref{eq:tauTildeStar}) and $\bm{m}_i^\star$ solves (\ref{eq:mStar}) for all governments $i$.
-
-Proposition 1 states that constraints in problem \ref{eq:tauTildeStar} will hold with equality in equilibrium whenever $m_{ji}^\star > 0$. The logic behind this result is simple. Consider a defender $i$'s war constraint vis a vis a threatening government $k$. If $i$'s war constraint vis a vis $k$ does not bind, then its policy choice is unaffected by $k$'s threats. Since $k$ pays a small cost $\epsilon^m$ to allocate military force to threaten $i$, it can profitably reallocate this force to defense. $k$'s military allocation is therefore inconsistent with equilibrium.
-
-
-
-**Proposition 1:** 
-If $m_{ji}^\star > 0$ then $\lambda_{ij}^{\chi} > 0$.
-
-**Proof:** See Appendix E.
+where the constraints can be derived by rearranging \ref{eq:AwarConstraint}. Formulated in this manner, it becomes clear that military allocations affect trade policy through their effect on the $i$'s war constraints. As $M_j$ increases, $\chi_{ji}$ increases as well (for $\gamma > 0$), tightening the constraint on $i$'s policy choice. Let $\tilde{\bm{\tau}}_i^\star(\tilde{\bm{\tau}}_{-i})$ denote a solution to this problem and $\tilde{\bm{\tau}}^\star$ a Nash equilibrium of the constrained policy announcement game.
 
 ## Policy Equilibrium in Changes
 
@@ -220,7 +198,7 @@ where
 $$
 \hat{c} = \frac{c_i}{G_i(\bm{\tau}; b_i)}
 $$
-is the *share* of factual utility each government pays if a war occurs. Let $\mathcal{L}_i^{\hat{\bm{\tau}}}(\hat{\tilde{\bm{\tau}}}_i, \bm{m}; \bm{\lambda}^{\chi})$ denote the Lagrangian associated with this problem. Assumption 2 requires that governments pay the same share of their factual utility in any war.^[While not innocuous, this assumption is more tenable than assumption constant absolute costs. It formalizes the idea that larger countries (that collect more rents and have high real incomes than their smaller counterparts) also pay more in military operations. It avoids the complications inherent in the more realistic but less tractable assumption that war costs depend on power ($\chi$).]
+is the *share* of factual utility each government pays if a war occurs. Let $\mathcal{L}_i^{\hat{\bm{\tau}}}(\hat{\tilde{\bm{\tau}}}_i, \bm{m}; \bm{\lambda}^{\chi})$ denote the Lagrangian associated with this problem. Assumption 3 requires that governments pay the same share of their factual utility in any war.^[While not innocuous, this assumption is more tenable than assumption constant absolute costs. It formalizes the idea that larger countries (that collect more rents and have high real incomes than their smaller counterparts) also pay more in military operations. It avoids the complications inherent in the more realistic but less tractable assumption that war costs depend on power ($\chi$).]
 
 
 
@@ -238,7 +216,7 @@ Let $\mathcal{L}_i^{\bm{m}}(\bm{m}; \bm{\lambda}^{\bm{m}})$ denote the Lagrangia
 
 
 
-**Definition 2:** 
+**Definition 1:** 
 A peaceful subgame perfect equilibrium of $\hat{\Gamma}^{\bm{m}}$ is a pair $\bm{m}^\star$, $\hat{\tilde{\bm{\tau}}}^\star(\bm{m}^\star)$ such that $\hat{\tilde{\bm{\tau}}}_i^\star(\bm{m}^\star)$ solves (\ref{eq:tauTildeStarHat}) and $\bm{m}_i^\star$ solves (\ref{eq:mStarHat}) for all governments $i$.
 
 # Calibration and Estimation
@@ -750,23 +728,6 @@ which is approximated during the preference estimation stage. Then, the moment c
 which can be estimated via iteratively calculating $\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$ and solving the moment condition via least squares. $\E \left[ \epsilon_{ji} \mid  \epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right]$ can be calculated as the mean of a truncated normal distribution. 
 
 In the case where the constraint holds almost surely then $\Phi \left( \frac{\epsilon_{ij}^\star(\bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \approx 0$ and this resembles a tobit regression of $\tilde{Y}_{ji}(\bm{1}; \bm{\theta}_m)$ on the military capability ratio and dyadic geograpy. If $\tilde{Y}_{ji}(\bm{1}; \bm{\theta}_m)$ varies positively with the capability ratio, this indicates higher returns to military expenditure, corresponding to a larger $\gamma$.
-
-
-
-## E: Proofs
-
-
-**Proposition 1:** 
-If $m_{ji}^\star > 0$ then $\lambda_{ij}^{\chi} > 0$.
-
-
-
-**Proof:** 
-Suppose that for some $m_{ji}^\star > 0$, $\lambda_{ij}^{\chi} = 0$. Then $\tilde{\bm{\tau}}_i^\star(\bm{m}_j^\star; \bm{m}_{-j}) = \tilde{\bm{\tau}}_i^\star(\bm{m}_j^\prime; \bm{m}_{-j})$ with $m_{ji}^\prime = 0$, $m_{j, -i}^\prime = m_{j, -i}^\star$. Then,
-$$
-G_i \left(\tilde{\bm{\tau}}^\star(\bm{m}_i^\prime; \bm{m}_{-i}) \right) - \sum_{j \neq i} m_{ij}^\prime \epsilon^m > G_i \left(\tilde{\bm{\tau}}^\star(\bm{m}_i^\star; \bm{m}_{-i}) \right) - \sum_{j \neq i} m_{ij}^\star \epsilon^m
-$$
-contradicting the premise that $\bm{m}_j^\star$ is a best response.
 
 \clearpage
 

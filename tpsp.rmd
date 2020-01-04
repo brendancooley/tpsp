@@ -185,25 +185,6 @@ Aalphagamma <- LETTERS[a]
 ```{r, child = "sections/Aalphagamma.md"}
 ```
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
-
-a <- a + 1
-
-# reset definition, assumption, proposition, lemma tickers
-Dtick <- 1
-Atick <- 1
-Ptick <- 1
-Ltick <- 1
-
-Aproofs <- LETTERS[a]
-
-```
-
-## `r Aproofs`: Proofs
-
-```{r, child = "sections/Aproofs.md"}
-```
-
 \clearpage
 
 # References
