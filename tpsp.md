@@ -250,9 +250,9 @@ which can be rearranged as
 \begin{equation} \label{eq:constraintRegression}
 \ln \left( \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - 1 \right) - 1 } \right) = \gamma \ln \left( \frac{ M_j }{ M_i } \right) - \bm{\alpha}^T W_{ji} + \epsilon_{ji}
 \end{equation}
-. The left side is a measure of the difference between $j$'s factual utility difference ($1$) and it's regime change value ($\hat{G}_j(\hat{\tau}_i^{j\star})$). The extent to which this correlates with $j$'s military advantage over $i$ ($M_j / M_i$) is informative about the returns to military power, $\gamma$. The extent to which this correlates with dyadic geography is informative about the power projection parameters $\bm{\alpha}$.
+. The left side is a measure of the difference between $j$'s factual utility difference and it's regime change value ($\hat{G}_j(\hat{\tau}_i^{j\star}) - 1$). The extent to which this correlates with $j$'s military advantage over $i$ ($M_j / M_i$) is informative about the returns to military power, $\gamma$. The extent to which this correlates with dyadic geography is informative about the power projection parameters $\bm{\alpha}$.
 
-In Appendix E I show that if the regime change value is sufficiently high, there exists an $\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$ such that for all $\epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$, $i$'s constraint vis-à-vis $j$ holds. Given $\sigma_{\epsilon}$, I can then construct a stochastic variant of \ref{eq:constraintRegression} which can be used as a second moment condition. 
+In Appendix E I show that if the regime change value is sufficiently high, there exists an $\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$ such that for all $\epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$, $i$'s constraint vis-à-vis $j$ holds. I can then construct a stochastic variant of \ref{eq:constraintRegression} which can be used as a second moment condition. 
 
 
 epsilon tilde?
@@ -704,21 +704,21 @@ Converting \ref{eq:tauTildeStarHat} to an MPEC requires allowing the government 
 
 Government $i$'s war constraint vis a vis $j$ is slack in equilibrium when
 $$
-\hat{G}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) - \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{c} \chi_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \right) \geq 0
+\hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) - \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{c} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \right) \geq 0
 $$
 for some proposed $\hat{\tilde{\bm{\tau}}}$. The constraint is therefore slack so long as
 \begin{align*}
-\hat{G}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) - \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{c} \chi_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \right) &\geq 0 \\
-\chi_{ji}(\bm{Z}; \bm{\theta}_m) &\leq \hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{G}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1}
+\hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) - \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{c} \tilde{\chi}(\bm{Z}; \bm{\theta}_m)^{-1} \right) &\geq 0 \\
+\tilde{\chi}(\bm{Z}; \bm{\theta}_m) &\leq \hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1}
 \end{align*}
 
 Note that
 $$
-1 - \chi_{ji}(\bm{Z}; \bm{\theta}_m) = \frac{ m_i^\gamma }{ \rho_{ji}(\bm{W}; \bm{\theta}_m) m_j^\gamma + m_i^\gamma }
+1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) = \frac{ m_i^\gamma }{ \rho_{ji}(\bm{W}; \bm{\theta}_m) m_j^\gamma + m_i^\gamma }
 $$
 which implies
 $$
-\frac{\chi_{ji}(\bm{Z}; \bm{\theta}_m)}{1 - \chi_{ji}(\bm{Z}; \bm{\theta}_m)} =\rho_{ji}(W_{ji}; \bm{\alpha}) \left( \frac{ m_{ji} }{ m_{ii} } \right)^\gamma
+\frac{\tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)}{1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)} =\rho_{ji}(W_{ji}; \bm{\alpha}) \left( \frac{ M_j }{ M_i } \right)^\gamma
 $$.
 
 Recall from Equation \ref{eq:rho} that
@@ -727,43 +727,53 @@ $$
 $$.
 We can therefore rewrite the slackness condition as
 \begin{align*}
-\chi_{ji}(\bm{Z}; \bm{\theta}_m) &\leq \hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{G}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1} \\
-\frac{\chi_{ji}(\bm{Z}; \bm{\theta}_m)}{1 - \chi_{ji}(\bm{Z}; \bm{\theta}_m)} &\leq \frac{\hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}) - \hat{G}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1}}{1 - \hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{G}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1}} \\ 
-\rho_{ji}(\bm{W}_{ji}; \bm{\alpha}) \left( \frac{ m_{ji} }{ m_{ii} } \right)^\gamma &\leq \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{G}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \\
-- \bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ji} + \gamma \left( \frac{ m_{ji} }{ m_{ii} } \right) &\leq \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{G}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right) \\
-\epsilon_{ij} &\leq \bm{\alpha}^T \bm{W}_{ji} - \gamma \left( \frac{ m_{ji} }{ m_{ii} } \right) + \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{G}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right)
+\tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) &\leq \hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1} \\
+\frac{\tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)}{1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)} &\leq \frac{\hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1}}{1 - \hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1}} \\ 
+\rho_{ji}(\bm{W}_{ji}; \bm{\alpha}) \left( \frac{ M_j }{ M_i } \right)^\gamma &\leq \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \\
+- \bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ji} + \gamma \left( \frac{ M_j }{ M_i } \right) &\leq \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right) \\
+\epsilon_{ij} &\leq \bm{\alpha}^T \bm{W}_{ji} - \gamma \left( \frac{ M_j }{ M_i } \right) + \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right)
 \end{align*}.
-Let $\epsilon_{ji}^\star$ solve this with equality,^[If $\hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{G}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) < 1$ then $\epsilon_{ji}^\star$ does not exist and $i$'s war constraint vis-à-vis $j$ will never bind.]
+Let $\epsilon_{ji}^\star$ solve this with equality,^[If $\hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) < 1$ then $\epsilon_{ji}^\star$ does not exist and $i$'s war constraint vis-à-vis $j$ will never bind.]
 \begin{equation} \label{eq:epsilon_star}
-\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) = \bm{\alpha}^T \bm{W}_{ji} - \gamma \left( \frac{ m_{ji} }{ m_{ii} } \right) + \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{G}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right)
+\epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) = \bm{\alpha}^T \bm{W}_{ji} - \gamma \left( \frac{ M_j }{ M_i } \right) + \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right)
 \end{equation}
 With $\epsilon_{ij}$ distributed normal, the probability that the constraint is slack can be computed as 
 $$
-\text{Pr} \left( \epsilon_{ij} < \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right) = \Phi \left( \frac{\epsilon_{ij}(\bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right)
+\text{Pr} \left( \epsilon_{ij} < \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right) = \Phi \left( \frac{\epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right)
 $$
 where $\Phi$ is the standard normal c.d.f.
 
-Let $\tilde{Y}_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) = \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{G}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right)$. With the above quantities in hand, we can write
+Let $Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) = \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right)$. With the above quantities in hand, we can write
 \begin{align*}
-\E_{\epsilon} \left[ \tilde{Y}_{ji} \right] =& \Phi \left( \frac{\epsilon_{ij}^\star(\bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \E \left[ \tilde{Y}_{ji} \mid \epsilon_{ji} < \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right] + \left( 1 - \Phi \left( \frac{\epsilon_{ij}^\star(\bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \right) \E \left[ \tilde{Y}_{ji} \mid \epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right] \\
-=& \Phi \left( \frac{\epsilon_{ij}^\star(\bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \E \left[ \tilde{Y}_{ji} \mid \epsilon_{ji} < \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right] + \\
-& \left( 1 - \Phi \left( \frac{\epsilon_{ij}^\star(\bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \right) \left( \gamma \left( \frac{ m_{ji} }{ m_{ii} } \right) - \bm{\alpha}^T \bm{W}_{ji} + \E \left[ \epsilon_{ji} \mid  \epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right] \right)
+\E_{\hat{\tilde{\bm{\tau}}}^\star, \bm{\epsilon}} \left[ Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) \right] =& \Phi \left( \frac{ \E \left[ \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right] }{\sigma_{\epsilon}} \right) \E \left[ Y_{ji} \mid \epsilon_{ji} < \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right] + \\
+& \left( 1 - \Phi \left( \frac{ \E \left[ \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right] }{\sigma_{\epsilon}} \right) \right) \E \left[ Y_{ji} \mid \epsilon_{ji} \geq \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right] \\
+=& \Phi \left( \frac{ \E \left[ \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right] }{\sigma_{\epsilon}} \right) \E \left[ Y_{ji} \mid \epsilon_{ji} < \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right] + \\
+& \left( 1 - \Phi \left( \frac{ \E \left[ \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right] }{\sigma_{\epsilon}} \right) \right) \times \\
+& \left( \gamma \left( \frac{ M_j }{ M_i } \right) - \bm{\alpha}^T \bm{W}_{ji} + \E \left[ \epsilon_{ji} \mid  \epsilon_{ji} \geq \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right] \right)
 \end{align*}
 
-In the data, $\hat{\tilde{\bm{\tau}}}^\star = \bm{1} \implies \hat{G}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) = 1$. We can construct a moment estimator for $\bm{\alpha}$ and $\gamma$ by replacing $\E_{\epsilon} \left[ \tilde{Y}_{ji} \right]$, $\E \left[ \tilde{Y}_{ji} \mid \epsilon_{ji} < \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right]$, and $\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$ with their simulated sample analogues. Let
+$\E \left[ Y_{ji} \mid \epsilon_{ji} < \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right]$ can be approximated by 
 $$
-\bar{Y}_{ji} = \int_{-\infty}^{\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)} \tilde{Y}_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) f(\epsilon) d \epsilon
+\int_{-\infty}^{\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)} Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) f(\epsilon) d \epsilon
 $$
-which is approximated during the preference estimation stage. Then, the moment condition is
+and $\E \left[ \epsilon_{ji} \mid  \epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right]$ is the mean of a truncated normal distribution. 
+
+The sample analogue for $\E \left[ Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) \right]$ is $\E \left[ Y_{ji}(\bm{1}; \bm{\theta}_m) \right]$. Then, 
 \begin{equation*}
 \begin{split}
-\tilde{Y}_{ji}(\bm{1}; \bm{\theta}_m) - \Phi \left( \frac{\epsilon_{ij}^\star(\bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \bar{Y}_{ji} - \left( 1 - \Phi \left( \frac{\epsilon_{ij}^\star(\bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \right) \E \left[ \epsilon_{ji} \mid  \epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right] = \\ 
-\left( 1 - \Phi \left( \frac{\epsilon_{ij}^\star(\bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \right) \left( \gamma \left( \frac{ m_{ji} }{ m_{ii} } \right) - \bm{\alpha}^T \bm{W}_{ji} \right)
+\E \left[ Y_{ji}(\bm{1}; \bm{\theta}_m) \right] = \Phi \left( \frac{ \epsilon_{ji}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m) }{ \sigma_{\epsilon} } \right) \E \left[ Y_{ji} \mid \epsilon_{ji} < \epsilon_{ji}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m) \right] + \\
+\left( 1 - \Phi \left( \frac{ \epsilon_{ji}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m) }{ \sigma_{\epsilon} } \right) \right) \left( \gamma \left( \frac{ M_j }{ M_i } \right) - \bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ij} \right)
 \end{split}
 \end{equation*}
-which can be estimated via iteratively calculating $\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$ and solving the moment condition via least squares. $\E \left[ \epsilon_{ji} \mid  \epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right]$ can be calculated as the mean of a truncated normal distribution. 
 
-In the case where the constraint holds almost surely then $\Phi \left( \frac{\epsilon_{ij}^\star(\bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \approx 0$ and this resembles a tobit regression of $\tilde{Y}_{ji}(\bm{1}; \bm{\theta}_m)$ on the military capability ratio and dyadic geograpy. If $\tilde{Y}_{ji}(\bm{1}; \bm{\theta}_m)$ varies positively with the capability ratio, this indicates higher returns to military expenditure, corresponding to a larger $\gamma$.
+We can now construct a loss function
+\begin{equation} \label{eq:lossEpsilon}
+\ell_{\epsilon}(\bm{\theta}_m) = \sum_i \sum_j \left( \E_{\hat{\tilde{\bm{\tau}}}^\star, \bm{\epsilon}} \left[ Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) \right] - \E \left[ Y_{ji}(\bm{1}; \bm{\theta}_m) \right] \right)^2
+\end{equation}
+
+In practice, I estimate this equation by iteratively recalculating the weights, $\Phi \left( \frac{ \epsilon_{ji}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m) }{ \sigma_{\epsilon} } \right)$, and choosing $\gamma$ and $\bm{\alpha}$ via ordinary least squares.
+
+In the case where the constraint holds almost surely then $\Phi \left( \frac{\epsilon_{ij}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \approx 0$ and this resembles a tobit regression of $Y_{ji}(\bm{1}; \bm{\theta}_m)$ on the military capability ratio and dyadic geograpy. If $Y_{ji}(\bm{1}; \bm{\theta}_m)$ varies positively with the capability ratio, this indicates higher returns to military expenditure, corresponding to a larger $\gamma$.
 
 \clearpage
 

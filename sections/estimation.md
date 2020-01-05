@@ -24,7 +24,7 @@ which can be rearranged as
 \end{equation}
 . The left side is a measure of the difference between $j$'s factual utility difference and it's regime change value ($\hat{G}_j(\hat{\tau}_i^{j\star}) - 1$). The extent to which this correlates with $j$'s military advantage over $i$ ($M_j / M_i$) is informative about the returns to military power, $\gamma$. The extent to which this correlates with dyadic geography is informative about the power projection parameters $\bm{\alpha}$.
 
-In Appendix `r Aalphagamma` I show that if the regime change value is sufficiently high, there exists an $\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$ such that for all $\epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$, $i$'s constraint vis-à-vis $j$ holds. Given $\sigma_{\epsilon}$, I can then construct a stochastic variant of \ref{eq:constraintRegression} which can be used as a second moment condition. 
+In Appendix `r Aalphagamma` I show that if the regime change value is sufficiently high, there exists an $\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$ such that for all $\epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$, $i$'s constraint vis-à-vis $j$ holds. I can then construct a stochastic variant of \ref{eq:constraintRegression} which can be used as a second moment condition. 
 
 
 epsilon tilde?
