@@ -1,1 +1,1 @@
-$\E [ \epsilon_{ji} ] = 0$.
+$\epsilon_{ji} \sim \mathcal{N}(0, \sigma_{\epsilon}) \implies \E [ \epsilon_{ji} ] = 0$.

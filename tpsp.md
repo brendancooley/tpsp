@@ -138,12 +138,12 @@ Governments' ability to prosecute wars against one another depend on dyadic geog
 \begin{equation} \label{eq:rho}
 \rho_{ji}(W_{ji}; \bm{\alpha}) = e^{ -\bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ji} }
 \end{equation}
-. $\bm{W}_{ij}$ is a vector of dyadic geographic features such as centroid-centroid distance, and $\bm{\alpha}$ parameterizes the effect of these features on power projection capacity. The random variable $\epsilon_{ij} \sim \mathcal{N}(0, \sigma_{\epsilon}^2)$ is a *war shock* that captures determinants of power projection capacity not included in $\bm{W}_{ji}$.
+. $\bm{W}_{ij}$ is a vector of dyadic geographic features such as centroid-centroid distance, and $\bm{\alpha}$ parameterizes the effect of these features on power projection capacity. The random variable $\epsilon_{ij}$ is a *war shock* that captures determinants of power projection capacity not included in $\bm{W}_{ji}$.
 
 
 
 **Assumption 3**: 
-$\E [ \epsilon_{ji} ] = 0$.
+$\epsilon_{ji} \sim \mathcal{N}(0, \sigma_{\epsilon}) \implies \E [ \epsilon_{ji} ] = 0$.
 
 War outcomes are determined by a contest function 
 \begin{equation} \label{eq:chi}
@@ -255,12 +255,16 @@ In Appendix E I show that if the regime change value is sufficiently high, there
 
 I estimate the model by minimizing the sum of these two loss functions. Formally, I seek estimates $\hat{\bm{\theta}}_m$ such that
 \begin{equation} \label{eq:thetaLoss}
-\hat{\bm{\theta}}_m \in \argmin_{\bm{\theta}_m} \quad \ell_{\bm{\tau}}(\bm{\theta}_m) + \ell_{\epsilon}(\bm{\theta}_m)
+\tilde{\bm{\theta}}_m \in \argmin_{\bm{\theta}_m} \quad \ell_{\bm{\tau}}(\bm{\theta}_m) + \ell_{\epsilon}(\bm{\theta}_m)
 \end{equation}
 
-...
+In practice, I minimize these loss functions using an iterative procedure. In the first stage, I hold $\gamma$ and $\bm{\alpha}$ fixed and miminize $\ell_{\bm{\tau}}(\bm{\theta}_m)$ via adaptive grid search over $\bm{b}$, $\hat{c}$, and $\sigma_{\epsilon}$. Then, I hold these values fixed and choose $\gamma$ and $\bm{\alpha}$ to minimize $\ell_{\epsilon}(\bm{\theta}_m)$ using an ordinary least squares variant. I then return to the first stage and iterate until the loss functions stabilize. I discuss this procedure in more detail in Appendix F.
 
-Variation in policies unexplained by preference parameters $b_i$ is informative about the vector of power projection parameters $\bm{\alpha}$ and $\gamma$. Note that the Legrangian corresponding to the governments' constrained policy problem (\ref{eq:tauTildeStarHat}) function is a weighted average of the governments own utility and others' utility, where the weights are given by the Legrange multipliers. Constraints on policy choice are more likely to bind when a threatening government $j$ a) has a larger military allocation ($m_{ji}$ high) and b) when power projection costs are lower ($\rho_{ij}$ high). Therefore, the extent to which $i$'s policy choices favor government $j$ helps pin down power projection parameters. 
+This algorithm codifies intuition about identifying variation. Holding the military coercive environment fixed, the openness of trade policy is informative about governments underlying preferences, $\bm{b}$. The overall responsiveness of trade policy to the military coercive environment is governed by $\hat{c}$. When $\hat{c}$ is low, coercive threats are more credible, and policy is more responsive to threats. Conversely, when, $\hat{c}$ is high, few governments are willing to risk war and policies are more reflective of underlying preferences. For fixed $\gamma$ and $\bm{\alpha}$, $\tilde{\bm{b}}$, $\tilde{\hat{c}}$ are chosen to rationalize observed trade policies, given these incentives. 
+
+Fixing governments preferences and the relative costs of war, the probability that constraints are binding on governments' trade policy choices can be calculated. The responsiveness of the constraints that bind with high probability to the military capability ratio ($M_j / M_i$) and dyadic geography $\bm{W}_{ji}$ are informative about $\gamma$ and $\bm{\alpha}$ respectively. 
+
+This procedure produces point estimates $\tilde{\bm{\theta}}_m$. I then construct uncertainty intervals through nonparametric bootstrap, sampling policies and constraints and re-estimating $\tilde{\bm{\theta}}_m$. 
 
 # Data 
 
@@ -722,6 +726,12 @@ We can now construct a loss function
 In practice, I minimize this loss function by iteratively recalculating the weights, $\Phi \left( \frac{ \epsilon_{ji}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m) }{ \sigma_{\epsilon} } \right)$, and choosing $\gamma$ and $\bm{\alpha}$ via ordinary least squares.
 
 In the case where the constraint holds almost surely then $\Phi \left( \frac{\epsilon_{ij}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \approx 0$ and this resembles a tobit regression of $Y_{ji}(\bm{1}; \bm{\theta}_m)$ on the military capability ratio and dyadic geograpy. If $Y_{ji}(\bm{1}; \bm{\theta}_m)$ varies positively with the capability ratio, this indicates higher returns to military expenditure, corresponding to a larger $\gamma$.
+
+
+
+## F: Estimation Algorithm
+
+
 
 \clearpage
 

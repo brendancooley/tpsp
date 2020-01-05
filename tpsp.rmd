@@ -44,9 +44,10 @@ Pm <- "NA"
 Aeconomy <- "NA"
 AeconomyC <- "NA"
 Achat <- "NA"
-Aproofs <- "NA"
+# Aproofs <- "NA"
 Aalphagamma <- "NA"
 Ampec <- "NA"
+AestimationAlg <- "NA"
 
 # load references picked up later in document
 if (file.exists('references.RData')) load('references.RData')
@@ -197,6 +198,19 @@ Aalphagamma <- LETTERS[a]
 ## `r Aalphagamma`: Estimation of $\gamma$ and $\bm{\alpha}$
 
 ```{r, child = "sections/Aalphagamma.md"}
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+a <- a + 1
+
+AestimationAlg <- LETTERS[a]
+
+```
+
+## `r AestimationAlg`: Estimation Algorithm
+
+```{r, child = "sections/AestimationAlg.md"}
 ```
 
 \clearpage

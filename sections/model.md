@@ -54,7 +54,7 @@ Governments' ability to prosecute wars against one another depend on dyadic geog
 \begin{equation} \label{eq:rho}
 \rho_{ji}(W_{ji}; \bm{\alpha}) = e^{ -\bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ji} }
 \end{equation}
-. $\bm{W}_{ij}$ is a vector of dyadic geographic features such as centroid-centroid distance, and $\bm{\alpha}$ parameterizes the effect of these features on power projection capacity. The random variable $\epsilon_{ij} \sim \mathcal{N}(0, \sigma_{\epsilon}^2)$ is a *war shock* that captures determinants of power projection capacity not included in $\bm{W}_{ji}$.
+. $\bm{W}_{ij}$ is a vector of dyadic geographic features such as centroid-centroid distance, and $\bm{\alpha}$ parameterizes the effect of these features on power projection capacity. The random variable $\epsilon_{ij}$ is a *war shock* that captures determinants of power projection capacity not included in $\bm{W}_{ji}$.
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 Aepsilon <- Atick
