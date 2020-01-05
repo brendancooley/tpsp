@@ -48,7 +48,7 @@ Let $Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) = \ln \left( \frac{1}{
 & \left( \gamma \left( \frac{ M_j }{ M_i } \right) - \bm{\alpha}^T \bm{W}_{ji} + \E \left[ \epsilon_{ji} \mid  \epsilon_{ji} \geq \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right] \right)
 \end{align*}
 
-$\E \left[ Y_{ji} \mid \epsilon_{ji} < \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right]$ can be approximated by 
+$\E \left[ Y_{ji} \mid \epsilon_{ji} < \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right]$ can be approximated by simulating the integral
 $$
 \int_{-\infty}^{\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)} Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) f(\epsilon) d \epsilon
 $$
@@ -67,6 +67,6 @@ We can now construct a loss function
 \ell_{\epsilon}(\bm{\theta}_m) = \sum_i \sum_j \left( \E_{\hat{\tilde{\bm{\tau}}}^\star, \bm{\epsilon}} \left[ Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) \right] - \E \left[ Y_{ji}(\bm{1}; \bm{\theta}_m) \right] \right)^2
 \end{equation}
 
-In practice, I estimate this equation by iteratively recalculating the weights, $\Phi \left( \frac{ \epsilon_{ji}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m) }{ \sigma_{\epsilon} } \right)$, and choosing $\gamma$ and $\bm{\alpha}$ via ordinary least squares.
+In practice, I minimize this loss function by iteratively recalculating the weights, $\Phi \left( \frac{ \epsilon_{ji}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m) }{ \sigma_{\epsilon} } \right)$, and choosing $\gamma$ and $\bm{\alpha}$ via ordinary least squares.
 
 In the case where the constraint holds almost surely then $\Phi \left( \frac{\epsilon_{ij}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \approx 0$ and this resembles a tobit regression of $Y_{ji}(\bm{1}; \bm{\theta}_m)$ on the military capability ratio and dyadic geograpy. If $Y_{ji}(\bm{1}; \bm{\theta}_m)$ varies positively with the capability ratio, this indicates higher returns to military expenditure, corresponding to a larger $\gamma$.
