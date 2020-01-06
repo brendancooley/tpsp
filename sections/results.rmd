@@ -20,7 +20,7 @@ First, suppose all governments are welfare-maximizing ($b_i=0$ for all $i$). It 
 
 ```{r Vhat, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Consumer welfare gains from moving to global free trade, $\\hat{V}_i(h(\\hat{\\bm{\\tau}}^{\\text{ft}}))$, for each country. Recall that changes are expressed in multiples from utility in the factual equilibrium, where this value is normalized to one $\\hat{V}_i(h(\\bm{1})) = 1$. \\label{fig:Vhat}"), fig.height=5, dpi=300, fig.pos="t"}
 
-source("../figs/Ghatft.R")
+source("../02_figs/Ghatft.R")
 GhatftFig + theme(aspect.ratio=1)
 
 ```
@@ -31,7 +31,7 @@ I can also solve the optimal policy change problem (\ref{eq:optTaujHat}) and cal
 
 ```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Government utility changes associated with successful wars. Each cell represents the welfare gain an attacker (y-axis) accrues when it wins a war against a given defender (x-axis). The left panel shows the case in which $b_i = 0$ for all $i$ (welfare-maximizers), while the right panel shows the case in which $b_i = 1$ for all $i$ (revenue-maximizers). Darker values indicate higher welfare changes. \\label{fig:rcv}"), fig.height=4, dpi=300, fig.pos="t"}
 
-source("../figs/rcv.R")
+source("../02_figs/rcv.R")
 rcvhm(rcv0, 0, mint, maxt) + rcvhm(rcv1, 1, mint, maxt)
 
 ```

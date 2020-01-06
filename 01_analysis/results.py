@@ -18,6 +18,7 @@ import helpers
 imp.reload(helpers)
 
 mini = True
+large = False
 
 # dataFiles = os.listdir("tpsp_data/")
 
@@ -27,6 +28,9 @@ projectPath = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 if mini is True:
     dataPath = projectPath + "tpsp_data_mini/"
     resultsPath = projectPath + "results_mini/"
+elif large is True:
+    dataPath = projectPath + "tpsp_data_large/"
+    resultsPath = projectPath + "results_large/"
 else:
     dataPath = projectPath + "tpsp_data/"
     resultsPath = projectPath + "results/"
@@ -72,11 +76,9 @@ N = len(Y)
 
 E = Eq + Ex
 
-data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M}  # Note: log distance
+data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
-imp.reload(policies)
-# imp.reload(economy)
-pecmy = policies.policies(data, params, b, rcv_path=rcvPath)  # generate pecmy and rcv vals
+
 # This will finish in 6.5 hours if each opt takes 75 seconds (13 governments)
 # lots of nonsense negative numbers for Turkey's (11) best response for U.S. (12), replace with open/closed value instead
 
@@ -89,23 +91,47 @@ pecmy = policies.policies(data, params, b, rcv_path=rcvPath)  # generate pecmy a
 # np.savetxt(resultsPath + "rcv1.csv", pecmy.rcv[1], delimiter=",")
 
 # calculate free trade vals
-tau_hat_ft = 1 / pecmy.ecmy.tau
-ge_dict_ft = pecmy.ecmy.geq_solve(tau_hat_ft, np.ones(pecmy.N))
-ge_x_ft = pecmy.ecmy.unwrap_ge_dict(ge_dict_ft)
-G_hat_ft = pecmy.G_hat(ge_x_ft, np.zeros(pecmy.N))
+# tau_hat_ft = 1 / pecmy.ecmy.tau
+# ge_dict_ft = pecmy.ecmy.geq_solve(tau_hat_ft, np.ones(pecmy.N))
+# ge_x_ft = pecmy.ecmy.unwrap_ge_dict(ge_dict_ft)
+# G_hat_ft = pecmy.G_hat(ge_x_ft, np.zeros(pecmy.N))
 
 # export free trade vals (b=0)
 # np.savetxt("results/Ghatft.csv", G_hat_ft, delimiter=",")
 
 # theta_dict_init = dict()
-# theta_dict_init["alpha"] = .122
+# theta_dict_init["alpha"] = .15
 # theta_dict_init["c_hat"] = .2
 # theta_dict_init["sigma_epsilon"] = 1
 # theta_dict_init["gamma"] = .105
-#
-# b_init = np.repeat(.5, pecmy.N)
 
-b_init, theta_dict_sv = pecmy.import_results(resultsPath + "estimates_sv.csv")
-theta_dict_sv["c_hat"] = .2
-out_test = pecmy.est_loop(b_init, theta_dict_sv, est_c=False, c_step=.1)
-pecmy.export_results(out_test, resultsPath + "test.csv")
+# b_init = np.repeat(.5, pecmy.N)
+# b_init = np.array([1, 1, 1, .6, 1, 0, 1, .5, .5, .5, 0, .5, .5])
+
+# b_init, theta_dict_sv = pecmy.import_results("estimates_sv.csv")
+# theta_dict_sv["c_hat"] = .2
+
+imp.reload(policies)
+b_init, theta_dict_init = pecmy.import_results(resultsPath+"estimates_sv.csv")
+pecmy = policies.policies(data, params, b, results_path=resultsPath)  # generate pecmy and rcv vals
+out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=False, c_step=.1)
+# out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=True, c_step=.1)
+# pecmy.export_results(out_test, resultsPath + "c_hat20.csv")
+
+
+
+
+
+
+
+
+start_time = time.time()
+m = M / np.ones_like(tau)
+m = m.T
+id = 0
+wv = pecmy.war_vals(b_init, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N))) # calculate war values
+ids_j = np.delete(np.arange(pecmy.N), id)
+wv_i = wv[:,id][ids_j]
+ge_x_sv = pecmy.nft_sv(id)
+br = pecmy.br(ge_x_sv, b_init, wv_i, id, mil=False)
+print("--- %s seconds ---" % (time.time() - start_time))

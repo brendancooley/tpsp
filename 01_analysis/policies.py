@@ -16,7 +16,7 @@ import multiprocessing as mp
 
 class policies:
 
-    def __init__(self, data, params, b, rcv_path=None):
+    def __init__(self, data, params, b, results_path=None):
         """
 
         Parameters
@@ -41,6 +41,8 @@ class policies:
         self.ecmy = economy.economy(data, params)
         self.N = self.ecmy.N
         self.ids = np.arange(self.N)
+
+        self.ROW_id = np.where(data["ccodes"]=="ROW")[0][0]
 
         # purge deficits
         self.ecmy.purgeD()
@@ -75,8 +77,9 @@ class policies:
 
         # NOTE: values outside of unit interval seem to mess with things
         self.b_vals = np.arange(0, 1.1, .1)  # preference values for which to generate regime change value matrix.
-        # self.b_vals = np.arange(0, 1.1, .1)
+        np.savetxt(results_path + "b_vals.csv", self.b_vals, delimiter=",")
 
+        rcv_path = results_path + "rcv.csv"
         if not os.path.isfile(rcv_path):
             rcv = self.pop_rc_vals()
             self.rc_vals_to_csv(rcv, rcv_path)
@@ -674,7 +677,7 @@ class policies:
             else:  # otherwise start from free trade
                 return(self.Lsolve(tau_hat, m, theta_dict, id, ft=True, mtd="lm"))
 
-    def constraints_tau(self, ge_dict, tau_free, wv_i, b, m=None, ge=True, deficits=False, mil=False):
+    def constraints_tau(self, ge_dict, tau_free, wv_i, b, ge=True, deficits=False, mil=False):
         """Constructs list of constraints for policy br.
 
         Parameters
@@ -697,8 +700,8 @@ class policies:
 
         """
 
-        if m is None:
-            m = np.diag(self.M)
+        # if m is None:
+        #     m = np.diag(self.M)
 
         # constrain policies
         # constrain row i, column j of trade policy matrix
@@ -751,11 +754,11 @@ class policies:
             for j in range(self.N):
                 if j != tau_free:
                     idx = np.where(ids_j==j)[0]
-                    cons.append({'type': 'ineq', 'fun': self.con_mil, 'args':(tau_free, j, m, wv_i[idx], b, )})
+                    cons.append({'type': 'ineq', 'fun': self.con_mil, 'args':(tau_free, j, wv_i[idx], b, )})
 
         return(cons)
 
-    def con_mil(self, ge_x, i, j, m, wv_ji, b):
+    def con_mil(self, ge_x, i, j, wv_ji, b):
         """
 
         Parameters
@@ -945,7 +948,7 @@ class policies:
         return(bnds)
 
 
-    def br(self, ge_x, b, m, wv_i, id, mil=True, method="SLSQP"):
+    def br(self, ge_x, b, wv_i, id, mil=True, method="SLSQP"):
         """Calculate optimal policies for gov id, given others' policies in ge_x.
 
         Parameters
@@ -980,10 +983,13 @@ class policies:
         # NOTE: don't want to repeat this for every iteration of br
 
         mxit = 500
-        b_perturb = .01
+        eps = 1.0e-10
 
-        cons = self.constraints_tau(ge_dict, id, wv_i, b, m=m, mil=mil)
-        thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit})
+        b_perturb = .01
+        tau_perturb = .01
+
+        cons = self.constraints_tau(ge_dict, id, wv_i, b, mil=mil)
+        thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit, 'eps':eps})
 
         thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
         taustar = thistar_dict["tau_hat"]*self.ecmy.tau
@@ -1000,20 +1006,23 @@ class policies:
             thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit})
 
         # NOTE: sometimes extreme values due to difficulties in satisfying particular mil constraints
+        # Also seems to happen when target countries are small, easy to make mistakes in finite difference differentiation?
         while np.any(taustar > self.tauMax):
             print("extreme tau values found, iterating...")
             print("taustar[id]: " + str(taustar[id]))
-            # for j in range(self.N):
-            #     if taustar[id, j] > self.tauMax:
-            #         ge_dict["tau_hat"][id, j] = tau_hat_ft[id, j]
+            for j in range(self.N):
+                if taustar[id, j] > self.tauMax:
+                    ge_dict["tau_hat"][id, j] = tau_hat_ft[id, j]
+                else:
+                    ge_dict["tau_hat"][id, j] = thistar_dict["tau_hat"][id, j] + np.random.normal(loc=0, scale=tau_perturb)
             # print(ge_dict["tau_hat"] * self.ecmy.tau)
             # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
             # ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
             b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
-            ge_dict = self.ecmy.geq_solve(tau_hat_ft, ge_dict["D_hat"])
-            ge_dict["tau_hat"][id, ] += .1  # bump up starting taus
-            ge_dict["tau_hat"][id, id] = 1
-            ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
+            # ge_dict = self.ecmy.geq_solve(tau_hat_ft, ge_dict["D_hat"])
+            # ge_dict["tau_hat"][id, ] += .1  # bump up starting taus
+            # ge_dict["tau_hat"][id, id] = 1
+            # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
             print(ge_dict)
             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
             thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit})
@@ -1132,10 +1141,10 @@ class policies:
                 wv_i = wv[:,id][ids_j]
                 # print("wv_i: " + str(wv_i))
 
-                br = self.br(ge_x_sv, b_vec, m, wv_i, id)  # calculate best response
+                print("b_idx: " + str(b_idx))
+                br = self.br(ge_x_sv, b_vec, wv_i, id)  # calculate best response
                 br_dict = self.ecmy.rewrap_ge_dict(br)
                 tau_i = br_dict["tau_hat"][id, ]
-                print("b_idx: " + str(b_idx))
                 print(tau_i)
                 loss = self.loss_tau(tau_i, weights=self.ecmy.Y)
                 Loss.append(loss)
@@ -1164,7 +1173,7 @@ class policies:
 
         return(b)
 
-    def est_b_grid(self, b_sv, m, theta_dict, epsilon, thres=.01):
+    def est_b_grid(self, b_sv, m, theta_dict, epsilon, thres=.1):
         """Estimate vector of b values through grid search
 
         Parameters
@@ -1362,6 +1371,8 @@ class policies:
 
         m = self.M / np.ones((self.N, self.N))
         m = m.T
+        m[:,self.ROW_id] = 0
+        print(m)
 
         if est_c is True:
             c_hat_vec = np.arange(c_step, 1 + c_step, c_step)
@@ -1483,7 +1494,7 @@ class policies:
             # starting values
             ge_x_sv = self.nft_sv(id)
 
-            br = self.br(ge_x_sv, b_k, m, wv_i, id)  # calculate best response
+            br = self.br(ge_x_sv, b_k, wv_i, id)  # calculate best response
             br_dict = self.ecmy.rewrap_ge_dict(br)
             tau_i = br_dict["tau_hat"][id, ]
             Loss_k += self.loss_tau(tau_i, weights=self.ecmy.Y)
@@ -1541,7 +1552,7 @@ class policies:
         D_hat = np.ones(self.N)
 
         for i in range(self.N):
-            ge_x = self.br(ge_x, m, i, mpec=mpec)
+            ge_x = self.br(ge_x, i, mpec=mpec)
             ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
             tau_hat_br[i, ] = ge_dict["tau_hat"][i, ]
 

@@ -8,7 +8,7 @@ yROW <- yDF %>% filter(iso3=="ROW") %>% pull(y)
 
 ```
 
-I estimate the model on a set of `r N` governments in the year `r Y`. These governments are listed in Table \ref{tab:ccodes}. I aggregate all European Union governments into a single entity and collapse all countries not included in the analysis into a "Rest of World" (ROW) aggregate. Non-ROW countries make up `r round( (yAll - yROW) / yAll * 100 )` percent of world GDP. 
+I estimate the model on a set of `r N` governments in the year `r Y`. These governments are listed in Table \ref{tab:ccodes}. I aggregate all European Union governments into a single entity and collapse all countries not included in the analysis into a "Rest of World" (ROW) aggregate.^[Such an aggregation is necessary in order to calculate fully general equilibrium effects of counterfactual trade policies. However, I prohibit other countries from invading ROW, which ensures that estimates of military parameters depend almost entirely on interactions between countries within my sample.] Non-ROW countries make up `r round( (yAll - yROW) / yAll * 100 )` percent of world GDP.
 
 ```{r ccodes, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
@@ -29,4 +29,4 @@ milexFig + theme(aspect.ratio=1)
 
 ```
 
-Finally, I use data from @Weidmann2010 to calculate centroid-centroid geographic distance between all countries in my sample. This constitutes the only variable affecting power projection capacity in $\bm{W}$. 
+Finally, I use data from @Weidmann2010 to calculate centroid-centroid geographic distance between all countries in my sample. I take the natural log of this value to be the only variable affecting power projection capacity in $\bm{W}$. 

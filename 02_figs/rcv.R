@@ -1,26 +1,33 @@
-# helperPath <- "~/Dropbox (Princeton)/14_Software/R/"
-# helperFiles <- list.files(helperPath)
-# for (i in helperFiles) {
-#   source(paste0(helperPath, i))
-# }
-# 
-# libs <- c("tidyverse", "patchwork")
-# ipak(libs)
-# 
-# analysisPath <- "../working/analysis/"
-# dataPath <- paste0(analysisPath, "tpsp_data/")
-# resultsPath <- paste0(analysisPath, "results/")
-# 
-# ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
-# Y <- read_csv(paste0(dataPath, "year.csv"), col_names=FALSE) %>% pull(.)
-# rcv0 <- read_csv(paste0(resultsPath, "rcv0.csv"), col_names=FALSE)
+helperPath <- "~/Dropbox (Princeton)/14_Software/R/"
+helperFiles <- list.files(helperPath)
+for (i in helperFiles) {
+  source(paste0(helperPath, i))
+}
+
+libs <- c("tidyverse", "patchwork")
+ipak(libs)
+
+tpspPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
+dataPath <- paste0(tpspPath, "tpsp_data_mini/")
+resultsPath <- paste0(tpspPath, "results_mini/")
+
+ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
+N <- nrow(ccodes)
+Y <- read_csv(paste0(dataPath, "year.csv"), col_names=FALSE) %>% pull(.)
+# rcv0 <- read_csv(paste0("~/Dropbox (Princeton)/1_Papers/tpsp/working/analysis/results/rcv0.csv"), col_names=FALSE)
 # rcv1 <- read_csv(paste0(resultsPath, "rcv1.csv"), col_names=FALSE)
+rcv <- read_csv(paste0(resultsPath, "rcv.csv"), col_names=FALSE)
+
+rcvMats <- list()
+for (i in 1:nrow(rcv)) {
+  rcvMats[[i]] <- as_tibble(matrix(data=unlist(rcv[i, ]), nrow=N, ncol=N))
+}
 
 hmColors <- colorRampPalette(c("white", bcOrange))(30)
 naColor <- "#D3D3D3"
 
 mint <- .99
-maxt <- max(max(rcv0), max(rcv1))
+maxt <- max(rcvMats[[N]])
 
 rcvhm <- function(rcv, b, minTau, maxTau) {
   colnames(rcv) <- ccodes %>% pull(.)
@@ -47,6 +54,7 @@ rcvhm <- function(rcv, b, minTau, maxTau) {
           legend.position="none")
 }
 
+rcvhm(rcvMats[[1]], 0, mint, maxt)
 # rcvhm(rcv0, 0, mint, maxt) + rcvhm(rcv1, 1, mint, maxt)
 # coords = which(rcv0 == max(rcv0), arr.ind = TRUE)
 # coords[2]
