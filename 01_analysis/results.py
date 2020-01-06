@@ -108,6 +108,4 @@ G_hat_ft = pecmy.G_hat(ge_x_ft, np.zeros(pecmy.N))
 b_init, theta_dict_sv = pecmy.import_results(resultsPath + "estimates_sv.csv")
 theta_dict_sv["c_hat"] = .2
 out_test = pecmy.est_loop(b_init, theta_dict_sv, est_c=False, c_step=.1)
-
-
 pecmy.export_results(out_test, resultsPath + "test.csv")

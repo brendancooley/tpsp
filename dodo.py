@@ -8,7 +8,8 @@ import helpers
 
 templatePath = "~/Dropbox\ \(Princeton\)/8_Templates/"
 github = "~/GitHub/tpsp"
-
+website_docs = "~/Dropbox\ \(Princeton\)/5_CV/website/static/docs"
+website_docs_github = "~/Github/brendancooley.github.io/docs"
 templatePath = "~/Dropbox\ \(Princeton\)/8_Templates/"
 
 def task_source():
@@ -32,6 +33,16 @@ def task_paper():
     	'actions':["R --slave -e \"set.seed(100);knitr::knit('tpsp.rmd')\"",
                    "pandoc --template=templates/cooley-paper-template.latex --filter pandoc-citeproc -o tpsp.pdf tpsp.md"],
                    'verbosity': 2,
+	}
+
+def task_post_to_web():
+	"""
+
+	"""
+	yield {
+		'name': "posting...",
+		'actions': ["cp -a tpsp.pdf " + website_docs,
+					"cp -a tpsp.pdf " + website_docs_github]
 	}
 
 def task_prep_slides():
