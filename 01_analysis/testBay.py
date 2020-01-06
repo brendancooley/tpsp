@@ -94,6 +94,66 @@ b_k1 = np.array([.7, 0, .5, .2, 1, .3])
 out = pecmy.est_loop(b_k1, theta_dict)
 
 
+
+
+# Loss seemed monotonically decreasing in c... 1.76 - 1.39, why?
+# probably has to do with a lot of countries sitting at upper bound of preference parameter...loosening constraints makes policies more realistic
+
+# out_dict = pecmy.est_loop(b_init, theta_dict_init, est_c=True)
+rcv = np.zeros((pecmy.N, pecmy.N))  # empty regime change value matrix (row's value for invading column)
+for i in range(pecmy.N):
+    b_nearest = hp.find_nearest(b_init, b[i])
+    rcv[i, ] = pecmy.rcv[b_nearest][i, ]
+
+pecmy.ecmy.tau
+pecmy.ecmy.Y
+
+
+# start_time = time.time()
+# out_dict = pecmy.est_loop(b_init, theta_dict_init)
+# print("--- %s seconds ---" % (time.time() - start_time))
+
+if not os.path.exists(resultsPath + "estimates_sv.csv"):
+
+    theta_dict_init = dict()
+    theta_dict_init["alpha"] = .122
+    theta_dict_init["c_hat"] = .2
+    theta_dict_init["sigma_epsilon"] = 1
+    theta_dict_init["gamma"] = .105
+
+    b_init = np.array([.3, 1, 1, 1, .1, .7])
+
+    theta_dict_sv = pecmy.est_loop(b_init, theta_dict_init)
+    for id in range(pecmy.N):
+        theta_dict_sv["b" + str(id)] = theta_dict_sv["b"][id]
+    try:
+        del theta_dict_sv["b"]
+    except KeyError:
+        print("Key 'b' not found")
+
+    with open(resultsPath + 'estimates_sv.csv', 'w', newline="") as csv_file:
+        writer = csv.writer(csv_file)
+        for key, value in theta_dict_sv.items():
+           writer.writerow([key, value])
+else:
+    with open(resultsPath + 'estimates_sv.csv') as csv_file:
+        reader = csv.reader(csv_file)
+        theta_dict_sv = dict(reader)
+
+    b_init = np.zeros(pecmy.N)
+    for key in theta_dict_sv.keys():
+        if key[0] == 'b':
+            b_init[int(key[1])] = theta_dict_sv[key]
+        else:
+            theta_dict_sv[key] = float(theta_dict_sv[key])
+    keys_del = ['b' + str(i) for i in range(pecmy.N)]
+    for key in keys_del:
+        try:
+            del theta_dict_sv[key]
+        except KeyError:
+            print("key not found")
+
+
 # TODO: test affinity shocks on nonzero other values
 id = 5
 b_test = np.array([0.3, 1.,  1., 1.,  0.1, 0.4])

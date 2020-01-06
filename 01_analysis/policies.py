@@ -1137,7 +1137,7 @@ class policies:
                 tau_i = br_dict["tau_hat"][id, ]
                 print("b_idx: " + str(b_idx))
                 print(tau_i)
-                loss = self.loss_tau(tau_i)
+                loss = self.loss_tau(tau_i, weights=self.ecmy.Y)
                 Loss.append(loss)
 
             # print(Loss)
@@ -1263,7 +1263,7 @@ class policies:
 
         return(out)
 
-    def est_theta(self, b, m, theta_dict, thres=.0001):
+    def est_theta(self, b, m, theta_dict, thres=.001):
         """Estimate military parameters from constraints. Iteratively recalculate parameters and weights until convergence.
 
         Parameters
@@ -1310,6 +1310,7 @@ class policies:
             # lhs = np.log(m_frac) - np.log( 1 / (chat ** -1 * (rcv - 1) - 1) )
             lhs = np.log( 1 / (theta_dict["c_hat"] ** -1 * (rcv - 1) - 1) )
             lhs = np.nan_to_num(lhs)
+            print("lhs")
             Y = lhs.ravel()
             X = np.column_stack((np.log(m_frac.ravel()), self.W.ravel()))
             # print("regressors: " + str(X))
@@ -1408,7 +1409,9 @@ class policies:
 
         out_id = np.argmin(Loss)
 
-        out_dict = {"b":b[out_id], "alpha":alpha[out_id], "gamma":gamma[out_id], "c_hat":c_hat_vec[out_id], "sigma_epsilon":theta_dict_init["sigma_epsilon"]}
+        out_dict = {"alpha":alpha[out_id], "gamma":gamma[out_id], "c_hat":c_hat_vec[out_id], "sigma_epsilon":theta_dict_init["sigma_epsilon"]}
+        for id in range(self.N):
+            out_dict["b" + str(id)] = b[out_id][id]
 
         return(out_dict)
 
@@ -1483,9 +1486,38 @@ class policies:
             br = self.br(ge_x_sv, b_k, m, wv_i, id)  # calculate best response
             br_dict = self.ecmy.rewrap_ge_dict(br)
             tau_i = br_dict["tau_hat"][id, ]
-            Loss_k += self.loss_tau(tau_i)
+            Loss_k += self.loss_tau(tau_i, weights=self.ecmy.Y)
 
         Loss.append(Loss_k)
+
+    def export_results(self, out_dict, path):
+
+        with open(path, 'w', newline="") as csv_file:
+            writer = csv.writer(csv_file)
+            for key, value in out_dict.items():
+               writer.writerow([key, value])
+
+    def import_results(self, path):
+
+        with open(path) as csv_file:
+            reader = csv.reader(csv_file)
+            theta_dict = dict(reader)
+
+        b = np.zeros(self.N)
+        for key in theta_dict.keys():
+            if key[0] == 'b':
+                b[int(key[1])] = theta_dict[key]
+            else:
+                theta_dict[key] = float(theta_dict[key])
+        keys_del = ['b' + str(i) for i in range(self.N)]
+        for key in keys_del:
+            try:
+                del theta_dict[key]
+            except KeyError:
+                print("key not found")
+
+        return(b, theta_dict)
+
 
     def br_cor(self, ge_x, m, mpec=True):
         """Best response correspondence. Given current policies, calculates best responses for all govs and returns new ge_x flattened vector.

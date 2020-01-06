@@ -9,6 +9,8 @@ import sys
 import economy
 import policies
 
+import helpers_tpsp as hp
+
 helpersPath = os.path.expanduser("~/Dropbox (Princeton)/14_Software/python/")
 sys.path.insert(1, helpersPath)
 
@@ -95,57 +97,17 @@ G_hat_ft = pecmy.G_hat(ge_x_ft, np.zeros(pecmy.N))
 # export free trade vals (b=0)
 # np.savetxt("results/Ghatft.csv", G_hat_ft, delimiter=",")
 
-theta_dict_init = dict()
-theta_dict_init["alpha"] = .122
-theta_dict_init["c_hat"] = .2
-theta_dict_init["sigma_epsilon"] = 1
-theta_dict_init["gamma"] = .105
+# theta_dict_init = dict()
+# theta_dict_init["alpha"] = .122
+# theta_dict_init["c_hat"] = .2
+# theta_dict_init["sigma_epsilon"] = 1
+# theta_dict_init["gamma"] = .105
+#
+# b_init = np.repeat(.5, pecmy.N)
 
-b_init = np.repeat(.5, pecmy.N)
-
-start_time = time.time()
-out_dict = pecmy.est_loop(b_init, theta_dict_init)
-print("--- %s seconds ---" % (time.time() - start_time))
-
-if not os.path.exists(resultsPath + "estimates_sv.csv"):
-
-    theta_dict_init = dict()
-    theta_dict_init["alpha"] = .122
-    theta_dict_init["c_hat"] = .2
-    theta_dict_init["sigma_epsilon"] = 1
-    theta_dict_init["gamma"] = .105
-
-    b_init = np.array([.3, 1, 1, 1, .1, .7])
-
-    theta_dict_sv = pecmy.est_loop(b_init, theta_dict_init)
-    for id in range(pecmy.N):
-        theta_dict_sv["b" + str(id)] = theta_dict_sv["b"][id]
-    try:
-        del theta_dict_sv["b"]
-    except KeyError:
-        print("Key 'b' not found")
-
-    with open(resultsPath + 'estimates_sv.csv', 'w', newline="") as csv_file:
-        writer = csv.writer(csv_file)
-        for key, value in theta_dict_sv.items():
-           writer.writerow([key, value])
-else:
-    with open(resultsPath + 'estimates_sv.csv') as csv_file:
-        reader = csv.reader(csv_file)
-        theta_dict_sv = dict(reader)
-
-    b_init = np.zeros(pecmy.N)
-    for key in theta_dict_sv.keys():
-        if key[0] == 'b':
-            b_init[int(key[1])] = theta_dict_sv[key]
-    keys_del = ['b' + str(i) for i in range(pecmy.N)]
-    for key in keys_del:
-        try:
-            del theta_dict_sv[key]
-        except KeyError:
-            print("key not found")
-
-out_test = pecmy.est_loop(b_init, theta_dict_sv)
+b_init, theta_dict_sv = pecmy.import_results(resultsPath + "estimates_sv.csv")
+theta_dict_sv["c_hat"] = .2
+out_test = pecmy.est_loop(b_init, theta_dict_sv, est_c=False, c_step=.1)
 
 
-# out_dict = pecmy.est_loop(b_init, theta_dict_init, est_c=True)
+pecmy.export_results(out_test, resultsPath + "test.csv")
