@@ -4,7 +4,7 @@ Converting \ref{eq:tauTildeStarHat} to an MPEC requires allowing the government 
 \begin{equation} \label{eq:tauTildeHatMPEC}
 \begin{split}
 \max_{\hat{\bm{x}}_i} & \quad \hat{\tilde{G}}_i(\hat{\bm{w}}; \bm{\theta}_m) \\
-\text{subject to} & \quad hat{\tilde{G}}_j(\hat{\bm{w}}; \bm{\theta}_m) - \hat{G}_j \left( \hat{\bm{\tau}}_i^{j \star}(\bm{\theta}_m) \right) + \hat{c} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \geq 0 \quad \text{for all } j \neq i \\
+\text{subject to} & \quad \hat{\tilde{G}}_j(\hat{\bm{w}}; \bm{\theta}_m) - \hat{G}_j \left( \hat{\bm{\tau}}_i^{j \star}(\bm{\theta}_m) \right) + \hat{c} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \geq 0 \quad \text{for all } j \neq i \\
 & \quad \hat{\bm{w}} = \hat{h}(\hat{\tilde{\bm{\tau}}})
 \end{split}
 \end{equation}

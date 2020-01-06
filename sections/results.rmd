@@ -1,15 +1,15 @@
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 
-rcv0max <- max(rcv0)
-coords <- which(rcv0 == max(rcv0), arr.ind = TRUE)
+# rcv0max <- max(rcv0)
+# coords <- which(rcv0 == max(rcv0), arr.ind = TRUE)
 
-ccodesL <- ccodes %>% pull(.)
+# ccodesL <- ccodes %>% pull(.)
 
-rcv0j <- ccodesL[coords[1]]
-rcv0i <- ccodesL[coords[2]]
+# rcv0j <- ccodesL[coords[1]]
+# rcv0i <- ccodesL[coords[2]]
 
-rcv0jName <- ccodesT %>% filter(iso3==rcv0j) %>% pull(`Country Name`)
-rcv0iName <- ccodesT %>% filter(iso3==rcv0i) %>% pull(`Country Name`)
+# rcv0jName <- ccodesT %>% filter(iso3==rcv0j) %>% pull(`Country Name`)
+# rcv0iName <- ccodesT %>% filter(iso3==rcv0i) %>% pull(`Country Name`)
 
 ```
 
@@ -36,4 +36,4 @@ rcvhm(rcv0, 0, mint, maxt) + rcvhm(rcv1, 1, mint, maxt)
 
 ```
 
-Again, governments that face poor market access conditions gain the most from successful wars. Comparing the left panel to the right shows that the value of war depends crucially on the governments' preferences. When they win wars, rent-maximizing governments impose policies designed to direct trade into their borders. As imports go up, revenue collection potential also increases. The value of war is lower for welfare-maximizing governments. Still, welfare-maximizing governments facing poor market access benefit substantially from winning wars against countries with large markets and high barriers to trade. At the extreme, the welfare of consumers in `r rcv0jName` increases by a factor of `r round(rcv0max, 2)` when their government wins a war against `r rcv0iName`. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These values assist in the identification of the power projection and preference parameters in $\bm{\theta}_m$.
+Again, governments that face poor market access conditions gain the most from successful wars. Comparing the left panel to the right shows that the value of war depends crucially on the governments' preferences. When they win wars, rent-maximizing governments impose policies designed to direct trade into their borders. As imports go up, revenue collection potential also increases. The value of war is lower for welfare-maximizing governments. Still, welfare-maximizing governments facing poor market access benefit substantially from winning wars against countries with large markets and high barriers to trade. At the extreme, the welfare of consumers in XXX increases by a factor of XXX when their government wins a war against XXX. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These values assist in the identification of the power projection and preference parameters in $\bm{\theta}_m$.
