@@ -342,6 +342,15 @@ I can also solve the optimal policy change problem (\ref{eq:optTaujHat}) and cal
 
 Again, governments that face poor market access conditions gain the most from successful wars. Comparing the left panel to the right shows that the value of war depends crucially on the governments' preferences. When they win wars, rent-maximizing governments impose policies designed to direct trade into their borders. As imports go up, revenue collection potential also increases. The value of war is lower for welfare-maximizing governments. Still, welfare-maximizing governments facing poor market access benefit substantially from winning wars against countries with large markets and high barriers to trade. At the extreme, the welfare of consumers in XXX increases by a factor of XXX when their government wins a war against XXX. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These values assist in the identification of the power projection and preference parameters in $\bm{\theta}_m$.
 
+# Counterfactual: From Anarchy to Pacifism
+
+
+
+# Conclusion
+
+
+
+
 \clearpage
 
 # Appendix

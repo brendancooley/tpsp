@@ -114,6 +114,17 @@ rcv1 <- read_csv(paste0(resultsPath, "rcv1.csv"), col_names=FALSE)
 ```{r, child = "sections/results.rmd"}
 ```
 
+# Counterfactual: From Anarchy to Pacifism
+
+```{r, child = "sections/counterfactual.rmd"}
+```
+
+# Conclusion
+
+```{r, child = "sections/conclusion.md"}
+```
+
+
 \clearpage
 
 # Appendix
