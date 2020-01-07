@@ -981,13 +981,13 @@ class policies:
         # NOTE: don't want to repeat this for every iteration of br
 
         mxit = 500
-        eps = 1.0e-10
+        # eps = 1.0e-10
 
         b_perturb = .01
         tau_perturb = .01
 
         cons = self.constraints_tau(ge_dict, id, wv_i, b, mil=mil)
-        thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit, 'eps':eps})
+        thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit})
 
         thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
         taustar = thistar_dict["tau_hat"]*self.ecmy.tau
@@ -1046,7 +1046,7 @@ class policies:
 
         return(ge_x_sv)
 
-    def loss_tau(self, tau, weights=None):
+    def loss_tau(self, tau_i, id, weights=None):
         """Loss function for b estimation, absolute log loss
 
         Parameters
@@ -1066,7 +1066,11 @@ class policies:
             weights = np.ones(self.N)
         weights = weights / np.sum(weights)  # normalize
 
-        out = np.sum(np.abs(np.log(tau)) * weights)
+        tau_star = self.ecmy.tau[id, ] * tau_i
+        print("tau_star: " + str(tau_star))
+        print("tau: " + str(self.ecmy.tau[id, ]))
+
+        out = np.sum(np.abs(self.ecmy.tau[id, ] - tau_star) * weights)
 
         return(out)
 
@@ -1103,14 +1107,15 @@ class policies:
         # turn this on when we've reached local min
         stop = False
 
-        # turn these flags on if we're searching one of the lower or upper bounds of the b space
-        lb = False
-        ub = False
-
         # starting values (nearft)
         ge_x_sv = self.nft_sv(id)
 
         while stop is False:
+
+            # turn these flags on if we're searching one of the lower or upper bounds of the b space
+            lb = False
+            ub = False
+
             print("bmin: " + str(bmin))
             print("bmax: " + str(bmax))
 
@@ -1141,6 +1146,7 @@ class policies:
             for idx in [idx_down, idx_first, idx_up]:
                 b_idx = self.b_vals[idx]
                 b_vec[id] = b_idx
+                print("b_vec:" + str(b_vec))
                 wv = self.war_vals(b_vec, m, theta_dict, epsilon) # calculate war values
                 ids_j = np.delete(np.arange(self.N), id)
                 wv_i = wv[:,id][ids_j]
@@ -1151,10 +1157,10 @@ class policies:
                 br_dict = self.ecmy.rewrap_ge_dict(br)
                 tau_i = br_dict["tau_hat"][id, ]
                 print(tau_i)
-                loss = self.loss_tau(tau_i, weights=self.ecmy.Y)
+                loss = self.loss_tau(tau_i, id, weights=self.ecmy.Y)
                 Loss.append(loss)
 
-            # print(Loss)
+            print("Loss: " + str(Loss))
             # if median value is a valley, return it as estimate
             if Loss[1] <= Loss[2] and Loss[1] <= Loss[0]:
                 stop = True
@@ -1350,7 +1356,7 @@ class policies:
 
         return(theta_dict)
 
-    def est_loop(self, b_init, theta_dict_init, thres=.01, est_c=False, c_step=.1, P=1, epsilon_zeros=True, estimates_path=""):
+    def est_loop(self, b_init, theta_dict_init, thres=.1, est_c=False, c_step=.1, P=1, epsilon_zeros=True, estimates_path=""):
         """Estimate model. For each trial c_hat, iterate over estimates of b and alpha, gamma until convergence. Choose c_hat and associated parameters with lowest loss on predicted policies.
 
         Parameters
@@ -1521,7 +1527,7 @@ class policies:
             br = self.br(ge_x_sv, b_k, wv_i, id)  # calculate best response
             br_dict = self.ecmy.rewrap_ge_dict(br)
             tau_i = br_dict["tau_hat"][id, ]
-            Loss_k += self.loss_tau(tau_i, weights=self.ecmy.Y)
+            Loss_k += self.loss_tau(tau_i, id, weights=self.ecmy.Y)
 
         Loss.append(Loss_k)
 
