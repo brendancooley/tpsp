@@ -12,8 +12,6 @@ import copy
 import multiprocessing as mp
 # import nlopt # NOTE: something wrong with build of this on laptop
 
-# TODO: remove b from theta dict, need to track preferences separately
-
 class policies:
 
     def __init__(self, data, params, b, results_path=None):
@@ -1096,8 +1094,8 @@ class policies:
         """
 
         # endpoints for search
-        bmax = np.max(self.b_vals)
-        bmin = np.min(self.b_vals)
+        bmax = np.copy(np.max(self.b_vals))
+        bmin = np.copy(np.min(self.b_vals))
         b_vec = np.copy(b_init)
 
         b = b_vec[id]
@@ -1113,6 +1111,8 @@ class policies:
         ge_x_sv = self.nft_sv(id)
 
         while stop is False:
+            print("bmin: " + str(bmin))
+            print("bmax: " + str(bmax))
 
             # first
             idx_first = hp.which_nearest(self.b_vals, b)
@@ -1129,6 +1129,11 @@ class policies:
                 ub = True
             if idx_down == 0:
                 lb = True
+
+            print("lb:")
+            print(lb)
+            print("ub:")
+            print(ub)
 
             b = self.b_vals[idx_first]
 
@@ -1272,7 +1277,7 @@ class policies:
 
         return(out)
 
-    def est_theta(self, b, m, theta_dict, thres=.001):
+    def est_theta(self, b, m, theta_dict, thres=.01):
         """Estimate military parameters from constraints. Iteratively recalculate parameters and weights until convergence.
 
         Parameters
@@ -1293,7 +1298,6 @@ class policies:
 
         m_diag = np.diagonal(m)
         m_frac = m / m_diag
-        print(m_frac)
 
         rcv = np.zeros((self.N, self.N))  # empty regime change value matrix (row's value for invading column)
         for i in range(self.N):
@@ -1301,6 +1305,7 @@ class policies:
             rcv[i, ] = self.rcv[b_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
             # (i's value for invading all others)
         # rcv = rcv.T
+        print("rcv: ")
         print(rcv)
 
         diffs = 10
@@ -1322,10 +1327,13 @@ class policies:
             print("lhs")
             Y = lhs.ravel()
             X = np.column_stack((np.log(m_frac.ravel()), self.W.ravel()))
+            X[:,0][X[:,0]==-np.inf] = np.nan
+            print(X)
+
             # print("regressors: " + str(X))
             # print("lhs: " + str(Y))
 
-            ests = sm.WLS(Y, X, weights=weights.ravel()).fit()
+            ests = sm.WLS(Y, X, weights=weights.ravel(), missing='drop').fit()
 
             theta_dict["gamma"] = ests.params[0]
             theta_dict["alpha"] = -ests.params[1]
@@ -1342,7 +1350,7 @@ class policies:
 
         return(theta_dict)
 
-    def est_loop(self, b_init, theta_dict_init, thres=.01, est_c=False, c_step=.1, P=1, epsilon_zeros=True):
+    def est_loop(self, b_init, theta_dict_init, thres=.01, est_c=False, c_step=.1, P=1, epsilon_zeros=True, estimates_path=""):
         """Estimate model. For each trial c_hat, iterate over estimates of b and alpha, gamma until convergence. Choose c_hat and associated parameters with lowest loss on predicted policies.
 
         Parameters
@@ -1371,18 +1379,24 @@ class policies:
 
         m = self.M / np.ones((self.N, self.N))
         m = m.T
+        m[self.ROW_id,:] = 0
         m[:,self.ROW_id] = 0
+        m[self.ROW_id,self.ROW_id] = 1
+        print("m_frac:")
         print(m)
 
         if est_c is True:
             c_hat_vec = np.arange(c_step, 1 + c_step, c_step)
         else:
             c_hat_vec = [theta_dict_init["c_hat"]]
+        np.savetxt(estimates_path + "c_hat_vec.csv", c_hat_vec, delimiter=",")
 
         Loss = []
         b = []
         alpha = []
         gamma = []
+
+        tick = 0
         for c_hat in c_hat_vec:
 
             theta_dict_init["c_hat"] = c_hat
@@ -1418,11 +1432,21 @@ class policies:
             gamma.append(np.mean(gamma_c))
             Loss.append(np.mean(Loss_c))
 
+            out_dict_c = {"alpha":alpha_c, "gamma":gamma_c, "c_hat":c_hat, "sigma_epsilon":theta_dict_init["sigma_epsilon"], "Loss":Loss_c}
+            for id in range(self.N):
+                out_dict_c["b" + str(id)] = b_c[id]
+
+            self.export_results(out_dict_c, estimates_path + "ests_" + str(tick) + ".csv")
+            tick += 1
+
+
         out_id = np.argmin(Loss)
 
         out_dict = {"alpha":alpha[out_id], "gamma":gamma[out_id], "c_hat":c_hat_vec[out_id], "sigma_epsilon":theta_dict_init["sigma_epsilon"]}
         for id in range(self.N):
             out_dict["b" + str(id)] = b[out_id][id]
+
+        self.export_results(out_dict, estimates_path + "ests_" + "min" + ".csv")
 
         return(out_dict)
 

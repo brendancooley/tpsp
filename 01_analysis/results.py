@@ -99,13 +99,13 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 # export free trade vals (b=0)
 # np.savetxt("results/Ghatft.csv", G_hat_ft, delimiter=",")
 
-# theta_dict_init = dict()
-# theta_dict_init["alpha"] = .15
-# theta_dict_init["c_hat"] = .2
-# theta_dict_init["sigma_epsilon"] = 1
-# theta_dict_init["gamma"] = .105
+theta_dict_init = dict()
+theta_dict_init["alpha"] = .15
+theta_dict_init["c_hat"] = .2
+theta_dict_init["sigma_epsilon"] = 1
+theta_dict_init["gamma"] = .105
 
-# b_init = np.repeat(.5, pecmy.N)
+b_init = np.repeat(.5, pecmy.N)
 # b_init = np.array([1, 1, 1, .6, 1, 0, 1, .5, .5, .5, 0, .5, .5])
 
 # b_init, theta_dict_sv = pecmy.import_results("estimates_sv.csv")
@@ -114,12 +114,23 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 imp.reload(policies)
 b_init, theta_dict_init = pecmy.import_results(resultsPath+"estimates_sv.csv")
 pecmy = policies.policies(data, params, b, results_path=resultsPath)  # generate pecmy and rcv vals
-out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=False, c_step=.1)
-# out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=True, c_step=.1)
+
+estimatesPath = resultsPath + "estimates/"
+helpers.mkdir(estimatesPath)
+out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=False, c_step=.1, estimates_path=estimatesPath)
+# out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=True, c_step=.1, estimates_path=estimatesPath)
 # pecmy.export_results(out_test, resultsPath + "c_hat20.csv")
 
-
-
+#
+# m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+# m = m.T
+# m[pecmy.ROW_id,:] = 0
+# m[:,pecmy.ROW_id] = 0
+# m[pecmy.ROW_id,pecmy.ROW_id] = 1
+#
+# m_diag = np.diagonal(m)
+# m_frac = m / m_diag
+# pecmy.est_theta(b_init, m, theta_dict_init)
 
 
 
