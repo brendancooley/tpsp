@@ -176,6 +176,33 @@ test
 # wv_m
 # wv_m_i
 
+#
+# m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+# m = m.T
+# m[pecmy.ROW_id,:] = 0
+# m[:,pecmy.ROW_id] = 0
+# m[pecmy.ROW_id,pecmy.ROW_id] = 1
+#
+# m_diag = np.diagonal(m)
+# m_frac = m / m_diag
+# pecmy.est_theta(b_init, m, theta_dict_init)
+
+
+
+
+
+# start_time = time.time()
+# m = M / np.ones_like(tau)
+# m = m.T
+# id = 0
+# wv = pecmy.war_vals(b_init, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N))) # calculate war values
+# ids_j = np.delete(np.arange(pecmy.N), id)
+# wv_i = wv[:,id][ids_j]
+# ge_x_sv = pecmy.nft_sv(id)
+# br = pecmy.br(ge_x_sv, b_init, wv_i, id, mil=False)
+# print("--- %s seconds ---" % (time.time() - start_time))
+
+
 
 # pecmy.ecmy.tau * 4.5
 

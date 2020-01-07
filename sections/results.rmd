@@ -10,30 +10,47 @@
 
 # rcv0jName <- ccodesT %>% filter(iso3==rcv0j) %>% pull(`Country Name`)
 # rcv0iName <- ccodesT %>% filter(iso3==rcv0i) %>% pull(`Country Name`)
+USA_id <- which(ccodes=="USA")
+CHN_id <- which(ccodes=="CHN")
+
+chi_gamma_ex <- 2^gamma_tilde / (2^gamma_tilde + 1)
+rho_ex = exp(-1*alpha_tilde*log(W[USA_id, CHN_id] %>% pull(.)))
 
 ```
 
-*NOTE: Estimation remains a work-in-progress. Here, I present the welfare effects of two experiments relevant to the model that are possible once the economy has been calibrated.*
+*NOTE: Computing uncertainty intervals is computationally expensive and in-progress. I report and discuss point estimates here, with the necessary caution such preliminary discussion requires.*
+
+Estimates of preference parameters are reported in Table \ref{tab:b_estsT}. Consistent with their high trade barriers, the European Union and Japan are assessed to have high values of $b_i$. 
 
 
-First, suppose all governments are welfare-maximizing ($b_i=0$ for all $i$). It is straightforward to calculate their gains from moving to a world of free trade ($\tau_{ij} = 1$ for all $i, j$).^[In "hats", we have $\hat{\bm{\tau}}^{\text{ft}} = \bm{\tau}^{-1}$.] These come from two sources. First, prices fall and consumers benefit when the levels of factual barriers are significantly greater than welfare-optimal levels. Second, increasing market access through reducing trade barriers abroad increases real wages at home. Figure \ref{fig:Vhat} displays the empirical magnitudes of these gains. 
+```{r b_estsT, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
-```{r Vhat, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Consumer welfare gains from moving to global free trade, $\\hat{V}_i(h(\\hat{\\bm{\\tau}}^{\\text{ft}}))$, for each country. Recall that changes are expressed in multiples from utility in the factual equilibrium, where this value is normalized to one $\\hat{V}_i(h(\\bm{1})) = 1$. \\label{fig:Vhat}"), fig.height=5, dpi=300, fig.pos="t"}
+source("../02_figs/ccodes.R")
 
-source("../02_figs/Ghatft.R")
-GhatftFig + theme(aspect.ratio=1)
+kable(b_estsT, "latex", booktabs = T, caption = "Preference Parameter ($\\tilde{\\bm{b}}$) Estimates \\label{tab:b_estsT}", escape = FALSE) %>% kable_styling(position = "center")
 
 ```
 
-All governments gain substantially from moving to free trade. Those that face the largest barriers to foreign market access, such as Turkey and Russia, gain the most. This provides suggestive evidence that governments are not welfare-maximizers ($b_i > 0$). 
+With estimates of $b_i$ in hand, we can calculate each government's conquest value vis-à-vis all other governments. Recall that $\hat{\bm{\tau}}_i^{j \star}$ is the set of policies government $j$ would impose on $i$ if it successfully prosecuted a war against the latter. Then, $j$'s counterfactual utility in this scenario can be readily calculated given knowledge of its objective function (\ref{eq:Ghat}). These values are shown in Figure \ref{fig:rcv}. Each cell measures the utility change each row government experiences when successfully conquering each column government. Darker colors correspond to larger changes in utility.
 
-I can also solve the optimal policy change problem (\ref{eq:optTaujHat}) and calculate the welfare changes associated with successful wars. Recall that $\hat{\bm{\tau}}_i^{j \star}$ is the set of policies government $j$ would impose on $i$ if it successfully prosecuted a war against the latter. Then, $j$'s counterfactual utility in this scenario can be readily calculated given knowledge of its objective function (\ref{eq:Ghat}). I calculate counterfactual government utilities for each possible war under two assumptions on governments' motivations. First, I consider the case in which governments maximize consumer welfare ($b_i = 0$), followed by the case in which governments maximize rents ($b_i = 1$). The results are shown in Figure \ref{fig:rcv}.
+Governments that face poor market access conditions and/or are rent-maximizing gain the most from successful wars, relative to the status quo. When they win wars, rent-maximizing governments impose policies designed to direct trade into their borders. As imports go up, revenue collection potential also increases. The value of war is lower for welfare-maximizing governments. Still, welfare-maximizing governments facing poor market access benefit substantially from winning wars against countries with large markets and high barriers to trade. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These values assist in the identification of the power projection and preference parameters in $\bm{\theta}_m$.
 
-```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Government utility changes associated with successful wars. Each cell represents the welfare gain an attacker (y-axis) accrues when it wins a war against a given defender (x-axis). The left panel shows the case in which $b_i = 0$ for all $i$ (welfare-maximizers), while the right panel shows the case in which $b_i = 1$ for all $i$ (revenue-maximizers). Darker values indicate higher welfare changes. \\label{fig:rcv}"), fig.height=4, dpi=300, fig.pos="t"}
+```{r rcv_b, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Conquest values evaluated at $\\tilde{\\bm{b}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \\label{fig:rcv}"), fig.height=4, dpi=300, fig.pos="t"}
 
 source("../02_figs/rcv.R")
-rcvhm(rcv0, 0, mint, maxt) + rcvhm(rcv1, 1, mint, maxt)
+rcvhm(rcv_b, mint, maxt)
 
 ```
 
-Again, governments that face poor market access conditions gain the most from successful wars. Comparing the left panel to the right shows that the value of war depends crucially on the governments' preferences. When they win wars, rent-maximizing governments impose policies designed to direct trade into their borders. As imports go up, revenue collection potential also increases. The value of war is lower for welfare-maximizing governments. Still, welfare-maximizing governments facing poor market access benefit substantially from winning wars against countries with large markets and high barriers to trade. At the extreme, the welfare of consumers in XXX increases by a factor of XXX when their government wins a war against XXX. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These values assist in the identification of the power projection and preference parameters in $\bm{\theta}_m$.
+Turning to these parameters, I estimate $\gamma$ to be `r round(gamma_tilde, 2)`. This is consistent with a positive effect of military advantage on counterfactual war outcomes, holding power projection capacity constant. In particular, a 2:1 advantage in military spending translates into a `r round(chi_gamma_ex * 100, 1)` percent chance of winning a war, assuming no strength is lost due to the loss of strength gradient ($\rho_{ji} = 1$). 
+
+Governments also face significant obstacles to projecting power. I estimate $\alpha$ to be `r round(alpha_tilde, 2)`. At this value, if the United States wished to invade China, its effective strength would decline by a factor of `r round(1 / rho_ex, 1)` due to the distance between the countries. 
+
+Figure \ref{fig:chi} combines these estimates to produce estimates of the contest function $\tilde{\chi}_{ji}$ for each pair of countries. The United States' military advantage is reflected in its higher probability of success in conquest. However, conquest is estimated to be a difficult endeavor in modern international relations -- no country has a better than even chance of conquering another country within the sample.
+
+```{r chi, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Estimated probability of successful conquest for each attacking country (row) in war against every defending country (column). Each probability is reported in the appropriate cell of the heatmap. \\label{fig:chi}"), fig.height=4, dpi=300, fig.pos="t"}
+
+source("../02_figs/chi.R")
+chihm(chi, minchi, maxchi)
+
+```

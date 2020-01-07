@@ -8,13 +8,13 @@ yROW <- yDF %>% filter(iso3=="ROW") %>% pull(y)
 
 ```
 
-I estimate the model on a set of `r N` governments in the year `r Y`. These governments are listed in Table \ref{tab:ccodes}. I aggregate all European Union governments into a single entity and collapse all countries not included in the analysis into a "Rest of World" (ROW) aggregate.^[Such an aggregation is necessary in order to calculate fully general equilibrium effects of counterfactual trade policies. However, I prohibit other countries from invading ROW and likewise prohibit ROW from invading others. This ensures that estimates of military parameters depend almost entirely on interactions between countries within my sample.] Non-ROW countries make up `r round( (yAll - yROW) / yAll * 100 )` percent of world GDP.
+I estimate the model on a set of `r N` governments in the year `r Y`.^[Focusing on a small set of governments is necessary for computational tractability. However, the largest countries (by GDP) are the most attractive targets for coercion, as changes to their trade policies return the largest welfare gains, regardless of whether the coercer is a rent-maximizer or welfare-maximizer. The estimated model is therefore more useful in understanding "great power politics," rather than smaller political-economic conflicts of interest.] These governments are listed in Table \ref{tab:ccodes}. I aggregate all European Union governments into a single entity and collapse all countries not included in the analysis into a "Rest of World" (ROW) aggregate.^[Such an aggregation is necessary in order to calculate fully general equilibrium effects of counterfactual trade policies. However, I prohibit other countries from invading ROW and likewise prohibit ROW from invading others. This ensures that estimates of military parameters depend almost entirely on interactions between countries within my sample.] Non-ROW countries make up `r round( (yAll - yROW) / yAll * 100 )` percent of world GDP.
 
 ```{r ccodes, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
-source("../figs/ccodes.R")
+source("../02_figs/ccodes.R")
 
-kable(ccodesT, "latex", booktabs = T, caption = "\\label{tab:ccodes}") %>% kable_styling(position = "center")
+kable(ccodesT, "latex", booktabs = T, caption = "In-Sample Countries \\label{tab:ccodes}") %>% kable_styling(position = "center")
 
 ```
 
@@ -24,7 +24,7 @@ With the economy calibrated and policy barrier estimates in hand, I require only
 
 ```{r milex, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste("Military expenditure for in-sample governments. Values for ROW and EU are obtained by summing expenditure of all member countries. \\label{fig:milex}"), fig.height=5, dpi=300, fig.pos="t"}
 
-source("../figs/milex.R")
+source("../02_figs/milex.R")
 milexFig + theme(aspect.ratio=1)
 
 ```

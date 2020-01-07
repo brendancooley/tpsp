@@ -30,9 +30,11 @@ I estimate the model by minimizing the sum of these two loss functions. Formally
 \tilde{\bm{\theta}}_m \in \argmin_{\bm{\theta}_m} \quad \ell_{\bm{\tau}}(\bm{\theta}_m) + \ell_{\epsilon}(\bm{\theta}_m)
 \end{equation}
 
-In practice, I minimize these loss functions using an iterative procedure. In the first stage, I hold $\gamma$ and $\bm{\alpha}$ fixed and miminize $\ell_{\bm{\tau}}(\bm{\theta}_m)$ via adaptive grid search over $\bm{b}$, $\hat{c}$, and $\sigma_{\epsilon}$. Then, I hold these values fixed and choose $\gamma$ and $\bm{\alpha}$ to minimize $\ell_{\epsilon}(\bm{\theta}_m)$ using an ordinary least squares variant. I then return to the first stage and iterate until the loss functions stabilize. I discuss this procedure in more detail in Appendix `r AestimationAlg`.
+In practice, I minimize these loss functions using an iterative procedure. In the first stage, I hold $\gamma$ and $\bm{\alpha}$ fixed and miminize $\ell_{\bm{\tau}}(\bm{\theta}_m)$ via adaptive grid search over $\bm{b}$. Then, I hold these values fixed and choose $\gamma$ and $\bm{\alpha}$ to minimize $\ell_{\epsilon}(\bm{\theta}_m)$ using an ordinary least squares variant. I then return to the first stage and iterate until the loss functions stabilize. I discuss this procedure in more detail in Appendix `r AestimationAlg`. 
 
-This algorithm codifies intuition about identifying variation. Holding the military coercive environment fixed, the openness of trade policy is informative about governments underlying preferences, $\bm{b}$. The overall responsiveness of trade policy to the military coercive environment is governed by $\hat{c}$. When $\hat{c}$ is low, coercive threats are more credible, and policy is more responsive to threats. Conversely, when, $\hat{c}$ is high, few governments are willing to risk war and policies are more reflective of underlying preferences. For fixed $\gamma$ and $\bm{\alpha}$, $\tilde{\bm{b}}$, $\tilde{\hat{c}}$ are chosen to rationalize observed trade policies, given these incentives. 
+Because they affect coercion potential similarly, $\bm{\alpha}$ and $\hat{c}$ are difficult to separately identify. I therefore set $\hat{c} = .1$ and report estimates for other parameters consistent with this value.
+
+
 
 Fixing governments preferences and the relative costs of war, the probability that constraints are binding on governments' trade policy choices can be calculated. The responsiveness of the constraints that bind with high probability to the military capability ratio ($M_j / M_i$) and dyadic geography $\bm{W}_{ji}$ are informative about $\gamma$ and $\bm{\alpha}$ respectively. 
 

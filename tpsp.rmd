@@ -58,10 +58,12 @@ Atick <- 1
 Ptick <- 1
 Ltick <- 1
 
-dataPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/tpsp_data/"
-resultsPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results/"
+tpspPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
+dataPath <- paste0(tpspPath, "tpsp_data_mini/")
+resultsPath <- paste0(tpspPath, "results_mini/")
+estimatesPath <- paste0(resultsPath, "estimates/")
 
-# parameters 
+# economic parameters 
 theta <- read_csv(paste0(dataPath, "theta.csv"), col_names=FALSE) %>% pull(.)
 beta <- read_csv(paste0(dataPath, "beta.csv"), col_names=FALSE) %>% pull(.)
 ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
@@ -73,11 +75,22 @@ N <- length(ccodes %>% pull(.))
 tauM <- read_csv(paste0(dataPath, "tau.csv"), col_names=FALSE) %>% as.matrix()
 tau <- read_csv(paste0(dataPath, "tau.csv"), col_names=FALSE)
 milex <- read_csv(paste0(dataPath, "milex.csv"), col_names=FALSE)
+rcv <- read_csv(paste0(resultsPath, "rcv.csv"), col_names=FALSE)
+b_vals <- read_csv(paste0(resultsPath, "b_vals.csv"), col_names=FALSE)
+W <- read_csv(paste0(dataPath, "cDists.csv"), col_names=FALSE)
+W <- log(W)
+
+# estimates
+b_tilde <- read_csv(paste0(resultsPath, "b_tilde.csv"), col_names=FALSE)
+gamma_tilde <- read_csv(paste0(resultsPath, "gamma_tilde.csv"), col_names=FALSE) %>% pull(.)
+alpha_tilde <- read_csv(paste0(resultsPath, "alpha_tilde.csv"), col_names=FALSE) %>% pull(.)
+c_hat_tilde <- read_csv(paste0(resultsPath, "c_hat_tilde.csv"), col_names=FALSE) %>% pull(.)
+simga_epsilon_tilde <- read_csv(paste0(resultsPath, "sigma_epsilon_tilde.csv"), col_names=FALSE) %>% pull(.)
 
 # results
-Ghatft <- read_csv(paste0(resultsPath, "Ghatft.csv"), col_names=FALSE)
-rcv0 <- read_csv(paste0(resultsPath, "rcv0.csv"), col_names=FALSE)
-rcv1 <- read_csv(paste0(resultsPath, "rcv1.csv"), col_names=FALSE)
+# Ghatft <- read_csv(paste0(resultsPath, "Ghatft.csv"), col_names=FALSE)
+# rcv0 <- read_csv(paste0(resultsPath, "rcv0.csv"), col_names=FALSE)
+# rcv1 <- read_csv(paste0(resultsPath, "rcv1.csv"), col_names=FALSE)
 
 ```
 

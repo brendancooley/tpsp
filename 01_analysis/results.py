@@ -112,37 +112,53 @@ theta_dict_init["gamma"] = .3
 b_init = np.repeat(.5, pecmy.N)
 # b_init = np.array([.3, .8, 1, 1, 0, .3])
 
-# b_init, theta_dict_sv = pecmy.import_results("estimates_sv.csv")
+b_init, theta_dict_sv = pecmy.import_results(resultsPath + "estimates_sv.csv")
 # theta_dict_sv["c_hat"] = .2
 
 estimatesPath = resultsPath + "estimates/"
 helpers.mkdir(estimatesPath)
 # out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=False, c_step=.1, estimates_path=estimatesPath)
 # out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=True, c_step=.1, c_min=.1, estimates_path=estimatesPath)
-# pecmy.export_results(out_test, resultsPath + "c_hat20.csv")
 
+ests_tilde = estimatesPath + "ests_0.csv"
+b_tilde, theta_dict_tilde = pecmy.import_results(ests_tilde)
+
+np.savetxt(resultsPath + "b_tilde.csv", b_tilde, delimiter=",")
+for key in theta_dict_tilde.keys():
+    np.savetxt(resultsPath + key + "_tilde.csv", np.array([theta_dict_tilde[key]]), delimiter=",")
+
+# imp.reload(policies)
+# pecmy = policies.policies(data, params, b, results_path=resultsPath)
+# test = pecmy.affinity_fp(b_tilde, theta_dict_tilde, m)
 #
-# m = pecmy.M / np.ones((pecmy.N, pecmy.N))
-# m = m.T
-# m[pecmy.ROW_id,:] = 0
-# m[:,pecmy.ROW_id] = 0
-# m[pecmy.ROW_id,pecmy.ROW_id] = 1
-#
-# m_diag = np.diagonal(m)
-# m_frac = m / m_diag
-# pecmy.est_theta(b_init, m, theta_dict_init)
+counterfactualPath = resultsPath + "counterfactuals/"
+helpers.mkdir(counterfactualPath)
 
+### No militaries ###
 
+m_prime = np.diag(M)
+affinity = np.zeros((pecmy.N, pecmy.N))
+equilibrium_prime = pecmy.nash_eq(b_tilde, theta_dict_tilde, m_prime, affinity)
+equilibrium_dict_prime = pecmy.ecmy.rewrap_ge_dict(equilibrium_prime)
 
+tau_prime = equilibrium_dict_prime["tau_hat"] * pecmy.ecmy.tau
+np.savetxt(counterfactualPath + "tau_prime.csv", tau_prime, delimiter=",")
+G_prime = pecmy.G_hat(equilibrium_prime, b_tilde)
+np.savetxt(counterfactualPath + "G_prime.csv", G_prime, delimiter=",")
 
+### best fit with militaries ###
 
-# start_time = time.time()
-# m = M / np.ones_like(tau)
-# m = m.T
-# id = 0
-# wv = pecmy.war_vals(b_init, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N))) # calculate war values
-# ids_j = np.delete(np.arange(pecmy.N), id)
-# wv_i = wv[:,id][ids_j]
-# ge_x_sv = pecmy.nft_sv(id)
-# br = pecmy.br(ge_x_sv, b_init, wv_i, id, mil=False)
-# print("--- %s seconds ---" % (time.time() - start_time))
+m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+m = m.T
+m[pecmy.ROW_id,:] = 0
+m[:,pecmy.ROW_id] = 0
+m[pecmy.ROW_id,pecmy.ROW_id] = 1
+
+affinity = np.zeros((pecmy.N, pecmy.N))
+equilibrium = pecmy.nash_eq(b_tilde, theta_dict_tilde, m, affinity)
+equilibrium_dict = pecmy.ecmy.rewrap_ge_dict(equilibrium)
+
+tau_star = equilibrium_dict["tau_hat"] * pecmy.ecmy.tau
+np.savetxt(counterfactualPath + "tau_star.csv", tau_star, delimiter=",")
+G_star = pecmy.G_hat(equilibrium, b_tilde)
+np.savetxt(counterfactualPath + "G_star.csv", G_star, delimiter=",")

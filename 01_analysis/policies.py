@@ -73,8 +73,10 @@ class policies:
         self.lambda_i_len = self.hhat_len + 1 + (self.N - 1)
         # self.lambda_i_len_td = self.lambda_i_len + self.N ** 2 - self.N # add constraints on others' policies
 
-        # NOTE: values outside of unit interval seem to mess with things
-        self.b_vals = np.arange(-.5, 1.6, .1)
+        # NOTE: values less than zero seem to mess with best response
+        self.b_vals = np.arange(0, 2.1, .1)
+        # self.b_vals = np.arange(-1, 2.1, .1)
+        # self.b_vals = np.arange(-.5, 1.6, .1)
         # self.b_vals = np.arange(0, 1.1, .1)  # preference values for which to generate regime change value matrix.
         np.savetxt(results_path + "b_vals.csv", self.b_vals, delimiter=",")
 
@@ -947,7 +949,7 @@ class policies:
         return(bnds)
 
 
-    def br(self, ge_x, b, wv_i, id, mil=True, method="SLSQP"):
+    def br(self, ge_x, b, wv_i, id, mil=True, method="SLSQP", affinity=None):
         """Calculate optimal policies for gov id, given others' policies in ge_x.
 
         Parameters
@@ -988,7 +990,11 @@ class policies:
         tau_perturb = .01
 
         cons = self.constraints_tau(ge_dict, id, wv_i, b, mil=mil)
-        thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit})
+        bnds = self.bounds()
+        if affinity is None:
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(b, np.array([id]), None, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
+        else:
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(b, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
 
         thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
         taustar = thistar_dict["tau_hat"]*self.ecmy.tau
@@ -1000,9 +1006,9 @@ class policies:
             ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
             print(ge_dict)
             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-            b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
-            print(b)
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit})
+            # b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
+            # print(b)
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
 
         # NOTE: sometimes extreme values due to difficulties in satisfying particular mil constraints
         # Also seems to happen when target countries are small, easy to make mistakes in finite difference differentiation?
@@ -1013,7 +1019,8 @@ class policies:
                 if taustar[id, j] > self.tauMax:
                     ge_dict["tau_hat"][id, j] = tau_hat_ft[id, j]
                 else:
-                    ge_dict["tau_hat"][id, j] = thistar_dict["tau_hat"][id, j] + np.random.normal(loc=0, scale=tau_perturb)
+                    if id != j:
+                        ge_dict["tau_hat"][id, j] = thistar_dict["tau_hat"][id, j] + np.random.normal(loc=0, scale=tau_perturb)
             # print(ge_dict["tau_hat"] * self.ecmy.tau)
             # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
             # ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
@@ -1024,7 +1031,7 @@ class policies:
             # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
             print(ge_dict)
             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit})
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
             taustar = thistar_dict["tau_hat"]*self.ecmy.tau
 
         # else:
@@ -1034,14 +1041,13 @@ class policies:
 
         return(thistar['x'])
 
-    def nft_sv(self, id):
+    def nft_sv(self, id, ge_x):
 
         tau_hat_nft = self.tau_nft / self.ecmy.tau
         np.fill_diagonal(tau_hat_nft, 1)
-        ge_x_sv = np.ones(self.x_len)
-        ge_dict = self.ecmy.rewrap_ge_dict(ge_x_sv)
+        ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
         tau_hat_sv = ge_dict["tau_hat"]
-        tau_hat_sv[id] = tau_hat_nft[id] # start slightly above free trade
+        tau_hat_sv[id, ] = tau_hat_nft[id, ] # start slightly above free trade
         ge_dict_sv = self.ecmy.geq_solve(tau_hat_sv, np.ones(self.N))
         ge_x_sv = self.ecmy.unwrap_ge_dict(ge_dict_sv)
 
@@ -1109,7 +1115,7 @@ class policies:
         stop = False
 
         # starting values (nearft)
-        ge_x_sv = self.nft_sv(id)
+        ge_x_sv = self.nft_sv(id, np.ones(self.x_len))
 
         while stop is False:
 
@@ -1181,6 +1187,17 @@ class policies:
             if ub is True:
                 if Loss[2] < Loss[1]:
                     b = self.b_vals[idx_up]
+                    stop = True
+
+            # terminate if we've gotten stuck
+            if np.abs(bmax - bmin) < .3:
+                if Loss[0] < Loss[1]:
+                    b = self.b_vals[idx_down]
+                    stop = True
+                elif Loss[2] < Loss[1]:
+                    b = self.b_vals[idx_up]
+                    stop = True
+                else:
                     stop = True
 
         return(b)
@@ -1357,7 +1374,7 @@ class policies:
 
         return(theta_dict)
 
-    def est_loop(self, b_init, theta_dict_init, thres=.1, est_c=False, c_step=.1, c_min=.15, P=1, epsilon_zeros=True, estimates_path=""):
+    def est_loop(self, b_init, theta_dict_init, thres=.25, est_c=False, c_step=.1, c_min=.15, P=1, epsilon_zeros=True, estimates_path=""):
         """Estimate model. For each trial c_hat, iterate over estimates of b and alpha, gamma until convergence. Choose c_hat and associated parameters with lowest loss on predicted policies.
 
         Parameters
@@ -1523,7 +1540,7 @@ class policies:
             wv_i = wv[:,id][ids_j]
 
             # starting values
-            ge_x_sv = self.nft_sv(id)
+            ge_x_sv = self.nft_sv(id, np.ones(self.x_len))
 
             br = self.br(ge_x_sv, b_k, wv_i, id)  # calculate best response
             br_dict = self.ecmy.rewrap_ge_dict(br)
@@ -1560,8 +1577,40 @@ class policies:
 
         return(b, theta_dict)
 
+    def affinity_cor(self, affinity_sv, b, theta_dict, m, epsilon, step=.1, delta=.05):
 
-    def br_cor(self, ge_x, m, mpec=True):
+        # NOTE: these are difficult to calibrate exactly because constraints will pin tau_hats away from one systematically.
+
+        affinity = np.copy(affinity_sv)
+
+        wv = self.war_vals(b, m, theta_dict, epsilon) # calculate war values
+        for id in range(self.N):
+            print("id: " + str(id))
+            ids_j = np.delete(np.arange(self.N), id)
+            wv_i = wv[:,id][ids_j]
+            ge_x_nft = self.nft_sv(id, np.ones(self.x_len))
+            ge_x = self.br(ge_x_nft, b, wv_i, id, affinity=affinity)
+            tau_hat_i = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"][id, ]
+            print(tau_hat_i)
+            for j in range(len(tau_hat_i)):
+                diff = tau_hat_i[j] - 1
+                if diff > delta: # overpredicting tau, up affinity
+                    affinity[id, j] += step
+                if -1 * diff > delta:  # underpredictig tau, lower affinity
+                    affinity[id, j] -= step
+            print(affinity)
+
+        return(affinity)
+
+    def affinity_fp(self, b, theta_dict, m, step=.1, range = .05):
+
+        epsilon = np.zeros((self.N, self.N))
+        affinity_sv = np.zeros((self.N, self.N))
+        affinity_out = opt.fixed_point(self.affinity_cor, affinity_sv, args=(b, theta_dict, m, epsilon, step, range, ), method="iteration")
+
+        return(affinity_out)
+
+    def br_cor(self, ge_x_sv, m, affinity, epsilon, b, theta_dict, mpec=True):
         """Best response correspondence. Given current policies, calculates best responses for all govs and returns new ge_x flattened vector.
 
         Parameters
@@ -1578,21 +1627,29 @@ class policies:
 
         """
 
+        ge_dict_sv = self.ecmy.rewrap_ge_dict(ge_x_sv)
+        tau_hat_sv = np.copy(ge_dict_sv["tau_hat"])
+        ge_x = np.copy(ge_x_sv)
 
-        tau_hat_br = np.ones_like(self.ecmy.tau)
-        D_hat = np.ones(self.N)
+        tau_hat_br = ge_dict_sv["tau_hat"]
+        wv = self.war_vals(b, m, theta_dict, epsilon) # calculate war values
+        for id in range(self.N):
+            print("id: " + str(id))
+            ids_j = np.delete(np.arange(self.N), id)
+            wv_i = wv[:,id][ids_j]
+            print(ge_x)
+            ge_x_nft = self.nft_sv(id, ge_x)
+            print(ge_x_nft)
+            ge_x = self.br(ge_x_nft, b, wv_i, id, affinity=affinity)
+            # ge_x = self.br(ge_x, b, wv_i, id)
 
-        for i in range(self.N):
-            ge_x = self.br(ge_x, i, mpec=mpec)
-            ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
-            tau_hat_br[i, ] = ge_dict["tau_hat"][i, ]
-
-        ge_dict = self.ecmy.geq_solve(tau_hat_br, D_hat)
-        ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
+        ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
+        print("end: " + str(ge_dict))
+        print(ge_dict["tau_hat"] - tau_hat_sv)
 
         return(ge_x)
 
-    def nash_eq(self, m):
+    def nash_eq(self, b, theta_dict, m, affinity):
         """Calculates Nash equilibrium of policy game
 
         Returns
@@ -1602,8 +1659,10 @@ class policies:
 
         """
 
+        epsilon = np.zeros((self.N, self.N))
+
         ge_x_sv = np.ones(self.ecmy.ge_x_len)
-        ge_x_out = opt.fixed_point(self.br_cor, ge_x_sv, args=(m, True, ), method="del2")
+        ge_x_out = opt.fixed_point(self.br_cor, ge_x_sv, args=(m, affinity, epsilon, b, theta_dict, True, ), method="iteration", xtol=1e-02)
         return(ge_x_out)
 
     def unwrap_xy_tau(self, dict_xy_tau):

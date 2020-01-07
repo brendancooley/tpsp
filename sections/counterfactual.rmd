@@ -1,0 +1,1 @@
+I quantify the effects of military coercion on the international economy by calculating equilibrium policies in a world without militaries. I then compare these to policies consistent with $\tilde{\bm{\theta}}_m$ and observed military strengths. 
