@@ -74,7 +74,8 @@ class policies:
         # self.lambda_i_len_td = self.lambda_i_len + self.N ** 2 - self.N # add constraints on others' policies
 
         # NOTE: values outside of unit interval seem to mess with things
-        self.b_vals = np.arange(0, 1.1, .1)  # preference values for which to generate regime change value matrix.
+        self.b_vals = np.arange(-.5, 1.6, .1)
+        # self.b_vals = np.arange(0, 1.1, .1)  # preference values for which to generate regime change value matrix.
         np.savetxt(results_path + "b_vals.csv", self.b_vals, delimiter=",")
 
         rcv_path = results_path + "rcv.csv"
@@ -1356,7 +1357,7 @@ class policies:
 
         return(theta_dict)
 
-    def est_loop(self, b_init, theta_dict_init, thres=.1, est_c=False, c_step=.1, P=1, epsilon_zeros=True, estimates_path=""):
+    def est_loop(self, b_init, theta_dict_init, thres=.1, est_c=False, c_step=.1, c_min=.15, P=1, epsilon_zeros=True, estimates_path=""):
         """Estimate model. For each trial c_hat, iterate over estimates of b and alpha, gamma until convergence. Choose c_hat and associated parameters with lowest loss on predicted policies.
 
         Parameters
@@ -1392,7 +1393,7 @@ class policies:
         print(m)
 
         if est_c is True:
-            c_hat_vec = np.arange(c_step, 1 + c_step, c_step)
+            c_hat_vec = np.arange(c_min, 1 + c_step, c_step)
         else:
             c_hat_vec = [theta_dict_init["c_hat"]]
         np.savetxt(estimates_path + "c_hat_vec.csv", c_hat_vec, delimiter=",")
@@ -1438,9 +1439,9 @@ class policies:
             gamma.append(np.mean(gamma_c))
             Loss.append(np.mean(Loss_c))
 
-            out_dict_c = {"alpha":alpha_c, "gamma":gamma_c, "c_hat":c_hat, "sigma_epsilon":theta_dict_init["sigma_epsilon"], "Loss":Loss_c}
+            out_dict_c = {"alpha":alpha_c[0], "gamma":gamma_c[0], "c_hat":c_hat, "sigma_epsilon":theta_dict_init["sigma_epsilon"], "Loss":Loss_c[0]}
             for id in range(self.N):
-                out_dict_c["b" + str(id)] = b_c[id]
+                out_dict_c["b" + str(id)] = b_c[0][id]
 
             self.export_results(out_dict_c, estimates_path + "ests_" + str(tick) + ".csv")
             tick += 1
