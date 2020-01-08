@@ -120,7 +120,7 @@ helpers.mkdir(estimatesPath)
 # out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=False, c_step=.1, estimates_path=estimatesPath)
 # out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=True, c_step=.1, c_min=.1, estimates_path=estimatesPath)
 
-ests_tilde = estimatesPath + "ests_0.csv"
+ests_tilde = estimatesPath + "ests_1.csv"
 b_tilde, theta_dict_tilde = pecmy.import_results(ests_tilde)
 
 np.savetxt(resultsPath + "b_tilde.csv", b_tilde, delimiter=",")
@@ -136,15 +136,15 @@ helpers.mkdir(counterfactualPath)
 
 ### No militaries ###
 
-m_prime = np.diag(M)
-affinity = np.zeros((pecmy.N, pecmy.N))
-equilibrium_prime = pecmy.nash_eq(b_tilde, theta_dict_tilde, m_prime, affinity)
-equilibrium_dict_prime = pecmy.ecmy.rewrap_ge_dict(equilibrium_prime)
-
-tau_prime = equilibrium_dict_prime["tau_hat"] * pecmy.ecmy.tau
-np.savetxt(counterfactualPath + "tau_prime.csv", tau_prime, delimiter=",")
-G_prime = pecmy.G_hat(equilibrium_prime, b_tilde)
-np.savetxt(counterfactualPath + "G_prime.csv", G_prime, delimiter=",")
+# m_prime = np.diag(M)
+# affinity = np.zeros((pecmy.N, pecmy.N))
+# equilibrium_prime = pecmy.nash_eq(b_tilde, theta_dict_tilde, m_prime, affinity)
+# equilibrium_dict_prime = pecmy.ecmy.rewrap_ge_dict(equilibrium_prime)
+#
+# tau_prime = equilibrium_dict_prime["tau_hat"] * pecmy.ecmy.tau
+# np.savetxt(counterfactualPath + "tau_prime.csv", tau_prime, delimiter=",")
+# G_prime = pecmy.G_hat(equilibrium_prime, b_tilde)
+# np.savetxt(counterfactualPath + "G_prime.csv", G_prime, delimiter=",")
 
 ### best fit with militaries ###
 
@@ -153,6 +153,7 @@ m = m.T
 m[pecmy.ROW_id,:] = 0
 m[:,pecmy.ROW_id] = 0
 m[pecmy.ROW_id,pecmy.ROW_id] = 1
+print(m)
 
 affinity = np.zeros((pecmy.N, pecmy.N))
 equilibrium = pecmy.nash_eq(b_tilde, theta_dict_tilde, m, affinity)

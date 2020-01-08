@@ -65,7 +65,7 @@ class policies:
 
         self.tauMin = 1  # enforce lower bound on policies
         self.tauMax = 15
-        self.tau_nft = 1.25  # where to begin search for best response
+        self.tau_nft = 1.5  # where to begin search for best response
 
         self.hhat_len = self.N**2+4*self.N
         self.tauj_len = self.N**2-self.N
@@ -942,7 +942,8 @@ class policies:
         tauHatMax = self.tauMax / self.ecmy.tau
         for i in range(self.N):
             for j in range(self.N):
-                bnds.append((tauHatMin[i,j], tauHatMax[i,j]))
+                # bnds.append((tauHatMin[i,j], tauHatMax[i,j]))
+                bnds.append((tauHatMin[i,j], None))
         for i in range(self.ecmy.ge_x_len-self.N**2):
             bnds.append((None, None))
 
@@ -987,7 +988,7 @@ class policies:
         # eps = 1.0e-10
 
         b_perturb = .01
-        tau_perturb = .01
+        tau_perturb = .1
 
         cons = self.constraints_tau(ge_dict, id, wv_i, b, mil=mil)
         bnds = self.bounds()
@@ -1008,31 +1009,36 @@ class policies:
             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
             # b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
             # print(b)
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(b, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
+            thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
+            print("taustar_out:")
+            print(thistar_dict["tau_hat"]*self.ecmy.tau)
 
         # NOTE: sometimes extreme values due to difficulties in satisfying particular mil constraints
+        # NOTE: one way to fix this is is to just force countries to impose free trade when they win wars, no manipulation
         # Also seems to happen when target countries are small, easy to make mistakes in finite difference differentiation?
-        while np.any(taustar > self.tauMax):
-            print("extreme tau values found, iterating...")
-            print("taustar[id]: " + str(taustar[id]))
-            for j in range(self.N):
-                if taustar[id, j] > self.tauMax:
-                    ge_dict["tau_hat"][id, j] = tau_hat_ft[id, j]
-                else:
-                    if id != j:
-                        ge_dict["tau_hat"][id, j] = thistar_dict["tau_hat"][id, j] + np.random.normal(loc=0, scale=tau_perturb)
-            # print(ge_dict["tau_hat"] * self.ecmy.tau)
-            # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
-            # ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-            b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
-            # ge_dict = self.ecmy.geq_solve(tau_hat_ft, ge_dict["D_hat"])
-            # ge_dict["tau_hat"][id, ] += .1  # bump up starting taus
-            # ge_dict["tau_hat"][id, id] = 1
-            # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
-            print(ge_dict)
-            ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
-            taustar = thistar_dict["tau_hat"]*self.ecmy.tau
+        # while np.any(taustar > self.tauMax):
+        #     print("extreme tau values found, iterating...")
+        #     print("taustar[id]: " + str(taustar[id]))
+        #     for j in range(self.N):
+        #         if taustar[id, j] > self.tauMax:
+        #             ge_dict["tau_hat"][id, j] = tau_hat_ft[id, j]
+        #         else:
+        #             if id != j:
+        #                 ge_dict["tau_hat"][id, j] = thistar_dict["tau_hat"][id, j] + np.random.normal(loc=0, scale=tau_perturb)
+        #     # print(ge_dict["tau_hat"] * self.ecmy.tau)
+        #     # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
+        #     # ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
+        #     b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
+        #     # ge_dict = self.ecmy.geq_solve(tau_hat_ft, ge_dict["D_hat"])
+        #     # ge_dict["tau_hat"][id, ] += .1  # bump up starting taus
+        #     # ge_dict["tau_hat"][id, id] = 1
+        #     # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
+        #     print(ge_dict)
+        #     ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
+        #     thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
+        #     thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
+        #     taustar = thistar_dict["tau_hat"]*self.ecmy.tau
 
         # else:
         #     cons = self.constraints_tau(ge_dict, id, ge=False, mil=True)
@@ -1628,6 +1634,8 @@ class policies:
         """
 
         ge_dict_sv = self.ecmy.rewrap_ge_dict(ge_x_sv)
+        print("start:")
+        print(ge_dict_sv)
         tau_hat_sv = np.copy(ge_dict_sv["tau_hat"])
         ge_x = np.copy(ge_x_sv)
 
@@ -1637,15 +1645,19 @@ class policies:
             print("id: " + str(id))
             ids_j = np.delete(np.arange(self.N), id)
             wv_i = wv[:,id][ids_j]
-            print(ge_x)
             ge_x_nft = self.nft_sv(id, ge_x)
-            print(ge_x_nft)
-            ge_x = self.br(ge_x_nft, b, wv_i, id, affinity=affinity)
-            # ge_x = self.br(ge_x, b, wv_i, id)
+            ge_x_i = self.br(ge_x_nft, b, wv_i, id, affinity=affinity)
+            tau_hat_br[id, ] = self.ecmy.rewrap_ge_dict(ge_x_i)["tau_hat"][id, ]
 
-        ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
-        print("end: " + str(ge_dict))
+        print(tau_hat_br)
+        ge_dict = self.ecmy.geq_solve(tau_hat_br, np.ones(self.N))
+        ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
+        print("end: ")
+        print(ge_dict)
         print(ge_dict["tau_hat"] - tau_hat_sv)
+
+        print("taustar: ")
+        print(ge_dict["tau_hat"]*self.ecmy.tau)
 
         return(ge_x)
 

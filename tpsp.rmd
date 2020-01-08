@@ -119,7 +119,7 @@ simga_epsilon_tilde <- read_csv(paste0(resultsPath, "sigma_epsilon_tilde.csv"), 
 
 # Estimation
 
-```{r, child = "sections/estimation.md"}
+```{r, child = "sections/estimation.rmd"}
 ```
 
 # Results

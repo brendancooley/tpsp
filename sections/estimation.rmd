@@ -32,9 +32,7 @@ I estimate the model by minimizing the sum of these two loss functions. Formally
 
 In practice, I minimize these loss functions using an iterative procedure. In the first stage, I hold $\gamma$ and $\bm{\alpha}$ fixed and miminize $\ell_{\bm{\tau}}(\bm{\theta}_m)$ via adaptive grid search over $\bm{b}$. Then, I hold these values fixed and choose $\gamma$ and $\bm{\alpha}$ to minimize $\ell_{\epsilon}(\bm{\theta}_m)$ using an ordinary least squares variant. I then return to the first stage and iterate until the loss functions stabilize. I discuss this procedure in more detail in Appendix `r AestimationAlg`. 
 
-Because they affect coercion potential similarly, $\bm{\alpha}$ and $\hat{c}$ are difficult to separately identify. I therefore set $\hat{c} = .1$ and report estimates for other parameters consistent with this value.
-
-
+Because they affect coercion potential similarly, $\bm{\alpha}$ and $\hat{c}$ are difficult to separately identify. I therefore set $\hat{c} =$ `r c_hat_tilde` and report estimates for other parameters consistent with this value.
 
 Fixing governments preferences and the relative costs of war, the probability that constraints are binding on governments' trade policy choices can be calculated. The responsiveness of the constraints that bind with high probability to the military capability ratio ($M_j / M_i$) and dyadic geography $\bm{W}_{ji}$ are informative about $\gamma$ and $\bm{\alpha}$ respectively. 
 
