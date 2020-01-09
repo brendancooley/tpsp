@@ -18,7 +18,7 @@ import helpers
 imp.reload(helpers)
 
 mini = False
-large = False
+large = True
 rcv_ft = True
 
 # dataFiles = os.listdir("tpsp_data/")
@@ -32,9 +32,9 @@ if mini is True:
 elif large is True:
     dataPath = projectPath + "tpsp_data_large/"
     resultsPath = projectPath + "results_large/"
-elif rcv_ft is True:
-    dataPath = projectPath + "tpsp_data_mini/"
-    resultsPath = projectPath + "results_rcv_ft/"
+# elif rcv_ft is True:
+#     dataPath = projectPath + "tpsp_data_mini/"
+#     resultsPath = projectPath + "results_rcv_ft/"
 else:
     dataPath = projectPath + "tpsp_data/"
     resultsPath = projectPath + "results/"
@@ -122,7 +122,7 @@ b_init = np.array([.3, 2, 2, 1.2, 0, .3])
 estimatesPath = resultsPath + "estimates/"
 helpers.mkdir(estimatesPath)
 # out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=False, c_step=.1, estimates_path=estimatesPath)
-# out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=True, c_step=.1, c_min=.2, estimates_path=estimatesPath)
+out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=True, c_step=.1, c_min=.1, estimates_path=estimatesPath)
 
 ests_tilde = estimatesPath + "ests_0.csv"
 b_tilde, theta_dict_tilde = pecmy.import_results(ests_tilde)
