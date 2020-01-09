@@ -74,10 +74,10 @@ class policies:
         # self.lambda_i_len_td = self.lambda_i_len + self.N ** 2 - self.N # add constraints on others' policies
 
         # NOTE: values less than zero seem to mess with best response
-        # self.b_vals = np.arange(0, 2.1, .1)
+        self.b_vals = np.arange(0, 2.1, .1)
         # self.b_vals = np.arange(-1, 2.1, .1)
         # self.b_vals = np.arange(-.5, 1.6, .1)
-        self.b_vals = np.arange(0, 1.1, .1)  # preference values for which to generate regime change value matrix.
+        # self.b_vals = np.arange(0, 1.1, .1)  # preference values for which to generate regime change value matrix.
         np.savetxt(results_path + "b_vals.csv", self.b_vals, delimiter=",")
 
         rcv_path = results_path + "rcv.csv"
@@ -1001,45 +1001,46 @@ class policies:
         taustar = thistar_dict["tau_hat"]*self.ecmy.tau
 
         # try new starting values if we don't converge
-        # while thistar['success'] is False or np.any(np.isnan(thistar['x'])) or np.any(thistar_dict["tau_hat"] < 0):
-        #     print("br unsuccessful, iterating...")
-        #     ge_dict["tau_hat"][id, ] += .1  # bump up starting taus
-        #     ge_dict["tau_hat"][id, id] = 1
-        #     ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
-        #     print(ge_dict)
-        #     ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-        #     # b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
-        #     # print(b)
-        #     thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(b, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
-        #     thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
-        #     print("taustar_out:")
-        #     print(thistar_dict["tau_hat"]*self.ecmy.tau)
-        #
-        # # NOTE: sometimes extreme values due to difficulties in satisfying particular mil constraints
-        # # NOTE: one way to fix this is is to just force countries to impose free trade when they win wars, no manipulation
-        # # Also seems to happen when target countries are small, easy to make mistakes in finite difference differentiation?
-        # while np.any(taustar > self.tauMax):
-        #     print("extreme tau values found, iterating...")
-        #     print("taustar[id]: " + str(taustar[id]))
-        #     for j in range(self.N):
-        #         if taustar[id, j] > self.tauMax:
-        #             ge_dict["tau_hat"][id, j] = tau_hat_ft[id, j]
-        #         else:
-        #             if id != j:
-        #                 ge_dict["tau_hat"][id, j] = thistar_dict["tau_hat"][id, j] + np.random.normal(loc=0, scale=tau_perturb)
-        #     # print(ge_dict["tau_hat"] * self.ecmy.tau)
-        #     # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
-        #     # ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-        #     b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
-        #     # ge_dict = self.ecmy.geq_solve(tau_hat_ft, ge_dict["D_hat"])
-        #     # ge_dict["tau_hat"][id, ] += .1  # bump up starting taus
-        #     # ge_dict["tau_hat"][id, id] = 1
-        #     # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
-        #     print(ge_dict)
-        #     ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-        #     thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(b, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
-        #     thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
-        #     taustar = thistar_dict["tau_hat"]*self.ecmy.tau
+        while thistar['success'] is False or np.any(np.isnan(thistar['x'])) or np.any(thistar_dict["tau_hat"] < 0):
+            print("br unsuccessful, iterating...")
+            for j in range(self.N):
+                if id != j:
+                    ge_dict["tau_hat"][id, j] = thistar_dict["tau_hat"][id, j] + np.random.normal(loc=0, scale=tau_perturb)
+            ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
+            print(ge_dict)
+            ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
+            # b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
+            # print(b)
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(b, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
+            thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
+            print("taustar_out:")
+            print(thistar_dict["tau_hat"]*self.ecmy.tau)
+
+        # NOTE: sometimes extreme values due to difficulties in satisfying particular mil constraints
+        # NOTE: one way to fix this is is to just force countries to impose free trade when they win wars, no manipulation
+        # Also seems to happen when target countries are small, easy to make mistakes in finite difference differentiation?
+        while np.any(taustar > self.tauMax):
+            print("extreme tau values found, iterating...")
+            print("taustar[id]: " + str(taustar[id]))
+            for j in range(self.N):
+                if taustar[id, j] > self.tauMax:
+                    ge_dict["tau_hat"][id, j] = tau_hat_ft[id, j]
+                else:
+                    if id != j:
+                        ge_dict["tau_hat"][id, j] = thistar_dict["tau_hat"][id, j] + np.random.normal(loc=0, scale=tau_perturb)
+            # print(ge_dict["tau_hat"] * self.ecmy.tau)
+            # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
+            # ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
+            b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
+            # ge_dict = self.ecmy.geq_solve(tau_hat_ft, ge_dict["D_hat"])
+            # ge_dict["tau_hat"][id, ] += .1  # bump up starting taus
+            # ge_dict["tau_hat"][id, id] = 1
+            # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
+            print(ge_dict)
+            ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(b, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
+            thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
+            taustar = thistar_dict["tau_hat"]*self.ecmy.tau
 
         # else:
         #     cons = self.constraints_tau(ge_dict, id, ge=False, mil=True)
@@ -1123,6 +1124,7 @@ class policies:
 
         # starting values (nearft)
         ge_x_sv = self.nft_sv(id, np.ones(self.x_len))
+        loss_last = 1000
 
         while stop is False:
 
@@ -1178,6 +1180,11 @@ class policies:
             # if median value is a valley, return it as estimate
             if np.argmin(Loss) == 1:
                 stop = True
+                # TODO: prevent binary search if local loss is less than previous loss
+                # if loss_last < Loss[1]:
+                #     b = b_max
+                # else:
+                #     stop = True
             else:  # otherwise, truncate search region and search in direction of of lower loss
                 if np.argmin(Loss) == 2:
                     bmin = b
@@ -1197,7 +1204,7 @@ class policies:
                     stop = True
 
             # terminate if we've gotten stuck
-            if np.abs(bmax - bmin) < .3:
+            if np.abs(bmax - bmin) < .1:
                 if np.argmin(Loss) == 0:
                     b = self.b_vals[idx_down]
                     stop = True
@@ -1369,6 +1376,10 @@ class policies:
             theta_dict["gamma"] = ests.params[0]
             theta_dict["alpha"] = -ests.params[1]
             # theta_dict["sigma_epsilon"] = np.dot(ests.resid ** 2, weights.ravel())
+            if theta_dict["gamma"] < 0:
+                theta_dict["gamma"] = .01
+            # if theta_dict["alpha"] < 0:
+            #     theta_dict["alpha"] = .01
 
             theta_k = np.array([i for i in theta_dict.values()])
             theta_km1 = np.array([i for i in theta_dict_last.values()])
