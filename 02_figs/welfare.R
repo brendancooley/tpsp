@@ -1,18 +1,18 @@
-# helperPath <- "~/Dropbox (Princeton)/14_Software/R/"
-# helperFiles <- list.files(helperPath)
-# for (i in helperFiles) {
-#   source(paste0(helperPath, i))
-# }
-# 
-# libs <- c("tidyverse", "latex2exp")
-# ipak(libs)
-# 
-# analysisPath <- "../working/analysis/"
-# dataPath <- paste0(analysisPath, "tpsp_data/")
-# resultsPath <- paste0(analysisPath, "results/")
-# 
-# ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
-# Y <- read_csv(paste0(dataPath, "year.csv"), col_names=FALSE) %>% pull(.)
+helperPath <- "~/Dropbox (Princeton)/14_Software/R/"
+helperFiles <- list.files(helperPath)
+for (i in helperFiles) {
+  source(paste0(helperPath, i))
+}
+
+libs <- c("tidyverse", "latex2exp")
+ipak(libs)
+
+analysisPath <- "../working/analysis/"
+dataPath <- paste0(analysisPath, "tpsp_data_mini/")
+resultsPath <- paste0(analysisPath, "results_rcv_ft/")
+
+ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
+Y <- read_csv(paste0(dataPath, "year.csv"), col_names=FALSE) %>% pull(.)
 # Ghatft <- read_csv(paste0(resultsPath, "Ghatft.csv"), col_names=FALSE)
 
 Ghat <- bind_cols(ccodes, Ghatft) %>% as_tibble()

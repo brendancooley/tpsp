@@ -219,11 +219,11 @@ $\hat{c}_i = \hat{c}$ for all $i$.
 
 I estimate the model on a set of 6 governments in the year 2011.^[Focusing on a small set of governments is necessary for computational tractability. However, the largest countries (by GDP) are the most attractive targets for coercion, as changes to their trade policies return the largest welfare gains, regardless of whether the coercer is a rent-maximizer or welfare-maximizer. The estimated model is therefore more useful in understanding "great power politics," rather than smaller political-economic conflicts of interest.] These governments are listed in Table \ref{tab:ccodes}. I aggregate all European Union governments into a single entity and collapse all countries not included in the analysis into a "Rest of World" (ROW) aggregate.^[Such an aggregation is necessary in order to calculate fully general equilibrium effects of counterfactual trade policies. However, I prohibit other countries from invading ROW and likewise prohibit ROW from invading others. This ensures that estimates of military parameters depend almost entirely on interactions between countries within my sample.] Non-ROW countries make up 68 percent of world GDP.
 
-\begin{table}[t]
+\begin{table}
 
 \caption{\label{tab:ccodes}In-Sample Countries \label{tab:ccodes}}
 \centering
-\begin{tabular}{ll}
+\begin{tabular}[t]{ll}
 \toprule
 iso3 & Country Name\\
 \midrule
@@ -231,9 +231,9 @@ CHN & China\\
 EU & European Union\\
 JPN & Japan\\
 ROW & Rest of World\\
-RUS & Russian Federation\\
+RUS & Russia\\
 \addlinespace
-USA & United States of America\\
+USA & United States\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -283,9 +283,7 @@ I estimate the model by minimizing the sum of these two loss functions. Formally
 
 In practice, I minimize these loss functions using an iterative procedure. In the first stage, I hold $\gamma$ and $\bm{\alpha}$ fixed and miminize $\ell_{\bm{\tau}}(\bm{\theta}_m)$ via adaptive grid search over $\bm{b}$. Then, I hold these values fixed and choose $\gamma$ and $\bm{\alpha}$ to minimize $\ell_{\epsilon}(\bm{\theta}_m)$ using an ordinary least squares variant. I then return to the first stage and iterate until the loss functions stabilize. I discuss this procedure in more detail in Appendix F. 
 
-Because they affect coercion potential similarly, $\bm{\alpha}$ and $\hat{c}$ are difficult to separately identify. I therefore set $\hat{c} = .1$ and report estimates for other parameters consistent with this value.
-
-
+Because they affect coercion potential similarly, $\bm{\alpha}$ and $\hat{c}$ are difficult to separately identify. I therefore set $\hat{c} =$ 0.1 and report estimates for other parameters consistent with this value.
 
 Fixing governments preferences and the relative costs of war, the probability that constraints are binding on governments' trade policy choices can be calculated. The responsiveness of the constraints that bind with high probability to the military capability ratio ($M_j / M_i$) and dyadic geography $\bm{W}_{ji}$ are informative about $\gamma$ and $\bm{\alpha}$ respectively. 
 
@@ -301,11 +299,11 @@ This procedure produces point estimates $\tilde{\bm{\theta}}_m$. I then construc
 Estimates of preference parameters are reported in Table \ref{tab:b_estsT}. Consistent with their high trade barriers, the European Union and Japan are assessed to have high values of $b_i$. 
 
 
-\begin{table}[t]
+\begin{table}
 
 \caption{\label{tab:b_estsT}Preference Parameter ($\tilde{\bm{b}}$) Estimates \label{tab:b_estsT}}
 \centering
-\begin{tabular}{llr}
+\begin{tabular}[t]{llr}
 \toprule
 iso3 & Country Name & $\tilde{\boldsymbol{b}}_i$\\
 \midrule
@@ -313,16 +311,21 @@ CHN & China & 0.2\\
 EU & European Union & 2.0\\
 JPN & Japan & 1.9\\
 ROW & Rest of World & 1.2\\
-RUS & Russian Federation & 0.0\\
+RUS & Russia & 0.0\\
 \addlinespace
-USA & United States of America & 0.3\\
+USA & United States & 0.3\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-With estimates of $b_i$ in hand, we can calculate each government's conquest value vis-à-vis all other governments. Recall that $\hat{\bm{\tau}}_i^{j \star}$ is the set of policies government $j$ would impose on $i$ if it successfully prosecuted a war against the latter. Then, $j$'s counterfactual utility in this scenario can be readily calculated given knowledge of its objective function (\ref{eq:Ghat}). These values are shown in Figure \ref{fig:rcv}. Each cell measures the utility change each row government experiences when successfully conquering each column government. Darker colors correspond to larger changes in utility.^[I report conquest values for the ROW but remind readers that I prohibit ROW from invading other governments and do not allow it to be invaded.]
+With estimates of $b_i$ in hand, we can calculate each government's conquest value vis-à-vis all other governments. Recall that $\hat{\bm{\tau}}_i^{j \star}$ is the set of policies government $j$ would impose on $i$ if it successfully prosecuted a war against the latter. Then, $j$'s counterfactual utility in this scenario can be readily calculated given knowledge of its objective function (\ref{eq:Ghat}). These values are shown in Figure \ref{fig:rcv}. Each cell measures the utility change each row government experiences when successfully conquering each column government. Darker colors correspond to larger changes in utility.
 
 Governments that face poor market access conditions and/or are rent-maximizing gain the most from successful wars, relative to the status quo. When they win wars, rent-maximizing governments impose policies designed to direct trade into their borders. As imports go up, revenue collection potential also increases. The value of war is lower for welfare-maximizing governments. Still, welfare-maximizing governments facing poor market access benefit substantially from winning wars against countries with large markets and high barriers to trade. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These values assist in the identification of the power projection and preference parameters in $\bm{\theta}_m$.
+
+
+```
+## Error in eval(ei, envir): object 'ccodes_vec' not found
+```
 
 ![Conquest values evaluated at $\tilde{\bm{b}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \label{fig:rcv}](figure/rcv_b-1.png)
 
@@ -330,13 +333,14 @@ Turning to these parameters, I estimate $\gamma$ to be 0.42. This is consistent 
 
 Governments also face significant obstacles to projecting power. I estimate $\alpha$ to be 0.24. At this value, if the United States wished to invade China, its effective strength would decline by a factor of 1.7 due to the distance between the countries. 
 
-Figure \ref{fig:chi} combines these estimates to produce estimates of the contest function $\tilde{\chi}_{ji}$ for each pair of countries. The United States' military advantage is reflected in its higher probability of success in conquest. 
+Figure \ref{fig:chi} combines these estimates to produce estimates of the contest function $\tilde{\chi}_{ji}$ for each pair of countries. The United States' military advantage is reflected in its higher probability of success in conquest. However, conquest is estimated to be a difficult endeavor in modern international relations -- no country has a better than even chance of conquering another country within the sample.
 
-![Probability of successful conquest for each attacking country (row) in war against every defending country (column). Each probability is reported in the appropriate cell of the heatmap. \label{fig:chi}](figure/chi-1.png)
+![Estimated probability of successful conquest for each attacking country (row) in war against every defending country (column). Each probability is reported in the appropriate cell of the heatmap. \label{fig:chi}](figure/chi-1.png)
 
 # Counterfactual: From Anarchy to Pacifism
 
 
+I quantify the effects of military coercion on the international economy by calculating equilibrium policies in a world without militaries. I then compare these to policies consistent with $\tilde{\bm{\theta}}_m$ and observed military strengths. Formally, let $\tilde{\bm{\tau}}^\star(\tilde{\bm{\theta}}_m, \bm{M}$ be equilibrium policies at observed strengths, holding affinity shocks at zero, $\xi_{ij} = 0$ for all $i$, $j$.^[note on why this is the right comparison]
 
 # Conclusion
 
