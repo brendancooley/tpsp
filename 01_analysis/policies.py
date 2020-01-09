@@ -2050,6 +2050,11 @@ class policies:
             b_vec = np.repeat(b, self.N)
             wvb = np.zeros_like(self.ecmy.tau)
             for i in range(self.N):
+                tau_hat_ft = 1 / self.ecmy.tau
+                tau_hat_prime = np.ones((self.N, self.N))
+                tau_hat_prime[i, ] = tau_hat_ft[i, ]
+                ge_dict_prime = self.ecmy.geq_solve(tau_hat_prime, np.ones(self.N))
+                ge_x_prime = self.ecmy.unwrap_ge_dict(ge_dict_prime)
                 for j in range(self.N):
                     if i != j:
                         print(str(i) + " " + str(j))
@@ -2059,11 +2064,6 @@ class policies:
                             ge_br_war_ji = self.br_war_ji(ge_x, b_vec, j, i, full_opt=True)
                             G_hat_ji = self.G_hat(ge_br_war_ji, b_vec, ids=np.array([j]))
                         else:
-                            tau_hat_ft = 1 / self.ecmy.tau
-                            tau_hat_prime = np.ones((self.N, self.N))
-                            tau_hat_prime[i, ] = tau_hat_ft[i, ]
-                            ge_dict_prime = self.ecmy.geq_solve(tau_hat_prime, np.ones(self.N))
-                            ge_x_prime = self.ecmy.unwrap_ge_dict(ge_dict_prime)
                             G_hat_ji = self.G_hat(ge_x_prime, b_vec, ids=np.array([j]))
                         wvb[j, i] = G_hat_ji
                         # print(time.time() - start_time)

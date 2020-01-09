@@ -17,9 +17,11 @@ sys.path.insert(1, helpersPath)
 import helpers
 imp.reload(helpers)
 
-mini = False
+mini = True
 large = False
-rcv_ft = True
+rcv_ft = False
+
+runEstimates = False
 
 # dataFiles = os.listdir("tpsp_data/")
 
@@ -122,7 +124,8 @@ b_init = np.repeat(.5, pecmy.N)
 estimatesPath = resultsPath + "estimates/"
 helpers.mkdir(estimatesPath)
 # out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=False, c_step=.1, estimates_path=estimatesPath)
-out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=True, c_step=.1, c_min=.1, estimates_path=estimatesPath)
+if runEstimates is True:
+    out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=True, c_step=.1, c_min=.1, estimates_path=estimatesPath)
 
 ests_tilde = estimatesPath + "ests_0.csv"
 b_tilde, theta_dict_tilde = pecmy.import_results(ests_tilde)
