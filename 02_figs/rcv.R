@@ -9,7 +9,7 @@
 # 
 # tpspPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 # dataPath <- paste0(tpspPath, "tpsp_data_mini/")
-# resultsPath <- paste0(tpspPath, "results_mini/")
+# resultsPath <- paste0(tpspPath, "results_rcv_ft/")
 # 
 # ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
 # ccodes_vec <- ccodes %>% pull(.)
