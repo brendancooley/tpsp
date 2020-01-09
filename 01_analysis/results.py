@@ -18,7 +18,7 @@ import helpers
 imp.reload(helpers)
 
 mini = False
-large = True
+large = False
 rcv_ft = True
 
 # dataFiles = os.listdir("tpsp_data/")
@@ -113,8 +113,8 @@ theta_dict_init["c_hat"] = .2
 theta_dict_init["alpha"] = .25
 theta_dict_init["gamma"] = .3
 
-# b_init = np.repeat(.5, pecmy.N)
-b_init = np.array([.3, 2, 2, 1.2, 0, .3])
+b_init = np.repeat(.5, pecmy.N)
+# b_init = np.array([.3, 2, 2, 1.2, 0, .3])
 
 # b_init, theta_dict_sv = pecmy.import_results(resultsPath + "estimates_sv.csv")
 # theta_dict_sv["c_hat"] = .2
