@@ -17,8 +17,9 @@ sys.path.insert(1, helpersPath)
 import helpers
 imp.reload(helpers)
 
-mini = True
+mini = False
 large = False
+rcv_ft = True
 
 # dataFiles = os.listdir("tpsp_data/")
 
@@ -31,6 +32,9 @@ if mini is True:
 elif large is True:
     dataPath = projectPath + "tpsp_data_large/"
     resultsPath = projectPath + "results_large/"
+elif rcv_ft is True:
+    dataPath = projectPath + "tpsp_data_mini/"
+    resultsPath = projectPath + "results_rcv_ft/"
 else:
     dataPath = projectPath + "tpsp_data/"
     resultsPath = projectPath + "results/"
@@ -101,7 +105,7 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 
 imp.reload(policies)
 # b_init, theta_dict_init = pecmy.import_results(resultsPath+"estimates_sv.csv")
-pecmy = policies.policies(data, params, b, results_path=resultsPath)  # generate pecmy and rcv vals
+pecmy = policies.policies(data, params, b, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
 
 theta_dict_init = dict()
 theta_dict_init["sigma_epsilon"] = 1
@@ -112,20 +116,20 @@ theta_dict_init["gamma"] = .3
 b_init = np.repeat(.5, pecmy.N)
 # b_init = np.array([.3, .8, 1, 1, 0, .3])
 
-b_init, theta_dict_sv = pecmy.import_results(resultsPath + "estimates_sv.csv")
+# b_init, theta_dict_sv = pecmy.import_results(resultsPath + "estimates_sv.csv")
 # theta_dict_sv["c_hat"] = .2
 
 estimatesPath = resultsPath + "estimates/"
 helpers.mkdir(estimatesPath)
 # out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=False, c_step=.1, estimates_path=estimatesPath)
-# out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=True, c_step=.1, c_min=.1, estimates_path=estimatesPath)
+out_test = pecmy.est_loop(b_init, theta_dict_init, est_c=True, c_step=.1, c_min=.1, estimates_path=estimatesPath)
 
-ests_tilde = estimatesPath + "ests_1.csv"
-b_tilde, theta_dict_tilde = pecmy.import_results(ests_tilde)
-
-np.savetxt(resultsPath + "b_tilde.csv", b_tilde, delimiter=",")
-for key in theta_dict_tilde.keys():
-    np.savetxt(resultsPath + key + "_tilde.csv", np.array([theta_dict_tilde[key]]), delimiter=",")
+# ests_tilde = estimatesPath + "ests_0.csv"
+# b_tilde, theta_dict_tilde = pecmy.import_results(ests_tilde)
+#
+# np.savetxt(resultsPath + "b_tilde.csv", b_tilde, delimiter=",")
+# for key in theta_dict_tilde.keys():
+#     np.savetxt(resultsPath + key + "_tilde.csv", np.array([theta_dict_tilde[key]]), delimiter=",")
 
 # imp.reload(policies)
 # pecmy = policies.policies(data, params, b, results_path=resultsPath)
@@ -148,18 +152,24 @@ helpers.mkdir(counterfactualPath)
 
 ### best fit with militaries ###
 
-m = pecmy.M / np.ones((pecmy.N, pecmy.N))
-m = m.T
-m[pecmy.ROW_id,:] = 0
-m[:,pecmy.ROW_id] = 0
-m[pecmy.ROW_id,pecmy.ROW_id] = 1
-print(m)
-
-affinity = np.zeros((pecmy.N, pecmy.N))
-equilibrium = pecmy.nash_eq(b_tilde, theta_dict_tilde, m, affinity)
-equilibrium_dict = pecmy.ecmy.rewrap_ge_dict(equilibrium)
-
-tau_star = equilibrium_dict["tau_hat"] * pecmy.ecmy.tau
-np.savetxt(counterfactualPath + "tau_star.csv", tau_star, delimiter=",")
-G_star = pecmy.G_hat(equilibrium, b_tilde)
-np.savetxt(counterfactualPath + "G_star.csv", G_star, delimiter=",")
+# tau_prime = np.genfromtxt(counterfactualPath + "tau_prime.csv", delimiter=",")
+# tau_hat_prime = tau_prime / pecmy.ecmy.tau
+# ge_dict_prime = pecmy.ecmy.geq_solve(tau_hat_prime, np.ones(pecmy.N))
+# ge_x_prime = pecmy.ecmy.unwrap_ge_dict(ge_dict_prime)
+#
+# m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+# m = m.T
+# m[pecmy.ROW_id,:] = 0
+# m[:,pecmy.ROW_id] = 0
+# m[pecmy.ROW_id,pecmy.ROW_id] = 1
+# print(m)
+# print(theta_dict_tilde)
+#
+# affinity = np.zeros((pecmy.N, pecmy.N))
+# equilibrium = pecmy.nash_eq(ge_x_prime, b_tilde, theta_dict_tilde, m, affinity)
+# equilibrium_dict = pecmy.ecmy.rewrap_ge_dict(equilibrium)
+#
+# tau_star = equilibrium_dict["tau_hat"] * pecmy.ecmy.tau
+# np.savetxt(counterfactualPath + "tau_star.csv", tau_star, delimiter=",")
+# G_star = pecmy.G_hat(equilibrium, b_tilde)
+# np.savetxt(counterfactualPath + "G_star.csv", G_star, delimiter=",")

@@ -14,7 +14,7 @@ import multiprocessing as mp
 
 class policies:
 
-    def __init__(self, data, params, b, results_path=None):
+    def __init__(self, data, params, b, results_path=None, rcv_ft=False):
         """
 
         Parameters
@@ -65,7 +65,7 @@ class policies:
 
         self.tauMin = 1  # enforce lower bound on policies
         self.tauMax = 15
-        self.tau_nft = 1.5  # where to begin search for best response
+        self.tau_nft = 1.25  # where to begin search for best response
 
         self.hhat_len = self.N**2+4*self.N
         self.tauj_len = self.N**2-self.N
@@ -74,15 +74,15 @@ class policies:
         # self.lambda_i_len_td = self.lambda_i_len + self.N ** 2 - self.N # add constraints on others' policies
 
         # NOTE: values less than zero seem to mess with best response
-        self.b_vals = np.arange(0, 2.1, .1)
+        # self.b_vals = np.arange(0, 2.1, .1)
         # self.b_vals = np.arange(-1, 2.1, .1)
         # self.b_vals = np.arange(-.5, 1.6, .1)
-        # self.b_vals = np.arange(0, 1.1, .1)  # preference values for which to generate regime change value matrix.
+        self.b_vals = np.arange(0, 1.1, .1)  # preference values for which to generate regime change value matrix.
         np.savetxt(results_path + "b_vals.csv", self.b_vals, delimiter=",")
 
         rcv_path = results_path + "rcv.csv"
         if not os.path.isfile(rcv_path):
-            rcv = self.pop_rc_vals()
+            rcv = self.pop_rc_vals(rcv_ft=rcv_ft)
             self.rc_vals_to_csv(rcv, rcv_path)
             self.rcv = rcv
         else:
@@ -999,24 +999,25 @@ class policies:
 
         thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
         taustar = thistar_dict["tau_hat"]*self.ecmy.tau
-        # try new starting values if we don't converge
-        while thistar['success'] is False or np.any(np.isnan(thistar['x'])) or np.any(thistar_dict["tau_hat"] < 0):
-            print("br unsuccessful, iterating...")
-            ge_dict["tau_hat"][id, ] += .1  # bump up starting taus
-            ge_dict["tau_hat"][id, id] = 1
-            ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
-            print(ge_dict)
-            ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-            # b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
-            # print(b)
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(b, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
-            thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
-            print("taustar_out:")
-            print(thistar_dict["tau_hat"]*self.ecmy.tau)
 
-        # NOTE: sometimes extreme values due to difficulties in satisfying particular mil constraints
-        # NOTE: one way to fix this is is to just force countries to impose free trade when they win wars, no manipulation
-        # Also seems to happen when target countries are small, easy to make mistakes in finite difference differentiation?
+        # try new starting values if we don't converge
+        # while thistar['success'] is False or np.any(np.isnan(thistar['x'])) or np.any(thistar_dict["tau_hat"] < 0):
+        #     print("br unsuccessful, iterating...")
+        #     ge_dict["tau_hat"][id, ] += .1  # bump up starting taus
+        #     ge_dict["tau_hat"][id, id] = 1
+        #     ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
+        #     print(ge_dict)
+        #     ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
+        #     # b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
+        #     # print(b)
+        #     thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(b, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
+        #     thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
+        #     print("taustar_out:")
+        #     print(thistar_dict["tau_hat"]*self.ecmy.tau)
+        #
+        # # NOTE: sometimes extreme values due to difficulties in satisfying particular mil constraints
+        # # NOTE: one way to fix this is is to just force countries to impose free trade when they win wars, no manipulation
+        # # Also seems to happen when target countries are small, easy to make mistakes in finite difference differentiation?
         # while np.any(taustar > self.tauMax):
         #     print("extreme tau values found, iterating...")
         #     print("taustar[id]: " + str(taustar[id]))
@@ -1036,7 +1037,7 @@ class policies:
         #     # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
         #     print(ge_dict)
         #     ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-        #     thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, args=(b, np.array([id]), None, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
+        #     thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(b, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
         #     thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
         #     taustar = thistar_dict["tau_hat"]*self.ecmy.tau
 
@@ -1175,32 +1176,32 @@ class policies:
 
             print("Loss: " + str(Loss))
             # if median value is a valley, return it as estimate
-            if Loss[1] <= Loss[2] and Loss[1] <= Loss[0]:
+            if np.argmin(Loss) == 1:
                 stop = True
             else:  # otherwise, truncate search region and search in direction of of lower loss
-                if Loss[2] < Loss[1]:
+                if np.argmin(Loss) == 2:
                     bmin = b
                     b = (bmax - b) / 2 + bmin
-                if Loss[0] < Loss[1]:
+                if np.argmin(Loss) == 0:
                     bmax = b
                     b = (b - bmin) / 2 + bmin
 
             # check bounds, if loss decreases in direction of bound return bound as estimate
             if lb is True:
-                if Loss[0] < Loss[1]:
+                if np.argmin(Loss) == 0:
                     b = self.b_vals[idx_down]
                     stop = True
             if ub is True:
-                if Loss[2] < Loss[1]:
+                if np.argmin(Loss) == 2:
                     b = self.b_vals[idx_up]
                     stop = True
 
             # terminate if we've gotten stuck
             if np.abs(bmax - bmin) < .3:
-                if Loss[0] < Loss[1]:
+                if np.argmin(Loss) == 0:
                     b = self.b_vals[idx_down]
                     stop = True
-                elif Loss[2] < Loss[1]:
+                elif np.argmin(Loss) == 2:
                     b = self.b_vals[idx_up]
                     stop = True
                 else:
@@ -1638,6 +1639,10 @@ class policies:
         print(ge_dict_sv)
         tau_hat_sv = np.copy(ge_dict_sv["tau_hat"])
         ge_x = np.copy(ge_x_sv)
+        tau_hat_nft = self.tau_nft / self.ecmy.tau
+        np.fill_diagonal(tau_hat_nft, 1)
+        # print("nft:")
+        # print(tau_hat_nft)
 
         tau_hat_br = ge_dict_sv["tau_hat"]
         wv = self.war_vals(b, m, theta_dict, epsilon) # calculate war values
@@ -1647,7 +1652,16 @@ class policies:
             wv_i = wv[:,id][ids_j]
             ge_x_nft = self.nft_sv(id, ge_x)
             ge_x_i = self.br(ge_x_nft, b, wv_i, id, affinity=affinity)
-            tau_hat_br[id, ] = self.ecmy.rewrap_ge_dict(ge_x_i)["tau_hat"][id, ]
+            update = True
+            tau_hat_i = self.ecmy.rewrap_ge_dict(ge_x_i)["tau_hat"][id, ]
+            if np.any(np.isnan(ge_x_i)):
+                update = False
+                print("passing update...")
+            if np.all(tau_hat_i==tau_hat_nft[id, ]):
+                update = False
+                print("passing update...")
+            if update is True:
+                tau_hat_br[id, ] = tau_hat_i
 
         print(tau_hat_br)
         ge_dict = self.ecmy.geq_solve(tau_hat_br, np.ones(self.N))
@@ -1661,7 +1675,7 @@ class policies:
 
         return(ge_x)
 
-    def nash_eq(self, b, theta_dict, m, affinity):
+    def nash_eq(self, ge_x_sv, b, theta_dict, m, affinity):
         """Calculates Nash equilibrium of policy game
 
         Returns
@@ -1673,7 +1687,7 @@ class policies:
 
         epsilon = np.zeros((self.N, self.N))
 
-        ge_x_sv = np.ones(self.ecmy.ge_x_len)
+        # ge_x_sv = np.ones(self.ecmy.ge_x_len)
         ge_x_out = opt.fixed_point(self.br_cor, ge_x_sv, args=(m, affinity, epsilon, b, theta_dict, True, ), method="iteration", xtol=1e-02)
         return(ge_x_out)
 
@@ -2008,7 +2022,7 @@ class policies:
         thfti[ids, ] = 1 / self.ecmy.tau[ids, ]
         return(thfti)
 
-    def pop_rc_vals(self):
+    def pop_rc_vals(self, rcv_ft=False):
         """Generate regime change value matrix for each value of preference parameters in self.b_vals
 
         Returns
@@ -2030,8 +2044,16 @@ class policies:
                         print(str(i) + " " + str(j))
                         # start_time = time.time()
                         # populates matrix column-wise, value for row of controlling policy in column
-                        ge_br_war_ji = self.br_war_ji(ge_x, b_vec, j, i, full_opt=True)
-                        G_hat_ji = self.G_hat(ge_br_war_ji, b_vec, ids=np.array([j]))
+                        if rcv_ft is False:
+                            ge_br_war_ji = self.br_war_ji(ge_x, b_vec, j, i, full_opt=True)
+                            G_hat_ji = self.G_hat(ge_br_war_ji, b_vec, ids=np.array([j]))
+                        else:
+                            tau_hat_ft = 1 / self.ecmy.tau
+                            tau_hat_prime = np.ones((self.N, self.N))
+                            tau_hat_prime[i, ] = tau_hat_ft[i, ]
+                            ge_dict_prime = self.ecmy.geq_solve(tau_hat_prime, np.ones(self.N))
+                            ge_x_prime = self.ecmy.unwrap_ge_dict(ge_dict_prime)
+                            G_hat_ji = self.G_hat(ge_x_prime, b_vec, ids=np.array([j]))
                         wvb[j, i] = G_hat_ji
                         # print(time.time() - start_time)
             wv[b] = wvb
