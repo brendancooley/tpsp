@@ -7,8 +7,8 @@ author:
 	- name: Brendan Cooley
       affiliation: Ph.D. Candidate, Department of Politics, Princeton University
 date: \today
-abstract: In international relations, how does latent military coercion affect governments’ policy choices? Because militarily powerful governments can credibly threaten to impose their policy preferences by force, weaker governments may adjust their policy choices to avoid costly conflict. This setting raises an inference problem -- do observed policies reflect the preferences of the governmnets that adopted them or the military constraints of the anarchic international system? Here, I investigate the role of this “shadow of power” in determining trade policy. Specifically, I build a model of trade policy choice under threat that allows me to measure empirically governments’ underlying trade policy preferences and the magnitude of policy appeasement attributable to latent military coercion. Once estimated, the model can be used to conduct counterfactual experiments – such as assessing the international economic effects of Chinese military growth or the military strategic effects of Chinese political liberalization. These and other exercises shed light on how military power affects international economic exchange, and how expectations about exchange affect governments’ military strategies.
-thanks: Thanks go here.
+abstract: In international relations, how does latent military coercion affect governments’ policy choices? Because militarily powerful governments can credibly threaten to impose their policy preferences by force, weaker governments may adjust their policy choices to avoid costly conflict. This setting raises an inference problem -- do observed policies reflect the preferences of the governments that adopted them or the military constraints of the anarchic international system? Here, I investigate the role of this “shadow of power” in determining trade policy. Specifically, I build a model of trade policy choice under threat that allows me to measure empirically governments’ underlying trade policy preferences, the returns to military advantage, and the extent to which power projection capacity degrades across space. I then estimate the parameters of the model using data on governments' observed trade policies. I find military capacity confers moderate battlefield advantages in counterfactual wars and that distance is an impediment to the projection of power. Through counterfactual experiments, I can quantify the effect of these military constraints on the international economy and governments' welfare. These and other exercises shed light on how military power affects international economic exchange, and how expectations about exchange affect governments’ military strategies.
+# thanks: Allison Carnegie, APSA 2019.
 # jelcodes: JEL codes go here
 
 bibliography: /Users/brendancooley/Dropbox (Princeton)/References/library.bib
@@ -125,11 +125,6 @@ simga_epsilon_tilde <- read_csv(paste0(resultsPath, "sigma_epsilon_tilde.csv"), 
 # Results
 
 ```{r, child = "sections/results.rmd"}
-```
-
-# Counterfactual: From Anarchy to Pacifism
-
-```{r, child = "sections/counterfactual.rmd"}
 ```
 
 # Conclusion
