@@ -272,7 +272,7 @@ which can be rearranged as
 \begin{equation} \label{eq:constraintRegression}
 \ln \left( \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1 } \right) = \gamma \ln \left( \frac{ M_j }{ M_i } \right) - \bm{\alpha}^T W_{ji} + \epsilon_{ji}
 \end{equation}
-. The left side is a measure of the difference between $j$'s equilibrium utility difference and it's conquest value ($\hat{G}_j(\hat{\tau}_i^{j\star}) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j)$). The extent to which this correlates with $j$'s military advantage over $i$ ($M_j / M_i$) is informative about the returns to military power, $\gamma$. The extent to which this correlates with dyadic geography is informative about the power projection parameters $\bm{\alpha}$.
+. The left side is a measure of the difference between $j$'s equilibrium utility difference and it's conquest value ($\hat{G}_j(\hat{\tau}_i^{j\star}) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j)$) -- the benefits from conquest. The extent to which these correlates with $j$'s military advantage over $i$ ($M_j / M_i$) is informative about the returns to military power, $\gamma$. The extent to which this correlates with dyadic geography is informative about the power projection parameters $\bm{\alpha}$.
 
 In Appendix E I show that if the conquest value is sufficiently high, there exists an $\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$ such that for all $\epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$, $i$'s constraint vis-à-vis $j$ holds. I can then construct a stochastic variant of \ref{eq:constraintRegression} which can be used as a second moment condition. This condition generates a second loss function, $\ell_{\epsilon}(\bm{\theta}_m)$ (Equation \ref{eq:lossEpsilon}).
 
@@ -335,6 +335,11 @@ Figure \ref{fig:chi} combines these estimates to produce estimates of the contes
 # Conclusion
 
 
+The shadow of power plays a central role in international relations theory, but measuring its effects has proved challenging. It is axiomatic that if governments forgo war, then they must at least weakly prefer the policy status quo to the expected policy outcomes that would result from potential wars. In this paper, I have shown that a flexible model of government preferences over trade outcomes can serve to quantify government welfare under this policy counterfactual. I then leverage the difference between factual government welfare and its conquest values to identify parameters governing the technology of coercion in international relations. 
+
+The preliminary estimates of these parameters suggest that military constraints indeed constrain governments' policy choice in international relations. Military spending advantage translates into battlefield advantage, discounted by a significant loss of strength gradient. These military constraints serve to contort trade policy toward the interests of the powerful as well as the resolved — those whose benefits from conquest are the largest. Military threats structure interactions in the international economy.
+
+Drawing these conclusions requires taking extant theoretical models of international conflict and international political economy seriously. On the one hand, this limits the credibility and generalizability of the conclusions reached here — if the models are flawed, so too will our inferences about the world. On the other hand, this provides a foundation upon which empirical and theoretical research in these subfields can progress in tandem. Otherwise intractable empirical questions can be answered, leveraging the identifying assumptions embedded in these theories. And theories can be revised to account for anomalous or unreasonable empirical results that rest on these assumptions. Taking the models seriously provides answers to hard empirical questions, along with a transparent edifice upon which those answers rest.
 
 
 \clearpage
