@@ -54,6 +54,7 @@ chihm <- function(chi, minchi, maxchi) {
   colnames(chi)[colnames(chi)=="X1"] <- "j_iso3"
   chiDF <- chi %>% gather("i_iso3", "chi_ji", -j_iso3)
   chiDF$chi_ji <- as.numeric(chiDF$chi_ji)
+  chiDF <- chiDF %>% filter(i_iso3 != "ROW", j_iso3 != "ROW")
   # rcvDF %>% print(n=50)
   
   ggplot(chiDF, aes(x=i_iso3, y=j_iso3, fill=chi_ji)) +

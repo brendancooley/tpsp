@@ -322,6 +322,38 @@ With estimates of $b_i$ in hand, I can calculate each government's conquest valu
 
 Governments that face poor market access conditions and/or are rent-maximizing gain the most from successful wars, relative to the status quo. When they win wars, rent-maximizing governments impose policies designed to direct trade into their borders. As imports go up, revenue collection potential also increases. The value of war is lower for welfare-maximizing governments. Still, welfare-maximizing governments facing poor market access benefit substantially from winning wars against countries with large markets and high barriers to trade. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These values assist in the identification of the power projection and preference parameters in $\bm{\theta}_m$.
 
+
+```
+## # A tibble: 25 x 3
+##    j_iso3 i_iso3 rcv_ji
+##    <chr>  <chr>   <dbl>
+##  1 CHN    CHN     NA   
+##  2 EU     CHN      1.65
+##  3 JPN    CHN      2.12
+##  4 RUS    CHN      1.08
+##  5 USA    CHN      1.25
+##  6 CHN    EU       1.43
+##  7 EU     EU      NA   
+##  8 JPN    EU       4.05
+##  9 RUS    EU       1.12
+## 10 USA    EU       1.53
+## 11 CHN    JPN      1.29
+## 12 EU     JPN      2.03
+## 13 JPN    JPN     NA   
+## 14 RUS    JPN      1.08
+## 15 USA    JPN      1.34
+## 16 CHN    RUS      1.05
+## 17 EU     RUS      1.15
+## 18 JPN    RUS      1.18
+## 19 RUS    RUS     NA   
+## 20 USA    RUS      1.05
+## 21 CHN    USA      1.30
+## 22 EU     USA      2.02
+## 23 JPN    USA      2.71
+## 24 RUS    USA      1.05
+## 25 USA    USA     NA
+```
+
 ![Conquest values evaluated at $\tilde{\bm{b}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \label{fig:rcv}](figure/rcv_b-1.png)
 
 Turning to these parameters, I estimate $\gamma$ to be 0.42. This is consistent with a positive effect of military advantage on counterfactual war outcomes, holding power projection capacity constant. In particular, a 2:1 advantage in military spending translates into a 57.2 percent chance of winning a war, assuming no strength is lost due to the loss of strength gradient ($\rho_{ji} = 1$). 
