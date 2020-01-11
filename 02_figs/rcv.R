@@ -59,7 +59,6 @@ rcvhm <- function(rcv, minTau, maxTau) {
   rcvDF <- rcvDF %>% filter(i_iso3 != "ROW", j_iso3 != "ROW")
   rcvDF$rcv_ji <- ifelse(rcvDF$rcv_ji==0, NA, rcvDF$rcv_ji)
   rcvDF$rcv_ji <- as.numeric(rcvDF$rcv_ji)
-  rcvDF %>% print(n=50)
 
   ggplot(rcvDF, aes(x=i_iso3, y=j_iso3, fill=rcv_ji)) +
     geom_tile(colour="white", width=.9, height=.9) +

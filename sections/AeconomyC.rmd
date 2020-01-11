@@ -14,7 +14,7 @@ As noted by @Ossa2014, the assumption of exogenous and fixed trade imbalances ge
 
 ### Trade Barrier Estimates
 
-```{r tauhm, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste("Distribution of policy barriers to trade. Each cell reports the magnitude of the policy barrier each importing country (y-axis) imposes on every exporting country (x-axis). \\label{fig:tauhm}"), fig.height=6, dpi=300, fig.pos="t"}
+```{r tauhm, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste("Distribution of policy barriers to trade. Each cell reports the magnitude of the policy barrier each importing country (y-axis) imposes on every exporting country (x-axis). \\label{fig:tauhm}"), fig.height=4, dpi=300, fig.pos="t"}
 
 source("../02_figs/tau.R")
 tauhm(tau)
