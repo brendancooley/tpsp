@@ -158,7 +158,7 @@ if not os.path.exists(counterfactualPath + "tau_prime.csv"):
     np.savetxt(counterfactualPath + "V_prime.csv", G_prime, delimiter=",")
 else:
     tau_prime = np.genfromtxt(counterfactualPath + "tau_prime.csv", delimiter=",")
-
+    print(tau_prime)
     equilibrium_dict_prime = pecmy.ecmy.geq_solve(tau_prime, np.ones(pecmy.N))
     V_prime = pecmy.ecmy.U_hat(equilibrium_dict_prime)
     np.savetxt(counterfactualPath + "V_prime.csv", V_prime, delimiter=",")
@@ -189,6 +189,7 @@ if not os.path.exists(counterfactualPath + "tau_star.csv"):
     np.savetxt(counterfactualPath + "G_star.csv", G_star, delimiter=",")
 else:
     tau_star = np.genfromtxt(counterfactualPath + "tau_star.csv", delimiter=",")
+    print(tau_star)
     equilibrium_dict = pecmy.ecmy.geq_solve(tau_star, np.ones(pecmy.N))
-    V_prime = pecmy.ecmy.U_hat(equilibrium_dict)
-    np.savetxt(counterfactualPath + "V_prime.csv", V_prime, delimiter=",")
+    V_star = pecmy.ecmy.U_hat(equilibrium_dict)
+    np.savetxt(counterfactualPath + "V_star.csv", V_star, delimiter=",")

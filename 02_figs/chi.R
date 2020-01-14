@@ -9,7 +9,7 @@
 # 
 # tpspPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 # dataPath <- paste0(tpspPath, "tpsp_data_mini/")
-# resultsPath <- paste0(tpspPath, "results_mini/")
+# resultsPath <- paste0(tpspPath, "results_rcv_ft/")
 # 
 # milex <- read_csv(paste0(dataPath, "milex.csv"), col_names=FALSE)
 # ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
@@ -54,6 +54,7 @@ chihm <- function(chi, minchi, maxchi) {
   colnames(chi)[colnames(chi)=="X1"] <- "j_iso3"
   chiDF <- chi %>% gather("i_iso3", "chi_ji", -j_iso3)
   chiDF$chi_ji <- as.numeric(chiDF$chi_ji)
+  chiDF <- chiDF %>% filter(i_iso3 != "ROW", j_iso3 != "ROW")
   # rcvDF %>% print(n=50)
   
   ggplot(chiDF, aes(x=i_iso3, y=j_iso3, fill=chi_ji)) +
@@ -74,5 +75,5 @@ chihm <- function(chi, minchi, maxchi) {
           legend.position="none")
 }
 
-# chihm(chi, minchi, maxchi)
+chihm(chi, minchi, maxchi)
 

@@ -20,6 +20,7 @@
 # rcv <- read_csv(paste0(resultsPath, "rcv.csv"), col_names=FALSE)
 # b_vals <- read_csv(paste0(resultsPath, "b_vals.csv"), col_names=FALSE) %>% pull(.)
 # b_tilde <- read_csv(paste0(resultsPath, "b_tilde.csv"), col_names=FALSE)
+# tau <- read_csv(paste0(dataPath, "tau.csv"), col_names=FALSE)
 
 
 rcvMats <- list()
@@ -55,9 +56,9 @@ rcvhm <- function(rcv, minTau, maxTau) {
   rcv <- bind_cols(rcv, ccodes) 
   colnames(rcv)[colnames(rcv)=="X1"] <- "j_iso3"
   rcvDF <- rcv %>% gather("i_iso3", "rcv_ji", -j_iso3)
+  rcvDF <- rcvDF %>% filter(i_iso3 != "ROW", j_iso3 != "ROW")
   rcvDF$rcv_ji <- ifelse(rcvDF$rcv_ji==0, NA, rcvDF$rcv_ji)
   rcvDF$rcv_ji <- as.numeric(rcvDF$rcv_ji)
-  # rcvDF %>% print(n=50)
 
   ggplot(rcvDF, aes(x=i_iso3, y=j_iso3, fill=rcv_ji)) +
     geom_tile(colour="white", width=.9, height=.9) +

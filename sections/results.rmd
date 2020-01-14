@@ -20,7 +20,7 @@ rho_ex = exp(-1*alpha_tilde*log(W[USA_id, CHN_id] %>% pull(.)))
 
 *NOTE: Computing uncertainty intervals is computationally expensive and in-progress. I report and discuss point estimates here, with the necessary caution such preliminary discussion requires.*
 
-Estimates of preference parameters are reported in Table \ref{tab:b_estsT}. Consistent with their high trade barriers, the European Union and Japan are assessed to have high values of $b_i$. 
+Estimates of preference weights are reported in Table \ref{tab:b_estsT}. In @Cooley2019b, I show that developed countries tend to adopt higher trade barriers than their developing peers. Consistent with this finding, the European Union and Japan are assessed to have high values of $b_i$.
 
 
 ```{r b_estsT, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
@@ -31,7 +31,7 @@ kable(b_estsT, "latex", booktabs = T, caption = "Preference Parameter ($\\tilde{
 
 ```
 
-With estimates of $b_i$ in hand, we can calculate each government's conquest value vis-à-vis all other governments. Recall that $\hat{\bm{\tau}}_i^{j \star}$ is the set of policies government $j$ would impose on $i$ if it successfully prosecuted a war against the latter. Then, $j$'s counterfactual utility in this scenario can be readily calculated given knowledge of its objective function (\ref{eq:Ghat}). These values are shown in Figure \ref{fig:rcv}. Each cell measures the utility change each row government experiences when successfully conquering each column government. Darker colors correspond to larger changes in utility.
+With estimates of $b_i$ in hand, I can calculate each government's conquest value vis-à-vis all other governments. Recall that $\hat{\bm{\tau}}_i^{j \star}$ is the set of policies government $j$ would impose on $i$ if it successfully prosecuted a war against the latter. Then, $j$'s counterfactual utility in this scenario can be readily calculated given knowledge of its objective function (\ref{eq:Ghat}). These values are shown in Figure \ref{fig:rcv}. Each cell measures the utility change each row government experiences when successfully conquering each column government. Darker colors correspond to larger changes in utility.
 
 Governments that face poor market access conditions and/or are rent-maximizing gain the most from successful wars, relative to the status quo. When they win wars, rent-maximizing governments impose policies designed to direct trade into their borders. As imports go up, revenue collection potential also increases. The value of war is lower for welfare-maximizing governments. Still, welfare-maximizing governments facing poor market access benefit substantially from winning wars against countries with large markets and high barriers to trade. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These values assist in the identification of the power projection and preference parameters in $\bm{\theta}_m$.
 

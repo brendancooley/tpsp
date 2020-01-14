@@ -10,7 +10,7 @@ for some proposed $\hat{\tilde{\bm{\tau}}}$. The constraint is therefore slack s
 
 Note that
 $$
-1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) = \frac{ m_i^\gamma }{ \rho_{ji}(\bm{W}; \bm{\theta}_m) m_j^\gamma + m_i^\gamma }
+1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) = \frac{ M_i^\gamma }{ \rho_{ji}(\bm{W}; \bm{\theta}_m) M_j^\gamma + M_i^\gamma }
 $$
 which implies
 $$
@@ -21,7 +21,7 @@ Recall from Equation \ref{eq:rho} that
 $$
 \rho_{ji}(\bm{W}_{ji}; \bm{\alpha}) = e^{ -\bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ji} }
 $$.
-We can therefore rewrite the slackness condition as
+I can therefore rewrite the slackness condition as
 \begin{align*}
 \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) &\leq \hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1} \\
 \frac{\tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)}{1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)} &\leq \frac{\hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1}}{1 - \hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1}} \\ 
@@ -62,11 +62,11 @@ The sample analogue for $\E \left[ Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\th
 \end{split}
 \end{equation*}
 
-We can now construct a loss function
+I can now construct a loss function
 \begin{equation} \label{eq:lossEpsilon}
 \ell_{\epsilon}(\bm{\theta}_m) = \sum_i \sum_j \left( \E_{\hat{\tilde{\bm{\tau}}}^\star, \bm{\epsilon}} \left[ Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) \right] - \E \left[ Y_{ji}(\bm{1}; \bm{\theta}_m) \right] \right)^2
 \end{equation}
 
 In practice, I minimize this loss function by iteratively recalculating the weights, $\Phi \left( \frac{ \epsilon_{ji}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m) }{ \sigma_{\epsilon} } \right)$, and choosing $\gamma$ and $\bm{\alpha}$ via ordinary least squares.
 
-In the case where the constraint holds almost surely then $\Phi \left( \frac{\epsilon_{ij}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \approx 0$ and this resembles a tobit regression of $Y_{ji}(\bm{1}; \bm{\theta}_m)$ on the military capability ratio and dyadic geograpy. If $Y_{ji}(\bm{1}; \bm{\theta}_m)$ varies positively with the capability ratio, this indicates higher returns to military expenditure, corresponding to a larger $\gamma$.
+In the case where the constraint holds almost surely then $\Phi \left( \frac{\epsilon_{ij}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \approx 0$ and this resembles a tobit regression of $Y_{ji}(\bm{1}; \bm{\theta}_m)$ on the military capability ratio and dyadic geography. If $Y_{ji}(\bm{1}; \bm{\theta}_m)$ varies positively with the capability ratio, this indicates higher returns to military expenditure, corresponding to a larger $\gamma$.
