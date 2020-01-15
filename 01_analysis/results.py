@@ -74,6 +74,7 @@ D = np.genfromtxt(dataPath + 'D.csv', delimiter=',')
 ccodes = np.genfromtxt(dataPath + 'ccodes.csv', delimiter=',', dtype="str")
 dists = np.genfromtxt(dataPath + 'cDists.csv', delimiter=',')
 M = np.genfromtxt(dataPath + "milex.csv", delimiter=",")
+ROWname = np.genfromtxt(dataPath + 'ROWname.csv', delimiter=',', dtype="str")[0]
 
 M = M / np.min(M)  # normalize milex
 W = np.log(dists+1)
@@ -107,7 +108,7 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 
 imp.reload(policies)
 # b_init, theta_dict_init = pecmy.import_results(resultsPath+"estimates_sv.csv")
-pecmy = policies.policies(data, params, b, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
+pecmy = policies.policies(data, params, b, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
 
 theta_dict_init = dict()
 theta_dict_init["sigma_epsilon"] = 1

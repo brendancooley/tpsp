@@ -14,7 +14,7 @@ import multiprocessing as mp
 
 class policies:
 
-    def __init__(self, data, params, b, results_path=None, rcv_ft=False):
+    def __init__(self, data, params, b, ROWname, results_path=None, rcv_ft=False):
         """
 
         Parameters
@@ -40,7 +40,7 @@ class policies:
         self.N = self.ecmy.N
         self.ids = np.arange(self.N)
 
-        self.ROW_id = np.where(data["ccodes"]=="ROW")[0][0]
+        self.ROW_id = np.where(data["ccodes"]==ROWname)[0][0]
 
         # purge deficits
         self.ecmy.purgeD()
