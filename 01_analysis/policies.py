@@ -74,10 +74,10 @@ class policies:
         # self.lambda_i_len_td = self.lambda_i_len + self.N ** 2 - self.N # add constraints on others' policies
 
         # NOTE: values less than zero seem to mess with best response
-        self.b_vals = np.arange(0, 2.1, .1)
+        # self.b_vals = np.arange(0, 2.1, .1)
         # self.b_vals = np.arange(-1, 2.1, .1)
         # self.b_vals = np.arange(-.5, 1.6, .1)
-        # self.b_vals = np.arange(0, 1.1, .1)  # preference values for which to generate regime change value matrix.
+        self.b_vals = np.arange(0, 1.1, .1)  # preference values for which to generate regime change value matrix.
         np.savetxt(results_path + "b_vals.csv", self.b_vals, delimiter=",")
 
         rcv_path = results_path + "rcv.csv"
