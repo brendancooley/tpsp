@@ -86,51 +86,10 @@ E = Eq + Ex
 
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
-
-# This will finish in 6.5 hours if each opt takes 75 seconds (13 governments)
-# lots of nonsense negative numbers for Turkey's (11) best response for U.S. (12), replace with open/closed value instead
-
-# br_11_12 = pecmy.br_war_ji(np.ones(pecmy.x_len), np.zeros(pecmy.N), 11, 12, full_opt=False)
-# pecmy.rcv[0][11, 12] = pecmy.G_hat(br_11_12, np.zeros(pecmy.N), ids=np.array([11]))
-# pecmy.rcv
-
-# export regime change vals
-# np.savetxt(resultsPath + "rcv0.csv", pecmy.rcv[0], delimiter=",")
-# np.savetxt(resultsPath + "rcv1.csv", pecmy.rcv[1], delimiter=",")
-
-# calculate free trade vals
-# tau_hat_ft = 1 / pecmy.ecmy.tau
-# ge_dict_ft = pecmy.ecmy.geq_solve(tau_hat_ft, np.ones(pecmy.N))
-# ge_x_ft = pecmy.ecmy.unwrap_ge_dict(ge_dict_ft)
-# G_hat_ft = pecmy.G_hat(ge_x_ft, np.zeros(pecmy.N))
-
-# export free trade vals (b=0)
-# np.savetxt("results/Ghatft.csv", G_hat_ft, delimiter=",")
-
 imp.reload(policies)
 # b_init, theta_dict_init = pecmy.import_results(resultsPath+"estimates_sv.csv")
 pecmy = policies.policies(data, params, b, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
 
-# m = np.diag(M)
-# id = 2
-# b_test = np.array([0.3, 1.,  1, 1.,  0.1, 0.4])
-# epsilon = np.zeros((pecmy.N, pecmy.N))
-# wv_m = pecmy.war_vals(b_test, m, theta_dict_init, epsilon) # calculate war values
-# ids_j = np.delete(np.arange(pecmy.N), id)
-# wv_m_i = wv_m[:,id][ids_j]
-#
-# tau_hat_nft = 1.25 / pecmy.ecmy.tau
-# np.fill_diagonal(tau_hat_nft, 1)
-# ge_x_sv = np.ones(pecmy.x_len)
-# ge_dict = pecmy.ecmy.rewrap_ge_dict(ge_x_sv)
-# tau_hat_sv = ge_dict["tau_hat"]
-# tau_hat_sv[id] = tau_hat_nft[id] # start slightly above free trade
-# ge_dict_sv = pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
-# ge_x_sv = pecmy.ecmy.unwrap_ge_dict(ge_dict_sv)
-#
-# test_x = pecmy.br(ge_x_sv, b_test, wv_m_i, id)
-# test_dict = pecmy.ecmy.rewrap_ge_dict(test_x)
-# test_dict["tau_hat"] * pecmy.ecmy.tau
 
 if runEstimates is True:
 

@@ -14,7 +14,7 @@ import multiprocessing as mp
 
 class policies:
 
-    def __init__(self, data, params, b, ROWname, results_path=None, rcv_ft=False):
+    def __init__(self, data, params, ROWname, results_path=None, rcv_ft=False):
         """
 
         Parameters
@@ -50,15 +50,6 @@ class policies:
         tau_hat_pos[self.ecmy.tau < 1] = 1 / self.ecmy.tau[self.ecmy.tau < 1]
         self.ecmy.update_ecmy(tau_hat_pos, np.ones(self.N))
 
-        # preference parameters
-        self.b = b
-
-        # power projection parameters
-        # self.alpha_0 = params["alpha_0"]
-        self.alpha_1 = params["alpha_1"]
-        self.gamma = params["gamma"]
-        self.c_hat = params["c_hat"]
-
         self.W = data["W"]  # distances
         self.M = data["M"]  # milex
         # self.rhoM = self.rho()  # loss of strength gradient
@@ -74,9 +65,6 @@ class policies:
         # self.lambda_i_len_td = self.lambda_i_len + self.N ** 2 - self.N # add constraints on others' policies
 
         # NOTE: values less than zero seem to mess with best response
-        # self.b_vals = np.arange(0, 2.1, .1)
-        # self.b_vals = np.arange(-1, 2.1, .1)
-        # self.b_vals = np.arange(-.5, 1.6, .1)
         self.b_vals = np.arange(0, 1.1, .1)  # preference values for which to generate regime change value matrix.
         np.savetxt(results_path + "b_vals.csv", self.b_vals, delimiter=",")
 
@@ -153,7 +141,8 @@ class policies:
                     pass
 
         Uhat = self.ecmy.U_hat(ge_dict)
-        Ghat = Uhat ** (1 - b) * ge_dict["r_hat"] ** b
+        # Ghat = Uhat ** (1 - b) * ge_dict["r_hat"] ** b
+        Ghat = Uhat * self.R_hat(ge_dict, .25) ** b
 
         Ghat_a = affinity * Ghat
         Ghat_out = Ghat + np.sum(Ghat_a, axis=1)
@@ -192,6 +181,15 @@ class policies:
         out.extend(tau_diff_M.ravel())
 
         return(np.array(out))
+
+    def R_hat(self, ge_dict, zeta):
+
+        tau_prime = ge_dict["tau_hat"] * self.ecmy.tau
+        R = np.sum(self.ecmy.tau ** zeta, axis=1)
+        R_prime = np.sum(tau_prime ** zeta, axis=1)
+        R_hat = R_prime / R
+
+        return(R_hat)
 
     def Lagrange_i_x(self, ge_x, b, tau_hat, war_vals, lambda_i_x, id):
         """Short summary.
@@ -616,7 +614,7 @@ class policies:
 
         return(rhoM)
 
-    def Lsolve(self, tau_hat, m, theta_dict, id, ft=False, mtd="lm"):
+    def Lsolve(self, tau_hat, b, m, theta_dict, id, epsilon=None, ft=False, mtd="lm"):
         """Solves for zeros of Lagrange optimality conditions for id's policies, holding others' at values in tau_hat. If ft==True, algorithm begins searching at free trade values for gov id. Otherwise, tries "lm" and "hybr" methods recursively starting at tau_hat, before trying each starting at free trade.
 
         Parameters
@@ -639,6 +637,9 @@ class policies:
 
         """
 
+        if epsilon is None:
+            epsilon = np.zeros((self.N, self.N))
+
         j = np.delete(np.arange(self.N), id)
 
         if ft is False:
@@ -656,10 +657,9 @@ class policies:
         lambda_i_x_sv = np.zeros(self.lambda_i_len)
 
         # calculate war values
-        wv = self.war_vals(m, theta_dict)
+        wv = self.war_vals(b, m, theta_dict, epsilon)
         wv_i = wv[:,id][j]
-
-        b = theta_dict["b"]
+        print(wv_i)
 
         x = []
         x.extend(ge_dict_sv["tau_hat"][id, ])
@@ -674,9 +674,9 @@ class policies:
         else:
             print("recursing...")
             if mtd == "lm":  # first try hybr
-                return(self.Lsolve(tau_hat, m, theta_dict, id, ft=ft, mtd="hybr"))
+                return(self.Lsolve(tau_hat, b, m, theta_dict, id, ft=ft, mtd="hybr"))
             else:  # otherwise start from free trade
-                return(self.Lsolve(tau_hat, m, theta_dict, id, ft=True, mtd="lm"))
+                return(self.Lsolve(tau_hat, b, m, theta_dict, id, id, ft=True, mtd="lm"))
 
     def constraints_tau(self, ge_dict, tau_free, wv_i, b, ge=True, deficits=False, mil=False):
         """Constructs list of constraints for policy br.
@@ -945,7 +945,7 @@ class policies:
                 # bnds.append((tauHatMin[i,j], tauHatMax[i,j]))
                 bnds.append((tauHatMin[i,j], None))
         for i in range(self.ecmy.ge_x_len-self.N**2):
-            bnds.append((None, None))
+            bnds.append((.01, None))  # positive other entries
 
         return(bnds)
 
@@ -1019,9 +1019,10 @@ class policies:
         # NOTE: sometimes extreme values due to difficulties in satisfying particular mil constraints
         # NOTE: one way to fix this is is to just force countries to impose free trade when they win wars, no manipulation
         # Also seems to happen when target countries are small, easy to make mistakes in finite difference differentiation?
+        print(thistar_dict)
         while np.any(taustar > self.tauMax):
             print("extreme tau values found, iterating...")
-            print("taustar[id]: " + str(taustar[id]))
+            print("taustar[id]: " + str(taustar[id, ]))
             for j in range(self.N):
                 if taustar[id, j] > self.tauMax:
                     ge_dict["tau_hat"][id, j] = tau_hat_ft[id, j]
