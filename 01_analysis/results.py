@@ -21,7 +21,7 @@ mini = True
 large = False
 rcv_ft = False
 
-runEstimates = False
+runEstimates = True
 
 # dataFiles = os.listdir("tpsp_data/")
 
@@ -137,8 +137,8 @@ if runEstimates is True:
     theta_dict_init = dict()
     theta_dict_init["sigma_epsilon"] = 1
     theta_dict_init["c_hat"] = .2
-    theta_dict_init["alpha"] = .25
-    theta_dict_init["gamma"] = .3
+    theta_dict_init["alpha"] = .5
+    theta_dict_init["gamma"] = 1
 
     b_init = np.repeat(.5, pecmy.N)
     # b_init = np.array([.3, 2, 2, 1.2, 0, .3])
