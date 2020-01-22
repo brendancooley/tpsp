@@ -84,16 +84,17 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
-id = 2
+id = 0
 
 tau_hat = np.ones((pecmy.N, pecmy.N))
 tau_hat[0, 1] = 2
 ge_dict = pecmy.ecmy.geq_solve(tau_hat, np.ones(pecmy.N))
 
 v_test = np.ones(pecmy.N)
-v_test[id] = 3
+v_test = v_test * 2
 
 pecmy.ecmy.U_hat(ge_dict)
+pecmy.r_v(ge_dict, v_test)
 pecmy.R_hat(ge_dict, v_test)
 pecmy.ecmy.tau
 
@@ -139,8 +140,19 @@ for i in t_vals:
 
 plt.plot(t_vals, r_hat_id)
 
+id_i = 1
+nft_sv = pecmy.nft_sv(id_i, np.ones(pecmy.x_len))
 
 
+rc_pols_x = pecmy.br_war_ji(nft_sv, v_test, id, id_i, full_opt=True)
+rc_pols_dict = pecmy.ecmy.rewrap_ge_dict(rc_pols_x)
+rc_pols_dict["tau_hat"] * pecmy.ecmy.tau
+pecmy.G_hat(rc_pols_x, v_test)
+pecmy.R_hat(rc_pols_dict, v_test)
+pecmy.ecmy.U_hat(rc_pols_dict)
+
+# TODO: regime change values still very large. Need to think about structure of objective.
+    # this might be ok though because it's also easier to satisfy constraints
 
 
 

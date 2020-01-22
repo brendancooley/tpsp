@@ -65,8 +65,12 @@ class policies:
         # self.lambda_i_len_td = self.lambda_i_len + self.N ** 2 - self.N # add constraints on others' policies
 
         # NOTE: values less than zero seem to mess with best response
-        self.b_vals = np.arange(0, 1.1, .1)  # preference values for which to generate regime change value matrix.
-        np.savetxt(results_path + "b_vals.csv", self.b_vals, delimiter=",")
+        # self.b_vals = np.arange(0, 1.1, .1)  # preference values for which to generate regime change value matrix.
+        self.v_vals = np.arange(1, np.max(self.ecmy.tau), .1)
+        # self.v_vals = np.arange(1, 1.1, .1)
+        np.savetxt(results_path + "v_vals.csv", self.v_vals, delimiter=",")
+
+        self.x_len = self.ecmy.ge_x_len
 
         rcv_path = results_path + "rcv.csv"
         if not os.path.isfile(rcv_path):
@@ -80,7 +84,6 @@ class policies:
         # self.theta_len = self.N + self.alpha_len + 2  # b, alpha, gamma, c_hat
         self.theta_len = self.N + self.alpha_len + 1  # b, alpha, c_hat
 
-        self.x_len = self.ecmy.ge_x_len
         self.y_len = self.theta_len + self.N ** 2 + self.N + self.lambda_i_len * self.N  # parameters, military allocations, military budget multipliers, other multipliers
 
         self.clock = 0
@@ -150,12 +153,19 @@ class policies:
         else:
             return(np.log(Ghat_out[ids])*sign)
 
-    def R_hat(self, ge_dict, v):
+    def r_v(self, ge_dict, v):
 
         v_mat = np.array([v])
         tau_mv = self.ecmy.tau - np.tile(v_mat.transpose(), (1, self.N))
         tau_mv[tau_mv < 0] = 0
         r = np.sum(tau_mv * self.ecmy.Xcif, axis=1)
+
+        return(r)
+
+    def R_hat(self, ge_dict, v):
+
+        v_mat = np.array([v])
+        r = self.r_v(ge_dict, v)
 
         tau_prime = ge_dict["tau_hat"] * self.ecmy.tau
         tau_prime_mv = tau_prime - np.tile(v_mat.transpose(), (1, self.N))
@@ -164,6 +174,7 @@ class policies:
         r_prime = np.sum(tau_prime_mv * X_prime, axis=1)
 
         r_hat = r_prime / r
+        r_hat[r==0] = 0
 
         return(r_hat)
 
@@ -866,7 +877,7 @@ class policies:
 
         return(cons)
 
-    def br_war_ji(self, ge_x, b, j, i, mpec=True, full_opt=False):
+    def br_war_ji(self, ge_x, v, j, i, mpec=True, full_opt=False):
         """puppet policies implemented by j after war on i
 
         Parameters
@@ -889,20 +900,31 @@ class policies:
         NOTE: seems a lot more stable after updating scipy to 1.3.2
         """
 
-        ge_x = np.copy(ge_x)
+        # ge_x = np.copy(ge_x)
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
+
+        tau_perturb = .1
 
         if full_opt == True:
             # initialize starting values of ge_x to equilibrium
-            ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
-            ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
+            # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
+            # ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
 
             mxit = 500
             ftol = 1e-06
             wv_null = np.repeat(0, self.N - 1)
-            cons = self.constraints_tau(ge_dict, i, wv_null, b, mil=False)
+            cons = self.constraints_tau(ge_dict, i, wv_null, v, mil=False)
             bnds = self.bounds()
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(b, np.array([j]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit, "ftol":ftol})
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(v, np.array([j]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit, "ftol":ftol})
+            print(thistar)
+            while thistar['success'] is False:
+                print("iterating...")
+                for k in range(self.N):
+                    if k != i:
+                        ge_dict["tau_hat"][k, i] = thistar_dict["tau_hat"][k, i] + np.random.normal(loc=0, scale=tau_perturb)
+                ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
+                ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
+                thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(v, np.array([j]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit, "ftol":ftol})
 
             return(thistar['x'])
         else:
@@ -2052,9 +2074,9 @@ class policies:
 
         wv = dict()
         ge_x = np.ones(self.ecmy.ge_x_len)
-        for b in self.b_vals:
-            print(b)
-            b_vec = np.repeat(b, self.N)
+        for v in self.v_vals:
+            # v_vec = np.repeat(v, self.N)
+            v_vec = np.ones(self.N)
             wvb = np.zeros_like(self.ecmy.tau)
             for i in range(self.N):
                 tau_hat_ft = 1 / self.ecmy.tau
@@ -2063,18 +2085,23 @@ class policies:
                 ge_dict_prime = self.ecmy.geq_solve(tau_hat_prime, np.ones(self.N))
                 ge_x_prime = self.ecmy.unwrap_ge_dict(ge_dict_prime)
                 for j in range(self.N):
+                    v_vec[j] = v
                     if i != j:
                         print(str(i) + " " + str(j))
-                        # start_time = time.time()
-                        # populates matrix column-wise, value for row of controlling policy in column
-                        if rcv_ft is False:
-                            ge_br_war_ji = self.br_war_ji(ge_x, b_vec, j, i, full_opt=True)
-                            G_hat_ji = self.G_hat(ge_br_war_ji, b_vec, ids=np.array([j]))
+                        if v > np.max(self.ecmy.tau[j, ]):
+                            wvb[j, i] = np.NaN
                         else:
-                            G_hat_ji = self.G_hat(ge_x_prime, b_vec, ids=np.array([j]))
-                        wvb[j, i] = G_hat_ji
-                        # print(time.time() - start_time)
-            wv[b] = wvb
+                            # start_time = time.time()
+                            # populates matrix column-wise, value for row of controlling policy in column
+                            if rcv_ft is False:
+                                nft_sv = self.nft_sv(i, np.ones(self.x_len))
+                                ge_br_war_ji = self.br_war_ji(nft_sv, v, j, i, full_opt=True)
+                                G_hat_ji = self.G_hat(ge_br_war_ji, v, ids=np.array([j]))
+                            else:
+                                G_hat_ji = self.G_hat(ge_x_prime, v, ids=np.array([j]))
+                            wvb[j, i] = G_hat_ji
+                            # print(time.time() - start_time)
+            wv[v] = wvb
             print(wvb)
         return(wv)
 
@@ -2114,8 +2141,8 @@ class policies:
             reader = csv.reader(file, delimiter=",")
             tick = 0
             for row in reader:
-                b = self.b_vals[tick]
+                v = self.v_vals[tick]
                 vals = [float(i) for i in row]
-                wv[b] = np.reshape(np.array(vals), (self.N, self.N))
+                wv[v] = np.reshape(np.array(vals), (self.N, self.N))
                 tick += 1
         return(wv)
