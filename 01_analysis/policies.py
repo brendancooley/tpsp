@@ -916,12 +916,11 @@ class policies:
             cons = self.constraints_tau(ge_dict, i, wv_null, v, mil=False)
             bnds = self.bounds()
             thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(v, np.array([j]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit, "ftol":ftol})
-            print(thistar)
-            while thistar['success'] is False:
+            while thistar['success'] == False:
                 print("iterating...")
                 for k in range(self.N):
                     if k != i:
-                        ge_dict["tau_hat"][k, i] = thistar_dict["tau_hat"][k, i] + np.random.normal(loc=0, scale=tau_perturb)
+                        ge_dict["tau_hat"][k, i] = ge_dict["tau_hat"][k, i] + np.random.normal(loc=0, scale=tau_perturb)
                 ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
                 ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
                 thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(v, np.array([j]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit, "ftol":ftol})
@@ -1029,7 +1028,7 @@ class policies:
         taustar = thistar_dict["tau_hat"]*self.ecmy.tau
 
         # try new starting values if we don't converge
-        while thistar['success'] is False or np.any(np.isnan(thistar['x'])) or np.any(thistar_dict["tau_hat"] < 0):
+        while thistar['success'] == False or np.any(np.isnan(thistar['x'])) or np.any(thistar_dict["tau_hat"] < 0):
             print("br unsuccessful, iterating...")
             for j in range(self.N):
                 if id != j:
