@@ -66,7 +66,8 @@ class policies:
 
         # NOTE: values less than zero seem to mess with best response
         # self.b_vals = np.arange(0, 1.1, .1)  # preference values for which to generate regime change value matrix.
-        self.v_vals = np.arange(1, np.max(self.ecmy.tau), .1)
+        self.v_step = .1
+        self.v_vals = np.arange(1, np.max(self.ecmy.tau), self.v_step)
         # self.v_vals = np.arange(1, 1.1, .1)
         np.savetxt(results_path + "v_vals.csv", self.v_vals, delimiter=",")
 
@@ -904,6 +905,7 @@ class policies:
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
 
         tau_perturb = .1
+        v_perturb = .01
 
         if full_opt == True:
             # initialize starting values of ge_x to equilibrium
@@ -921,6 +923,7 @@ class policies:
                 for k in range(self.N):
                     if k != i:
                         ge_dict["tau_hat"][k, i] = ge_dict["tau_hat"][k, i] + np.random.normal(loc=0, scale=tau_perturb)
+                # v[j] -= v_perturb
                 ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
                 ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
                 thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(v, np.array([j]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit, "ftol":ftol})
@@ -2074,8 +2077,8 @@ class policies:
         wv = dict()
         ge_x = np.ones(self.ecmy.ge_x_len)
         for v in self.v_vals:
+            print("v: " + str(v))
             # v_vec = np.repeat(v, self.N)
-            v_vec = np.ones(self.N)
             wvb = np.zeros_like(self.ecmy.tau)
             for i in range(self.N):
                 tau_hat_ft = 1 / self.ecmy.tau
@@ -2084,20 +2087,22 @@ class policies:
                 ge_dict_prime = self.ecmy.geq_solve(tau_hat_prime, np.ones(self.N))
                 ge_x_prime = self.ecmy.unwrap_ge_dict(ge_dict_prime)
                 for j in range(self.N):
+                    v_vec = np.ones(self.N)
                     v_vec[j] = v
                     if i != j:
-                        print(str(i) + " " + str(j))
-                        if v > np.max(self.ecmy.tau[j, ]):
+                        print(str(j) + "'s value for replacing " + str(i))
+                        if v > (np.max(self.ecmy.tau[j, ]) - self.v_step):
+                            print("NA")
                             wvb[j, i] = np.NaN
                         else:
                             # start_time = time.time()
                             # populates matrix column-wise, value for row of controlling policy in column
                             if rcv_ft is False:
                                 nft_sv = self.nft_sv(i, np.ones(self.x_len))
-                                ge_br_war_ji = self.br_war_ji(nft_sv, v, j, i, full_opt=True)
-                                G_hat_ji = self.G_hat(ge_br_war_ji, v, ids=np.array([j]))
+                                ge_br_war_ji = self.br_war_ji(nft_sv, v_vec, j, i, full_opt=True)
+                                G_hat_ji = self.G_hat(ge_br_war_ji, v_vec, ids=np.array([j]))
                             else:
-                                G_hat_ji = self.G_hat(ge_x_prime, v, ids=np.array([j]))
+                                G_hat_ji = self.G_hat(ge_x_prime, v_vec, ids=np.array([j]))
                             wvb[j, i] = G_hat_ji
                             # print(time.time() - start_time)
             wv[v] = wvb

@@ -84,18 +84,21 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
-id = 0
+id = 4
 
 tau_hat = np.ones((pecmy.N, pecmy.N))
-tau_hat[0, 1] = 2
+tau_hat[0, ] = 3
+tau_hat[0, 4] = 1 / pecmy.ecmy.tau[0, 4]
+tau_hat[0, 0] = 1
 ge_dict = pecmy.ecmy.geq_solve(tau_hat, np.ones(pecmy.N))
 
 v_test = np.ones(pecmy.N)
-v_test = v_test * 2
+v_test = v_test * 1.7
 
 pecmy.ecmy.U_hat(ge_dict)
 pecmy.r_v(ge_dict, v_test)
 pecmy.R_hat(ge_dict, v_test)
+pecmy.G_hat(pecmy.ecmy.unwrap_ge_dict(ge_dict), v_test)
 pecmy.ecmy.tau
 
 theta_dict_init = dict()
@@ -140,16 +143,18 @@ for i in t_vals:
 
 plt.plot(t_vals, r_hat_id)
 
-id_i = 1
+id_i = 0
 nft_sv = pecmy.nft_sv(id_i, np.ones(pecmy.x_len))
 
 
+v_test[id] = 1.69
 rc_pols_x = pecmy.br_war_ji(nft_sv, v_test, id, id_i, full_opt=True)
 rc_pols_dict = pecmy.ecmy.rewrap_ge_dict(rc_pols_x)
 rc_pols_dict["tau_hat"] * pecmy.ecmy.tau
 pecmy.G_hat(rc_pols_x, v_test)
 pecmy.R_hat(rc_pols_dict, v_test)
 pecmy.ecmy.U_hat(rc_pols_dict)
+pecmy.ecmy.tau
 
 # TODO: regime change values still very large. Need to think about structure of objective.
     # this might be ok though because it's also easier to satisfy constraints
