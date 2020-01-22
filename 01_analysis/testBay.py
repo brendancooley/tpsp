@@ -5,6 +5,7 @@ import timeit
 import time
 import csv
 import sys
+import matplotlib.pyplot as plt
 
 import economy
 import policies
@@ -83,13 +84,18 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
+id = 2
 
 tau_hat = np.ones((pecmy.N, pecmy.N))
 tau_hat[0, 1] = 2
 ge_dict = pecmy.ecmy.geq_solve(tau_hat, np.ones(pecmy.N))
 
+v_test = np.ones(pecmy.N)
+v_test[id] = 3
+
 pecmy.ecmy.U_hat(ge_dict)
-pecmy.R_hat(ge_dict, 1)
+pecmy.R_hat(ge_dict, v_test)
+pecmy.ecmy.tau
 
 theta_dict_init = dict()
 theta_dict_init["sigma_epsilon"] = 1
@@ -98,21 +104,48 @@ theta_dict_init["alpha"] = .5
 theta_dict_init["gamma"] = 1
 
 m = np.diag(M)
-id = 2
-b_test = np.array([0., 0., 0., 0., 0., 0.])
-b_test[id] = 0
-b_test
 
 epsilon = np.zeros((pecmy.N, pecmy.N))
 wv_m = pecmy.war_vals(b_test, m, theta_dict_init, epsilon) # calculate war values
 ids_j = np.delete(np.arange(pecmy.N), id)
 wv_m_i = wv_m[:,id][ids_j]
 
-tau_hat = np.ones((pecmy.N, pecmy.N))
-tau_hat_nft = 1.1 / pecmy.ecmy.tau
-np.fill_diagonal(tau_hat_nft, 1)
-tau_hat[id, ] = tau_hat_nft[id, ]
-ge_dict = pecmy.ecmy.geq_solve(tau_hat, np.ones(pecmy.N))
+tau_v = np.tile(np.array([v_test]).transpose(), (1, pecmy.N))
+np.fill_diagonal(tau_v, 1)
+
+tau_hat_sv = np.ones((pecmy.N, pecmy.N))
+tau_hat_v_sv = tau_v / pecmy.ecmy.tau
+tau_hat_sv[id, ] = tau_hat_v_sv[id, ] + .01
+
+ge_dict = pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
+ge_x_sv = pecmy.ecmy.unwrap_ge_dict(ge_dict)
+
+test_x = pecmy.br(ge_x_sv, v_test, wv_m_i, id)
+test_dict = pecmy.ecmy.rewrap_ge_dict(test_x)
+test_dict
+test_dict["tau_hat"] * pecmy.ecmy.tau
+
+r_hat_id = []
+t_vals = np.arange(0, 3, .1)
+tau_v = np.tile(np.array([v_test]).transpose(), (1, pecmy.N))
+np.fill_diagonal(tau_v, 1)
+tau_hat_sv = np.ones((pecmy.N, pecmy.N))
+for i in t_vals:
+    tau_v[id, 0] = v_test[id] + i
+    tau_hat_v_sv = tau_v / pecmy.ecmy.tau
+    tau_hat_sv[id, 0] = tau_hat_v_sv[id, 0]
+    ge_dict = pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
+    r_hat_id.append(pecmy.R_hat(ge_dict, v_test)[id])
+
+plt.plot(t_vals, r_hat_id)
+
+
+
+
+
+
+
+
 
 tau_hat_sv = ge_dict["tau_hat"]
 tau_hat_sv[id] = tau_hat_nft[id] # start slightly above free trade
@@ -124,7 +157,26 @@ ge_x_sv = pecmy.ecmy.unwrap_ge_dict(ge_dict_sv)
 # test_dict
 # test_dict["tau_hat"] * pecmy.ecmy.tau
 
+
+
+
+
+
+
+
+
+
+
+
 test_x = pecmy.Lsolve(np.ones((pecmy.N, pecmy.N)), b_test, m, theta_dict_init, id)
 test_dict = pecmy.ecmy.rewrap_ge_dict(test_x)
 test_dict
 test_dict["tau_hat"] * pecmy.ecmy.tau
+
+v = np.array([1, 2])
+v = np.array([v])
+v
+np.sum(np.array([[1, 2],[3,4]]), axis=1)
+
+X = np.array([[1,2],[-1,2]])
+X[X<0] = 0

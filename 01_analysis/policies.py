@@ -86,15 +86,13 @@ class policies:
         self.clock = 0
         self.minute = 0
 
-    def G_hat(self, x, b, ids=None, affinity=None, sign=1, mpec=True, jitter=True, log=False):
+    def G_hat(self, x, v, ids=None, affinity=None, sign=1, mpec=True, jitter=True, log=False):
         """Calculate changes in government welfare given ge inputs and outputs
 
         Parameters
         ----------
         ge_x : vector (TODO: documentation for arbitrary input vector)
             1d numpy array storing flattened ge inputs and outputs. See function for order of values.
-        b : vector
-            Length N vector of government preference parameters.
         affinity : matrix
             N times N matrix of affinity shocks
         ids : vector
@@ -136,13 +134,13 @@ class policies:
                                 ge_dict["tau_hat"][i, j] += np.random.normal(0, .1, 1)
                     # recurse
                     ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-                    self.G_hat(ge_x, b, ids=ids, sign=sign, mpec=False, jitter=True)
+                    self.G_hat(ge_x, v, ids=ids, sign=sign, mpec=False, jitter=True)
                 else:
                     pass
 
         Uhat = self.ecmy.U_hat(ge_dict)
         # Ghat = Uhat ** (1 - b) * ge_dict["r_hat"] ** b
-        Ghat = Uhat * self.R_hat(ge_dict, .25) ** b
+        Ghat = Uhat * self.R_hat(ge_dict, v)
 
         Ghat_a = affinity * Ghat
         Ghat_out = Ghat + np.sum(Ghat_a, axis=1)
@@ -151,6 +149,23 @@ class policies:
             return(Ghat_out[ids]*sign)
         else:
             return(np.log(Ghat_out[ids])*sign)
+
+    def R_hat(self, ge_dict, v):
+
+        v_mat = np.array([v])
+        tau_mv = self.ecmy.tau - np.tile(v_mat.transpose(), (1, self.N))
+        tau_mv[tau_mv < 0] = 0
+        r = np.sum(tau_mv * self.ecmy.Xcif, axis=1)
+
+        tau_prime = ge_dict["tau_hat"] * self.ecmy.tau
+        tau_prime_mv = tau_prime - np.tile(v_mat.transpose(), (1, self.N))
+        tau_prime_mv[tau_prime_mv < 0] = 0
+        X_prime = ge_dict["X_hat"] * self.ecmy.Xcif
+        r_prime = np.sum(tau_prime_mv * X_prime, axis=1)
+
+        r_hat = r_prime / r
+
+        return(r_hat)
 
     def tau_diffs(self, tau_hat_x, tau_hat, id):
         """Short summary.
@@ -181,15 +196,6 @@ class policies:
         out.extend(tau_diff_M.ravel())
 
         return(np.array(out))
-
-    def R_hat(self, ge_dict, zeta):
-
-        tau_prime = ge_dict["tau_hat"] * self.ecmy.tau
-        R = np.sum(self.ecmy.tau ** zeta, axis=1)
-        R_prime = np.sum(tau_prime ** zeta, axis=1)
-        R_hat = R_prime / R
-
-        return(R_hat)
 
     def Lagrange_i_x(self, ge_x, b, tau_hat, war_vals, lambda_i_x, id):
         """Short summary.
@@ -678,7 +684,7 @@ class policies:
             else:  # otherwise start from free trade
                 return(self.Lsolve(tau_hat, b, m, theta_dict, id, id, ft=True, mtd="lm"))
 
-    def constraints_tau(self, ge_dict, tau_free, wv_i, b, ge=True, deficits=False, mil=False):
+    def constraints_tau(self, ge_dict, tau_free, wv_i, v, ge=True, deficits=False, mil=False):
         """Constructs list of constraints for policy br.
 
         Parameters
@@ -755,11 +761,11 @@ class policies:
             for j in range(self.N):
                 if j != tau_free:
                     idx = np.where(ids_j==j)[0]
-                    cons.append({'type': 'ineq', 'fun': self.con_mil, 'args':(tau_free, j, wv_i[idx], b, )})
+                    cons.append({'type': 'ineq', 'fun': self.con_mil, 'args':(tau_free, j, wv_i[idx], v, )})
 
         return(cons)
 
-    def con_mil(self, ge_x, i, j, wv_ji, b):
+    def con_mil(self, ge_x, i, j, wv_ji, v):
         """
 
         Parameters
@@ -780,7 +786,7 @@ class policies:
 
         """
         # G_j
-        G_j = self.G_hat(ge_x, b, ids=np.array([j]), log=False)
+        G_j = self.G_hat(ge_x, v, ids=np.array([j]), log=False)
 
         cons = G_j - wv_ji
 
@@ -950,7 +956,7 @@ class policies:
         return(bnds)
 
 
-    def br(self, ge_x, b, wv_i, id, mil=True, method="SLSQP", affinity=None):
+    def br(self, ge_x, v, wv_i, id, mil=True, method="SLSQP", affinity=None):
         """Calculate optimal policies for gov id, given others' policies in ge_x.
 
         Parameters
@@ -977,7 +983,7 @@ class policies:
 
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
         tau_hat_ft = 1 / self.ecmy.tau
-        b = np.copy(b)
+        v = np.copy(v)
 
         # initialize starting values of ge_x to equilibrium
         # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
@@ -990,12 +996,12 @@ class policies:
         b_perturb = .01
         tau_perturb = .1
 
-        cons = self.constraints_tau(ge_dict, id, wv_i, b, mil=mil)
+        cons = self.constraints_tau(ge_dict, id, wv_i, v, mil=mil)
         bnds = self.bounds()
         if affinity is None:
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(b, np.array([id]), None, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(v, np.array([id]), None, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
         else:
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(b, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(v, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
 
         thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
         taustar = thistar_dict["tau_hat"]*self.ecmy.tau
@@ -1011,7 +1017,7 @@ class policies:
             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
             # b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
             # print(b)
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(b, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(v, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
             thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
             print("taustar_out:")
             print(thistar_dict["tau_hat"]*self.ecmy.tau)
@@ -1039,7 +1045,7 @@ class policies:
             # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
             print(ge_dict)
             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(b, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(v, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
             thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
             taustar = thistar_dict["tau_hat"]*self.ecmy.tau
 
