@@ -88,18 +88,24 @@ theta_dict_init["c_hat"] = .2
 theta_dict_init["alpha"] = .1
 theta_dict_init["gamma"] = 1
 
+
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
 id = 4
 
-# m = pecmy.M / np.ones((pecmy.N, pecmy.N))
-# m = m.T
-m = np.diag(pecmy.M)
+m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+m = m.T
+# m = np.diag(pecmy.M)
 v_test = np.ones(pecmy.N)
 epsilon = np.zeros((pecmy.N, pecmy.N))
 wv_m = pecmy.war_vals(v_test, m, theta_dict_init, epsilon) # calculate war values
 
-test = pecmy.est_v_grid(v_test, m, theta_dict_init, epsilon)
+# test = pecmy.est_v_i_grid(2, v_test, m, theta_dict_init, epsilon)
+# test = pecmy.est_v_grid(v_test, m, theta_dict_init, epsilon)
+v_sv = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])
+epsilon_star_test = pecmy.epsilon_star(v_sv, m, theta_dict_init)
+pecmy.trunc_epsilon(epsilon_star_test, theta_dict_init)
+
 
 
 

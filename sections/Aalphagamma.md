@@ -14,13 +14,13 @@ $$
 $$
 which implies
 $$
-\frac{\tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)}{1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)} =\rho_{ji}(W_{ji}; \bm{\alpha}) \left( \frac{ M_j }{ M_i } \right)^\gamma
-$$.
+\frac{\tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)}{1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)} =\rho_{ji}(W_{ji}; \bm{\alpha}) \left( \frac{ M_j }{ M_i } \right)^\gamma .
+$$
 
 Recall from Equation \ref{eq:rho} that
 $$
-\rho_{ji}(\bm{W}_{ji}; \bm{\alpha}) = e^{ -\bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ji} }
-$$.
+\rho_{ji}(\bm{W}_{ji}; \bm{\alpha}) = e^{ -\bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ji} } .
+$$
 I can therefore rewrite the slackness condition as
 \begin{align*}
 \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) &\leq \hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1} \\
@@ -50,7 +50,7 @@ Let $Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) = \ln \left( \frac{1}{
 
 $\E \left[ Y_{ji} \mid \epsilon_{ji} < \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right]$ can be approximated by simulating the integral
 $$
-\int_{-\infty}^{\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)} Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) f(\epsilon) d \epsilon
+\frac{1}{1 - F(\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m))} \int_{-\infty}^{\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)} Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) f(\epsilon) d \epsilon
 $$
 and $\E \left[ \epsilon_{ji} \mid  \epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right]$ is the mean of a truncated normal distribution. 
 

@@ -1018,7 +1018,7 @@ class policies:
         # eps = 1.0e-10
 
         b_perturb = .01
-        tau_perturb = .1
+        tau_perturb = .01
 
         cons = self.constraints_tau(ge_dict, id, wv_i, v, mil=mil)
         bnds = self.bounds()
@@ -1035,7 +1035,8 @@ class policies:
             print("br unsuccessful, iterating...")
             for j in range(self.N):
                 if id != j:
-                    ge_dict["tau_hat"][id, j] = thistar_dict["tau_hat"][id, j] + np.random.normal(loc=0, scale=tau_perturb)
+                    # ge_dict["tau_hat"][id, j] = thistar_dict["tau_hat"][id, j] + np.random.normal(loc=0, scale=tau_perturb)
+                    ge_dict["tau_hat"][id, j] += tau_perturb
             ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
             print(ge_dict)
             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
@@ -1053,15 +1054,19 @@ class policies:
             print("extreme tau values found, iterating...")
             print("taustar[id]: " + str(taustar[id, ]))
             for j in range(self.N):
-                if taustar[id, j] > self.tauMax:
-                    ge_dict["tau_hat"][id, j] = tau_hat_ft[id, j]
-                else:
-                    if id != j:
-                        ge_dict["tau_hat"][id, j] = thistar_dict["tau_hat"][id, j] + np.random.normal(loc=0, scale=tau_perturb)
+                # if taustar[id, j] > self.tauMax:
+                #     ge_dict["tau_hat"][id, j] = tau_hat_ft[id, j]
+                # else:
+                if id != j:
+                    # ge_dict["tau_hat"][id, j] = thistar_dict["tau_hat"][id, j] + np.random.normal(loc=0, scale=tau_perturb)
+                    ge_dict["tau_hat"][id, j] += tau_perturb
+            ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
+            print(ge_dict)
+            # ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
             # print(ge_dict["tau_hat"] * self.ecmy.tau)
             # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
             # ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-            b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
+            # b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
             # ge_dict = self.ecmy.geq_solve(tau_hat_ft, ge_dict["D_hat"])
             # ge_dict["tau_hat"][id, ] += .1  # bump up starting taus
             # ge_dict["tau_hat"][id, id] = 1
@@ -1302,7 +1307,7 @@ class policies:
 
         return(v_vec)
 
-    def epsilon_star(self, b, m, theta_dict, W):
+    def epsilon_star(self, v, m, theta_dict):
         """Return critical epsilon (row's critical value for invading column, all epsilon greater than epsilon star will trigger invasion). If war costs exceed value of winning the war for sure then this value is infty
 
         Parameters
@@ -1328,14 +1333,14 @@ class policies:
 
         rcv = np.zeros((self.N, self.N))  # empty regime change value matrix (row's value for invading column)
         for i in range(self.N):
-            b_nearest = hp.find_nearest(self.b_vals, b[i])
-            rcv[i, ] = self.rcv[b_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
+            v_nearest = hp.find_nearest(self.v_vals, v[i])
+            rcv[i, ] = self.rcv[v_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
             # (i's value for invading all others)
 
         # rcv = rcv.T
         # print("rcv: " + str(rcv))
 
-        out = theta_dict["alpha"] * W - theta_dict["gamma"] * np.log(m_frac) + np.log( 1 / ( theta_dict["c_hat"] ** -1 * (rcv - 1) - 1 ) )
+        out = theta_dict["alpha"] * self.W - theta_dict["gamma"] * np.log(m_frac) + np.log( 1 / ( theta_dict["c_hat"] ** -1 * (rcv - 1) - 1 ) )
         out[np.isnan(out)] = np.inf
 
         return(out)
@@ -1361,6 +1366,10 @@ class policies:
         out = out / np.sum(out)
 
         return(out)
+
+    def trunc_epsilon(self, epsilon_star, theta_dict):
+
+        return(hp.mean_truncnorm(epsilon_star, theta_dict["sigma_epsilon"]))
 
     def est_theta(self, b, m, theta_dict, thres=.01):
         """Estimate military parameters from constraints. Iteratively recalculate parameters and weights until convergence.
