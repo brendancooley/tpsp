@@ -82,9 +82,30 @@ E = Eq + Ex
 
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
+theta_dict_init = dict()
+theta_dict_init["sigma_epsilon"] = 1
+theta_dict_init["c_hat"] = .2
+theta_dict_init["alpha"] = .1
+theta_dict_init["gamma"] = 1
+
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
 id = 4
+
+# m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+# m = m.T
+m = np.diag(pecmy.M)
+v_test = np.ones(pecmy.N)
+epsilon = np.zeros((pecmy.N, pecmy.N))
+wv_m = pecmy.war_vals(v_test, m, theta_dict_init, epsilon) # calculate war values
+
+test = pecmy.est_v_grid(v_test, m, theta_dict_init, epsilon)
+
+
+
+
+
+
 
 tau_hat = np.ones((pecmy.N, pecmy.N))
 tau_hat[0, ] = 3
@@ -101,16 +122,10 @@ pecmy.R_hat(ge_dict, v_test)
 pecmy.G_hat(pecmy.ecmy.unwrap_ge_dict(ge_dict), v_test)
 pecmy.ecmy.tau
 
-theta_dict_init = dict()
-theta_dict_init["sigma_epsilon"] = 1
-theta_dict_init["c_hat"] = .2
-theta_dict_init["alpha"] = .5
-theta_dict_init["gamma"] = 1
 
-m = np.diag(M)
 
-epsilon = np.zeros((pecmy.N, pecmy.N))
-wv_m = pecmy.war_vals(b_test, m, theta_dict_init, epsilon) # calculate war values
+
+
 ids_j = np.delete(np.arange(pecmy.N), id)
 wv_m_i = wv_m[:,id][ids_j]
 
@@ -131,6 +146,7 @@ test_dict["tau_hat"] * pecmy.ecmy.tau
 
 r_hat_id = []
 t_vals = np.arange(0, 3, .1)
+v_test[1] = 1.5
 tau_v = np.tile(np.array([v_test]).transpose(), (1, pecmy.N))
 np.fill_diagonal(tau_v, 1)
 tau_hat_sv = np.ones((pecmy.N, pecmy.N))

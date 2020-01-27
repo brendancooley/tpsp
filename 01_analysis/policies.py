@@ -246,7 +246,7 @@ class policies:
 
         return(L_i)
 
-    def war_vals(self, b, m, theta_dict, epsilon, c_bar=10):
+    def war_vals(self, v, m, theta_dict, epsilon, c_bar=10):
         """Calculate war values (regime change value minus war costs)
 
         Parameters
@@ -275,9 +275,9 @@ class policies:
         for i in range(self.N):
             for j in range(self.N):
                 if i != j:
-                    b_j = b[j]
-                    b_j_nearest = hp.find_nearest(self.b_vals, b_j)
-                    rcv_ji = self.rcv[b_j_nearest][j, i]  # get regime change value for j controlling i's policy
+                    v_j = v[j]
+                    v_j_nearest = hp.find_nearest(self.v_vals, v_j)
+                    rcv_ji = self.rcv[v_j_nearest][j, i]  # get regime change value for j controlling i's policy
                     m_x = self.unwrap_m(m)
                     chi_ji = self.chi(m_x, j, i, theta_dict, rhoM)
                     # print(chi_ji)
@@ -1049,7 +1049,6 @@ class policies:
         # NOTE: sometimes extreme values due to difficulties in satisfying particular mil constraints
         # NOTE: one way to fix this is is to just force countries to impose free trade when they win wars, no manipulation
         # Also seems to happen when target countries are small, easy to make mistakes in finite difference differentiation?
-        print(thistar_dict)
         while np.any(taustar > self.tauMax):
             print("extreme tau values found, iterating...")
             print("taustar[id]: " + str(taustar[id, ]))
@@ -1092,6 +1091,19 @@ class policies:
 
         return(ge_x_sv)
 
+    def v_sv(self, id, ge_x, v):
+
+        tau_v = np.tile(np.array([v]).transpose(), (1, self.N))
+        tau_hat_v = tau_v / self.ecmy.tau + .001
+        np.fill_diagonal(tau_hat_v, 1)
+        ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
+        tau_hat_sv = ge_dict["tau_hat"]
+        tau_hat_sv[id, ] = tau_hat_v[id, ] # start slightly above free trade
+        ge_dict_sv = self.ecmy.geq_solve(tau_hat_sv, np.ones(self.N))
+        ge_x_sv = self.ecmy.unwrap_ge_dict(ge_dict_sv)
+
+        return(ge_x_sv)
+
     def loss_tau(self, tau_i, id, weights=None):
         """Loss function for b estimation, absolute log loss
 
@@ -1116,11 +1128,11 @@ class policies:
         print("tau_star: " + str(tau_star))
         print("tau: " + str(self.ecmy.tau[id, ]))
 
-        out = np.sum(np.abs(self.ecmy.tau[id, ] - tau_star) * weights)
+        out = np.sum((self.ecmy.tau[id, ] - tau_star) ** 2 * weights)
 
         return(out)
 
-    def est_b_i_grid(self, id, b_init, m, theta_dict, epsilon):
+    def est_v_i_grid(self, id, v_init, m, theta_dict, epsilon):
         """Estimate b_i by searching over grid of possible values and calculating loss on predicted policy
 
         Parameters
@@ -1144,17 +1156,19 @@ class policies:
         """
 
         # endpoints for search
-        bmax = np.copy(np.max(self.b_vals))
-        bmin = np.copy(np.min(self.b_vals))
-        b_vec = np.copy(b_init)
+        # bmax = np.copy(np.max(self.b_vals))
+        vmax = np.max(self.ecmy.tau[id, ]) - self.v_step
+        # bmin = np.copy(np.min(self.b_vals))
+        vmin = 1
+        v_vec = np.copy(v_init)
 
-        b = b_vec[id]
+        v = v_vec[id]
 
         # turn this on when we've reached local min
         stop = False
 
         # starting values (nearft)
-        ge_x_sv = self.nft_sv(id, np.ones(self.x_len))
+        # ge_x_sv = self.nft_sv(id, np.ones(self.x_len))
         loss_last = 1000
 
         while stop is False:
@@ -1163,13 +1177,13 @@ class policies:
             lb = False
             ub = False
 
-            print("bmin: " + str(bmin))
-            print("bmax: " + str(bmax))
+            print("vmin: " + str(vmin))
+            print("vmax: " + str(vmax))
 
             # first
-            idx_first = hp.which_nearest(self.b_vals, b)
+            idx_first = hp.which_nearest(self.v_vals, v)
             # start away from corners
-            if idx_first == len(self.b_vals) - 1:
+            if idx_first == len(self.v_vals) - 1:
                 idx_first -= 1
             if idx_first == 0:
                 idx_first += 1
@@ -1177,7 +1191,7 @@ class policies:
             idx_down = idx_first - 1
 
             # if either of the values to search is a bound, note this so we can check termination condition below
-            if idx_up == len(self.b_vals) - 1:
+            if idx_up == len(self.v_vals) - 1:
                 ub = True
             if idx_down == 0:
                 lb = True
@@ -1187,24 +1201,27 @@ class policies:
             print("ub:")
             print(ub)
 
-            b = self.b_vals[idx_first]
+            v = self.v_vals[idx_first]
 
             Loss = []  # store values for local loss
             for idx in [idx_down, idx_first, idx_up]:
-                b_idx = self.b_vals[idx]
-                b_vec[id] = b_idx
-                print("b_vec:" + str(b_vec))
-                wv = self.war_vals(b_vec, m, theta_dict, epsilon) # calculate war values
+                v_idx = self.v_vals[idx]
+                v_vec[id] = v_idx
+                print("v_vec:" + str(v_vec))
+                wv = self.war_vals(v_vec, m, theta_dict, epsilon) # calculate war values
                 ids_j = np.delete(np.arange(self.N), id)
                 wv_i = wv[:,id][ids_j]
                 # print("wv_i: " + str(wv_i))
 
-                print("b_idx: " + str(b_idx))
-                br = self.br(ge_x_sv, b_vec, wv_i, id)  # calculate best response
+                ge_x_sv = self.v_sv(id, np.ones(self.x_len), v_vec)
+
+                print("v_idx: " + str(v_idx))
+                br = self.br(ge_x_sv, v_vec, wv_i, id)  # calculate best response
                 br_dict = self.ecmy.rewrap_ge_dict(br)
                 tau_i = br_dict["tau_hat"][id, ]
                 print(tau_i)
-                loss = self.loss_tau(tau_i, id, weights=self.ecmy.Y)
+                # loss = self.loss_tau(tau_i, id, weights=self.ecmy.Y)
+                loss = self.loss_tau(tau_i, id)
                 Loss.append(loss)
 
             print("Loss: " + str(Loss))
@@ -1218,36 +1235,36 @@ class policies:
                 #     stop = True
             else:  # otherwise, truncate search region and search in direction of of lower loss
                 if np.argmin(Loss) == 2:
-                    bmin = b
-                    b = (bmax - b) / 2 + bmin
+                    vmin = v
+                    v = (vmax - v) / 2 + vmin
                 if np.argmin(Loss) == 0:
-                    bmax = b
-                    b = (b - bmin) / 2 + bmin
+                    vmax = v
+                    v = (v - vmin) / 2 + vmin
 
             # check bounds, if loss decreases in direction of bound return bound as estimate
             if lb is True:
                 if np.argmin(Loss) == 0:
-                    b = self.b_vals[idx_down]
+                    v = self.v_vals[idx_down]
                     stop = True
             if ub is True:
                 if np.argmin(Loss) == 2:
-                    b = self.b_vals[idx_up]
+                    v = self.v_vals[idx_up]
                     stop = True
 
             # terminate if we've gotten stuck
-            if np.abs(bmax - bmin) < .1:
+            if np.abs(vmax - vmin) < .1:
                 if np.argmin(Loss) == 0:
-                    b = self.b_vals[idx_down]
+                    v = self.v_vals[idx_down]
                     stop = True
                 elif np.argmin(Loss) == 2:
-                    b = self.b_vals[idx_up]
+                    v = self.v_vals[idx_up]
                     stop = True
                 else:
                     stop = True
 
-        return(b)
+        return(v)
 
-    def est_b_grid(self, b_sv, m, theta_dict, epsilon, thres=.1):
+    def est_v_grid(self, v_sv, m, theta_dict, epsilon, thres=.1):
         """Estimate vector of b values through grid search
 
         Parameters
@@ -1270,21 +1287,20 @@ class policies:
         """
 
         converged = False  # flag for convergence
-        b_vec = np.copy(b_sv)
+        v_vec = np.copy(v_sv)
 
         while converged is False:
-            b_out = np.copy(b_vec)  # current values of b
-            # print("b_out: " + str(b_out))
+            v_out = np.copy(v_vec)  # current values of v
             for id in range(0, self.N):  # update values by iteratively calculating best estimates, holding other values fixed
                 print("id: " + str(id))
-                b_star = self.est_b_i_grid(id, b_vec, m, theta_dict, epsilon)
-                b_vec[id] = b_star  # update vector
-                print("b_vec: " + str(b_vec))
+                v_star = self.est_v_i_grid(id, v_vec, m, theta_dict, epsilon)
+                v_vec[id] = v_star  # update vector
+                print("b_vec: " + str(v_vec))
             # print("b_vec: " + str(b_vec))
-            if np.sum((b_vec - b_out) ** 2) < thres:  # if change in values less than threshold then terminate search
+            if np.sum((v_vec - v_out) ** 2) < thres:  # if change in values less than threshold then terminate search
                 converged = True
 
-        return(b_vec)
+        return(v_vec)
 
     def epsilon_star(self, b, m, theta_dict, W):
         """Return critical epsilon (row's critical value for invading column, all epsilon greater than epsilon star will trigger invasion). If war costs exceed value of winning the war for sure then this value is infty
@@ -1594,7 +1610,8 @@ class policies:
             br = self.br(ge_x_sv, b_k, wv_i, id)  # calculate best response
             br_dict = self.ecmy.rewrap_ge_dict(br)
             tau_i = br_dict["tau_hat"][id, ]
-            Loss_k += self.loss_tau(tau_i, id, weights=self.ecmy.Y)
+            # Loss_k += self.loss_tau(tau_i, id, weights=self.ecmy.Y)
+            Loss_k += self.loss_tau(tau_i, id)
 
         Loss.append(Loss_k)
 
