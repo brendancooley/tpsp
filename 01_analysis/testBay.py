@@ -92,9 +92,20 @@ theta_dict_init["gamma"] = 0
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
 id = 4
+m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+m = m.T
 v_sv = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])
+epsilon = np.zeros((pecmy.N, pecmy.N))
+wv_m = pecmy.war_vals(v_test, m, theta_dict_init, epsilon) # calculate war values
+ids_j = np.delete(np.arange(pecmy.N), id)
+wv_m_i = wv_m[:,id][ids_j]
 
-pecmy.G_hat_grad(np.ones(pecmy.x_len), v_sv, id)
+
+pecmy.G_hat_grad(np.ones(pecmy.x_len), v_sv, id, -1)
+pecmy.br(np.ones(pecmy.x_len), v_sv, wv_m_i, id)
+
+
+
 
 
 m = pecmy.M / np.ones((pecmy.N, pecmy.N))
@@ -103,6 +114,7 @@ m = m.T
 v_test = np.ones(pecmy.N)
 epsilon = np.zeros((pecmy.N, pecmy.N))
 wv_m = pecmy.war_vals(v_test, m, theta_dict_init, epsilon) # calculate war values
+
 
 # test = pecmy.est_v_i_grid(2, v_test, m, theta_dict_init, epsilon)
 # test = pecmy.est_v_grid(v_test, m, theta_dict_init, epsilon)

@@ -113,16 +113,16 @@ class policies:
 
         """
 
-        if affinity is None:
-            affinity = np.zeros((self.N, self.N))
+        # if affinity is None:
+        #     affinity = np.zeros((self.N, self.N))
 
         # if len(x) > self.ecmy.ge_x_len:  # convert input vector to ge vars if dealing with full vector
         #     ge_x = self.rewrap_x(x)["ge_x"]
         # else:
         #     ge_x = x
 
-        if ids is None:  # return G for all govs if no id specified
-            ids = self.ids
+        # if ids is None:  # return G for all govs if no id specified
+        #     ids = self.ids
 
         ge_dict = self.ecmy.rewrap_ge_dict(x)
 
@@ -146,10 +146,10 @@ class policies:
         # Ghat = Uhat ** (1 - b) * ge_dict["r_hat"] ** b
         Ghat = Uhat * self.R_hat(ge_dict, v)
 
-        Ghat_a = affinity * Ghat
-        Ghat_out = Ghat + np.sum(Ghat_a, axis=1)
+        # Ghat_a = affinity * Ghat
+        # Ghat_out = Ghat + np.sum(Ghat_a, axis=1)
 
-        return(Ghat_out[id]*sign)
+        return(Ghat[id]*sign)
 
     def G_hat_grad(self, x, v, id, sign):
         G_hat_grad_f = ag.grad(self.G_hat)
@@ -172,7 +172,6 @@ class policies:
         tau_prime = ge_dict["tau_hat"] * self.ecmy.tau
         tau_prime_mv = tau_prime - np.tile(v_mat.transpose(), (1, self.N))
         tau_prime_mv = np.clip(tau_prime_mv, 0, np.inf)
-        print(tau_prime_mv)
         X_prime = ge_dict["X_hat"] * self.ecmy.Xcif
         r_prime = np.sum(tau_prime_mv * X_prime, axis=1)
 
@@ -800,7 +799,7 @@ class policies:
 
         """
         # G_j
-        G_j = self.G_hat(ge_x, v, ids=np.array([j]), log=False)
+        G_j = self.G_hat(ge_x, v, j)
 
         cons = G_j - wv_ji
 
@@ -1025,9 +1024,9 @@ class policies:
         cons = self.constraints_tau(ge_dict, id, wv_i, v, mil=mil)
         bnds = self.bounds()
         if affinity is None:
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(v, np.array([id]), None, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, jac=self.G_hat_grad, args=(v, id, -1, ), method="SLSQP", options={"maxiter":mxit})
         else:
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(v, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, jac=self.G_hat_grad, args=(v, id, -1, ), method="SLSQP", options={"maxiter":mxit})
 
         thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
         taustar = thistar_dict["tau_hat"]*self.ecmy.tau
