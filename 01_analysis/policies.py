@@ -732,7 +732,10 @@ class policies:
                 else:
                     con = bv - x[i*self.N + j]
                 return(con)
-            return(f)
+            def f_grad(x):
+                f_grad_f = ag.grad(f)
+                return(f_grad_f(x))
+            return(f, f_grad)
 
         # constrain deficits
         def con_d(ge_x, bound="lower"):
@@ -742,6 +745,10 @@ class policies:
                 con = 1 - ge_x[self.N**2:self.N**2+self.N]
             return(con)
 
+        def con_d_grad(ge_x, bound):
+            con_d_grad_f = ag.grad(con_d)
+            return(con_d_grad_f(ge_x, bound))
+
         # build constraints
         cons = []
 
@@ -749,24 +756,24 @@ class policies:
         for i in np.arange(0, self.N):
             for j in np.arange(0, self.N):
                 if i != tau_free:
-                    cons.append({'type': 'ineq','fun': con_tau(i, j, bound="lower", bv=ge_dict["tau_hat"][i, j])})
-                    cons.append({'type': 'ineq','fun': con_tau(i, j, bound="upper", bv=ge_dict["tau_hat"][i, j])})
+                    cons.append({'type': 'eq','fun': con_tau(i, j, bound="lower", bv=ge_dict["tau_hat"][i, j])[0], 'jac':con_tau(i, j, bound="lower", bv=ge_dict["tau_hat"][i, j])[1]})
+                    # cons.append({'type': 'ineq','fun': con_tau(i, j, bound="upper", bv=ge_dict["tau_hat"][i, j])[0], 'jac':con_tau(i, j, bound="upper", bv=ge_dict["tau_hat"][i, j])[1]})
                 else:
                     if i == j:
-                        cons.append({'type': 'ineq','fun': con_tau(i, j, bound="lower", bv=1)})
-                        cons.append({'type': 'ineq','fun': con_tau(i, j, bound="upper", bv=1)})
+                        cons.append({'type': 'eq','fun': con_tau(i, j, bound="lower", bv=1)[0], 'jac':con_tau(i, j, bound="lower", bv=ge_dict["tau_hat"][i, j])[1]})
+                        # cons.append({'type': 'ineq','fun': con_tau(i, j, bound="upper", bv=1)[0], 'jac':con_tau(i, j, bound="upper", bv=ge_dict["tau_hat"][i, j])[1]})
                     else:
-                        cons.append({'type': 'ineq','fun': con_tau(i, j, bound="lower", bv=0)})
+                        cons.append({'type': 'ineq','fun': con_tau(i, j, bound="lower", bv=0)[0], 'jac':con_tau(i, j, bound="lower", bv=ge_dict["tau_hat"][i, j])[1]})
 
         # deficits
         if deficits == True:
-            cons.append({'type': 'ineq', 'fun': con_d, 'args':("lower",)})
-            cons.append({'type': 'ineq', 'fun': con_d, 'args':("upper",)})
+            cons.append({'type': 'eq', 'fun': con_d, 'jac': con_d_grad, 'args':("lower",)})
+            # cons.append({'type': 'ineq', 'fun': con_d, 'jac': con_d_grad, 'args':("upper",)})
 
         # ge constraints
         if ge == True:
-            cons.append({'type': 'ineq', 'fun': self.ecmy.geq_diffs, 'args':("lower",)})
-            cons.append({'type': 'ineq', 'fun': self.ecmy.geq_diffs, 'args':("upper",)})
+            cons.append({'type': 'eq', 'fun': self.ecmy.geq_diffs, 'jac': self.ecmy.geq_diffs_grad, 'args':("lower",)})
+            # cons.append({'type': 'ineq', 'fun': self.ecmy.geq_diffs, 'jac': self.ecmy.geq_diffs_grad, 'args':("upper",)})
 
         # mil constraints
         if mil == True:
@@ -774,7 +781,7 @@ class policies:
             for j in range(self.N):
                 if j != tau_free:
                     idx = np.where(ids_j==j)[0]
-                    cons.append({'type': 'ineq', 'fun': self.con_mil, 'args':(tau_free, j, wv_i[idx], v, )})
+                    cons.append({'type': 'ineq', 'fun': self.con_mil, 'jac':self.con_mil_grad, 'args':(tau_free, j, wv_i[idx], v, )})
 
         return(cons)
 
@@ -804,6 +811,10 @@ class policies:
         cons = G_j - wv_ji
 
         return(cons)
+
+    def con_mil_grad(self, ge_x, i, j, wv_ji, v):
+        con_mil_grad_f = ag.grad(self.con_mil)
+        return(con_mil_grad_f(ge_x, i, j, wv_ji, v))
 
     def constraints_m(self, m_init, id):
         """Compile constraints for military strategy problem
@@ -905,7 +916,7 @@ class policies:
         # ge_x = np.copy(ge_x)
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
 
-        tau_perturb = .1
+        tau_perturb = .01
         v_perturb = .01
 
         if full_opt == True:
@@ -918,16 +929,19 @@ class policies:
             wv_null = np.repeat(0, self.N - 1)
             cons = self.constraints_tau(ge_dict, i, wv_null, v, mil=False)
             bnds = self.bounds()
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(v, np.array([j]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit, "ftol":ftol})
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, jac=self.G_hat_grad, args=(v, j, -1, ), method="SLSQP", options={"maxiter":mxit, "ftol":ftol})
             while thistar['success'] == False:
                 print("iterating...")
                 for k in range(self.N):
                     if k != i:
-                        ge_dict["tau_hat"][k, i] = ge_dict["tau_hat"][k, i] + np.random.normal(loc=0, scale=tau_perturb)
+                        ge_dict["tau_hat"][i, k] += tau_perturb
+                ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
+                print(ge_dict)
+                ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
                 # v[j] -= v_perturb
                 ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
                 ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-                thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(v, np.array([j]), None, -1, True, ), method="SLSQP", options={"maxiter":mxit, "ftol":ftol})
+                thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, jac=self.G_hat_grad, args=(v, j, -1, ), method="SLSQP", options={"maxiter":mxit, "ftol":ftol})
 
             return(thistar['x'])
         else:
@@ -1043,7 +1057,7 @@ class policies:
             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
             # b[id] += b_perturb * np.random.choice([-1, 1]) # perturb preference value
             # print(b)
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(v, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, jac=self.G_hat_grad, args=(v, id, -1, ), method="SLSQP", options={"maxiter":mxit})
             thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
             print("taustar_out:")
             print(thistar_dict["tau_hat"]*self.ecmy.tau)
@@ -1074,7 +1088,7 @@ class policies:
             # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
             print(ge_dict)
             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, args=(v, np.array([id]), affinity, -1, True, True, True, ), method="SLSQP", options={"maxiter":mxit})
+            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, jac=self.G_hat_grad, args=(v, id, -1, ), method="SLSQP", options={"maxiter":mxit})
             thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
             taustar = thistar_dict["tau_hat"]*self.ecmy.tau
 
@@ -2145,7 +2159,7 @@ class policies:
                             if rcv_ft is False:
                                 nft_sv = self.nft_sv(i, np.ones(self.x_len))
                                 ge_br_war_ji = self.br_war_ji(nft_sv, v_vec, j, i, full_opt=True)
-                                G_hat_ji = self.G_hat(ge_br_war_ji, v_vec, ids=np.array([j]))
+                                G_hat_ji = self.G_hat(ge_br_war_ji, v_vec, j)
                             else:
                                 G_hat_ji = self.G_hat(ge_x_prime, v_vec, ids=np.array([j]))
                             wvb[j, i] = G_hat_ji

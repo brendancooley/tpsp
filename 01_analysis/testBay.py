@@ -18,8 +18,8 @@ sys.path.insert(1, helpersPath)
 import helpers
 imp.reload(helpers)
 
-mini = True
-large = False
+mini = False
+large = True
 rcv_ft = False
 
 runEstimates = True
@@ -85,26 +85,35 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 theta_dict_init = dict()
 theta_dict_init["sigma_epsilon"] = 1
 theta_dict_init["c_hat"] = .2
-theta_dict_init["alpha"] = 0
-theta_dict_init["gamma"] = 0
+theta_dict_init["alpha"] = .1
+theta_dict_init["gamma"] = 1
 
 
 imp.reload(policies)
+imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
-id = 4
-m = pecmy.M / np.ones((pecmy.N, pecmy.N))
-m = m.T
-v_sv = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])
+id = 2
+
+# m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+# m = m.T
+m = np.diag(pecmy.M)
+
+v = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])
 epsilon = np.zeros((pecmy.N, pecmy.N))
-wv_m = pecmy.war_vals(v_test, m, theta_dict_init, epsilon) # calculate war values
+wv_m = pecmy.war_vals(v, m, theta_dict_init, epsilon) # calculate war values
 ids_j = np.delete(np.arange(pecmy.N), id)
 wv_m_i = wv_m[:,id][ids_j]
 
+v_sv = pecmy.v_sv(id, np.ones(pecmy.x_len), v)
 
-pecmy.G_hat_grad(np.ones(pecmy.x_len), v_sv, id, -1)
-pecmy.br(np.ones(pecmy.x_len), v_sv, wv_m_i, id)
+# pecmy.G_hat_grad(v_sv, v, id, -1)
+test_x = pecmy.br(v_sv, v, wv_m_i, id)
+test_dict = pecmy.ecmy.rewrap_ge_dict(test_x)
+test_dict["tau_hat"] * pecmy.ecmy.tau
 
-
+v_sv_0 = pecmy.v_sv(0, np.ones(pecmy.x_len), v)
+test = pecmy.br_war_ji(v_sv_0, v, 1, 0, full_opt=True)
+test_dict = pecmy.ecmy.rewrap_ge_dict(test)
 
 
 
@@ -149,7 +158,7 @@ m_frac = m / m_diag
 
 rcv = np.zeros((pecmy.N, pecmy.N))  # empty regime change value matrix (row's value for invading column)
 for i in range(pecmy.N):
-    v_nearest = hp.find_nearest(pecmy.v_vals, v_sv[i])
+    v_nearest = hp.find_nearest(pecmy.v_vals, v[i])
     rcv[i, ] = pecmy.rcv[v_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
     # (i's value for invading all others)
 # rcv = rcv.T
