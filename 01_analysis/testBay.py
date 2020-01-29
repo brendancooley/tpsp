@@ -18,8 +18,8 @@ sys.path.insert(1, helpersPath)
 import helpers
 imp.reload(helpers)
 
-mini = False
-large = True
+mini = True
+large = False
 rcv_ft = False
 
 runEstimates = True
@@ -88,6 +88,7 @@ theta_dict_init["c_hat"] = .2
 theta_dict_init["alpha"] = .1
 theta_dict_init["gamma"] = 1
 
+# TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
 
 imp.reload(policies)
 imp.reload(economy)
@@ -112,9 +113,9 @@ test_dict = pecmy.ecmy.rewrap_ge_dict(test_x)
 test_dict["tau_hat"] * pecmy.ecmy.tau
 
 v_sv_0 = pecmy.v_sv(0, np.ones(pecmy.x_len), v)
-test = pecmy.br_war_ji(v_sv_0, v, 1, 0, full_opt=True)
+test = pecmy.br_war_ji(v_sv_0, v, 4, 0, full_opt=True)
 test_dict = pecmy.ecmy.rewrap_ge_dict(test)
-
+test_dict
 
 
 m = pecmy.M / np.ones((pecmy.N, pecmy.N))
