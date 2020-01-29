@@ -85,13 +85,17 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 theta_dict_init = dict()
 theta_dict_init["sigma_epsilon"] = 1
 theta_dict_init["c_hat"] = .2
-theta_dict_init["alpha"] = .1
-theta_dict_init["gamma"] = 1
+theta_dict_init["alpha"] = 0
+theta_dict_init["gamma"] = 0
 
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
 id = 4
+v_sv = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])
+
+pecmy.G_hat_grad(np.ones(pecmy.x_len), v_sv, id)
+
 
 m = pecmy.M / np.ones((pecmy.N, pecmy.N))
 m = m.T
@@ -102,13 +106,71 @@ wv_m = pecmy.war_vals(v_test, m, theta_dict_init, epsilon) # calculate war value
 
 # test = pecmy.est_v_i_grid(2, v_test, m, theta_dict_init, epsilon)
 # test = pecmy.est_v_grid(v_test, m, theta_dict_init, epsilon)
-v_sv = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])
 epsilon_star_test = pecmy.epsilon_star(v_sv, m, theta_dict_init)
 pecmy.trunc_epsilon(epsilon_star_test, theta_dict_init)
 
+epsilon_test = np.reshape(np.random.normal(0, theta_dict_init["sigma_epsilon"], pecmy.N ** 2), (pecmy.N, pecmy.N))
+pecmy.est_theta_outer(v_sv, theta_dict_init)
+
+
+theta_dict_init["gamma"] = test_params[0]
+theta_dict_init["alpha"] = test_params[1]
+rhoM = pecmy.rhoM(theta_dict_init, 0)
+chi_test = np.zeros((pecmy.N, pecmy.N))
+for i in range(pecmy.N):
+    for j in range(pecmy.N):
+        if i != j:
+            v_j = v_sv[j]
+            v_j_nearest = hp.find_nearest(pecmy.v_vals, v_j)
+            rcv_ji = pecmy.rcv[v_j_nearest][j, i]  # get regime change value for j controlling i's policy
+            m_x = pecmy.unwrap_m(m)
+            chi_ji = pecmy.chi(m_x, j, i, theta_dict_init, rhoM)
+            chi_test[j, i] = chi_ji
+
+m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+m = m.T
+m[pecmy.ROW_id,:] = 0
+m[:,pecmy.ROW_id] = 0
+m[pecmy.ROW_id,pecmy.ROW_id] = 1
+m_diag = np.diagonal(m)
+m_frac = m / m_diag
+
+rcv = np.zeros((pecmy.N, pecmy.N))  # empty regime change value matrix (row's value for invading column)
+for i in range(pecmy.N):
+    v_nearest = hp.find_nearest(pecmy.v_vals, v_sv[i])
+    rcv[i, ] = pecmy.rcv[v_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
+    # (i's value for invading all others)
+# rcv = rcv.T
+print("rcv: ")
+print(rcv)
+
+epsilon_star = pecmy.epsilon_star(v_sv, m, theta_dict_init)
+t_epsilon = pecmy.trunc_epsilon(epsilon_star, theta_dict_init)
+
+lhs = np.log( 1 / (theta_dict_init["c_hat"] ** -1 * (rcv - 1) - 1) )
+Y = lhs.ravel() - t_epsilon.ravel()
+X = np.column_stack((np.log(m_frac.ravel()), pecmy.W.ravel()))
+
+active_bin = epsilon_star < -2.5
+epsilon_star
+active_bin
+indicator = active_bin.ravel()
+
+Y_active = Y[indicator]
+X_active = X[indicator, ]
+
+plt.plot(X_active[:,1], Y_active, "r+")
 
 
 
+
+np.array([1, 2, 3])[np.array([True, False, False])]
+
+
+
+
+np.array([[0, 0],[1, 1]]) > np.array([[1, 1],[0, 0]])
+np.zeros((2, 3))
 
 
 

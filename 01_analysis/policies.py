@@ -92,7 +92,7 @@ class policies:
         self.clock = 0
         self.minute = 0
 
-    def G_hat(self, x, v, ids=None, affinity=None, sign=1, mpec=True, jitter=True, log=False):
+    def G_hat(self, x, v, id, sign=1):
         """Calculate changes in government welfare given ge inputs and outputs
 
         Parameters
@@ -105,8 +105,6 @@ class policies:
             ids of governments for which to return welfare changes. Defaults to all.
         sign : scalar
             Scales output. Use to convert max problems to min.
-        mpec : bool
-            Calculate wrt mpec (true) or enforce equilibrium in calculation (false)
 
         Returns
         -------
@@ -128,21 +126,21 @@ class policies:
 
         ge_dict = self.ecmy.rewrap_ge_dict(x)
 
-        if mpec == False: # enforce consistency of endogenous variables with policies
-            ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
-            if jitter == True:
-                if type(ge_dict) != dict:
-                    ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
-                    # jitter entries slightly if no solution found
-                    for i in range(self.N):
-                        for j in range(self.N):
-                            if i != j:
-                                ge_dict["tau_hat"][i, j] += np.random.normal(0, .1, 1)
-                    # recurse
-                    ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-                    self.G_hat(ge_x, v, ids=ids, sign=sign, mpec=False, jitter=True)
-                else:
-                    pass
+        # if mpec == False: # enforce consistency of endogenous variables with policies
+        #     ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
+        #     if jitter == True:
+        #         if type(ge_dict) != dict:
+        #             ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
+        #             # jitter entries slightly if no solution found
+        #             for i in range(self.N):
+        #                 for j in range(self.N):
+        #                     if i != j:
+        #                         ge_dict["tau_hat"][i, j] += np.random.normal(0, .1, 1)
+        #             # recurse
+        #             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
+        #             self.G_hat(ge_x, v, ids=ids, sign=sign, mpec=False, jitter=True)
+        #         else:
+        #             pass
 
         Uhat = self.ecmy.U_hat(ge_dict)
         # Ghat = Uhat ** (1 - b) * ge_dict["r_hat"] ** b
@@ -151,10 +149,11 @@ class policies:
         Ghat_a = affinity * Ghat
         Ghat_out = Ghat + np.sum(Ghat_a, axis=1)
 
-        if log==False:
-            return(Ghat_out[ids]*sign)
-        else:
-            return(np.log(Ghat_out[ids])*sign)
+        return(Ghat_out[id]*sign)
+
+    def G_hat_grad(self, x, v, id, sign):
+        G_hat_grad_f = ag.grad(self.G_hat)
+        return(G_hat_grad_f(x, v, id, sign))
 
     def r_v(self, ge_dict, v):
 
@@ -172,12 +171,13 @@ class policies:
 
         tau_prime = ge_dict["tau_hat"] * self.ecmy.tau
         tau_prime_mv = tau_prime - np.tile(v_mat.transpose(), (1, self.N))
-        tau_prime_mv[tau_prime_mv < 0] = 0
+        tau_prime_mv = np.clip(tau_prime_mv, 0, np.inf)
+        print(tau_prime_mv)
         X_prime = ge_dict["X_hat"] * self.ecmy.Xcif
         r_prime = np.sum(tau_prime_mv * X_prime, axis=1)
 
         r_hat = r_prime / r
-        r_hat[r==0] = 0
+        # r_hat[r==0] = 0
 
         return(r_hat)
 
@@ -1373,12 +1373,14 @@ class policies:
 
         return(hp.mean_truncnorm(epsilon_star, theta_dict["sigma_epsilon"]))
 
-    def est_theta(self, b, m, theta_dict, thres=.01):
+    def est_theta(self, epsilon, epsilon_star, X, Y):
         """Estimate military parameters from constraints. Iteratively recalculate parameters and weights until convergence.
 
         Parameters
         ----------
-        b : vector
+        fe : vector
+            N times 1 vector of "fixed effects," expected payoffs in absence of coercion
+        v : vector
             N times 1 vector of preference parameters
         m : matrix
             N times N matrix of military allocations
@@ -1392,63 +1394,79 @@ class policies:
 
         """
 
+        theta_out = np.zeros(2)
+        active_bin = epsilon > epsilon_star
+
+        indicator = active_bin.ravel()
+
+        Y_active = Y[indicator]
+        X_active = X[indicator, ]
+
+        print(np.sum(indicator))
+        if np.sum(indicator) > 2:
+            ests = sm.WLS(Y_active, X_active).fit()
+            theta_out[0] = ests.params[0]  # gamma
+            theta_out[1] = -ests.params[1]  # alpha
+        else:
+            theta_out[0] = np.NaN  # gamma
+            theta_out[1] = np.NaN  # alpha
+
+        return(theta_out)
+
+    def est_theta_inner(self, v, theta_dict_init, draws=1000):
+
+        m = self.M / np.ones((self.N, self.N))
+        m = m.T
+        m[self.ROW_id,:] = 0
+        m[:,self.ROW_id] = 0
+        m[self.ROW_id,self.ROW_id] = 1
         m_diag = np.diagonal(m)
         m_frac = m / m_diag
+        print(m_frac)
 
         rcv = np.zeros((self.N, self.N))  # empty regime change value matrix (row's value for invading column)
         for i in range(self.N):
-            b_nearest = hp.find_nearest(self.b_vals, b[i])
-            rcv[i, ] = self.rcv[b_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
+            v_nearest = hp.find_nearest(self.v_vals, v[i])
+            rcv[i, ] = self.rcv[v_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
             # (i's value for invading all others)
         # rcv = rcv.T
         print("rcv: ")
         print(rcv)
 
-        diffs = 10
-        k = 1
-        while diffs > thres:
-            print("k: " + str(k))
-            theta_dict_last = copy.deepcopy(theta_dict)
+        epsilon_star = self.epsilon_star(v, m, theta_dict_init)
+        t_epsilon = self.trunc_epsilon(epsilon_star, theta_dict_init)
 
-            epsilon_star = self.epsilon_star(b, m, theta_dict, self.W)
-            print(epsilon_star)
-            weights = self.weights(epsilon_star, theta_dict["sigma_epsilon"])
-            print(weights)
-            # NOTE: weights are affected by values of theta_dict, iterate on this until convergence
+        lhs = np.log( 1 / (theta_dict_init["c_hat"] ** -1 * (rcv - 1) - 1) )
+        Y = lhs.ravel() - t_epsilon.ravel()
+        X = np.column_stack((np.log(m_frac.ravel()), self.W.ravel()))
 
-            # chat = .2
-            # lhs = np.log(m_frac) - np.log( 1 / (chat ** -1 * (rcv - 1) - 1) )
-            lhs = np.log( 1 / (theta_dict["c_hat"] ** -1 * (rcv - 1) - 1) )
-            lhs = np.nan_to_num(lhs)
-            print("lhs")
-            Y = lhs.ravel()
-            X = np.column_stack((np.log(m_frac.ravel()), self.W.ravel()))
-            X[:,0][X[:,0]==-np.inf] = np.nan
-            print(X)
+        ests = np.zeros((draws, 2))
+        for i in range(draws):
+            e = np.reshape(np.random.normal(0, theta_dict_init["sigma_epsilon"], self.N ** 2), (self.N, self.N))
+            theta_i = self.est_theta(e, epsilon_star, X, Y)
+            ests[i, ] = theta_i
 
-            # print("regressors: " + str(X))
-            # print("lhs: " + str(Y))
+        out = np.nanmean(ests, axis=0)
 
-            ests = sm.WLS(Y, X, weights=weights.ravel(), missing='drop').fit()
+        return(out)
 
-            theta_dict["gamma"] = ests.params[0]
-            theta_dict["alpha"] = -ests.params[1]
-            # theta_dict["sigma_epsilon"] = np.dot(ests.resid ** 2, weights.ravel())
-            if theta_dict["gamma"] < 0:
-                theta_dict["gamma"] = .01
-            # if theta_dict["alpha"] < 0:
-            #     theta_dict["alpha"] = .01
+    def est_theta_outer(self, v, theta_dict_init, thres=.001):
 
-            theta_k = np.array([i for i in theta_dict.values()])
-            theta_km1 = np.array([i for i in theta_dict_last.values()])
+        out_last = np.repeat(100, 2)
+        out_k = copy.deepcopy(out_last)
+        out_last[0] = theta_dict_init["gamma"]
+        out_last[1] = theta_dict_init["alpha"]
+        theta_dict = copy.deepcopy(theta_dict_init)
+        print(out_k)
+        print(out_last)
+        while np.sum(np.abs(out_last - out_k) > thres):
+            out_last = copy.deepcopy(out_k)
+            out_k = self.est_theta_inner(v, theta_dict)
+            theta_dict["gamma"] = out_k[0]
+            theta_dict["alpha"] = out_k[1]
+            print(out_k)
 
-            diffs = np.sum((theta_k - theta_km1) ** 2)
-            k += 1
-
-        # alpha = ests.params()
-        # sigma_epsilon = np.dot(ests.resid ** 2, weights.ravel())
-
-        return(theta_dict)
+        return(out_k)
 
     def est_loop(self, b_init, theta_dict_init, thres=.25, est_c=False, c_step=.1, c_min=.15, P=1, epsilon_zeros=True, estimates_path=""):
         """Estimate model. For each trial c_hat, iterate over estimates of b and alpha, gamma until convergence. Choose c_hat and associated parameters with lowest loss on predicted policies.
