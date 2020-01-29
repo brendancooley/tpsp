@@ -12,6 +12,8 @@ import copy
 import multiprocessing as mp
 # import nlopt # NOTE: something wrong with build of this on laptop
 
+# TODO: gradient to BR function
+
 class policies:
 
     def __init__(self, data, params, ROWname, results_path=None, rcv_ft=False):
