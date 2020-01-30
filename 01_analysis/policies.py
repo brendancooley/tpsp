@@ -2140,11 +2140,11 @@ class policies:
             # v_vec = np.repeat(v, self.N)
             wvb = np.zeros_like(self.ecmy.tau)
             for i in range(self.N):
-                tau_hat_ft = 1 / self.ecmy.tau
-                tau_hat_prime = np.ones((self.N, self.N))
-                tau_hat_prime[i, ] = tau_hat_ft[i, ]
-                ge_dict_prime = self.ecmy.geq_solve(tau_hat_prime, np.ones(self.N))
-                ge_x_prime = self.ecmy.unwrap_ge_dict(ge_dict_prime)
+                # tau_hat_ft = 1 / self.ecmy.tau
+                # tau_hat_prime = np.ones((self.N, self.N))
+                # tau_hat_prime[i, ] = tau_hat_ft[i, ]
+                # ge_dict_prime = self.ecmy.geq_solve(tau_hat_prime, np.ones(self.N))
+                # ge_x_prime = self.ecmy.unwrap_ge_dict(ge_dict_prime)
                 for j in range(self.N):
                     v_vec = np.ones(self.N)
                     v_vec[j] = v
