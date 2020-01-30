@@ -26,12 +26,12 @@ I can therefore rewrite the slackness condition as
 \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) &\leq \hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1} \\
 \frac{\tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)}{1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)} &\leq \frac{\hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1}}{1 - \hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1}} \\ 
 \rho_{ji}(\bm{W}_{ji}; \bm{\alpha}) \left( \frac{ M_j }{ M_i } \right)^\gamma &\leq \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \\
-- \bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ji} + \gamma \left( \frac{ M_j }{ M_i } \right) &\leq \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right) \\
-\epsilon_{ij} &\leq \bm{\alpha}^T \bm{W}_{ji} - \gamma \left( \frac{ M_j }{ M_i } \right) + \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right)
+- \bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ji} + \gamma \ln \left( \frac{ M_j }{ M_i } \right) &\leq \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right) \\
+\epsilon_{ij} &\leq \bm{\alpha}^T \bm{W}_{ji} - \gamma \ln \left( \frac{ M_j }{ M_i } \right) + \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right)
 \end{align*}.
 Let $\epsilon_{ji}^\star$ solve this with equality,^[If $\hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) < 1$ then $\epsilon_{ji}^\star$ does not exist and $i$'s war constraint vis-à-vis $j$ will never bind.]
 \begin{equation} \label{eq:epsilon_star}
-\epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) = \bm{\alpha}^T \bm{W}_{ji} - \gamma \left( \frac{ M_j }{ M_i } \right) + \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right)
+\epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) = \bm{\alpha}^T \bm{W}_{ji} - \gamma \ln \left( \frac{ M_j }{ M_i } \right) + \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right)
 \end{equation}
 With $\epsilon_{ij}$ distributed normal, the probability that the constraint is slack can be computed as 
 $$
@@ -58,7 +58,7 @@ The sample analogue for $\E \left[ Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\th
 \begin{equation*}
 \begin{split}
 \E \left[ Y_{ji}(\bm{1}; \bm{\theta}_m) \right] = \Phi \left( \frac{ \epsilon_{ji}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m) }{ \sigma_{\epsilon} } \right) \E \left[ Y_{ji} \mid \epsilon_{ji} < \epsilon_{ji}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m) \right] + \\
-\left( 1 - \Phi \left( \frac{ \epsilon_{ji}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m) }{ \sigma_{\epsilon} } \right) \right) \left( \gamma \left( \frac{ M_j }{ M_i } \right) - \bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ij} \right)
+\left( 1 - \Phi \left( \frac{ \epsilon_{ji}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m) }{ \sigma_{\epsilon} } \right) \right) \left( \gamma \ln \left( \frac{ M_j }{ M_i } \right) - \bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ij} \right)
 \end{split}
 \end{equation*}
 
