@@ -76,6 +76,7 @@ class policies:
         self.x_len = self.ecmy.ge_x_len
 
         rcv_path = results_path + "rcv.csv"
+        print(rcv_path)
         if not os.path.isfile(rcv_path):
             rcv = self.pop_rc_vals(rcv_ft=rcv_ft)
             self.rc_vals_to_csv(rcv, rcv_path)
@@ -1426,25 +1427,16 @@ class policies:
 
         return(theta_out)
 
-    def est_theta_inner(self, v, theta_dict_init, draws=1000):
+    def est_theta_inner(self, v, theta_dict_init, m, draws=1000):
 
-        m = self.M / np.ones((self.N, self.N))
-        m = m.T
-        m[self.ROW_id,:] = 0
-        m[:,self.ROW_id] = 0
-        m[self.ROW_id,self.ROW_id] = 1
         m_diag = np.diagonal(m)
         m_frac = m / m_diag
-        print(m_frac)
 
         rcv = np.zeros((self.N, self.N))  # empty regime change value matrix (row's value for invading column)
         for i in range(self.N):
             v_nearest = hp.find_nearest(self.v_vals, v[i])
             rcv[i, ] = self.rcv[v_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
             # (i's value for invading all others)
-        # rcv = rcv.T
-        print("rcv: ")
-        print(rcv)
 
         epsilon_star = self.epsilon_star(v, m, theta_dict_init)
         t_epsilon = self.trunc_epsilon(epsilon_star, theta_dict_init)
@@ -1459,129 +1451,32 @@ class policies:
             theta_i = self.est_theta(e, epsilon_star, X, Y)
             ests[i, ] = theta_i
 
-        out = np.nanmean(ests, axis=0)
-
-        return(out)
-
-    def est_theta_outer(self, v, theta_dict_init, thres=.001):
-
-        out_last = np.repeat(100, 2)
-        out_k = copy.deepcopy(out_last)
-        out_last[0] = theta_dict_init["gamma"]
-        out_last[1] = theta_dict_init["alpha"]
+        updates = np.nanmean(ests, axis=0)
         theta_dict = copy.deepcopy(theta_dict_init)
-        print(out_k)
-        print(out_last)
-        while np.sum(np.abs(out_last - out_k) > thres):
-            out_last = copy.deepcopy(out_k)
-            out_k = self.est_theta_inner(v, theta_dict)
-            theta_dict["gamma"] = out_k[0]
-            theta_dict["alpha"] = out_k[1]
-            print(out_k)
+        theta_dict["gamma"] = updates[0]
+        theta_dict["alpha"] = updates[1]
 
-        return(out_k)
+        return(theta_dict)
 
-    def est_loop(self, b_init, theta_dict_init, thres=.25, est_c=False, c_step=.1, c_min=.15, P=1, epsilon_zeros=True, estimates_path=""):
-        """Estimate model. For each trial c_hat, iterate over estimates of b and alpha, gamma until convergence. Choose c_hat and associated parameters with lowest loss on predicted policies.
+    # def est_theta_outer(self, v, theta_dict_init, thres=.001):
+    #
+    #     out_last = np.repeat(100, 2)
+    #     out_k = copy.deepcopy(out_last)
+    #     out_last[0] = theta_dict_init["gamma"]
+    #     out_last[1] = theta_dict_init["alpha"]
+    #     theta_dict = copy.deepcopy(theta_dict_init)
+    #     print(out_k)
+    #     print(out_last)
+    #     while np.sum(np.abs(out_last - out_k) > thres):
+    #         out_last = copy.deepcopy(out_k)
+    #         out_k = self.est_theta_inner(v, theta_dict)
+    #         theta_dict["gamma"] = out_k[0]
+    #         theta_dict["alpha"] = out_k[1]
+    #         print(out_k)
+    #
+    #     return(out_k)
 
-        Parameters
-        ----------
-        b_init : vector
-            N times 1 vector of starting values for preference parameters
-        theta_dict_init : dict
-            Dictionary of starting values for gamma, alpha
-        thres : float
-            Convergence criterion, stop iteration when sum of squared changes in parameter values is less than thres
-        est_c : bool
-            if True then search over vector of possible c_hat values, if not then fix at initial value
-        c_step : float
-            step size for c estimation
-        P : int
-            number of epsilons to draw
-        epsilon_zeros : bool
-            force epsilon to zero
-
-        Returns
-        -------
-        dict
-            Estimates for preference parameters, military parameters, and war costs (respectively)
-
-        """
-
-        m = self.M / np.ones((self.N, self.N))
-        m = m.T
-        m[self.ROW_id,:] = 0
-        m[:,self.ROW_id] = 0
-        m[self.ROW_id,self.ROW_id] = 1
-        print("m_frac:")
-        print(m)
-
-        if est_c is True:
-            c_hat_vec = np.arange(c_min, 1 + c_step, c_step)
-        else:
-            c_hat_vec = [theta_dict_init["c_hat"]]
-        np.savetxt(estimates_path + "c_hat_vec.csv", c_hat_vec, delimiter=",")
-
-        Loss = []
-        b = []
-        alpha = []
-        gamma = []
-
-        tick = 0
-        for c_hat in c_hat_vec:
-
-            theta_dict_init["c_hat"] = c_hat
-
-            Loss_c = []
-            b_c = []
-            alpha_c = []
-            gamma_c = []
-
-            epsilon = []
-            for p in range(P):
-                if epsilon_zeros is True:
-                    epsilon_p = np.zeros((self.N, self.N))
-                else:
-                    epsilon_p = np.reshape(np.random.normal(0, theta_dict_k["sigma_epsilon"], self.N ** 2), (self.N, self.N))
-                epsilon.append(epsilon_p)
-
-            # pool = mp.Pool(mp.cpu_count())
-            # for e in epsilon:
-            #     pool.apply_async(self.est_loop_interior, args=(e, b_init, theta_dict_init, m, b_c, alpha_c, gamma_c, Loss_c))
-            # pool.close()
-            # pool.join()
-            for e in epsilon:
-                self.est_loop_interior(e, b_init, theta_dict_init, m, b_c, alpha_c, gamma_c, Loss_c)
-
-            print(Loss_c)
-            print(b_c)
-            print(alpha_c)
-            print(gamma_c)
-
-            b.append(np.mean(b_c, axis=0))
-            alpha.append(np.mean(alpha_c))
-            gamma.append(np.mean(gamma_c))
-            Loss.append(np.mean(Loss_c))
-
-            out_dict_c = {"alpha":alpha_c[0], "gamma":gamma_c[0], "c_hat":c_hat, "sigma_epsilon":theta_dict_init["sigma_epsilon"], "Loss":Loss_c[0]}
-            for id in range(self.N):
-                out_dict_c["b" + str(id)] = b_c[0][id]
-
-            self.export_results(out_dict_c, estimates_path + "ests_" + str(tick) + ".csv")
-            tick += 1
-
-
-        out_id = np.argmin(Loss)
-
-        out_dict = {"alpha":alpha[out_id], "gamma":gamma[out_id], "c_hat":c_hat_vec[out_id], "sigma_epsilon":theta_dict_init["sigma_epsilon"]}
-        for id in range(self.N):
-            out_dict["b" + str(id)] = b[out_id][id]
-
-        self.export_results(out_dict, estimates_path + "ests_" + "min" + ".csv")
-
-        return(out_dict)
-
-    def est_loop_interior(self, epsilon, b_init, theta_dict_init, m, b, alpha, gamma, Loss, thres=.01):
+    def est_loop_interior(self, v_init, theta_dict_init, thres=.001):
         """For fixed values of epsilon and c_hat, estimate preference parameters and alpha, gamma
 
         Parameters
@@ -1590,24 +1485,18 @@ class policies:
             N times 1 vector of initial preference parameters
         theta_dict_init : dict
             Dictionary storing values of alpha, gamma, c_hat, sigma_epsilon
-        m : matrix
-            N times N matrix of military deployments
-        epsilon : matrix
-            N times N matrix of war shocks
-        b : list
-            List to append values for b estimates
-        alpha : list
-            List to append values for alpha estimates
-        gamma : list
-            List to append values for alpha estimates
-        Loss : list
-            List to append values for empirical loss
         thres : float
             Convergence criterion for inner loop
 
         """
 
-        b_k = np.copy(b_init)
+        m = self.M / np.ones((self.N, self.N))
+        m = m.T
+        m[self.ROW_id,:] = 0
+        m[:,self.ROW_id] = 0
+        m[self.ROW_id,self.ROW_id] = 1
+
+        v_k = np.copy(v_init)
         theta_dict_k = copy.deepcopy(theta_dict_init)
 
         diffs = 10
@@ -1616,46 +1505,43 @@ class policies:
 
             print("k: " + str(k))
 
-            b_km1 = np.copy(b_k)
+            v_km1 = np.copy(v_k)
             theta_km1 = np.copy(np.array([i for i in theta_dict_k.values()]))
-            vals_km1 = np.append(b_km1, theta_km1)
+            vals_km1 = np.append(v_km1, theta_km1)
 
-            b_k = self.est_b_grid(b_k, m, theta_dict_k, epsilon)
-            theta_dict_k = self.est_theta(b_k, m, theta_dict_k)
+            epsilon = np.zeros((self.N, self.N))
+            v_k = self.est_v_grid(v_k, m, theta_dict_k, epsilon)
+            theta_dict_k = self.est_theta_inner(v_k, theta_dict_k, m)
 
-            print("b_k: " + str(b_k))
+            print("v_k: " + str(v_k))
             print("theta_dict_k: " + str(theta_dict_k))
 
             theta_k = np.array([i for i in theta_dict_k.values()])
-            vals_k = np.append(b_k, theta_k)
+            vals_k = np.append(v_k, theta_k)
 
             print("vals_km1: " + str(vals_km1))
             print("vals_k: " + str(vals_k))
             diffs = np.sum((vals_k - vals_km1) ** 2)
             k += 1
 
-        b.append(b_k)
-        alpha.append(theta_dict_k["alpha"])
-        gamma.append(theta_dict_k["gamma"])
-
         Loss_k = 0
         for id in range(self.N):
 
             # war values
-            wv = self.war_vals(b_k, m, theta_dict_k, np.zeros((self.N, self.N))) # calculate war values
+            wv = self.war_vals(v_k, m, theta_dict_k, np.zeros((self.N, self.N))) # calculate war values
             ids_j = np.delete(np.arange(self.N), id)
             wv_i = wv[:,id][ids_j]
 
             # starting values
             ge_x_sv = self.nft_sv(id, np.ones(self.x_len))
 
-            br = self.br(ge_x_sv, b_k, wv_i, id)  # calculate best response
+            br = self.br(ge_x_sv, v_k, wv_i, id)  # calculate best response
             br_dict = self.ecmy.rewrap_ge_dict(br)
             tau_i = br_dict["tau_hat"][id, ]
             # Loss_k += self.loss_tau(tau_i, id, weights=self.ecmy.Y)
             Loss_k += self.loss_tau(tau_i, id)
 
-        Loss.append(Loss_k)
+        return(v_k, theta_dict_k, Loss_k)
 
     def export_results(self, out_dict, path):
 
