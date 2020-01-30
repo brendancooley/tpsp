@@ -18,8 +18,8 @@ sys.path.insert(1, helpersPath)
 import helpers
 imp.reload(helpers)
 
-mini = True
-large = False
+mini = False
+large = True
 rcv_ft = False
 
 runEstimates = True
