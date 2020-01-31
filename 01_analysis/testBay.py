@@ -6,6 +6,7 @@ import time
 import csv
 import sys
 import matplotlib.pyplot as plt
+import scipy.stats as stats
 
 import economy
 import policies
@@ -89,17 +90,65 @@ imp.reload(policies)
 imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
 
-v_init = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])
-# pecmy.est_loop_interior(v_init, theta_dict_init)
-
-
-
-
-
-
-id = 2
 m = pecmy.M / np.ones((pecmy.N, pecmy.N))
 m = m.T
+m[pecmy.ROW_id,:] = 0
+m[:,pecmy.ROW_id] = 0
+m[pecmy.ROW_id,pecmy.ROW_id] = 1
+m_diag = np.diagonal(m)
+m_frac = m / m_diag
+
+v_init = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])
+
+pecmy.est_theta_inner(v_init, theta_dict_init, m)
+
+
+# pecmy.est_loop_interior(v_init, theta_dict_init)
+m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+m = m.T
+wv = pecmy.war_vals(v, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N)))
+wv[:,1]
+test = pecmy.Y_lower(v, m, theta_dict_init)
+
+
+
+rcv = np.zeros((pecmy.N, pecmy.N))  # empty regime change value matrix (row's value for invading column)
+for i in range(pecmy.N):
+    v_nearest = hp.find_nearest(pecmy.v_vals, v[i])
+    rcv[i, ] = pecmy.rcv[v_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
+
+epsilon_star = pecmy.epsilon_star(v, m, theta_dict_init)
+Y_lower = pecmy.Y(rcv, theta_dict_init, test)
+t_epsilon = pecmy.trunc_epsilon(epsilon_star, theta_dict_init)
+
+lhs = np.log( 1 / (theta_dict_init["c_hat"] ** -1 * (rcv - 1) - 1) )
+phi = stats.norm.cdf(epsilon_star.ravel(), loc=0, scale=theta_dict_init["sigma_epsilon"])
+Y = lhs.ravel() - phi.ravel() * Y_lower.ravel()
+# NOTE: truncated epsilons are very very large....is this the right way to do this?
+
+
+X = np.column_stack((1-phi.ravel())*(np.log(m_frac.ravel()), (1-phi.ravel())*pecmy.W.ravel()))
+plt.plot(X[:,1], Y, "+")
+plt.plot(X[:,0],Y, "+")
+
+
+
+
+
+
+ge_x_sv = pecmy.v_sv(2, np.ones(pecmy.x_len), v_init)
+test_br1 = pecmy.br(ge_x_sv, v, wv[:,2], 2)
+test_br1_dict = pecmy.ecmy.rewrap_ge_dict(test_br1)
+test_br1_dict["tau_hat"] * pecmy.ecmy.tau
+test_br2 = pecmy.br(ge_x_sv, v, np.zeros(pecmy.N), 2)
+test_br2_dict = pecmy.ecmy.rewrap_ge_dict(test_br2)
+
+pecmy.G_hat(test_br1, v_init, 2)
+pecmy.G_hat(test_br2, v_init, 2)
+pecmy.R_hat(test_br1_dict, v_init)
+
+id = 2
+
 # m = np.diag(pecmy.M)
 
 v = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])

@@ -402,177 +402,6 @@ class policies:
 
         return(wdz)
 
-    def Lzeros_m_y(self, y, j, bound="lower"):
-        """Wrapper for Lzeros_m taking flattened y vector
-
-        Parameters
-        ----------
-        y : vector
-            Flattened vector of parameters, military allocations, and multipliers.
-        j : int
-            id of government for which to calculate zeros
-        bound : str
-            "lower" or "upper" - which bound to return on constraint
-
-        Returns
-        -------
-        vector
-            zeros of j's military allocation Lagrangian
-
-        """
-
-        y_dict = self.rewrap_y(y)
-
-        theta_dict = self.rewrap_theta(y_dict["theta_m"])
-        lambda_m = y_dict["lambda_M"]
-        lambda_dict = self.rewrap_lambda(y_dict["lambda_x"])
-        m_x = y_dict["m"]
-
-        rhoM = self.rhoM(theta_dict)
-
-        out = self.Lzeros_m(m_x, j, lambda_m, theta_dict, rhoM, lambda_dict)
-
-        if bound == "lower":
-            return(out)
-        else:
-            return(-1*out)
-
-    def Lzeros_m(self, m_x, j, lambda_m, theta_dict, rhoM, lambda_dict):
-        """Calculate zeros of military allocation Lagrangian
-
-        Parameters
-        ----------
-        m_x : vector
-            Flattened vector of military allocations
-        j : int
-            id of country for which to calculate zeros
-        lambda_m : vector
-            Length n vector of military budget constraint multipliers
-        theta_dict : dict
-            Dictionary storing military structural parameters
-        rhoM : matrix
-            N times N symmetric matrix loss of strength gradient
-        lambda_dict : dict
-            Dictionary of ge, policy, and chi multipliers
-
-        Returns
-        -------
-        vector
-            Length N + 1 vector of optimality conditions plus (equality) constraint condition
-
-        """
-
-        lambda_mj = lambda_m[j]
-        ids = np.delete(np.arange(0, self.N), j)
-        out = []
-
-        # m_ji
-        for i in ids:
-            dGdm_ji = self.dGdm_ji(m_x, j, i, theta_dict, rhoM, lambda_dict)
-            out.extend(np.array([dGdm_ji - lambda_mj]))
-
-        # m_jj
-        dGdm_jj = self.dGdm_ii(m_x, j, theta_dict, rhoM, lambda_dict)
-        out.extend(np.array([dGdm_jj - lambda_mj]))
-
-        # constraint zero
-        m = self.rewrap_m(m_x)
-        out.extend(np.array([self.M[j] - np.sum(m[j, ])]))
-
-        return(np.array(out))
-
-    def dGdm_ii(self, m_x, i, theta_dict, rhoM, lambda_dict, max=100.0):
-        """Calculate derivative of constrained policy Legrangian with respect to m_ii
-
-        Parameters
-        ----------
-        m_x : vector
-            Flattened vector of military allocations
-        i : int
-            id of defending country
-        theta_dict : dict
-            Dictionary storing military structural parameters
-        rhoM : matrix
-            N times N symmetric matrix loss of strength gradient
-        lambda_dict : dict
-            Dictionary of ge, policy, and chi multipliers
-        max : float
-            Value to return when derivative is undefined
-
-        Returns
-        -------
-        float
-            derivative
-
-        """
-
-        lambda_i = lambda_dict[i] # get multipliers for i
-        lambda_i_dict = self.rewrap_lambda_i(lambda_i)
-        ids = np.delete(np.arange(0, self.N), i)
-        out = 0
-        for j in range(self.N - 1):  # NOTE: these index multipliers, not govs. Use ids[j] to get corresponding id
-            lambda_ij = lambda_i_dict["chi_i"][j]  # get relevant multiplier
-            dChidm = ag.grad(self.chi)
-            dChidm_x = dChidm(m_x, ids[j], i, theta_dict, rhoM)  # calculate gradient with respect to all allocations
-            dChidm_ji = np.reshape(dChidm_x, (self.N, self.N))[i, i]  # extract relevant entry
-            chi_ji = self.chi(m_x, ids[j], i, theta_dict, rhoM)
-            if chi_ji != 0:
-                out -= lambda_ij * theta_dict["c_hat"][0] * dChidm_ji / chi_ji ** 2
-            else:
-                out -= lambda_ij * max  # if chi_ji = 0 and lambda_ij != 0 return large number
-
-        return(out)
-
-
-    def dGdm_ji(self, m_x, j, i, theta_dict, rhoM, lambda_dict, max=100.0, lbda_min=.0001):
-        """Return derivative of welfare with respect to military effort allocated by j against i
-
-        Parameters
-        ----------
-        m_x : vector
-            Flattened vector of military allocations
-        j : int
-            id of threatening country
-        i : int
-            id of defending country
-        theta_dict : dict
-            Dictionary storing military structural parameters
-        rhoM : matrix
-            N times N symmetric matrix loss of strength gradient
-        lambda_dict : dict
-            Dictionary of ge, policy, and chi multipliers
-        max : float
-            Value to return when derivative is undefined
-
-        Returns
-        -------
-        float
-            derivative
-
-        """
-
-        # TODO vectorize this and chi if possible
-
-        # get relevant multiplier
-        lambda_i = lambda_dict[i]
-        lambda_i_dict = self.rewrap_lambda_i(lambda_i)
-        ids = np.delete(np.arange(0, self.N), i)
-        j_pos = np.where(ids == j)
-        lambda_ij = lambda_i_dict["chi_i"][j_pos]
-
-        if lambda_ij > lbda_min: # TODO: check machine precision on this
-            dChidm = ag.grad(self.chi)
-            dChidm_x = dChidm(m_x, j, i, theta_dict, rhoM)
-            dChidm_ji = np.reshape(dChidm_x, (self.N, self.N))[j, i]
-            chi_ji = self.chi(m_x, j, i, theta_dict, rhoM)
-            if chi_ji != 0:
-                dGdm_ji = theta_dict["c_hat"][0] * dChidm_ji / chi_ji ** 2
-                return(dGdm_ji)
-            else:
-                return(max)
-        else:
-            return(0.0)
-
     def chi(self, m_x, j, i, theta_dict, rhoM):
         """Short summary.
 
@@ -660,8 +489,6 @@ class policies:
         if epsilon is None:
             epsilon = np.zeros((self.N, self.N))
 
-        j = np.delete(np.arange(self.N), id)
-
         if ft is False:
             # initalize starting values to be consistent with initial tau_hat
             ge_dict_sv = self.ecmy.geq_solve(tau_hat, np.ones(self.N))
@@ -678,8 +505,7 @@ class policies:
 
         # calculate war values
         wv = self.war_vals(b, m, theta_dict, epsilon)
-        wv_i = wv[:,id][j]
-        print(wv_i)
+        wv_i = wv[:,id]
 
         x = []
         x.extend(ge_dict_sv["tau_hat"][id, ])
@@ -814,80 +640,6 @@ class policies:
     def con_mil_grad(self, ge_x, i, j, wv_ji, v):
         con_mil_grad_f = ag.grad(self.con_mil)
         return(con_mil_grad_f(ge_x, i, j, wv_ji, v))
-
-    def constraints_m(self, m_init, id):
-        """Compile constraints for military strategy problem
-
-        Parameters
-        ----------
-        m_init : matrix
-            N times N matrix of initial military deployments
-        id : int
-            id of government optimizing military strategy
-
-        Returns
-        -------
-        list
-            List of constraints for optimizers
-
-        """
-
-        cons = []
-
-        # military matrix (others' strategies fixed)
-        def con_m(x, m_init, id, bound="lower"):
-
-            # constrained ids
-            ids = np.arange(self.N)
-            ids = np.delete(ids, id)
-
-            # get proposed allocations
-            m_x = self.rewrap_x(x)["m_x"]
-            m = self.rewrap_m(m_x)
-            m_j = m[ids, ].flatten()  # constrained rows
-
-            out = m_j - m_init[ids, ].flatten() # diffs between proposed and initial allocations
-
-            if bound == "lower":
-                return(out)
-            else:
-                return(out*-1)
-
-        cons.append({'type': 'ineq', 'fun': con_m, 'args':(m_init, id, "lower",)})
-        cons.append({'type': 'ineq', 'fun': con_m, 'args':(m_init, id, "upper",)})
-
-        # military budget constraint
-        def con_M(x, id):
-            m_x = self.rewrap_x(x)["m_x"]
-            m = self.rewrap_m(m_x)
-            m_i = m[id, ]
-            return(self.M[id] - np.sum(m_i))
-
-        cons.append({'type': 'ineq', 'fun': con_M, 'args':(id, )})
-
-        # tau optimality (Lagrange zeros)
-        # NOTE: by far the most computationally intensive, play with self.war_vals if this is inefficient
-        def con_L(x, bound="lower"):
-            ge_x = self.rewrap_x(x)["ge_x"]
-            ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
-            lambda_x = self.rewrap_x(x)["lambda_x"]
-            m = self.rewrap_m(self.rewrap_x(x)["m_x"])
-            tau_hat = ge_dict["tau_hat"]  # current policies
-            z = []
-            for i in range(self.N):
-                war_vals = self.war_vals(ge_dict, m, i)
-                lambda_i_x = self.rewrap_lambda(lambda_x)[i]
-                L_i_x = np.append(ge_x, lambda_i_x)
-                z.extend(self.Lzeros(L_i_x, tau_hat, war_vals, i, bound=bound))
-            if bound == "lower":
-                return(np.array(z))
-            else:
-                return(-1 * np.array(z))
-
-        cons.append({'type': 'ineq', 'fun': con_L, 'args':("lower",)})
-        cons.append({'type': 'ineq', 'fun': con_L, 'args':("upper",)})
-
-        return(cons)
 
     def br_war_ji(self, ge_x, v, j, i, mpec=True, full_opt=False):
         """puppet policies implemented by j after war on i
@@ -1228,8 +980,7 @@ class policies:
                 v_vec[id] = v_idx
                 print("v_vec:" + str(v_vec))
                 wv = self.war_vals(v_vec, m, theta_dict, epsilon) # calculate war values
-                ids_j = np.delete(np.arange(self.N), id)
-                wv_i = wv[:,id][ids_j]
+                wv_i = wv[:,id]
                 # print("wv_i: " + str(wv_i))
 
                 ge_x_sv = self.v_sv(id, np.ones(self.x_len), v_vec)
@@ -1381,7 +1132,7 @@ class policies:
 
         return(out)
 
-    def Y_lower(self, j, i, v, m, theta_dict):
+    def Y_lower(self, v, m, theta_dict):
         """Calculate j's utility when constraint vis a vis i is off
 
         Parameters
@@ -1404,25 +1155,27 @@ class policies:
 
         """
 
-        wv = self.war_vals(v_k, m, theta_dict_k, np.zeros((self.N, self.N))) # calculate war values
+        wv = self.war_vals(v, m, theta_dict, np.zeros((self.N, self.N))) # calculate war values
+        print(wv)
 
-        # starting values
-        ge_x_sv = self.nft_sv(id, np.ones(self.x_len))
-
+        Y_lower = np.zeros((self.N, self.N))
         for i in range(self.N):
-            wv_i = wv[:,id]
+            wv_i = wv[:,i]
             for j in range(self.N):
                 wv_ij = copy.deepcopy(wv_i)
-                # wv_
-                # br_ij =
+                wv_ij[j] = 0
+                ge_x_sv = self.v_sv(i, np.ones(self.x_len), v)
+                br_ij = self.br(ge_x_sv, v, wv_ij, i)
+                G_ji = self.G_hat(br_ij, v, j)
+                Y_lower[j, i] = G_ji  # government i's welfare when constraint vis a vis j is lifted
 
-        return(0)
+        return(Y_lower)
 
     def trunc_epsilon(self, epsilon_star, theta_dict):
 
         return(hp.mean_truncnorm(epsilon_star, theta_dict["sigma_epsilon"]))
 
-    def est_theta(self, epsilon, epsilon_star, X, Y):
+    def est_theta(self, epsilon_star, X, Y):
         """Estimate military parameters from constraints. Iteratively recalculate parameters and weights until convergence.
 
         Parameters
@@ -1443,26 +1196,33 @@ class policies:
 
         """
 
-        theta_out = np.zeros(2)
-        active_bin = epsilon > epsilon_star
+        # theta_out = np.zeros(2)
+        # active_bin = epsilon > epsilon_star
+        #
+        # indicator = active_bin.ravel()
+        #
+        # Y_active = Y[indicator]
+        # X_active = X[indicator, ]
 
-        indicator = active_bin.ravel()
+        # print(np.sum(indicator))
+        # if np.sum(indicator) > 2:
+        #     ests = sm.WLS(Y, X).fit()
+        #     theta_out[0] = ests.params[0]  # gamma
+        #     theta_out[1] = -ests.params[1]  # alpha
+        # else:
+        #     theta_out[0] = np.NaN  # gamma
+        #     theta_out[1] = np.NaN  # alpha
 
-        Y_active = Y[indicator]
-        X_active = X[indicator, ]
-
-        print(np.sum(indicator))
-        if np.sum(indicator) > 2:
-            ests = sm.WLS(Y_active, X_active).fit()
-            theta_out[0] = ests.params[0]  # gamma
-            theta_out[1] = -ests.params[1]  # alpha
-        else:
-            theta_out[0] = np.NaN  # gamma
-            theta_out[1] = np.NaN  # alpha
+        ests = sm.WLS(Y, X).fit()
+        theta_out[0] = ests.params[0]  # gamma
+        theta_out[1] = -ests.params[1]  # alpha
 
         return(theta_out)
 
-    def est_theta_inner(self, v, theta_dict_init, m, draws=1000):
+    def Y(self, rcv, theta_dict, G_ji):
+        return(np.log( 1 / (theta_dict["c_hat"] ** -1 * (rcv - 1) - 1) ))
+
+    def est_theta_inner(self, v, theta_dict, m, draws=1000):
 
         m_diag = np.diagonal(m)
         m_frac = m / m_diag
@@ -1473,27 +1233,35 @@ class policies:
             rcv[i, ] = self.rcv[v_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
             # (i's value for invading all others)
 
-        epsilon_star = self.epsilon_star(v, m, theta_dict_init)
-        t_epsilon = self.trunc_epsilon(epsilon_star, theta_dict_init)
+        epsilon_star = self.epsilon_star(v, m, theta_dict)
+        G_lower = self.Y_lower(v, m, theta_dict)
+        Y_lower = self.Y(rcv, theta_dict, G_lower)
+        t_epsilon = self.trunc_epsilon(epsilon_star, theta_dict)
 
-        lhs = np.log( 1 / (theta_dict_init["c_hat"] ** -1 * (rcv - 1) - 1) )
-        Y = lhs.ravel() - t_epsilon.ravel()
-        # phi = stats.norm.cdf(epsilon_star.ravel(), loc=0, scale=theta_dict_init["sigma_epsilon"])
+        lhs = self.Y(rcv, theta_dict, 1)
+        phi = stats.norm.cdf(epsilon_star.ravel(), loc=0, scale=theta_dict["sigma_epsilon"])
+        Y = lhs.ravel() - (1 - phi.ravel()) * t_epsilon.ravel() - phi.ravel() * Y_lower.ravel()
         # print(phi)
-        X = np.column_stack((np.log(m_frac.ravel()), self.W.ravel()))
+        X = np.column_stack((1-phi.ravel())*(np.log(m_frac.ravel()), (1-phi.ravel())*self.W.ravel()))
 
-        ests = np.zeros((draws, 2))
-        for i in range(draws):
-            e = np.reshape(np.random.normal(0, theta_dict_init["sigma_epsilon"], self.N ** 2), (self.N, self.N))
-            theta_i = self.est_theta(e, epsilon_star, X, Y)
-            ests[i, ] = theta_i
+        # ests = np.zeros((draws, 2))
+        # for i in range(draws):
+        #     e = np.reshape(np.random.normal(0, theta_dict_init["sigma_epsilon"], self.N ** 2), (self.N, self.N))
+        #     theta_i = self.est_theta(e, epsilon_star, X, Y)
+        #     ests[i, ] = theta_i
 
-        updates = np.nanmean(ests, axis=0)
-        theta_dict = copy.deepcopy(theta_dict_init)
-        theta_dict["gamma"] = updates[0]
-        theta_dict["alpha"] = updates[1]
+        ests = self.est_theta(e, epsilon_star, X, Y)
 
-        return(theta_dict)
+        # updates = np.nanmean(ests, axis=0)
+        # theta_dict = copy.deepcopy(theta_dict_init)
+        # theta_dict["gamma"] = updates[0]
+        # theta_dict["alpha"] = updates[1]
+
+        return(ests)
+
+    def est_theta_outer(self, v, theta_dict_init):
+
+        return(0)
 
     # def est_theta_outer(self, v, theta_dict_init, thres=.001):
     #
@@ -1566,8 +1334,7 @@ class policies:
 
             # war values
             wv = self.war_vals(v_k, m, theta_dict_k, np.zeros((self.N, self.N))) # calculate war values
-            ids_j = np.delete(np.arange(self.N), id)
-            wv_i = wv[:,id][ids_j]
+            wv_i = wv[:,id]
 
             # starting values
             ge_x_sv = self.nft_sv(id, np.ones(self.x_len))
@@ -1617,8 +1384,7 @@ class policies:
         wv = self.war_vals(b, m, theta_dict, epsilon) # calculate war values
         for id in range(self.N):
             print("id: " + str(id))
-            ids_j = np.delete(np.arange(self.N), id)
-            wv_i = wv[:,id][ids_j]
+            wv_i = wv[:,id]
             ge_x_nft = self.nft_sv(id, np.ones(self.x_len))
             ge_x = self.br(ge_x_nft, b, wv_i, id, affinity=affinity)
             tau_hat_i = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"][id, ]
@@ -1672,8 +1438,7 @@ class policies:
         wv = self.war_vals(b, m, theta_dict, epsilon) # calculate war values
         for id in range(self.N):
             print("id: " + str(id))
-            ids_j = np.delete(np.arange(self.N), id)
-            wv_i = wv[:,id][ids_j]
+            wv_i = wv[:,id]
             ge_x_nft = self.nft_sv(id, ge_x)
             ge_x_i = self.br(ge_x_nft, b, wv_i, id, affinity=affinity)
             update = True

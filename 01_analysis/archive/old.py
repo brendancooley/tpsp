@@ -438,3 +438,248 @@
         out = opt.minimize(self.est_objective, y, constraints=cons, bounds=bnds, method="SLSQP", options={"maxiter":mxit})
 
         return(out)
+
+def constraints_m(self, m_init, id):
+    """Compile constraints for military strategy problem
+
+    Parameters
+    ----------
+    m_init : matrix
+        N times N matrix of initial military deployments
+    id : int
+        id of government optimizing military strategy
+
+    Returns
+    -------
+    list
+        List of constraints for optimizers
+
+    """
+
+    cons = []
+
+    # military matrix (others' strategies fixed)
+    def con_m(x, m_init, id, bound="lower"):
+
+        # constrained ids
+        ids = np.arange(self.N)
+        ids = np.delete(ids, id)
+
+        # get proposed allocations
+        m_x = self.rewrap_x(x)["m_x"]
+        m = self.rewrap_m(m_x)
+        m_j = m[ids, ].flatten()  # constrained rows
+
+        out = m_j - m_init[ids, ].flatten() # diffs between proposed and initial allocations
+
+        if bound == "lower":
+            return(out)
+        else:
+            return(out*-1)
+
+    cons.append({'type': 'ineq', 'fun': con_m, 'args':(m_init, id, "lower",)})
+    cons.append({'type': 'ineq', 'fun': con_m, 'args':(m_init, id, "upper",)})
+
+    # military budget constraint
+    def con_M(x, id):
+        m_x = self.rewrap_x(x)["m_x"]
+        m = self.rewrap_m(m_x)
+        m_i = m[id, ]
+        return(self.M[id] - np.sum(m_i))
+
+    cons.append({'type': 'ineq', 'fun': con_M, 'args':(id, )})
+
+    # tau optimality (Lagrange zeros)
+    # NOTE: by far the most computationally intensive, play with self.war_vals if this is inefficient
+    def con_L(x, bound="lower"):
+        ge_x = self.rewrap_x(x)["ge_x"]
+        ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
+        lambda_x = self.rewrap_x(x)["lambda_x"]
+        m = self.rewrap_m(self.rewrap_x(x)["m_x"])
+        tau_hat = ge_dict["tau_hat"]  # current policies
+        z = []
+        for i in range(self.N):
+            war_vals = self.war_vals(ge_dict, m, i)
+            lambda_i_x = self.rewrap_lambda(lambda_x)[i]
+            L_i_x = np.append(ge_x, lambda_i_x)
+            z.extend(self.Lzeros(L_i_x, tau_hat, war_vals, i, bound=bound))
+        if bound == "lower":
+            return(np.array(z))
+        else:
+            return(-1 * np.array(z))
+
+    cons.append({'type': 'ineq', 'fun': con_L, 'args':("lower",)})
+    cons.append({'type': 'ineq', 'fun': con_L, 'args':("upper",)})
+
+    return(cons)
+
+
+    def dGdm_ji(self, m_x, j, i, theta_dict, rhoM, lambda_dict, max=100.0, lbda_min=.0001):
+        """Return derivative of welfare with respect to military effort allocated by j against i
+
+        Parameters
+        ----------
+        m_x : vector
+            Flattened vector of military allocations
+        j : int
+            id of threatening country
+        i : int
+            id of defending country
+        theta_dict : dict
+            Dictionary storing military structural parameters
+        rhoM : matrix
+            N times N symmetric matrix loss of strength gradient
+        lambda_dict : dict
+            Dictionary of ge, policy, and chi multipliers
+        max : float
+            Value to return when derivative is undefined
+
+        Returns
+        -------
+        float
+            derivative
+
+        """
+
+        # TODO vectorize this and chi if possible
+
+        # get relevant multiplier
+        lambda_i = lambda_dict[i]
+        lambda_i_dict = self.rewrap_lambda_i(lambda_i)
+        ids = np.delete(np.arange(0, self.N), i)
+        j_pos = np.where(ids == j)
+        lambda_ij = lambda_i_dict["chi_i"][j_pos]
+
+        if lambda_ij > lbda_min: # TODO: check machine precision on this
+            dChidm = ag.grad(self.chi)
+            dChidm_x = dChidm(m_x, j, i, theta_dict, rhoM)
+            dChidm_ji = np.reshape(dChidm_x, (self.N, self.N))[j, i]
+            chi_ji = self.chi(m_x, j, i, theta_dict, rhoM)
+            if chi_ji != 0:
+                dGdm_ji = theta_dict["c_hat"][0] * dChidm_ji / chi_ji ** 2
+                return(dGdm_ji)
+            else:
+                return(max)
+        else:
+            return(0.0)
+
+    def dGdm_ii(self, m_x, i, theta_dict, rhoM, lambda_dict, max=100.0):
+        """Calculate derivative of constrained policy Legrangian with respect to m_ii
+
+        Parameters
+        ----------
+        m_x : vector
+            Flattened vector of military allocations
+        i : int
+            id of defending country
+        theta_dict : dict
+            Dictionary storing military structural parameters
+        rhoM : matrix
+            N times N symmetric matrix loss of strength gradient
+        lambda_dict : dict
+            Dictionary of ge, policy, and chi multipliers
+        max : float
+            Value to return when derivative is undefined
+
+        Returns
+        -------
+        float
+            derivative
+
+        """
+
+        lambda_i = lambda_dict[i] # get multipliers for i
+        lambda_i_dict = self.rewrap_lambda_i(lambda_i)
+        ids = np.delete(np.arange(0, self.N), i)
+        out = 0
+        for j in range(self.N - 1):  # NOTE: these index multipliers, not govs. Use ids[j] to get corresponding id
+            lambda_ij = lambda_i_dict["chi_i"][j]  # get relevant multiplier
+            dChidm = ag.grad(self.chi)
+            dChidm_x = dChidm(m_x, ids[j], i, theta_dict, rhoM)  # calculate gradient with respect to all allocations
+            dChidm_ji = np.reshape(dChidm_x, (self.N, self.N))[i, i]  # extract relevant entry
+            chi_ji = self.chi(m_x, ids[j], i, theta_dict, rhoM)
+            if chi_ji != 0:
+                out -= lambda_ij * theta_dict["c_hat"][0] * dChidm_ji / chi_ji ** 2
+            else:
+                out -= lambda_ij * max  # if chi_ji = 0 and lambda_ij != 0 return large number
+
+        return(out)
+
+    def Lzeros_m_y(self, y, j, bound="lower"):
+        """Wrapper for Lzeros_m taking flattened y vector
+
+        Parameters
+        ----------
+        y : vector
+            Flattened vector of parameters, military allocations, and multipliers.
+        j : int
+            id of government for which to calculate zeros
+        bound : str
+            "lower" or "upper" - which bound to return on constraint
+
+        Returns
+        -------
+        vector
+            zeros of j's military allocation Lagrangian
+
+        """
+
+        y_dict = self.rewrap_y(y)
+
+        theta_dict = self.rewrap_theta(y_dict["theta_m"])
+        lambda_m = y_dict["lambda_M"]
+        lambda_dict = self.rewrap_lambda(y_dict["lambda_x"])
+        m_x = y_dict["m"]
+
+        rhoM = self.rhoM(theta_dict)
+
+        out = self.Lzeros_m(m_x, j, lambda_m, theta_dict, rhoM, lambda_dict)
+
+        if bound == "lower":
+            return(out)
+        else:
+            return(-1*out)
+
+    def Lzeros_m(self, m_x, j, lambda_m, theta_dict, rhoM, lambda_dict):
+        """Calculate zeros of military allocation Lagrangian
+
+        Parameters
+        ----------
+        m_x : vector
+            Flattened vector of military allocations
+        j : int
+            id of country for which to calculate zeros
+        lambda_m : vector
+            Length n vector of military budget constraint multipliers
+        theta_dict : dict
+            Dictionary storing military structural parameters
+        rhoM : matrix
+            N times N symmetric matrix loss of strength gradient
+        lambda_dict : dict
+            Dictionary of ge, policy, and chi multipliers
+
+        Returns
+        -------
+        vector
+            Length N + 1 vector of optimality conditions plus (equality) constraint condition
+
+        """
+
+        lambda_mj = lambda_m[j]
+        ids = np.delete(np.arange(0, self.N), j)
+        out = []
+
+        # m_ji
+        for i in ids:
+            dGdm_ji = self.dGdm_ji(m_x, j, i, theta_dict, rhoM, lambda_dict)
+            out.extend(np.array([dGdm_ji - lambda_mj]))
+
+        # m_jj
+        dGdm_jj = self.dGdm_ii(m_x, j, theta_dict, rhoM, lambda_dict)
+        out.extend(np.array([dGdm_jj - lambda_mj]))
+
+        # constraint zero
+        m = self.rewrap_m(m_x)
+        out.extend(np.array([self.M[j] - np.sum(m[j, ])]))
+
+        return(np.array(out))
