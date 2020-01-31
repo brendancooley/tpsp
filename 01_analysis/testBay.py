@@ -123,7 +123,7 @@ t_epsilon = pecmy.trunc_epsilon(epsilon_star, theta_dict_init)
 
 lhs = np.log( 1 / (theta_dict_init["c_hat"] ** -1 * (rcv - 1) - 1) )
 phi = stats.norm.cdf(epsilon_star.ravel(), loc=0, scale=theta_dict_init["sigma_epsilon"])
-Y = lhs.ravel() - phi.ravel() * Y_lower.ravel()
+Y = lhs.ravel() - (1 - phi.ravel()) * t_epsilon.ravel() - phi.ravel() * Y_lower.ravel()
 # NOTE: truncated epsilons are very very large....is this the right way to do this?
 
 
