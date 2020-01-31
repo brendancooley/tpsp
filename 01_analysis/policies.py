@@ -1410,8 +1410,7 @@ class policies:
         ge_x_sv = self.nft_sv(id, np.ones(self.x_len))
 
         for i in range(self.N):
-            ids_j = np.delete(np.arange(self.N), id)
-            wv_i = wv[:,id][ids_j]
+            wv_i = wv[:,id]
             for j in range(self.N):
                 wv_ij = copy.deepcopy(wv_i)
                 # wv_

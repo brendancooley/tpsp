@@ -79,9 +79,9 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 
 theta_dict_init = dict()
 theta_dict_init["sigma_epsilon"] = 1
-theta_dict_init["c_hat"] = .2
-theta_dict_init["alpha"] = .0005
-theta_dict_init["gamma"] = 1
+theta_dict_init["c_hat"] = .25
+theta_dict_init["alpha"] = .0007
+theta_dict_init["gamma"] = .5
 
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
 
@@ -110,7 +110,6 @@ wv_m_i
 
 v_sv = pecmy.v_sv(id, np.ones(pecmy.x_len), v)
 
-pecmy.G_hat_grad(v_sv, v, id, -1)
 test_x = pecmy.br(v_sv, v, wv_m_i, id)
 test_dict = pecmy.ecmy.rewrap_ge_dict(test_x)
 test_dict["tau_hat"] * pecmy.ecmy.tau
