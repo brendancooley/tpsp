@@ -1443,6 +1443,8 @@ class policies:
 
         lhs = np.log( 1 / (theta_dict_init["c_hat"] ** -1 * (rcv - 1) - 1) )
         Y = lhs.ravel() - t_epsilon.ravel()
+        # phi = stats.norm.cdf(epsilon_star.ravel(), loc=0, scale=theta_dict_init["sigma_epsilon"])
+        # print(phi)
         X = np.column_stack((np.log(m_frac.ravel()), self.W.ravel()))
 
         ests = np.zeros((draws, 2))

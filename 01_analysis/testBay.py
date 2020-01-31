@@ -18,8 +18,8 @@ sys.path.insert(1, helpersPath)
 import helpers
 imp.reload(helpers)
 
-mini = False
-large = True
+mini = True
+large = False
 rcv_ft = False
 
 runEstimates = True
@@ -68,7 +68,8 @@ ROWname = np.genfromtxt(dataPath + 'ROWname.csv', delimiter=',', dtype="str")
 ROWname = str(ROWname)
 
 M = M / np.min(M)  # normalize milex
-W = np.log(dists+1)
+# W = np.log(dists+1)
+W = dists
 
 N = len(Y)
 
@@ -79,7 +80,7 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 theta_dict_init = dict()
 theta_dict_init["sigma_epsilon"] = 1
 theta_dict_init["c_hat"] = .2
-theta_dict_init["alpha"] = .4
+theta_dict_init["alpha"] = .0005
 theta_dict_init["gamma"] = 1
 
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
@@ -154,6 +155,9 @@ for i in range(pecmy.N):
 
 
 
+
+# NOTE: increasing gamma increases epsilon star and moves trunc_epsilon, implying higher gamma...
+
 m = pecmy.M / np.ones((pecmy.N, pecmy.N))
 m = m.T
 m[pecmy.ROW_id,:] = 0
@@ -178,7 +182,7 @@ lhs = np.log( 1 / (theta_dict_init["c_hat"] ** -1 * (rcv - 1) - 1) )
 Y = lhs.ravel() - t_epsilon.ravel()
 X = np.column_stack((np.log(m_frac.ravel()), pecmy.W.ravel()))
 
-active_bin = epsilon_star < -2.5
+active_bin = epsilon_star < 0
 epsilon_star
 active_bin
 indicator = active_bin.ravel()
@@ -186,7 +190,15 @@ indicator = active_bin.ravel()
 Y_active = Y[indicator]
 X_active = X[indicator, ]
 
-plt.plot(X[:,1], Y, "r+")
+plt.plot(X_active[:,1], Y_active, "r+")
+
+
+theta_dict_init["alpha"] = .0001
+theta_dict_init["gamma"] = 1
+imp.reload(policies)
+imp.reload(economy)
+pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)
+pecmy.est_theta_inner(v_init, theta_dict_init, m)
 #
 #
 #
