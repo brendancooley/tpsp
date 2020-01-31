@@ -18,8 +18,8 @@ sys.path.insert(1, helpersPath)
 import helpers
 imp.reload(helpers)
 
-mini = False
-large = True
+mini = True
+large = False
 rcv_ft = False
 
 runEstimates = True
@@ -68,7 +68,7 @@ ROWname = np.genfromtxt(dataPath + 'ROWname.csv', delimiter=',', dtype="str")
 ROWname = str(ROWname)
 
 M = M / np.min(M)  # normalize milex
-W = np.log(dists+1)
+W = dists
 
 N = len(Y)
 
@@ -79,7 +79,7 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 theta_dict_init = dict()
 theta_dict_init["sigma_epsilon"] = 1
 theta_dict_init["c_hat"] = .2
-theta_dict_init["alpha"] = .4
+theta_dict_init["alpha"] = .003
 theta_dict_init["gamma"] = 1
 
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
@@ -89,7 +89,7 @@ imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
 
 v_init = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])
-pecmy.est_loop_interior(v_init, theta_dict_init)
+# pecmy.est_loop_interior(v_init, theta_dict_init)
 
 
 
@@ -104,8 +104,8 @@ m = m.T
 v = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])
 epsilon = np.zeros((pecmy.N, pecmy.N))
 wv_m = pecmy.war_vals(v, m, theta_dict_init, epsilon) # calculate war values
-ids_j = np.delete(np.arange(pecmy.N), id)
-wv_m_i = wv_m[:,id][ids_j]
+wv_m_i = wv_m[:,id]
+wv_m_i
 
 v_sv = pecmy.v_sv(id, np.ones(pecmy.x_len), v)
 

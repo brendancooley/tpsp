@@ -778,11 +778,9 @@ class policies:
 
         # mil constraints
         if mil == True:
-            ids_j = np.delete(np.arange(self.N), tau_free)
             for j in range(self.N):
                 if j != tau_free:
-                    idx = np.where(ids_j==j)[0]
-                    cons.append({'type': 'ineq', 'fun': self.con_mil, 'jac':self.con_mil_grad, 'args':(tau_free, j, wv_i[idx], v, )})
+                    cons.append({'type': 'ineq', 'fun': self.con_mil, 'jac':self.con_mil_grad, 'args':(tau_free, j, wv_i[j], v, )})
 
         return(cons)
 
@@ -1008,7 +1006,7 @@ class policies:
         m : matrix
             N times N matrix of military deployments.
         wv_i : vector
-            Length N minus 1 vector of war values
+            Length N vector of war values (0 for i)
         id : int
             id of government for which to calculate best response
         mpec : bool
@@ -1382,6 +1380,44 @@ class policies:
         out = out / np.sum(out)
 
         return(out)
+
+    def Y_lower(self, j, i, v, m, theta_dict):
+        """Calculate j's utility when constraint vis a vis i is off
+
+        Parameters
+        ----------
+        j : type
+            Description of parameter `j`.
+        i : type
+            Description of parameter `i`.
+        v : type
+            Description of parameter `v`.
+        m : type
+            Description of parameter `m`.
+        theta_dict : type
+            Description of parameter `theta_dict`.
+
+        Returns
+        -------
+        type
+            Description of returned object.
+
+        """
+
+        wv = self.war_vals(v_k, m, theta_dict_k, np.zeros((self.N, self.N))) # calculate war values
+
+        # starting values
+        ge_x_sv = self.nft_sv(id, np.ones(self.x_len))
+
+        for i in range(self.N):
+            ids_j = np.delete(np.arange(self.N), id)
+            wv_i = wv[:,id][ids_j]
+            for j in range(self.N):
+                wv_ij = copy.deepcopy(wv_i)
+                # wv_
+                # br_ij =
+
+        return(0)
 
     def trunc_epsilon(self, epsilon_star, theta_dict):
 
