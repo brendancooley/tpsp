@@ -7,6 +7,7 @@ import csv
 import sys
 import matplotlib.pyplot as plt
 import scipy.stats as stats
+import statsmodels.api as sm
 
 import economy
 import policies
@@ -21,7 +22,7 @@ imp.reload(helpers)
 
 mini = True
 large = False
-rcv_ft = False
+rcv_ft = True
 
 runEstimates = True
 
@@ -80,8 +81,8 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 
 theta_dict_init = dict()
 theta_dict_init["sigma_epsilon"] = 1
-theta_dict_init["c_hat"] = .25
-theta_dict_init["alpha"] = .0007
+theta_dict_init["c_hat"] = .1
+theta_dict_init["alpha"] = .0001
 theta_dict_init["gamma"] = .5
 
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
@@ -98,17 +99,18 @@ m[pecmy.ROW_id,pecmy.ROW_id] = 1
 m_diag = np.diagonal(m)
 m_frac = m / m_diag
 
-v_init = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])
+v = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])
 
-pecmy.est_theta_inner(v_init, theta_dict_init, m)
+# pecmy.est_theta_inner(v_init, theta_dict_init, m)
 
 
 # pecmy.est_loop_interior(v_init, theta_dict_init)
 m = pecmy.M / np.ones((pecmy.N, pecmy.N))
 m = m.T
 wv = pecmy.war_vals(v, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N)))
-wv[:,1]
-test = pecmy.Y_lower(v, m, theta_dict_init)
+rcv[:,2]
+wv
+G_lower = pecmy.G_lower(v, m, theta_dict_init)
 
 
 
@@ -118,253 +120,274 @@ for i in range(pecmy.N):
     rcv[i, ] = pecmy.rcv[v_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
 
 epsilon_star = pecmy.epsilon_star(v, m, theta_dict_init)
-Y_lower = pecmy.Y(rcv, theta_dict_init, test)
+Y_lower = pecmy.Y(rcv, theta_dict_init, G_lower)
 t_epsilon = pecmy.trunc_epsilon(epsilon_star, theta_dict_init)
 
-lhs = np.log( 1 / (theta_dict_init["c_hat"] ** -1 * (rcv - 1) - 1) )
+lhs = pecmy.Y(rcv, theta_dict_init, 1)
 phi = stats.norm.cdf(epsilon_star.ravel(), loc=0, scale=theta_dict_init["sigma_epsilon"])
+
+lhs.ravel() - Y_lower.ravel()
+
 Y = lhs.ravel() - (1 - phi.ravel()) * t_epsilon.ravel() - phi.ravel() * Y_lower.ravel()
 # NOTE: truncated epsilons are very very large....is this the right way to do this?
 
 
 X = np.column_stack((1-phi.ravel())*(np.log(m_frac.ravel()), (1-phi.ravel())*pecmy.W.ravel()))
-plt.plot(X[:,1], Y, "+")
-plt.plot(X[:,0],Y, "+")
+# X = np.column_stack((np.log(m_frac.ravel()), pecmy.W.ravel()))
+plt.plot(X[:,1], Y.ravel(), "+")
+plt.plot(X[:,0], Y.ravel(), "+")
+#
+# weights = 1 - phi
+#
+X_active = X[X[:,0]!=-np.inf,:]
+Y_active = lhs.ravel()[X[:,0]!=-np.inf]
+# weights_active = weights[X[:,0]!=-np.inf]
+Y_active = Y_active[~np.isnan(X_active[:,0])]
+# weights_active = weights_active[~np.isnan(X_active[:,0])]
+X_active = X_active[~np.isnan(X_active[:,0]),:]
+# len(Y)
+# len(X[:,0])
+#
+# pecmy.est_theta(X_active, Y_active)
 
-
-
-
-
-
-ge_x_sv = pecmy.v_sv(2, np.ones(pecmy.x_len), v_init)
-test_br1 = pecmy.br(ge_x_sv, v, wv[:,2], 2)
-test_br1_dict = pecmy.ecmy.rewrap_ge_dict(test_br1)
-test_br1_dict["tau_hat"] * pecmy.ecmy.tau
-test_br2 = pecmy.br(ge_x_sv, v, np.zeros(pecmy.N), 2)
-test_br2_dict = pecmy.ecmy.rewrap_ge_dict(test_br2)
-
-pecmy.G_hat(test_br1, v_init, 2)
-pecmy.G_hat(test_br2, v_init, 2)
-pecmy.R_hat(test_br1_dict, v_init)
-
-id = 2
-
-# m = np.diag(pecmy.M)
-
-v = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])
-epsilon = np.zeros((pecmy.N, pecmy.N))
-wv_m = pecmy.war_vals(v, m, theta_dict_init, epsilon) # calculate war values
-wv_m_i = wv_m[:,id]
-wv_m_i
-
-v_sv = pecmy.v_sv(id, np.ones(pecmy.x_len), v)
-
-test_x = pecmy.br(v_sv, v, wv_m_i, id)
-test_dict = pecmy.ecmy.rewrap_ge_dict(test_x)
-test_dict["tau_hat"] * pecmy.ecmy.tau
-
-v_sv_0 = pecmy.v_sv(0, np.ones(pecmy.x_len), v)
-test = pecmy.br_war_ji(v_sv_0, v, 4, 0, full_opt=True)
-test_dict = pecmy.ecmy.rewrap_ge_dict(test)
-test_dict
-
-
-m = pecmy.M / np.ones((pecmy.N, pecmy.N))
-m = m.T
-# m = np.diag(pecmy.M)
-v_test = np.ones(pecmy.N)
-epsilon = np.zeros((pecmy.N, pecmy.N))
-wv_m = pecmy.war_vals(v_test, m, theta_dict_init, epsilon) # calculate war values
-
-
-# test = pecmy.est_v_i_grid(2, v_test, m, theta_dict_init, epsilon)
-# test = pecmy.est_v_grid(v_test, m, theta_dict_init, epsilon)
-epsilon_star_test = pecmy.epsilon_star(v_sv, m, theta_dict_init)
-pecmy.trunc_epsilon(epsilon_star_test, theta_dict_init)
-
-epsilon_test = np.reshape(np.random.normal(0, theta_dict_init["sigma_epsilon"], pecmy.N ** 2), (pecmy.N, pecmy.N))
-pecmy.est_theta_outer(v_sv, theta_dict_init)
-
-
-theta_dict_init["gamma"] = test_params[0]
-theta_dict_init["alpha"] = test_params[1]
-rhoM = pecmy.rhoM(theta_dict_init, 0)
-chi_test = np.zeros((pecmy.N, pecmy.N))
-for i in range(pecmy.N):
-    for j in range(pecmy.N):
-        if i != j:
-            v_j = v_sv[j]
-            v_j_nearest = hp.find_nearest(pecmy.v_vals, v_j)
-            rcv_ji = pecmy.rcv[v_j_nearest][j, i]  # get regime change value for j controlling i's policy
-            m_x = pecmy.unwrap_m(m)
-            chi_ji = pecmy.chi(m_x, j, i, theta_dict_init, rhoM)
-            chi_test[j, i] = chi_ji
-
-
-
-
-
-# NOTE: increasing gamma increases epsilon star and moves trunc_epsilon, implying higher gamma...
-
-m = pecmy.M / np.ones((pecmy.N, pecmy.N))
-m = m.T
-m[pecmy.ROW_id,:] = 0
-m[:,pecmy.ROW_id] = 0
-m[pecmy.ROW_id,pecmy.ROW_id] = 1
-m_diag = np.diagonal(m)
-m_frac = m / m_diag
-
-rcv = np.zeros((pecmy.N, pecmy.N))  # empty regime change value matrix (row's value for invading column)
-for i in range(pecmy.N):
-    v_nearest = hp.find_nearest(pecmy.v_vals, v[i])
-    rcv[i, ] = pecmy.rcv[v_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
-    # (i's value for invading all others)
-# rcv = rcv.T
-print("rcv: ")
-print(rcv)
-
-epsilon_star = pecmy.epsilon_star(v_sv, m, theta_dict_init)
-t_epsilon = pecmy.trunc_epsilon(epsilon_star, theta_dict_init)
-
-lhs = np.log( 1 / (theta_dict_init["c_hat"] ** -1 * (rcv - 1) - 1) )
-Y = lhs.ravel() - t_epsilon.ravel()
-X = np.column_stack((np.log(m_frac.ravel()), pecmy.W.ravel()))
-
-active_bin = epsilon_star < 0
-epsilon_star
-active_bin
-indicator = active_bin.ravel()
-
-Y_active = Y[indicator]
-X_active = X[indicator, ]
-
-plt.plot(X_active[:,1], Y_active, "r+")
-
-
-theta_dict_init["alpha"] = .0001
-theta_dict_init["gamma"] = 1
-imp.reload(policies)
-imp.reload(economy)
-pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)
-pecmy.est_theta_inner(v_init, theta_dict_init, m)
+# test = sm.OLS(Y_active, X_active, missing="drop").fit()
+# test2 = sm.WLS(Y_active, X_active, missing="drop").fit()
+#
+# test.params
+# test2.params
 #
 #
 #
 #
-# np.array([1, 2, 3])[np.array([True, False, False])]
+# ge_x_sv = pecmy.v_sv(2, np.ones(pecmy.x_len), v_init)
+# test_br1 = pecmy.br(ge_x_sv, v, wv[:,2], 2)
+# test_br1_dict = pecmy.ecmy.rewrap_ge_dict(test_br1)
+# test_br1_dict["tau_hat"] * pecmy.ecmy.tau
+# test_br2 = pecmy.br(ge_x_sv, v, np.zeros(pecmy.N), 2)
+# test_br2_dict = pecmy.ecmy.rewrap_ge_dict(test_br2)
 #
+# pecmy.G_hat(test_br1, v_init, 2)
+# pecmy.G_hat(test_br2, v_init, 2)
+# pecmy.R_hat(test_br1_dict, v_init)
 #
+# id = 2
 #
+# # m = np.diag(pecmy.M)
 #
-# np.array([[0, 0],[1, 1]]) > np.array([[1, 1],[0, 0]])
-# np.zeros((2, 3))
+# v = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])
+# epsilon = np.zeros((pecmy.N, pecmy.N))
+# wv_m = pecmy.war_vals(v, m, theta_dict_init, epsilon) # calculate war values
+# wv_m_i = wv_m[:,id]
+# wv_m_i
 #
+# v_sv = pecmy.v_sv(id, np.ones(pecmy.x_len), v)
 #
-#
-#
-# tau_hat = np.ones((pecmy.N, pecmy.N))
-# tau_hat[0, ] = 3
-# tau_hat[0, 4] = 1 / pecmy.ecmy.tau[0, 4]
-# tau_hat[0, 0] = 1
-# ge_dict = pecmy.ecmy.geq_solve(tau_hat, np.ones(pecmy.N))
-#
-# v_test = np.ones(pecmy.N)
-# v_test = v_test * 1.7
-#
-# pecmy.ecmy.U_hat(ge_dict)
-# pecmy.r_v(ge_dict, v_test)
-# pecmy.R_hat(ge_dict, v_test)
-# pecmy.G_hat(pecmy.ecmy.unwrap_ge_dict(ge_dict), v_test)
-# pecmy.ecmy.tau
-#
-#
-#
-#
-#
-# ids_j = np.delete(np.arange(pecmy.N), id)
-# wv_m_i = wv_m[:,id][ids_j]
-#
-# tau_v = np.tile(np.array([v_test]).transpose(), (1, pecmy.N))
-# np.fill_diagonal(tau_v, 1)
-#
-# tau_hat_sv = np.ones((pecmy.N, pecmy.N))
-# tau_hat_v_sv = tau_v / pecmy.ecmy.tau
-# tau_hat_sv[id, ] = tau_hat_v_sv[id, ] + .01
-#
-# ge_dict = pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
-# ge_x_sv = pecmy.ecmy.unwrap_ge_dict(ge_dict)
-#
-# test_x = pecmy.br(ge_x_sv, v_test, wv_m_i, id)
+# test_x = pecmy.br(v_sv, v, wv_m_i, id)
 # test_dict = pecmy.ecmy.rewrap_ge_dict(test_x)
-# test_dict
 # test_dict["tau_hat"] * pecmy.ecmy.tau
 #
-# r_hat_id = []
-# t_vals = np.arange(0, 3, .1)
-# v_test[1] = 1.5
-# tau_v = np.tile(np.array([v_test]).transpose(), (1, pecmy.N))
-# np.fill_diagonal(tau_v, 1)
-# tau_hat_sv = np.ones((pecmy.N, pecmy.N))
-# for i in t_vals:
-#     tau_v[id, 0] = v_test[id] + i
-#     tau_hat_v_sv = tau_v / pecmy.ecmy.tau
-#     tau_hat_sv[id, 0] = tau_hat_v_sv[id, 0]
-#     ge_dict = pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
-#     r_hat_id.append(pecmy.R_hat(ge_dict, v_test)[id])
-#
-# plt.plot(t_vals, r_hat_id)
-#
-# id_i = 0
-# nft_sv = pecmy.nft_sv(id_i, np.ones(pecmy.x_len))
+# v_sv_0 = pecmy.v_sv(0, np.ones(pecmy.x_len), v)
+# test = pecmy.br_war_ji(v_sv_0, v, 4, 0, full_opt=True)
+# test_dict = pecmy.ecmy.rewrap_ge_dict(test)
+# test_dict
 #
 #
-# v_test[id] = 1.69
-# rc_pols_x = pecmy.br_war_ji(nft_sv, v_test, id, id_i, full_opt=True)
-# rc_pols_dict = pecmy.ecmy.rewrap_ge_dict(rc_pols_x)
-# rc_pols_dict["tau_hat"] * pecmy.ecmy.tau
-# pecmy.G_hat(rc_pols_x, v_test)
-# pecmy.R_hat(rc_pols_dict, v_test)
-# pecmy.ecmy.U_hat(rc_pols_dict)
-# pecmy.ecmy.tau
-#
-# # TODO: regime change values still very large. Need to think about structure of objective.
-#     # this might be ok though because it's also easier to satisfy constraints
+# m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+# m = m.T
+# # m = np.diag(pecmy.M)
+# v_test = np.ones(pecmy.N)
+# epsilon = np.zeros((pecmy.N, pecmy.N))
+# wv_m = pecmy.war_vals(v_test, m, theta_dict_init, epsilon) # calculate war values
 #
 #
+# # test = pecmy.est_v_i_grid(2, v_test, m, theta_dict_init, epsilon)
+# # test = pecmy.est_v_grid(v_test, m, theta_dict_init, epsilon)
+# epsilon_star_test = pecmy.epsilon_star(v_sv, m, theta_dict_init)
+# pecmy.trunc_epsilon(epsilon_star_test, theta_dict_init)
+#
+# epsilon_test = np.reshape(np.random.normal(0, theta_dict_init["sigma_epsilon"], pecmy.N ** 2), (pecmy.N, pecmy.N))
+# pecmy.est_theta_outer(v_sv, theta_dict_init)
+#
+#
+# theta_dict_init["gamma"] = test_params[0]
+# theta_dict_init["alpha"] = test_params[1]
+# rhoM = pecmy.rhoM(theta_dict_init, 0)
+# chi_test = np.zeros((pecmy.N, pecmy.N))
+# for i in range(pecmy.N):
+#     for j in range(pecmy.N):
+#         if i != j:
+#             v_j = v_sv[j]
+#             v_j_nearest = hp.find_nearest(pecmy.v_vals, v_j)
+#             rcv_ji = pecmy.rcv[v_j_nearest][j, i]  # get regime change value for j controlling i's policy
+#             m_x = pecmy.unwrap_m(m)
+#             chi_ji = pecmy.chi(m_x, j, i, theta_dict_init, rhoM)
+#             chi_test[j, i] = chi_ji
 #
 #
 #
 #
-# tau_hat_sv = ge_dict["tau_hat"]
-# tau_hat_sv[id] = tau_hat_nft[id] # start slightly above free trade
-# ge_dict_sv = pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
-# ge_x_sv = pecmy.ecmy.unwrap_ge_dict(ge_dict_sv)
 #
-# # test_x = pecmy.br(ge_x_sv, b_test, wv_m_i, id)
+# # NOTE: increasing gamma increases epsilon star and moves trunc_epsilon, implying higher gamma...
+#
+# m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+# m = m.T
+# m[pecmy.ROW_id,:] = 0
+# m[:,pecmy.ROW_id] = 0
+# m[pecmy.ROW_id,pecmy.ROW_id] = 1
+# m_diag = np.diagonal(m)
+# m_frac = m / m_diag
+#
+# rcv = np.zeros((pecmy.N, pecmy.N))  # empty regime change value matrix (row's value for invading column)
+# for i in range(pecmy.N):
+#     v_nearest = hp.find_nearest(pecmy.v_vals, v[i])
+#     rcv[i, ] = pecmy.rcv[v_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
+#     # (i's value for invading all others)
+# # rcv = rcv.T
+# print("rcv: ")
+# print(rcv)
+#
+# epsilon_star = pecmy.epsilon_star(v_sv, m, theta_dict_init)
+# t_epsilon = pecmy.trunc_epsilon(epsilon_star, theta_dict_init)
+#
+# lhs = np.log( 1 / (theta_dict_init["c_hat"] ** -1 * (rcv - 1) - 1) )
+# Y = lhs.ravel() - t_epsilon.ravel()
+# X = np.column_stack((np.log(m_frac.ravel()), pecmy.W.ravel()))
+#
+# active_bin = epsilon_star < 0
+# epsilon_star
+# active_bin
+# indicator = active_bin.ravel()
+#
+# Y_active = Y[indicator]
+# X_active = X[indicator, ]
+#
+# plt.plot(X_active[:,1], Y_active, "r+")
+#
+#
+# theta_dict_init["alpha"] = .0001
+# theta_dict_init["gamma"] = 1
+# imp.reload(policies)
+# imp.reload(economy)
+# pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)
+# pecmy.est_theta_inner(v_init, theta_dict_init, m)
+# #
+# #
+# #
+# #
+# # np.array([1, 2, 3])[np.array([True, False, False])]
+# #
+# #
+# #
+# #
+# # np.array([[0, 0],[1, 1]]) > np.array([[1, 1],[0, 0]])
+# # np.zeros((2, 3))
+# #
+# #
+# #
+# #
+# # tau_hat = np.ones((pecmy.N, pecmy.N))
+# # tau_hat[0, ] = 3
+# # tau_hat[0, 4] = 1 / pecmy.ecmy.tau[0, 4]
+# # tau_hat[0, 0] = 1
+# # ge_dict = pecmy.ecmy.geq_solve(tau_hat, np.ones(pecmy.N))
+# #
+# # v_test = np.ones(pecmy.N)
+# # v_test = v_test * 1.7
+# #
+# # pecmy.ecmy.U_hat(ge_dict)
+# # pecmy.r_v(ge_dict, v_test)
+# # pecmy.R_hat(ge_dict, v_test)
+# # pecmy.G_hat(pecmy.ecmy.unwrap_ge_dict(ge_dict), v_test)
+# # pecmy.ecmy.tau
+# #
+# #
+# #
+# #
+# #
+# # ids_j = np.delete(np.arange(pecmy.N), id)
+# # wv_m_i = wv_m[:,id][ids_j]
+# #
+# # tau_v = np.tile(np.array([v_test]).transpose(), (1, pecmy.N))
+# # np.fill_diagonal(tau_v, 1)
+# #
+# # tau_hat_sv = np.ones((pecmy.N, pecmy.N))
+# # tau_hat_v_sv = tau_v / pecmy.ecmy.tau
+# # tau_hat_sv[id, ] = tau_hat_v_sv[id, ] + .01
+# #
+# # ge_dict = pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
+# # ge_x_sv = pecmy.ecmy.unwrap_ge_dict(ge_dict)
+# #
+# # test_x = pecmy.br(ge_x_sv, v_test, wv_m_i, id)
 # # test_dict = pecmy.ecmy.rewrap_ge_dict(test_x)
 # # test_dict
 # # test_dict["tau_hat"] * pecmy.ecmy.tau
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-# test_x = pecmy.Lsolve(np.ones((pecmy.N, pecmy.N)), b_test, m, theta_dict_init, id)
-# test_dict = pecmy.ecmy.rewrap_ge_dict(test_x)
-# test_dict
-# test_dict["tau_hat"] * pecmy.ecmy.tau
-#
-# v = np.array([1, 2])
-# v = np.array([v])
-# v
-# np.sum(np.array([[1, 2],[3,4]]), axis=1)
-#
-# X = np.array([[1,2],[-1,2]])
-# X[X<0] = 0
+# #
+# # r_hat_id = []
+# # t_vals = np.arange(0, 3, .1)
+# # v_test[1] = 1.5
+# # tau_v = np.tile(np.array([v_test]).transpose(), (1, pecmy.N))
+# # np.fill_diagonal(tau_v, 1)
+# # tau_hat_sv = np.ones((pecmy.N, pecmy.N))
+# # for i in t_vals:
+# #     tau_v[id, 0] = v_test[id] + i
+# #     tau_hat_v_sv = tau_v / pecmy.ecmy.tau
+# #     tau_hat_sv[id, 0] = tau_hat_v_sv[id, 0]
+# #     ge_dict = pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
+# #     r_hat_id.append(pecmy.R_hat(ge_dict, v_test)[id])
+# #
+# # plt.plot(t_vals, r_hat_id)
+# #
+# # id_i = 0
+# # nft_sv = pecmy.nft_sv(id_i, np.ones(pecmy.x_len))
+# #
+# #
+# # v_test[id] = 1.69
+# # rc_pols_x = pecmy.br_war_ji(nft_sv, v_test, id, id_i, full_opt=True)
+# # rc_pols_dict = pecmy.ecmy.rewrap_ge_dict(rc_pols_x)
+# # rc_pols_dict["tau_hat"] * pecmy.ecmy.tau
+# # pecmy.G_hat(rc_pols_x, v_test)
+# # pecmy.R_hat(rc_pols_dict, v_test)
+# # pecmy.ecmy.U_hat(rc_pols_dict)
+# # pecmy.ecmy.tau
+# #
+# # # TODO: regime change values still very large. Need to think about structure of objective.
+# #     # this might be ok though because it's also easier to satisfy constraints
+# #
+# #
+# #
+# #
+# #
+# #
+# # tau_hat_sv = ge_dict["tau_hat"]
+# # tau_hat_sv[id] = tau_hat_nft[id] # start slightly above free trade
+# # ge_dict_sv = pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
+# # ge_x_sv = pecmy.ecmy.unwrap_ge_dict(ge_dict_sv)
+# #
+# # # test_x = pecmy.br(ge_x_sv, b_test, wv_m_i, id)
+# # # test_dict = pecmy.ecmy.rewrap_ge_dict(test_x)
+# # # test_dict
+# # # test_dict["tau_hat"] * pecmy.ecmy.tau
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# # test_x = pecmy.Lsolve(np.ones((pecmy.N, pecmy.N)), b_test, m, theta_dict_init, id)
+# # test_dict = pecmy.ecmy.rewrap_ge_dict(test_x)
+# # test_dict
+# # test_dict["tau_hat"] * pecmy.ecmy.tau
+# #
+# # v = np.array([1, 2])
+# # v = np.array([v])
+# # v
+# # np.sum(np.array([[1, 2],[3,4]]), axis=1)
+# #
+# # X = np.array([[1,2],[-1,2]])
+# # X[X<0] = 0

@@ -1132,7 +1132,7 @@ class policies:
 
         return(out)
 
-    def Y_lower(self, v, m, theta_dict):
+    def G_lower(self, v, m, theta_dict):
         """Calculate j's utility when constraint vis a vis i is off
 
         Parameters
@@ -1156,9 +1156,8 @@ class policies:
         """
 
         wv = self.war_vals(v, m, theta_dict, np.zeros((self.N, self.N))) # calculate war values
-        print(wv)
 
-        Y_lower = np.zeros((self.N, self.N))
+        G_lower = np.zeros((self.N, self.N))
         for i in range(self.N):
             wv_i = wv[:,i]
             for j in range(self.N):
@@ -1167,15 +1166,15 @@ class policies:
                 ge_x_sv = self.v_sv(i, np.ones(self.x_len), v)
                 br_ij = self.br(ge_x_sv, v, wv_ij, i)
                 G_ji = self.G_hat(br_ij, v, j)
-                Y_lower[j, i] = G_ji  # government i's welfare when constraint vis a vis j is lifted
+                G_lower[j, i] = G_ji  # government i's welfare when constraint vis a vis j is lifted
 
-        return(Y_lower)
+        return(G_lower)
 
     def trunc_epsilon(self, epsilon_star, theta_dict):
 
         return(hp.mean_truncnorm(epsilon_star, theta_dict["sigma_epsilon"]))
 
-    def est_theta(self, epsilon_star, X, Y):
+    def est_theta(self, X, Y):
         """Estimate military parameters from constraints. Iteratively recalculate parameters and weights until convergence.
 
         Parameters
@@ -1213,14 +1212,15 @@ class policies:
         #     theta_out[0] = np.NaN  # gamma
         #     theta_out[1] = np.NaN  # alpha
 
-        ests = sm.WLS(Y, X).fit()
+        theta_out = np.zeros(2)
+        ests = sm.OLS(Y, X).fit()
         theta_out[0] = ests.params[0]  # gamma
         theta_out[1] = -ests.params[1]  # alpha
 
         return(theta_out)
 
     def Y(self, rcv, theta_dict, G_ji):
-        return(np.log( 1 / (theta_dict["c_hat"] ** -1 * (rcv - 1) - 1) ))
+        return(np.log( 1 / (theta_dict["c_hat"] ** -1 * (rcv - G_ji) - 1) ))
 
     def est_theta_inner(self, v, theta_dict, m, draws=1000):
 
@@ -1828,11 +1828,6 @@ class policies:
             # v_vec = np.repeat(v, self.N)
             wvb = np.zeros_like(self.ecmy.tau)
             for i in range(self.N):
-                # tau_hat_ft = 1 / self.ecmy.tau
-                # tau_hat_prime = np.ones((self.N, self.N))
-                # tau_hat_prime[i, ] = tau_hat_ft[i, ]
-                # ge_dict_prime = self.ecmy.geq_solve(tau_hat_prime, np.ones(self.N))
-                # ge_x_prime = self.ecmy.unwrap_ge_dict(ge_dict_prime)
                 for j in range(self.N):
                     v_vec = np.ones(self.N)
                     v_vec[j] = v
@@ -1849,7 +1844,12 @@ class policies:
                                 ge_br_war_ji = self.br_war_ji(nft_sv, v_vec, j, i, full_opt=True)
                                 G_hat_ji = self.G_hat(ge_br_war_ji, v_vec, j)
                             else:
-                                G_hat_ji = self.G_hat(ge_x_prime, v_vec, ids=np.array([j]))
+                                tau_hat_ft = 1 / self.ecmy.tau
+                                tau_hat_prime = np.ones((self.N, self.N))
+                                tau_hat_prime[i, ] = tau_hat_ft[i, ]
+                                ge_dict_prime = self.ecmy.geq_solve(tau_hat_prime, np.ones(self.N))
+                                ge_x_prime = self.ecmy.unwrap_ge_dict(ge_dict_prime)
+                                G_hat_ji = self.G_hat(ge_x_prime, v_vec, j)
                             wvb[j, i] = G_hat_ji
                             # print(time.time() - start_time)
             wv[v] = wvb
