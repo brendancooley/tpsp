@@ -1,4 +1,5 @@
-import numpy as np
+import autograd as ag
+import autograd.numpy as np
 import os
 import imp
 import timeit
@@ -83,7 +84,7 @@ theta_dict_init = dict()
 theta_dict_init["sigma_epsilon"] = 1
 theta_dict_init["c_hat"] = .1
 theta_dict_init["alpha"] = .0001
-theta_dict_init["gamma"] = .5
+theta_dict_init["gamma"] = 1
 
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
 
@@ -91,16 +92,70 @@ imp.reload(policies)
 imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
 
+
+# pecmy.Lzeros_theta_min(theta_dict_init, np.ones(pecmy.N))
+
+
+theta_lbda_chi_init = np.ones(pecmy.N+3+pecmy.N**2)
+theta_lbda_chi_init[0:pecmy.N] = np.ones(pecmy.N)
+theta_lbda_chi_init[pecmy.N] = theta_dict_init["c_hat"]
+theta_lbda_chi_init[pecmy.N+1] = theta_dict_init["alpha"]
+theta_lbda_chi_init[pecmy.N+2] = theta_dict_init["gamma"]
+pecmy.Lzeros_theta_grad(theta_lbda_chi_init)
+
+wv = pecmy.war_vals(v, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N)))
+
+id = 2
+L_grad_f = ag.grad(pecmy.Lagrange_i_x)
+v = np.ones(pecmy.N)
+v[id] = 1.9
+L_grad = L_grad_f(np.ones(pecmy.x_len), v, np.ones((pecmy.N, pecmy.N)), wv[:,id], np.ones(pecmy.lambda_i_len), id)
+
+pecmy.ecmy.rewrap_ge_dict(L_grad)
+
+np.sum(L_grad)
+
+pecmy.rcv_ft(np.ones(pecmy.N))
+
 m = pecmy.M / np.ones((pecmy.N, pecmy.N))
 m = m.T
 m[pecmy.ROW_id,:] = 0
 m[:,pecmy.ROW_id] = 0
 m[pecmy.ROW_id,pecmy.ROW_id] = 1
 
-v = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])
+pecmy.chi_prime(m, theta_dict_init)
+pecmy.W
 
 
 
+
+
+
+pecmy.war_vals(v, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N)))
+
+
+
+m_diag = np.diagonal(m)
+m_frac = m / m_diag
+
+# m = np.diag(M)
+
+id = 2
+
+testL = pecmy.Lsolve(v, m, theta_dict_init, id, mtd="lm")
+testL_dict = pecmy.ecmy.rewrap_ge_dict(testL)
+testL_dict
+pecmy.G_hat(testL, v, 0, all=True)
+
+ge_x_sv = pecmy.v_sv(id, np.ones(pecmy.x_len), v)
+war_vals = pecmy.war_vals(v, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N)))
+testbr = pecmy.br(ge_x_sv, v, war_vals[:,id], id)
+testbr_dict = pecmy.ecmy.rewrap_ge_dict(testbr)
+testbr_dict
+pecmy.G_hat(testbr, v, 0, all=True)
+
+sv = np.concatenate((np.ones(pecmy.x_len), np.zeros(pecmy.lambda_i_len)))
+pecmy.Lzeros(sv, v, np.ones((pecmy.N, pecmy.N)), war_vals[:,id], id)
 
 
 test = pecmy.est_theta_inner(v, theta_dict_init, m)
