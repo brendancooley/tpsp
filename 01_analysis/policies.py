@@ -64,7 +64,8 @@ class policies:
         self.tauj_len = self.N**2-self.N
         # self.lambda_i_len = self.hhat_len + self.tauj_len + 1 + self.N + (self.N - 1)  # ge vars, other policies, tau_ii, deficits, mil constraints
         # self.lambda_i_len = self.hhat_len + 1 + (self.N - 1)
-        self.lambda_i_len = self.hhat_len + 1 + self.N
+        self.lambda_i_x_len = self.hhat_len + 1
+        self.lambda_i_len = self.hhat_len + 1 + self.N # one is own policy
         # self.lambda_i_len_td = self.lambda_i_len + self.N ** 2 - self.N # add constraints on others' policies
 
         # NOTE: values less than zero seem to mess with best response
@@ -72,10 +73,12 @@ class policies:
         self.v_step = .1
         self.v_vals = np.arange(1, np.max(self.ecmy.tau), self.v_step)
         # self.v_vals = np.arange(1, 1.1, .1)
+        self.v_max = np.max(self.ecmy.tau, axis=1) - .1
         np.savetxt(results_path + "v_vals.csv", self.v_vals, delimiter=",")
 
         self.x_len = self.ecmy.ge_x_len
 
+        self.chi_min = .001
         # rcv_path = results_path + "rcv.csv"
         # print(rcv_path)
         # if not os.path.isfile(rcv_path):
@@ -121,31 +124,7 @@ class policies:
         # if affinity is None:
         #     affinity = np.zeros((self.N, self.N))
 
-        # if len(x) > self.ecmy.ge_x_len:  # convert input vector to ge vars if dealing with full vector
-        #     ge_x = self.rewrap_x(x)["ge_x"]
-        # else:
-        #     ge_x = x
-
-        # if ids is None:  # return G for all govs if no id specified
-        #     ids = self.ids
-
         ge_dict = self.ecmy.rewrap_ge_dict(x)
-
-        # if mpec == False: # enforce consistency of endogenous variables with policies
-        #     ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
-        #     if jitter == True:
-        #         if type(ge_dict) != dict:
-        #             ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
-        #             # jitter entries slightly if no solution found
-        #             for i in range(self.N):
-        #                 for j in range(self.N):
-        #                     if i != j:
-        #                         ge_dict["tau_hat"][i, j] += np.random.normal(0, .1, 1)
-        #             # recurse
-        #             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-        #             self.G_hat(ge_x, v, ids=ids, sign=sign, mpec=False, jitter=True)
-        #         else:
-        #             pass
 
         Uhat = self.ecmy.U_hat(ge_dict)
         # Ghat = Uhat ** (1 - b) * ge_dict["r_hat"] ** b
@@ -176,6 +155,8 @@ class policies:
 
         v_mat = np.array([v])
         r = self.r_v(ge_dict, v)
+        if np.any(r == 0):
+            print(r)
 
         tau_prime = ge_dict["tau_hat"] * self.ecmy.tau
         tau_prime_mv = tau_prime - np.tile(v_mat.transpose(), (1, self.N))
@@ -279,6 +260,8 @@ class policies:
         """
 
         chi = self.chi(m, theta_dict)
+        chi = np.clip(chi, self.chi_min, 1)
+        print(chi)
         wc = theta_dict["c_hat"] / chi
         rcv_ft = self.rcv_ft(v)
         wv = rcv_ft - wc
@@ -361,110 +344,121 @@ class policies:
         else:
             return(np.array(out)*-1)
 
-    def Lzeros_theta(self, theta_lbda_chi):
-        """Short summary.
+    def Lzeros_i_wrap(self, x_lbda_theta, m, id, bound="lower"):
 
-        Parameters
-        ----------
-        theta_lbda_m : vector
-            v, c_hat, alpha, gamma, lambda_chi
+        ge_x = x_lbda_theta[0:self.x_len]
+        lbda = np.reshape(x_lbda_theta[self.x_len:self.x_len+self.lambda_i_len*self.N], (self.N, self.lambda_i_len))
+        theta = x_lbda_theta[self.x_len+self.lambda_i_len*self.N:]
 
-        Returns
-        -------
-        type
-            Description of returned object.
-
-        """
-
-        v = theta_lbda_chi[0:self.N]
-        theta = theta_lbda_chi[self.N:self.N+3]
-        lambda_chi = np.reshape(theta_lbda_chi[self.N+3:], (self.N, self.N))
-
+        v = theta[0:self.N]
         theta_dict = dict()
-        theta_dict["c_hat"] = theta[0]
-        theta_dict["alpha"] = theta[1]
-        theta_dict["gamma"] = theta[2]
+        theta_dict["c_hat"] = theta[self.N]
+        theta_dict["alpha"] = theta[self.N+1]
+        theta_dict["gamma"] = theta[self.N+2]
+
+        wv = self.war_vals(v, m, theta_dict, np.zeros((self.N, self.N)))
+
+        ge_x_lbda_i_x = np.concatenate((ge_x, lbda[id, ]))
+        Lzero_i = self.Lzeros(ge_x_lbda_i_x, v, self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"], wv[:,id], id)
+
+        if bound == "lower":
+            return(-1*Lzero_i)
+        else:
+            return(Lzero_i)
+
+    def Lzeros_i_wrap_jac(self, x_lbda_theta, m, id, bound):
+        Lzeros_i_wrap_jac_f = ag.jacobian(self.Lzeros_i_wrap)
+        return(Lzeros_i_wrap_jac_f(x_lbda_theta, m, id, bound))
+
+
+    def Lzeros_all(self, x_lbda_theta, m, bound="lower"):
+
+        ge_x = x_lbda_theta[0:self.x_len]
+        lbda = np.reshape(x_lbda_theta[self.x_len:self.x_len+self.lambda_i_len*self.N], (self.N, self.lambda_i_len))
+        theta = x_lbda_theta[self.x_len+self.lambda_i_len*self.N:]
+
+        v = theta[0:self.N]
+        theta_dict = dict()
+        theta_dict["c_hat"] = theta[self.N]
+        theta_dict["alpha"] = theta[self.N+1]
+        theta_dict["gamma"] = theta[self.N+2]
+
+        wv = self.war_vals(v, m, theta_dict, np.zeros((self.N, self.N)))
+
+        Lzeros = []
+        for i in range(self.N):
+            ge_x_lbda_i_x = np.concatenate((ge_x, lbda[i, ]))
+            Lzero_i = self.Lzeros(ge_x_lbda_i_x, v, self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"], wv[:,i], i)
+
+            Lzeros.extend(Lzero_i)
+
+        Lzeros = np.array(Lzeros)
+
+        # self.tick += 1
+        # print(self.tick)
+        # if self.tick == 100:
+        #     print(theta_dict)
+        #     print(v)
+        #     print(self.ecmy.rewrap_ge_dict(ge_x))
+        #     self.tick = 0
+
+        if bound == "lower":
+            return(Lzeros)
+        else:
+            return(-1*Lzeros)
+
+    def Lzeros_all_jac(self, x_lbda_theta, m, bound):
+        Lzeros_all_jac_f = ag.jacobian(self.Lzeros_all)
+        return(Lzeros_all_jac_f(x_lbda_theta, m, bound))
+
+    def Lzeros_min(self, v_init, theta_dict_init):
+
+        x_lbda_theta_sv = np.zeros(self.x_len+self.lambda_i_len*self.N+3+self.N)
+        x_lbda_theta_sv[0:self.x_len] = 1
+        x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = v_init
+        x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N+self.N] = theta_dict_init["c_hat"]
+        x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N+self.N+1] = theta_dict_init["alpha"]
+        x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N+self.N+2] = theta_dict_init["gamma"]
 
         m = self.M / np.ones((self.N, self.N))
         m = m.T
-        # NOTE: setting ROW to zero seems to mess with autograd
-        # m[self.ROW_id,:] = 0
-        # m[:,self.ROW_id] = 0
-        # m[self.ROW_id,self.ROW_id] = 1
 
-        # print(theta_dict)
-        wv = self.war_vals(v, m, theta_dict, np.zeros((self.N, self.N)))
-        # print(wv)
-
-        loss = 0
+        cons = []
+        # cons.append({'type': 'ineq','fun': self.Lzeros_all, 'jac':self.Lzeros_all_jac, 'args':(m,"lower",)})
+        # cons.append({'type': 'ineq','fun': self.Lzeros_all, 'jac':self.Lzeros_all_jac, 'args':(m,"upper",)})
         for i in range(self.N):
-            lambda_dict_i = self.rewrap_lambda_i(np.zeros(self.lambda_i_len))
-            lambda_dict_i["chi_i"] = lambda_chi[i, ]
-            lambda_x_i = self.unwrap_lambda_i(lambda_dict_i)
-            ge_x_lbda_i_x = np.concatenate((np.ones(self.x_len), lambda_x_i))
-            Lzeros_i = self.Lzeros(ge_x_lbda_i_x, v, np.ones((self.N, self.N)), wv[:,i], i)
-            loss += np.sum(Lzeros_i ** 2)
-
-        self.tick += 1
-        if self.tick == 25:
-            print("lambda_chi:")
-            print(lambda_chi)
-            print("v:")
-            print(v)
-            print("theta:")
-            print(theta)
-            print("loss:")
-            print(loss)
-            self.tick = 0
-
-        return(loss)
-
-    def Lzeros_theta_grad(self, x):
-        Lzeros_theta_grad_f = ag.grad(self.Lzeros_theta)
-        return(Lzeros_theta_grad_f(x))
-
-    def Lzeros_theta_min(self, theta_dict_init, v_init):
-
-        # theta_lbda_chi_init = np.zeros(self.N+3+self.N**2)
-        theta_lbda_chi_init = np.ones(self.N+3+self.N**2)
-        theta_lbda_chi_init[0:self.N] = v_init
-        theta_lbda_chi_init[self.N] = theta_dict_init["c_hat"]
-        theta_lbda_chi_init[self.N+1] = theta_dict_init["alpha"]
-        theta_lbda_chi_init[self.N+2] = theta_dict_init["gamma"]
+            cons.append({'type': 'ineq','fun': self.Lzeros_i_wrap, 'jac':self.Lzeros_i_wrap_jac, 'args':(m, i, "lower",)})
+            cons.append({'type': 'ineq','fun': self.Lzeros_i_wrap, 'jac':self.Lzeros_i_wrap_jac, 'args':(m, i, "upper",)})
 
         bounds = []
-        for i in range(self.N):
-            bounds.append((1, None))
-        for i in range(3):
-            bounds.append((0, None))
-        for i in range(self.N**2):
+        for i in range(self.x_len):
+            bounds.append((.01, None))
+        for i in range(self.lambda_i_len*self.N):
             bounds.append((None, None))
+        for i in range(self.N):
+            bounds.append((1, self.v_max[i]))
+        for i in range(2):
+            bounds.append((0, None))
+        bounds.append((0, 2))  # gamma
 
-
-        out = opt.minimize(self.Lzeros_theta, theta_lbda_chi_init, method="TNC", jac=self.Lzeros_theta_grad, bounds=bounds)
-        # out = opt.minimize(self.Lzeros_theta, theta_lbda_chi_init, method="TNC", bounds=bounds)
-
-        return(out)
-
-
-    def Lzeros_tixlbda(self, tixlbda, v, tau_hat, war_vals, id, geq=False):
-
-        th = np.copy(tau_hat)
-        th[id, ] = tixlbda[0:self.N]
-        gelbda = tixlbda[self.N:]
-
-        xlbda = []
-        xlbda.extend(th.ravel())  # policies
-        xlbda.extend(np.ones(self.N))  # deficits
-        xlbda.extend(gelbda)  # ge vars and lambdas
-        xlbda = np.array(xlbda)
-
-        x = xlbda[0:self.x_len]  # ge vars
-        lbda = xlbda[self.x_len:]  # lambda_i_x
-
-        out = self.Lzeros(x, lbda, v, tau_hat, war_vals, id, geq=geq)
+        out = opt.minimize(self.Lzeros_loss, x_lbda_theta_sv, method="SLSQP", constraints=cons, bounds=bounds)
 
         return(out)
+
+    def Lzeros_loss(self, x_lbda_theta_sv):
+
+        self.tick += 1
+        print(self.tick)
+        if self.tick == 100:
+            print(self.ecmy.rewrap_ge_dict(x_lbda_theta_sv[0:self.x_len], ))
+            print(x_lbda_theta_sv)
+            self.tick = 0
+        tau_hat = self.ecmy.rewrap_ge_dict(x_lbda_theta_sv[0:self.x_len])["tau_hat"]
+        loss = 0
+        for i in range(self.N):
+            loss += self.loss_tau(tau_hat[i, ], i)
+
+        return(loss)
 
     def war_diffs(self, ge_x, v, war_vals, id):
         """Calculate difference between government id's utility at proposed vector ge_x versus war_value
@@ -700,88 +694,6 @@ class policies:
         con_mil_grad_f = ag.jacobian(self.con_mil)
         return(con_mil_grad_f(ge_x, i, j, wv_ji, v))
 
-    def br_war_ji(self, ge_x, v, j, i, mpec=True, full_opt=False):
-        """puppet policies implemented by j after war on i
-
-        Parameters
-        ----------
-        ge_x : vector
-            Flattened array of ge inputs and outputs
-        j : int
-            id of coercer
-        i : int
-            id of defender
-        mpec : type
-            Description of parameter `mpec`.
-
-        Returns
-        -------
-        vector
-            Flattened array of ge inputs and outputs at optimal values for j choosing i's policies
-
-
-        NOTE: seems a lot more stable after updating scipy to 1.3.2
-        """
-
-        # ge_x = np.copy(ge_x)
-        ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
-
-        tau_perturb = .01
-        v_perturb = .01
-
-        if full_opt == True:
-            # initialize starting values of ge_x to equilibrium
-            # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
-            # ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-
-            mxit = 500
-            ftol = 1e-06
-            wv_null = np.repeat(0, self.N - 1)
-            cons = self.constraints_tau(ge_dict, i, wv_null, v, mil=False)
-            bnds = self.bounds()
-            thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, jac=self.G_hat_grad, args=(v, j, -1, ), method="SLSQP", options={"maxiter":mxit, "ftol":ftol})
-            while thistar['success'] == False:
-                print("iterating...")
-                for k in range(self.N):
-                    if k != i:
-                        ge_dict["tau_hat"][i, k] += tau_perturb
-                ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
-                print(ge_dict)
-                ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-                # v[j] -= v_perturb
-                ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
-                ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
-                thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, jac=self.G_hat_grad, args=(v, j, -1, ), method="SLSQP", options={"maxiter":mxit, "ftol":ftol})
-
-            return(thistar['x'])
-        else:
-            print("open...")
-            # "open" tariff changes
-            for k in range(self.N):
-                if k != i:
-                    ge_dict["tau_hat"][i, k] = 1 / self.ecmy.tau[i, k]
-
-            ge_dict_open = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
-            ge_x_open = self.ecmy.unwrap_ge_dict(ge_dict_open)
-            G_hat_open = self.G_hat(ge_x_open, b, ids=np.array([j]), sign=1, mpec=True)
-
-            print("closed...")
-            # "closed" tariff changes
-            for k in range(self.N):
-                if k not in [i, j]:
-                    ge_dict["tau_hat"][i, k] = self.tauMax / self.ecmy.tau[i, k]
-                else:
-                    ge_dict["tau_hat"][i, k] = 1 / self.ecmy.tau[i, k]
-
-            ge_dict_closed = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
-            ge_x_closed = self.ecmy.unwrap_ge_dict(ge_dict_closed)
-            G_hat_closed = self.G_hat(ge_x_closed, b, ids=np.array([j]), sign=1, mpec=True)
-
-            if G_hat_open >= G_hat_closed:
-                return(ge_x_open)
-            else:
-                return(ge_x_closed)
-
     def bounds(self):
         """Generate bounds for optimization algorithms. Currently requires tariffs be positive.
 
@@ -967,8 +879,6 @@ class policies:
         weights = weights / np.sum(weights)  # normalize
 
         tau_star = self.ecmy.tau[id, ] * tau_i
-        print("tau_star: " + str(tau_star))
-        print("tau: " + str(self.ecmy.tau[id, ]))
 
         out = np.sum((self.ecmy.tau[id, ] - tau_star) ** 2 * weights)
 
@@ -1330,24 +1240,6 @@ class policies:
     def est_theta_outer(self, v, theta_dict_init):
 
         return(0)
-
-    # def est_theta_outer(self, v, theta_dict_init, thres=.001):
-    #
-    #     out_last = np.repeat(100, 2)
-    #     out_k = copy.deepcopy(out_last)
-    #     out_last[0] = theta_dict_init["gamma"]
-    #     out_last[1] = theta_dict_init["alpha"]
-    #     theta_dict = copy.deepcopy(theta_dict_init)
-    #     print(out_k)
-    #     print(out_last)
-    #     while np.sum(np.abs(out_last - out_k) > thres):
-    #         out_last = copy.deepcopy(out_k)
-    #         out_k = self.est_theta_inner(v, theta_dict)
-    #         theta_dict["gamma"] = out_k[0]
-    #         theta_dict["alpha"] = out_k[1]
-    #         print(out_k)
-    #
-    #     return(out_k)
 
     def est_loop_interior(self, v_init, theta_dict_init, thres=.001):
         """For fixed values of epsilon and c_hat, estimate preference parameters and alpha, gamma

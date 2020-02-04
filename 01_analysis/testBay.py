@@ -92,15 +92,29 @@ imp.reload(policies)
 imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
 
+pecmy.Lzeros_min(np.ones(pecmy.N), theta_dict_init)
+
 
 # pecmy.Lzeros_theta_min(theta_dict_init, np.ones(pecmy.N))
 
+m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+m = m.T
 
-theta_lbda_chi_init = np.ones(pecmy.N+3+pecmy.N**2)
-theta_lbda_chi_init[0:pecmy.N] = np.ones(pecmy.N)
-theta_lbda_chi_init[pecmy.N] = theta_dict_init["c_hat"]
-theta_lbda_chi_init[pecmy.N+1] = theta_dict_init["alpha"]
-theta_lbda_chi_init[pecmy.N+2] = theta_dict_init["gamma"]
+x_lbda_theta_sv = np.zeros(pecmy.x_len+pecmy.lambda_i_len*pecmy.N+3+pecmy.N)
+x_lbda_theta_sv[0:pecmy.x_len] = 1
+x_lbda_theta_sv[pecmy.x_len+pecmy.lambda_i_len*pecmy.N:pecmy.x_len+pecmy.lambda_i_len*pecmy.N+pecmy.N] = np.ones(pecmy.N)
+x_lbda_theta_sv[pecmy.x_len+pecmy.lambda_i_len*pecmy.N+pecmy.N] = theta_dict_init["c_hat"]
+x_lbda_theta_sv[pecmy.x_len+pecmy.lambda_i_len*pecmy.N+pecmy.N+1] = theta_dict_init["alpha"]
+x_lbda_theta_sv[pecmy.x_len+pecmy.lambda_i_len*pecmy.N+pecmy.N+2] = theta_dict_init["gamma"]
+pecmy.Lzeros_i_wrap(x_lbda_theta_sv, m, 0)
+start_time = time.time()
+pecmy.Lzeros_i_wrap_jac(x_lbda_theta_sv, m, 0)
+print("--- %s seconds ---" % (time.time() - start_time))
+
+start_time = time.time()
+pecmy.Lzeros_all_jac(x_lbda_theta_sv, m, "lower")
+print("--- %s seconds ---" % (time.time() - start_time))
+
 pecmy.Lzeros_theta_grad(theta_lbda_chi_init)
 
 wv = pecmy.war_vals(v, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N)))
@@ -108,8 +122,8 @@ wv = pecmy.war_vals(v, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N)))
 id = 2
 L_grad_f = ag.grad(pecmy.Lagrange_i_x)
 v = np.ones(pecmy.N)
-v[id] = 1.9
-L_grad = L_grad_f(np.ones(pecmy.x_len), v, np.ones((pecmy.N, pecmy.N)), wv[:,id], np.ones(pecmy.lambda_i_len), id)
+v[id] = 1.3
+L_grad = L_grad_f(np.ones(pecmy.x_len), v, np.ones((pecmy.N, pecmy.N)), wv[:,id], np.zeros(pecmy.lambda_i_len), id)
 
 pecmy.ecmy.rewrap_ge_dict(L_grad)
 

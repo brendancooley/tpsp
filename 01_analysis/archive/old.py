@@ -683,3 +683,88 @@ def constraints_m(self, m_init, id):
         out.extend(np.array([self.M[j] - np.sum(m[j, ])]))
 
         return(np.array(out))
+
+    def Lzeros_theta(self, theta_lbda_chi):
+        """Short summary.
+
+        Parameters
+        ----------
+        theta_lbda_m : vector
+            v, c_hat, alpha, gamma, lambda_chi
+
+        Returns
+        -------
+        type
+            Description of returned object.
+
+        """
+
+        v = theta_lbda_chi[0:self.N]
+        theta = theta_lbda_chi[self.N:self.N+3]
+        lambda_chi = np.reshape(theta_lbda_chi[self.N+3:], (self.N, self.N))
+
+        theta_dict = dict()
+        theta_dict["c_hat"] = theta[0]
+        theta_dict["alpha"] = theta[1]
+        theta_dict["gamma"] = theta[2]
+
+        m = self.M / np.ones((self.N, self.N))
+        m = m.T
+        # NOTE: setting ROW to zero seems to mess with autograd
+        # m[self.ROW_id,:] = 0
+        # m[:,self.ROW_id] = 0
+        # m[self.ROW_id,self.ROW_id] = 1
+
+        # print(theta_dict)
+        wv = self.war_vals(v, m, theta_dict, np.zeros((self.N, self.N)))
+        # print(wv)
+
+        loss = 0
+        for i in range(self.N):
+            lambda_dict_i = self.rewrap_lambda_i(np.zeros(self.lambda_i_len))
+            lambda_dict_i["chi_i"] = lambda_chi[i, ]
+            lambda_x_i = self.unwrap_lambda_i(lambda_dict_i)
+            ge_x_lbda_i_x = np.concatenate((np.ones(self.x_len), lambda_x_i))
+            Lzeros_i = self.Lzeros(ge_x_lbda_i_x, v, np.ones((self.N, self.N)), wv[:,i], i)
+            loss += np.sum(Lzeros_i ** 2)
+
+        self.tick += 1
+        if self.tick == 25:
+            print("lambda_chi:")
+            print(lambda_chi)
+            print("v:")
+            print(v)
+            print("theta:")
+            print(theta)
+            print("loss:")
+            print(loss)
+            self.tick = 0
+
+        return(loss)
+
+    def Lzeros_theta_grad(self, x):
+        Lzeros_theta_grad_f = ag.grad(self.Lzeros_theta)
+        return(Lzeros_theta_grad_f(x))
+
+    def Lzeros_theta_min(self, theta_dict_init, v_init):
+
+        # theta_lbda_chi_init = np.zeros(self.N+3+self.N**2)
+        theta_lbda_chi_init = np.ones(self.N+3+self.N**2)
+        theta_lbda_chi_init[0:self.N] = v_init
+        theta_lbda_chi_init[self.N] = theta_dict_init["c_hat"]
+        theta_lbda_chi_init[self.N+1] = theta_dict_init["alpha"]
+        theta_lbda_chi_init[self.N+2] = theta_dict_init["gamma"]
+
+        bounds = []
+        for i in range(self.N):
+            bounds.append((1, None))
+        for i in range(3):
+            bounds.append((0, None))
+        for i in range(self.N**2):
+            bounds.append((None, None))
+
+
+        out = opt.minimize(self.Lzeros_theta, theta_lbda_chi_init, method="TNC", jac=self.Lzeros_theta_grad, bounds=bounds)
+        # out = opt.minimize(self.Lzeros_theta, theta_lbda_chi_init, method="TNC", bounds=bounds)
+
+        return(out)

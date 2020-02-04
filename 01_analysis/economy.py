@@ -302,6 +302,7 @@ class economy:
         w_hat, P_hat, E_hat, tau_hat = ge_dict["w_hat"], ge_dict["P_hat"], ge_dict["E_hat"], ge_dict["tau_hat"]
 
         if np.any(ge_dict["P_hat"] < 0):  # nudge to avoid negative trade solutions
+            print(ge_dict)
             ge_dict["P_hat"][ge_dict["P_hat"] < 0] = .01
         if np.any(ge_dict["w_hat"] < 0):
             ge_dict["w_hat"][ge_dict["w_hat"] < 0] = .01
