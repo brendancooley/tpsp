@@ -1172,7 +1172,10 @@ class policies:
 
     def trunc_epsilon(self, epsilon_star, theta_dict):
 
-        return(hp.mean_truncnorm(epsilon_star, theta_dict["sigma_epsilon"]))
+        te = hp.mean_truncnorm(epsilon_star, theta_dict["sigma_epsilon"])
+        te[np.isnan(te)] = 0
+
+        return(te)
 
     def est_theta(self, X, Y):
         """Estimate military parameters from constraints. Iteratively recalculate parameters and weights until convergence.
@@ -1195,25 +1198,8 @@ class policies:
 
         """
 
-        # theta_out = np.zeros(2)
-        # active_bin = epsilon > epsilon_star
-        #
-        # indicator = active_bin.ravel()
-        #
-        # Y_active = Y[indicator]
-        # X_active = X[indicator, ]
-
-        # print(np.sum(indicator))
-        # if np.sum(indicator) > 2:
-        #     ests = sm.WLS(Y, X).fit()
-        #     theta_out[0] = ests.params[0]  # gamma
-        #     theta_out[1] = -ests.params[1]  # alpha
-        # else:
-        #     theta_out[0] = np.NaN  # gamma
-        #     theta_out[1] = np.NaN  # alpha
-
         theta_out = np.zeros(2)
-        ests = sm.OLS(Y, X).fit()
+        ests = sm.OLS(Y, X, missing="drop").fit()
         theta_out[0] = ests.params[0]  # gamma
         theta_out[1] = -ests.params[1]  # alpha
 
@@ -1222,7 +1208,7 @@ class policies:
     def Y(self, rcv, theta_dict, G_ji):
         return(np.log( 1 / (theta_dict["c_hat"] ** -1 * (rcv - G_ji) - 1) ))
 
-    def est_theta_inner(self, v, theta_dict, m, draws=1000):
+    def est_theta_inner(self, v, theta_dict, m, thres=.0001):
 
         m_diag = np.diagonal(m)
         m_frac = m / m_diag
@@ -1233,31 +1219,42 @@ class policies:
             rcv[i, ] = self.rcv[v_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
             # (i's value for invading all others)
 
-        epsilon_star = self.epsilon_star(v, m, theta_dict)
-        G_lower = self.Y_lower(v, m, theta_dict)
-        Y_lower = self.Y(rcv, theta_dict, G_lower)
-        t_epsilon = self.trunc_epsilon(epsilon_star, theta_dict)
+        diff = 10
+        while diff > thres:
 
-        lhs = self.Y(rcv, theta_dict, 1)
-        phi = stats.norm.cdf(epsilon_star.ravel(), loc=0, scale=theta_dict["sigma_epsilon"])
-        Y = lhs.ravel() - (1 - phi.ravel()) * t_epsilon.ravel() - phi.ravel() * Y_lower.ravel()
-        # print(phi)
-        X = np.column_stack((1-phi.ravel())*(np.log(m_frac.ravel()), (1-phi.ravel())*self.W.ravel()))
+            theta_k0 = copy.deepcopy(np.array([theta_dict["gamma"], theta_dict["alpha"]]))
+            epsilon_star = self.epsilon_star(v, m, theta_dict)
+            print("epsilon star:")
+            print(epsilon_star)
+            G_lower = self.G_lower(v, m, theta_dict)
+            print("G_lower:")
+            print(G_lower)
+            Y_lower = self.Y(rcv, theta_dict, G_lower)
+            t_epsilon = self.trunc_epsilon(epsilon_star, theta_dict)
+            print("t_epsilon:")
+            print(t_epsilon)
 
-        # ests = np.zeros((draws, 2))
-        # for i in range(draws):
-        #     e = np.reshape(np.random.normal(0, theta_dict_init["sigma_epsilon"], self.N ** 2), (self.N, self.N))
-        #     theta_i = self.est_theta(e, epsilon_star, X, Y)
-        #     ests[i, ] = theta_i
+            lhs = self.Y(rcv, theta_dict, 1)
+            phi = stats.norm.cdf(epsilon_star.ravel(), loc=0, scale=theta_dict["sigma_epsilon"])
+            Y = lhs.ravel() - (1 - phi.ravel()) * t_epsilon.ravel() - phi.ravel() * Y_lower.ravel()
+            X = np.column_stack( (1 - phi.ravel()) * (np.log(m_frac.ravel()), (1 - phi.ravel()) * self.W.ravel()))
 
-        ests = self.est_theta(e, epsilon_star, X, Y)
+            X_active = X[~np.isnan(X[:,0]),:]
+            Y_active = Y[~np.isnan(X[:,0])]
 
-        # updates = np.nanmean(ests, axis=0)
-        # theta_dict = copy.deepcopy(theta_dict_init)
-        # theta_dict["gamma"] = updates[0]
-        # theta_dict["alpha"] = updates[1]
+            theta_k1 = self.est_theta(X_active, Y_active)
+            theta_dict["gamma"] = theta_k1[0]
+            theta_dict["alpha"] = theta_k1[1]
+            print("theta_k0")
+            print(theta_k0)
+            print("theta_k1:")
+            print(theta_k1)
 
-        return(ests)
+            diff = np.sum(np.abs(theta_k1 - theta_k0))
+            print("diff:")
+            print(diff)
+
+        return(theta_dict)
 
     def est_theta_outer(self, v, theta_dict_init):
 

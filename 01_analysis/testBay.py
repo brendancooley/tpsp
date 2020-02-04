@@ -96,13 +96,57 @@ m = m.T
 m[pecmy.ROW_id,:] = 0
 m[:,pecmy.ROW_id] = 0
 m[pecmy.ROW_id,pecmy.ROW_id] = 1
-m_diag = np.diagonal(m)
-m_frac = m / m_diag
 
 v = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])
 
-# pecmy.est_theta_inner(v_init, theta_dict_init, m)
 
+
+
+
+test = pecmy.est_theta_inner(v, theta_dict_init, m)
+
+
+
+
+
+
+
+
+
+
+
+
+
+rcv = np.zeros((pecmy.N, pecmy.N))  # empty regime change value matrix (row's value for invading column)
+for i in range(pecmy.N):
+    v_nearest = hp.find_nearest(pecmy.v_vals, v[i])
+    rcv[i, ] = pecmy.rcv[v_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
+
+m_diag = np.diagonal(m)
+m_frac = m / m_diag
+
+epsilon_star = pecmy.epsilon_star(v, m, theta_dict_init)
+t_epsilon = pecmy.trunc_epsilon(epsilon_star, theta_dict_init)
+phi = stats.norm.cdf(epsilon_star.ravel(), loc=0, scale=theta_dict_init["sigma_epsilon"])
+lhs = pecmy.Y(rcv, theta_dict_init, 1)
+
+X = np.column_stack((1-phi.ravel())*(np.log(m_frac.ravel()), (1-phi.ravel())*pecmy.W.ravel()))
+X.shape
+X_active = X[~np.isnan(X[:,0]),:]
+X_active.shape
+Y = lhs.ravel()
+Y.shape
+Y_active = Y[~np.isnan(X[:,0])]
+len(np.isnan(X[:,0]))
+
+m_diag = np.diagonal(m)
+m_frac = m / m_diag
+
+ests = sm.OLS(Y_active, X_active, missing="drop").fit()
+ests.params
+
+
+# pecmy.est_theta_inner(v_init, theta_dict_init, m)
 
 # pecmy.est_loop_interior(v_init, theta_dict_init)
 m = pecmy.M / np.ones((pecmy.N, pecmy.N))
@@ -114,10 +158,7 @@ G_lower = pecmy.G_lower(v, m, theta_dict_init)
 
 
 
-rcv = np.zeros((pecmy.N, pecmy.N))  # empty regime change value matrix (row's value for invading column)
-for i in range(pecmy.N):
-    v_nearest = hp.find_nearest(pecmy.v_vals, v[i])
-    rcv[i, ] = pecmy.rcv[v_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
+
 
 epsilon_star = pecmy.epsilon_star(v, m, theta_dict_init)
 Y_lower = pecmy.Y(rcv, theta_dict_init, G_lower)
