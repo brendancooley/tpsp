@@ -199,7 +199,7 @@ class policies:
 
         return(np.array(out))
 
-    def Lagrange_i_x(self, ge_x, v, tau_hat, war_vals, lambda_i_x, id):
+    def Lagrange_i_x(self, ge_x, v, war_vals, lambda_i_x, id):
         """Short summary.
 
         Parameters
@@ -227,7 +227,7 @@ class policies:
 
         G_hat_i = self.G_hat(ge_x, v, id, sign=1)
         geq_diffs = self.ecmy.geq_diffs(ge_x)
-        tau_diffs = self.tau_diffs(ge_dict["tau_hat"], tau_hat, id)
+        # tau_diffs = self.tau_diffs(ge_dict["tau_hat"], tau_hat, id)
         tau_ii_diff = ge_dict["tau_hat"][id, id] - 1
         D_diffs = ge_dict["D_hat"] - 1
         war_diffs = self.war_diffs(ge_x, v, war_vals, id)
@@ -277,7 +277,7 @@ class policies:
         return(out.T)
 
 
-    def Lzeros(self, ge_x_lbda_i_x, v, tau_hat, war_vals, id, bound="lower", td=False):
+    def Lzeros(self, ge_x_lbda_i_x, v, war_vals, id, bound="lower", td=False):
         """Short summary.
 
         Parameters
@@ -306,7 +306,7 @@ class policies:
         ge_dict = self.ecmy.rewrap_ge_dict(x)
         lambda_dict_i = self.rewrap_lambda_i(lambda_i_x)
         L_grad_f = ag.grad(self.Lagrange_i_x)
-        L_grad = L_grad_f(x, v, tau_hat, war_vals, lambda_i_x, id)
+        L_grad = L_grad_f(x, v, war_vals, lambda_i_x, id)
 
         L_grad_i = L_grad[self.N*id:self.N*(id+1)]
         L_grad_h = L_grad[self.N**2+self.N:]  # skip policies and deficits
@@ -369,7 +369,6 @@ class policies:
     def Lzeros_i_wrap_jac(self, x_lbda_theta, m, id, bound):
         Lzeros_i_wrap_jac_f = ag.jacobian(self.Lzeros_i_wrap)
         return(Lzeros_i_wrap_jac_f(x_lbda_theta, m, id, bound))
-
 
     def Lzeros_all(self, x_lbda_theta, m, bound="lower"):
 
@@ -565,7 +564,7 @@ class policies:
 
         # fct = .1  # NOTE: convergence of hybr and lm is sensitive to this value
         # out = opt.root(self.Lzeros_tixlbda, x0=np.array(x), method=mtd, args=(v, ge_dict_sv["tau_hat"], wv_i, id, True, ), options={"factor":fct})
-        out = opt.root(self.Lzeros, x0=ge_x_lbda_i_x, method=mtd, args=(v, ge_dict_sv["tau_hat"], wv_i, id, ), options={'ftol':1e-12})
+        out = opt.root(self.Lzeros, x0=ge_x_lbda_i_x, method=mtd, args=(v, wv_i, id, ), options={'ftol':1e-12})
         if out['success'] == True:
             print("success:" + str(id))
             print(out)
