@@ -92,6 +92,9 @@ imp.reload(policies)
 imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
 
+pecmy.br_bounds_ipyopt(np.ones(pecmy.x_len), 1)
+np.meshgrid(range(pecmy.x_len), range(self.x_len))
+
 # m = pecmy.M / np.ones((pecmy.N, pecmy.N))
 # m = m.T
 m = np.diag(pecmy.M)

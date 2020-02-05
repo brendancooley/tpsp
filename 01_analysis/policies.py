@@ -10,6 +10,7 @@ import time
 import os
 import copy
 import multiprocessing as mp
+import ipyopt
 # import nlopt # NOTE: something wrong with build of this on laptop
 
 # TODO: gradient to BR function
@@ -758,6 +759,68 @@ class policies:
 
         return(bnds)
 
+    def D_diffs(self, ge_x):
+        ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
+        return(ge_dict["D_hat"] - 1)
+
+    def br_cons_ipyopt(self, ge_x, v, id):
+
+        geq_diffs = self.ecmy.geq_diffs(ge_x)
+        D_diffs = self.D_diffs(ge_x)
+
+        out = []
+        out.extend(geq_diffs)
+        out.extend(D_diffs)
+
+        return(np.array(out))
+
+    def br_cons_ipyopt_wrap(v, id):
+        def f(x):
+            return(self.br_cons_ipyopt(x, v, id))
+        return(f)
+
+    def br_bounds_ipyopt(self, ge_x_sv, id):
+
+        tau_hat = self.ecmy.rewrap_ge_dict(ge_x_sv)["tau_hat"]
+
+        x_L = np.zeros(self.x_len)
+        x_U = np.repeat(np.inf, self.x_len)
+
+        tau_L = np.ones((self.N, self.N))
+        tau_U = np.reshape(np.repeat(np.inf, self.N ** 2), (self.N, self.N))
+        for i in range(self.N):
+            for j in range(self.N):
+                if i != j:
+                    if i != id:
+                        tau_L[i, j] = tau_hat[i, j]
+                        tau_U[i, j] = tau_hat[i, j]
+                else:
+                    tau_U[i, j] = 1
+
+        x_L[0:self.N**2] = tau_L.ravel()
+        x_U[0:self.N**2] = tau_U.ravel()
+
+        return(x_L, x_U)
+
+    def br_bounds_ipyopt_wrap(v, id):
+        def f(x):
+            return(self.br_bounds_ipyopt(x, v, id))
+        return(f)
+
+    def G_hat_wrap(v, id, sign):
+        def f(x):
+            return(self.G_hat(x, v, id, sign=sign))
+        return(f)
+
+    def br_ipyopt(self, ge_x, v, id):
+
+        # construct constraint jacobian and sparsity indices
+        # construct grad of f
+        # construct hessian sparsity indices (Ipopt will approximate)
+
+        problem = ipyopt.Problem(self.x_len, self.br_bounds_ipyopt_wrap(v, id)[0], self.br_bounds_ipyopt_wrap(v, id)[1], self.hhat_len+self.N, 0, 0, )
+
+        return(0)
 
     def br(self, ge_x, v, wv_i, id, mil=True, method="SLSQP", affinity=None):
         """Calculate optimal policies for gov id, given others' policies in ge_x.
