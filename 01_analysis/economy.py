@@ -172,7 +172,7 @@ class economy:
 
         return(out)
 
-    def geq_diffs_grad(self, ge_x, bound):
+    def geq_diffs_grad(self, ge_x, bound="lower"):
         geq_diffs_grad_f = ag.jacobian(self.geq_diffs)
         return(geq_diffs_grad_f(ge_x, bound))
 
@@ -302,7 +302,6 @@ class economy:
         w_hat, P_hat, E_hat, tau_hat = ge_dict["w_hat"], ge_dict["P_hat"], ge_dict["E_hat"], ge_dict["tau_hat"]
 
         if np.any(ge_dict["P_hat"] < 0):  # nudge to avoid negative trade solutions
-            print(ge_dict)
             ge_dict["P_hat"][ge_dict["P_hat"] < 0] = .01
         if np.any(ge_dict["w_hat"] < 0):
             ge_dict["w_hat"][ge_dict["w_hat"] < 0] = .01
@@ -480,10 +479,10 @@ class economy:
         """
 
         P_hat, w_hat = ge_dict["P_hat"], ge_dict["w_hat"]
-        if np.any(P_hat == 0):
-            print(P_hat)
-        if np.any(w_hat == 0):
-            print(w_hat)
+        # if np.any(P_hat == 0):
+        #     print(P_hat)
+        # if np.any(w_hat == 0):
+        #     print(w_hat)
 
         pcdhat = np.power(P_hat, self.nu) * np.power(w_hat, 1 - self.nu)
 

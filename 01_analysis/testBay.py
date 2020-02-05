@@ -92,28 +92,68 @@ imp.reload(policies)
 imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
 
-m = pecmy.M / np.ones((pecmy.N, pecmy.N))
-m = m.T
+# m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+# m = m.T
+m = np.diag(pecmy.M)
 
-v = np.ones(pecmy.N)
+# v = np.ones(pecmy.N)
+v = np.array([1., 1.3, 1.9, 1.1, 1, 1.1])
+test = pecmy.rewrap_lambda_i(np.ones(pecmy.lambda_i_len))
+len(test["tau_hat"])
+pecmy.lambda_i_len
+test2 = pecmy.unwrap_lambda_i(test)
+len(test2)
+pecmy.x_len
 
-# x = pecmy.Lsolve(v, m, theta_dict_init, 2, enforce_geq=True)
-# x_dict = pecmy.ecmy.rewrap_ge_dict(x)
-# x_dict["tau_hat"] * pecmy.ecmy.tau
-
-out = pecmy.Lzeros_min(np.ones(pecmy.N), theta_dict_init)
+wv = pecmy.war_vals(v, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N)))
+out = pecmy.Lzeros_eq(v, wv)
 print(out)
 
-# pecmy.Lzeros_theta_min(theta_dict_init, np.ones(pecmy.N))
+# out = pecmy.Lzeros_min(v, theta_dict_init, mtd="SLSQP")
+# print(out)
 
-
-#
 # x_lbda_theta_sv = np.zeros(pecmy.x_len+pecmy.lambda_i_len*pecmy.N+3+pecmy.N)
 # x_lbda_theta_sv[0:pecmy.x_len] = 1
 # x_lbda_theta_sv[pecmy.x_len+pecmy.lambda_i_len*pecmy.N:pecmy.x_len+pecmy.lambda_i_len*pecmy.N+pecmy.N] = np.ones(pecmy.N)
 # x_lbda_theta_sv[pecmy.x_len+pecmy.lambda_i_len*pecmy.N+pecmy.N] = theta_dict_init["c_hat"]
 # x_lbda_theta_sv[pecmy.x_len+pecmy.lambda_i_len*pecmy.N+pecmy.N+1] = theta_dict_init["alpha"]
 # x_lbda_theta_sv[pecmy.x_len+pecmy.lambda_i_len*pecmy.N+pecmy.N+2] = theta_dict_init["gamma"]
+#
+# for i in range(pecmy.N):
+#     print(np.sum(pecmy.Lzeros_i_wrap_jac(x_lbda_theta_sv, m, i, "lower")))
+#     print(np.sum(pecmy.ecmy.geq_diffs_grad(x_lbda_theta_sv, "lower"), axis=1))
+
+
+
+
+# wv = pecmy.war_vals(v, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N)))
+# # wv = np.zeros((pecmy.N, pecmy.N))
+# id = 3
+# print(wv[:,id])
+#
+# x = pecmy.Lsolve(v, m, theta_dict_init, id, enforce_geq=True)
+# x_dict = pecmy.ecmy.rewrap_ge_dict(x)
+# print(x_dict)
+# print(x_dict["tau_hat"] * pecmy.ecmy.tau)
+# pecmy.G_hat(x[0:pecmy.x_len], v, 0, all=True)
+#
+# x2 = pecmy.br(np.ones(pecmy.x_len), v, wv[:,id], id)
+# x2_dict = pecmy.ecmy.rewrap_ge_dict(x2)
+# print(x2_dict)
+# print(pecmy.G_hat(x2[0:pecmy.x_len], v, 0, all=True))
+
+
+
+# lambda_i = np.zeros(pecmy.lambda_i_len)
+# len(lambda_i)
+# lambda_i_dict = pecmy.rewrap_lambda_i(lambda_i)
+# len(lambda_i_dict["h_hat"])
+# pecmy.x_len
+# pecmy.N**2 + 4*pecmy.N + pecmy.N**2
+# pecmy.Lzeros_theta_min(theta_dict_init, np.ones(pecmy.N))
+
+
+
 # pecmy.Lzeros_i_wrap(x_lbda_theta_sv, m, 0)
 # start_time = time.time()
 # pecmy.Lzeros_i_wrap_jac(x_lbda_theta_sv, m, 0)
@@ -125,7 +165,6 @@ print(out)
 #
 # pecmy.Lzeros_theta_grad(theta_lbda_chi_init)
 #
-# wv = pecmy.war_vals(v, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N)))
 #
 # id = 2
 # L_grad_f = ag.grad(pecmy.Lagrange_i_x)
