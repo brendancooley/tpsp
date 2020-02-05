@@ -277,7 +277,7 @@ class policies:
         return(out.T)
 
 
-    def Lzeros(self, ge_x_lbda_i_x, v, tau_hat, war_vals, id, bound="lower", td=False):
+    def Lzeros(self, ge_x_lbda_i_x, v, tau_hat, war_vals, id, geq_diffs=False, bound="lower", td=False):
         """Short summary.
 
         Parameters
@@ -316,10 +316,12 @@ class policies:
         L_grad_out = np.array(L_grad_out)
         L_grad = L_grad_out
 
-        geq_diffs = self.ecmy.geq_diffs(x)
-        tau_diffs = self.tau_diffs(ge_dict["tau_hat"], tau_hat, id)
         tau_ii_diff = np.array([ge_dict["tau_hat"][id, id] - 1])
-        D_diffs = ge_dict["D_hat"] - 1
+
+        tau_diffs = self.tau_diffs(ge_dict["tau_hat"], tau_hat, id)
+        if geq_diffs == True:
+            geq_diffs = self.ecmy.geq_diffs(x)
+            D_diffs = ge_dict["D_hat"] - 1
 
         # calculate war constraints
         war_diffs = self.war_diffs(x, v, war_vals, id)
@@ -329,9 +331,10 @@ class policies:
         # out.extend(np.array([np.sum(L_grad**2)]))  # sum of squared focs is zero
         # if geq == True:
         #     out.extend(geq_diffs)
-        out.extend(D_diffs)
         out.extend(tau_diffs)
-        out.extend(geq_diffs)
+        if geq_diffs == True:
+            out.extend(D_diffs)
+            out.extend(geq_diffs)
         # if td == True:
         #     out.extend(tau_diffs)
         out.extend(tau_ii_diff)
@@ -429,6 +432,23 @@ class policies:
         for i in range(self.N):
             cons.append({'type': 'ineq','fun': self.Lzeros_i_wrap, 'jac':self.Lzeros_i_wrap_jac, 'args':(m, i, "lower",)})
             cons.append({'type': 'ineq','fun': self.Lzeros_i_wrap, 'jac':self.Lzeros_i_wrap_jac, 'args':(m, i, "upper",)})
+            # cons.append({'type': 'eq','fun': self.Lzeros_i_wrap, 'jac':self.Lzeros_i_wrap_jac, 'args':(m, i, "lower",)})
+
+        cons.append({'type': 'eq', 'fun': self.ecmy.geq_diffs, 'jac': self.ecmy.geq_diffs_grad, 'args':("lower",)})
+
+        # constrain deficits
+        def con_d(ge_x, bound="lower"):
+            if bound == "lower":
+                con = ge_x[self.N**2:self.N**2+self.N] - 1
+            else:
+                con = 1 - ge_x[self.N**2:self.N**2+self.N]
+            return(con)
+
+        def con_d_grad(ge_x, bound):
+            con_d_grad_f = ag.jacobian(con_d)
+            return(con_d_grad_f(ge_x, bound))
+
+        cons.append({'type': 'eq', 'fun': con_d, 'jac': con_d_grad, 'args':("lower",)})
 
         bounds = []
         for i in range(self.x_len):
@@ -808,7 +828,6 @@ class policies:
             # ge_dict["tau_hat"][id, ] += .1  # bump up starting taus
             # ge_dict["tau_hat"][id, id] = 1
             # ge_dict = self.ecmy.geq_solve(ge_dict["tau_hat"], ge_dict["D_hat"])
-            print(ge_dict)
             ge_x = self.ecmy.unwrap_ge_dict(ge_dict)
             thistar = opt.minimize(self.G_hat, ge_x, constraints=cons, bounds=bnds, jac=self.G_hat_grad, args=(v, id, -1, ), method="SLSQP", options={"maxiter":mxit})
             thistar_dict = self.ecmy.rewrap_ge_dict(thistar['x'])
