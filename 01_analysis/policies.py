@@ -64,8 +64,8 @@ class policies:
         self.tauj_len = self.N**2-self.N
         # self.lambda_i_len = self.hhat_len + self.tauj_len + 1 + self.N + (self.N - 1)  # ge vars, other policies, tau_ii, deficits, mil constraints
         # self.lambda_i_len = self.hhat_len + 1 + (self.N - 1)
-        self.lambda_i_x_len = self.hhat_len + 1
-        self.lambda_i_len = self.hhat_len + 1 + self.N # one is own policy
+        self.lambda_i_x_len = self.hhat_len + 1 # one is own policy (redundant?)
+        self.lambda_i_len = self.lambda_i_x_len + self.N
         # self.lambda_i_len_td = self.lambda_i_len + self.N ** 2 - self.N # add constraints on others' policies
 
         # NOTE: values less than zero seem to mess with best response
@@ -277,7 +277,7 @@ class policies:
         return(out.T)
 
 
-    def Lzeros(self, ge_x_lbda_i_x, v, tau_hat, war_vals, id, geq_diffs=False, bound="lower", td=False):
+    def Lzeros(self, ge_x_lbda_i_x, v, tau_hat, war_vals, id, enforce_geq=False, bound="lower", td=False):
         """Short summary.
 
         Parameters
@@ -319,7 +319,7 @@ class policies:
         tau_ii_diff = np.array([ge_dict["tau_hat"][id, id] - 1])
 
         tau_diffs = self.tau_diffs(ge_dict["tau_hat"], tau_hat, id)
-        if geq_diffs == True:
+        if enforce_geq == True:
             geq_diffs = self.ecmy.geq_diffs(x)
             D_diffs = ge_dict["D_hat"] - 1
 
@@ -332,13 +332,14 @@ class policies:
         # if geq == True:
         #     out.extend(geq_diffs)
         out.extend(tau_diffs)
-        if geq_diffs == True:
+        if enforce_geq == True:
             out.extend(D_diffs)
             out.extend(geq_diffs)
         # if td == True:
         #     out.extend(tau_diffs)
         out.extend(tau_ii_diff)
-        out.extend(war_diffs)  # NOTE: converted these to equality constraints, where negative values turned to zeros
+        # out.extend(war_diffs)  # NOTE: converted these to equality constraints, where negative values turned to zeros
+        out.extend(war_diffs * lambda_dict_i["chi_i"])  # complementary slackness
 
         # NOTE: squaring output helps keep solutions away from corners, sometimes...
         if bound == "lower":
@@ -430,9 +431,9 @@ class policies:
         # cons.append({'type': 'ineq','fun': self.Lzeros_all, 'jac':self.Lzeros_all_jac, 'args':(m,"lower",)})
         # cons.append({'type': 'ineq','fun': self.Lzeros_all, 'jac':self.Lzeros_all_jac, 'args':(m,"upper",)})
         for i in range(self.N):
-            cons.append({'type': 'ineq','fun': self.Lzeros_i_wrap, 'jac':self.Lzeros_i_wrap_jac, 'args':(m, i, "lower",)})
-            cons.append({'type': 'ineq','fun': self.Lzeros_i_wrap, 'jac':self.Lzeros_i_wrap_jac, 'args':(m, i, "upper",)})
-            # cons.append({'type': 'eq','fun': self.Lzeros_i_wrap, 'jac':self.Lzeros_i_wrap_jac, 'args':(m, i, "lower",)})
+            # cons.append({'type': 'ineq','fun': self.Lzeros_i_wrap, 'jac':self.Lzeros_i_wrap_jac, 'args':(m, i, "lower",)})
+            # cons.append({'type': 'ineq','fun': self.Lzeros_i_wrap, 'jac':self.Lzeros_i_wrap_jac, 'args':(m, i, "upper",)})
+            cons.append({'type': 'eq','fun': self.Lzeros_i_wrap, 'jac':self.Lzeros_i_wrap_jac, 'args':(m, i, "lower",)})
 
         cons.append({'type': 'eq', 'fun': self.ecmy.geq_diffs, 'jac': self.ecmy.geq_diffs_grad, 'args':("lower",)})
 
@@ -541,7 +542,7 @@ class policies:
 
         return(rhoM)
 
-    def Lsolve(self, v, m, theta_dict, id, epsilon=None, mtd="lm"):
+    def Lsolve(self, v, m, theta_dict, id, epsilon=None, mtd="lm", enforce_geq=False):
         """Solves for zeros of Lagrange optimality conditions for id's policies, holding others' at values in tau_hat. If ft==True, algorithm begins searching at free trade values for gov id. Otherwise, tries "lm" and "hybr" methods recursively starting at tau_hat, before trying each starting at free trade.
 
         Parameters
@@ -585,7 +586,7 @@ class policies:
 
         # fct = .1  # NOTE: convergence of hybr and lm is sensitive to this value
         # out = opt.root(self.Lzeros_tixlbda, x0=np.array(x), method=mtd, args=(v, ge_dict_sv["tau_hat"], wv_i, id, True, ), options={"factor":fct})
-        out = opt.root(self.Lzeros, x0=ge_x_lbda_i_x, method=mtd, args=(v, ge_dict_sv["tau_hat"], wv_i, id, ), options={'ftol':1e-12})
+        out = opt.root(self.Lzeros, x0=ge_x_lbda_i_x, method=mtd, args=(v, ge_dict_sv["tau_hat"], wv_i, id, enforce_geq, ), options={'ftol':1e-12})
         if out['success'] == True:
             print("success:" + str(id))
             print(out)

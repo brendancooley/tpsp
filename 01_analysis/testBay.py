@@ -97,7 +97,9 @@ m = m.T
 
 v = np.ones(pecmy.N)
 
-# pecmy.Lsolve(v, m, theta_dict_init, 0)
+# x = pecmy.Lsolve(v, m, theta_dict_init, 2, enforce_geq=True)
+# x_dict = pecmy.ecmy.rewrap_ge_dict(x)
+# x_dict["tau_hat"] * pecmy.ecmy.tau
 
 out = pecmy.Lzeros_min(np.ones(pecmy.N), theta_dict_init)
 print(out)
