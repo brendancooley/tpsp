@@ -88,25 +88,17 @@ theta_dict_init["gamma"] = 1
 
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
 
-
-
 imp.reload(policies)
 imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
-
-m = pecmy.M / np.ones((pecmy.N, pecmy.N))
-m = m.T
-
-v = np.ones(pecmy.N)
-
-Lsolve_test= pecmy.Lsolve(v, m, theta_dict_init, 0)
 
 out = pecmy.Lzeros_min(np.ones(pecmy.N), theta_dict_init)
 print(out)
 
 # pecmy.Lzeros_theta_min(theta_dict_init, np.ones(pecmy.N))
 
-
+# m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+# m = m.T
 #
 # x_lbda_theta_sv = np.zeros(pecmy.x_len+pecmy.lambda_i_len*pecmy.N+3+pecmy.N)
 # x_lbda_theta_sv[0:pecmy.x_len] = 1
