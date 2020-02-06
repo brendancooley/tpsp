@@ -125,8 +125,9 @@ class policies:
         # if affinity is None:
         #     affinity = np.zeros((self.N, self.N))
 
-        ge_dict = self.ecmy.rewrap_ge_dict(x)
 
+        ge_dict = self.ecmy.rewrap_ge_dict(x)
+        print(ge_dict)
         Uhat = self.ecmy.U_hat(ge_dict)
         # Ghat = Uhat ** (1 - b) * ge_dict["r_hat"] ** b
         Ghat = Uhat * self.R_hat(ge_dict, v)
@@ -139,6 +140,7 @@ class policies:
             return(Ghat*sign)
 
     def G_hat_grad(self, x, v, id, sign):
+        print(x)
         G_hat_grad_f = ag.grad(self.G_hat)
         return(G_hat_grad_f(x, v, id, sign))
 
@@ -763,7 +765,9 @@ class policies:
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
         return(ge_dict["D_hat"] - 1)
 
-    def br_cons_ipyopt(self, ge_x, v, id):
+    def br_cons_ipyopt(self, ge_x):
+
+        print(ge_x)
 
         geq_diffs = self.ecmy.geq_diffs(ge_x)
         D_diffs = self.D_diffs(ge_x)
@@ -774,12 +778,12 @@ class policies:
 
         return(np.array(out))
 
-    def br_cons_ipyopt_wrap(v, id):
-        def f(x):
-            return(self.br_cons_ipyopt(x, v, id))
-        return(f)
+    def br_cons_ipyopt_jac(self, ge_x):
+        print(ge_x)
+        br_cons_ipyopt_jac_f = ag.jacobian(self.br_cons_ipyopt)
+        return(br_cons_ipyopt_jac_f(ge_x))
 
-    def br_bounds_ipyopt(self, ge_x_sv, id):
+    def br_bounds_ipyopt(self, ge_x_sv, id, bound="lower"):
 
         tau_hat = self.ecmy.rewrap_ge_dict(ge_x_sv)["tau_hat"]
 
@@ -794,33 +798,50 @@ class policies:
                     if i != id:
                         tau_L[i, j] = tau_hat[i, j]
                         tau_U[i, j] = tau_hat[i, j]
+                    else:
+                        tau_L[i, j] = 1 / self.ecmy.tau[i, j]
                 else:
-                    tau_U[i, j] = 1
+                    tau_L[i, j] = 1.
+                    tau_U[i, j] = 1.
+
 
         x_L[0:self.N**2] = tau_L.ravel()
         x_U[0:self.N**2] = tau_U.ravel()
+        if bound == "lower":
+            return(x_L)
+        else:
+            return(x_U)
 
-        return(x_L, x_U)
-
-    def br_bounds_ipyopt_wrap(v, id):
-        def f(x):
-            return(self.br_bounds_ipyopt(x, v, id))
-        return(f)
-
-    def G_hat_wrap(v, id, sign):
+    def G_hat_wrap(self, v, id, sign):
         def f(x):
             return(self.G_hat(x, v, id, sign=sign))
         return(f)
 
-    def br_ipyopt(self, ge_x, v, id):
+    def G_hat_grad_wrap(self, v, id, sign):
+        def f(x):
+            return(self.G_hat_grad(x, v, id, sign))
+        return(f)
 
-        # construct constraint jacobian and sparsity indices
-        # construct grad of f
-        # construct hessian sparsity indices (Ipopt will approximate)
+    def br_ipyopt(self, v, id):
 
-        problem = ipyopt.Problem(self.x_len, self.br_bounds_ipyopt_wrap(v, id)[0], self.br_bounds_ipyopt_wrap(v, id)[1], self.hhat_len+self.N, 0, 0, )
+        # verbose
+        ipyopt.set_loglevel(ipyopt.LOGGING_DEBUG)
 
-        return(0)
+        x0 = self.v_sv(id, np.ones(self.x_len), v)
+        g_len = self.x_len - self.N**2
+
+        g_sparsity_indices_a = np.array(np.meshgrid(range(g_len), range(self.x_len))).T.reshape(-1,2)
+        g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
+        h_sparsity_indices_a = np.array(np.meshgrid(range(self.x_len), range(self.x_len))).T.reshape(-1,2)
+        h_sparsity_indices = (h_sparsity_indices_a[:,0], h_sparsity_indices_a[:,1])
+
+        problem = ipyopt.Problem(self.x_len, self.br_bounds_ipyopt(x0, id, "lower"), self.br_bounds_ipyopt(x0, id, "upper"), g_len, np.zeros(g_len), np.zeros(g_len), g_sparsity_indices, h_sparsity_indices, self.G_hat_wrap(v, id, -1), self.G_hat_grad_wrap(v, id, -1), self.br_cons_ipyopt, self.br_cons_ipyopt_jac)
+
+        problem.set(print_level=12)
+        print("solving...")
+        _x, obj, status = problem.solve(x0)
+
+        return(_x, obj, status)
 
     def br(self, ge_x, v, wv_i, id, mil=True, method="SLSQP", affinity=None):
         """Calculate optimal policies for gov id, given others' policies in ge_x.

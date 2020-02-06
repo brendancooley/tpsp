@@ -92,25 +92,31 @@ imp.reload(policies)
 imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
 
-pecmy.br_bounds_ipyopt(np.ones(pecmy.x_len), 1)
-np.meshgrid(range(pecmy.x_len), range(self.x_len))
+v = np.array([1., 1.3, 1.9, 1.1, 1, 1.1])
+id = 0
+
+print(pecmy.x_len - pecmy.N**2)
+x0 = pecmy.v_sv(id, np.ones(pecmy.x_len), v)
+print(pecmy.br_bounds_ipyopt(x0, id, "lower"))
+print(pecmy.br_bounds_ipyopt(x0, id, "upper"))
+
+pecmy.br_ipyopt(v, id)
 
 # m = pecmy.M / np.ones((pecmy.N, pecmy.N))
 # m = m.T
-m = np.diag(pecmy.M)
-
-# v = np.ones(pecmy.N)
-v = np.array([1., 1.3, 1.9, 1.1, 1, 1.1])
-test = pecmy.rewrap_lambda_i(np.ones(pecmy.lambda_i_len))
-len(test["tau_hat"])
-pecmy.lambda_i_len
-test2 = pecmy.unwrap_lambda_i(test)
-len(test2)
-pecmy.x_len
-
-wv = pecmy.war_vals(v, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N)))
-out = pecmy.Lzeros_eq(v, wv)
-print(out)
+# m = np.diag(pecmy.M)
+#
+# # v = np.ones(pecmy.N)
+# test = pecmy.rewrap_lambda_i(np.ones(pecmy.lambda_i_len))
+# len(test["tau_hat"])
+# pecmy.lambda_i_len
+# test2 = pecmy.unwrap_lambda_i(test)
+# len(test2)
+# pecmy.x_len
+#
+# wv = pecmy.war_vals(v, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N)))
+# out = pecmy.Lzeros_eq(v, wv)
+# print(out)
 
 # out = pecmy.Lzeros_min(v, theta_dict_init, mtd="SLSQP")
 # print(out)

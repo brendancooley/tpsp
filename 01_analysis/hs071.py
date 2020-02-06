@@ -29,6 +29,7 @@ g_U = array([2.0e19, 40.0])
 
 
 def eval_f(x):
+    print(x)
     assert len(x) == nvar
     return x[0] * x[3] * (x[0] + x[1] + x[2]) + x[2]
 
@@ -104,6 +105,7 @@ def apply_new(_x):
 ipyopt.set_loglevel(ipyopt.LOGGING_DEBUG)
 nlp = ipyopt.Problem(nvar, x_L, x_U, ncon, g_L, g_U, eval_jac_g.sparsity_indices,
                      eval_h.sparsity_indices, eval_f, eval_grad_f, eval_g, eval_jac_g)
+nlp.set(print_level=12)
 
 x0 = array([1.0, 5.0, 5.0, 1.0])
 pi0 = array([1.0, 1.0])
