@@ -89,18 +89,16 @@ theta_dict_init["gamma"] = 1
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
 
 imp.reload(policies)
-imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
 
 v = np.array([1., 1.3, 1.9, 1.1, 1, 1.1])
-id = 0
+id = 5
 
-print(pecmy.x_len - pecmy.N**2)
-x0 = pecmy.v_sv(id, np.ones(pecmy.x_len), v)
-print(pecmy.br_bounds_ipyopt(x0, id, "lower"))
-print(pecmy.br_bounds_ipyopt(x0, id, "upper"))
+_x, obj, status = pecmy.br_ipyopt(v, id)
 
-pecmy.br_ipyopt(v, id)
+print(_x)
+print(obj)
+print(status)
 
 # m = pecmy.M / np.ones((pecmy.N, pecmy.N))
 # m = m.T

@@ -125,9 +125,7 @@ class policies:
         # if affinity is None:
         #     affinity = np.zeros((self.N, self.N))
 
-
         ge_dict = self.ecmy.rewrap_ge_dict(x)
-        print(ge_dict)
         Uhat = self.ecmy.U_hat(ge_dict)
         # Ghat = Uhat ** (1 - b) * ge_dict["r_hat"] ** b
         Ghat = Uhat * self.R_hat(ge_dict, v)
@@ -140,7 +138,6 @@ class policies:
             return(Ghat*sign)
 
     def G_hat_grad(self, x, v, id, sign):
-        print(x)
         G_hat_grad_f = ag.grad(self.G_hat)
         return(G_hat_grad_f(x, v, id, sign))
 
@@ -158,6 +155,7 @@ class policies:
 
         v_mat = np.array([v])
         r = self.r_v(ge_dict, v)
+        # print(r)
         if np.any(r == 0):
             print("r_v vector has zeros")
             print(r)
@@ -169,6 +167,7 @@ class policies:
         r_prime = np.sum(tau_prime_mv * X_prime, axis=1)
 
         r_hat = r_prime / r
+        # print(r_hat)
         # r_hat[r==0] = 0
 
         return(r_hat)
@@ -365,12 +364,6 @@ class policies:
         out.extend(self.ecmy.geq_diffs(ge_x))
         out.extend(self.ecmy.rewrap_ge_dict(ge_x)["D_hat"] - 1)
 
-        self.tick += 1
-        if self.tick == 100:
-            print(out)
-            print(self.ecmy.rewrap_ge_dict(ge_x))
-            self.tick = 0
-
         return(np.array(out))
 
     def Lzeros_cor_jac(self, x_lbda, v, wv):
@@ -492,11 +485,6 @@ class policies:
 
     def Lzeros_loss(self, x_lbda_theta_sv):
 
-        self.tick += 1
-        if self.tick == 100:
-            print(self.ecmy.rewrap_ge_dict(x_lbda_theta_sv[0:self.x_len], ))
-            print(x_lbda_theta_sv)
-            self.tick = 0
         tau_hat = self.ecmy.rewrap_ge_dict(x_lbda_theta_sv[0:self.x_len])["tau_hat"]
         loss = 0
         for i in range(self.N):
@@ -765,33 +753,64 @@ class policies:
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
         return(ge_dict["D_hat"] - 1)
 
-    def br_cons_ipyopt(self, ge_x):
+    def G_hat_grad_ipyopt(self, ge_x, out, v, id):
+        G_hat_grad_f = ag.grad(self.G_hat)
+        out[0:len(out)] = G_hat_grad_f(ge_x, v, id, -1)
 
-        print(ge_x)
+    def G_hat_grad_ipyopt_wrap(self, v, id):
+        def f(ge_x, out):
+            return(self.G_hat_grad_ipyopt(ge_x, out, v, id))
+        return(f)
 
+    def br_cons_ipyopt(self, ge_x, out, id):
+
+        ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
+
+        tau_diffs = self.tau_diffs(ge_dict["tau_hat"], np.reshape(np.repeat(1., self.N**2), (self.N, self.N)), id)
+        tau_ii_diff = ge_dict["tau_hat"][id, id] - 1.
         geq_diffs = self.ecmy.geq_diffs(ge_x)
         D_diffs = self.D_diffs(ge_x)
 
-        out = []
-        out.extend(geq_diffs)
-        out.extend(D_diffs)
+        out_new = []
+        # out_new.extend(tau_diffs)
+        # out_new.extend(np.array([tau_ii_diff]))
+        out_new.extend(geq_diffs)
+        # out_new.extend(D_diffs)
 
-        return(np.array(out))
+        out[()] = np.array(out_new)
 
-    def br_cons_ipyopt_jac(self, ge_x):
-        print(ge_x)
-        br_cons_ipyopt_jac_f = ag.jacobian(self.br_cons_ipyopt)
-        return(br_cons_ipyopt_jac_f(ge_x))
+        return(out)
+
+    def br_cons_ipyopt_wrap(self, id):
+        def f(x, out):
+            return(self.br_cons_ipyopt(x, out, id))
+        return(f)
+
+    def br_cons_ipyopt_jac(self, ge_x, out, id):
+        # br_cons_ipyopt_jac_f = ag.jacobian(self.br_cons_ipyopt)
+        br_cons_ipyopt_jac_f = ag.jacobian(self.ecmy.geq_diffs)
+        # mat = br_cons_ipyopt_jac_f(ge_x, out, id)
+        mat = br_cons_ipyopt_jac_f(ge_x)
+        out[()] = mat.ravel()
+        return(out)
+
+    def br_cons_ipyopt_jac_wrap(self, id):
+        def f(x, out):
+            return(self.br_cons_ipyopt_jac(x, out, id))
+        return(f)
 
     def br_bounds_ipyopt(self, ge_x_sv, id, bound="lower"):
 
         tau_hat = self.ecmy.rewrap_ge_dict(ge_x_sv)["tau_hat"]
 
+        # TODO: set lower bounds slightly above zero
         x_L = np.zeros(self.x_len)
         x_U = np.repeat(np.inf, self.x_len)
 
-        tau_L = np.ones((self.N, self.N))
-        tau_U = np.reshape(np.repeat(np.inf, self.N ** 2), (self.N, self.N))
+        tau_L = 1. / self.ecmy.tau
+        # tau_U = np.reshape(np.repeat(np.inf, self.N ** 2), (self.N, self.N))
+        tau_U = (np.max(self.ecmy.tau, axis=1) / self.ecmy.tau.T).T
+        np.fill_diagonal(tau_U, 1.)
         for i in range(self.N):
             for j in range(self.N):
                 if i != j:
@@ -807,6 +826,11 @@ class policies:
 
         x_L[0:self.N**2] = tau_L.ravel()
         x_U[0:self.N**2] = tau_U.ravel()
+
+        # deficits
+        x_L[self.N**2:self.N**2+self.N] = 1.
+        x_U[self.N**2:self.N**2+self.N] = 1.
+
         if bound == "lower":
             return(x_L)
         else:
@@ -817,27 +841,26 @@ class policies:
             return(self.G_hat(x, v, id, sign=sign))
         return(f)
 
-    def G_hat_grad_wrap(self, v, id, sign):
-        def f(x):
-            return(self.G_hat_grad(x, v, id, sign))
-        return(f)
-
     def br_ipyopt(self, v, id):
 
         # verbose
         ipyopt.set_loglevel(ipyopt.LOGGING_DEBUG)
 
+        # TODO: jacs and grads and constraints need second "out" parameter
+        # TODO: how does assigning sparsity indices work
+
         x0 = self.v_sv(id, np.ones(self.x_len), v)
-        g_len = self.x_len - self.N**2
+        # g_len = self.x_len - (self.N - 1)
+        g_len = self.x_len - self.N**2 - self.N
 
         g_sparsity_indices_a = np.array(np.meshgrid(range(g_len), range(self.x_len))).T.reshape(-1,2)
         g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
         h_sparsity_indices_a = np.array(np.meshgrid(range(self.x_len), range(self.x_len))).T.reshape(-1,2)
         h_sparsity_indices = (h_sparsity_indices_a[:,0], h_sparsity_indices_a[:,1])
 
-        problem = ipyopt.Problem(self.x_len, self.br_bounds_ipyopt(x0, id, "lower"), self.br_bounds_ipyopt(x0, id, "upper"), g_len, np.zeros(g_len), np.zeros(g_len), g_sparsity_indices, h_sparsity_indices, self.G_hat_wrap(v, id, -1), self.G_hat_grad_wrap(v, id, -1), self.br_cons_ipyopt, self.br_cons_ipyopt_jac)
+        problem = ipyopt.Problem(self.x_len, self.br_bounds_ipyopt(x0, id, "lower"), self.br_bounds_ipyopt(x0, id, "upper"), g_len, np.zeros(g_len), np.zeros(g_len), g_sparsity_indices, h_sparsity_indices, self.G_hat_wrap(v, id, -1), self.G_hat_grad_ipyopt_wrap(v, id), self.br_cons_ipyopt_wrap(id), self.br_cons_ipyopt_jac_wrap(id))
 
-        problem.set(print_level=12)
+        problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
         print("solving...")
         _x, obj, status = problem.solve(x0)
 

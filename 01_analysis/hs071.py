@@ -62,10 +62,8 @@ def eval_jac_g(x, out):
                2.0 * x[3]]
     return out
 
-
 eval_jac_g.sparsity_indices = (array([0, 0, 0, 0, 1, 1, 1, 1]),
                                array([0, 1, 2, 3, 0, 1, 2, 3]))
-
 
 def eval_h(x, lagrange, obj_factor, out):
     out[0] = obj_factor * (2 * x[3])
@@ -109,6 +107,10 @@ nlp.set(print_level=12)
 
 x0 = array([1.0, 5.0, 5.0, 1.0])
 pi0 = array([1.0, 1.0])
+
+eval_jac_g(x0, zeros(8))
+eval_jac_g.sparsity_indices
+
 
 print("Going to call solve")
 print("x0 = {}".format(x0))
