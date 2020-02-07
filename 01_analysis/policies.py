@@ -239,7 +239,7 @@ class policies:
 
         return(L_i)
 
-    def war_vals(self, v, m, theta_dict, epsilon, c_bar=10):
+    def war_vals(self, v, m, theta_dict, c_bar=10):
         """Calculate war values (regime change value minus war costs)
 
         Parameters
@@ -512,12 +512,12 @@ class policies:
         """
 
         G = self.G_hat(ge_x, v, 0, all=True)
-        war_diffs = war_vals - G
+        war_diffs = G - war_vals
 
         # turn to zero where negative
-        wdz = np.where(war_diffs < 0, 0, war_diffs)
+        # wdz = np.where(war_diffs < 0, 0, war_diffs)
 
-        return(wdz)
+        return(war_diffs)
 
     def chi(self, m, theta_dict):
 
@@ -762,41 +762,39 @@ class policies:
             return(self.G_hat_grad_ipyopt(ge_x, out, v, id))
         return(f)
 
-    def br_cons_ipyopt(self, ge_x, out, id):
+    def br_cons_ipyopt(self, ge_x, out, id, v, wv=None):
 
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
-
-        tau_diffs = self.tau_diffs(ge_dict["tau_hat"], np.reshape(np.repeat(1., self.N**2), (self.N, self.N)), id)
-        tau_ii_diff = ge_dict["tau_hat"][id, id] - 1.
         geq_diffs = self.ecmy.geq_diffs(ge_x)
-        D_diffs = self.D_diffs(ge_x)
-
-        out_new = []
-        # out_new.extend(tau_diffs)
-        # out_new.extend(np.array([tau_ii_diff]))
-        out_new.extend(geq_diffs)
-        # out_new.extend(D_diffs)
-
-        out[()] = np.array(out_new)
+        if not wv is None:
+            war_diffs = self.war_diffs(ge_x, v, wv, id)
+            out[()] = np.concatenate((geq_diffs, war_diffs))
+        else:
+            out[()] = np.array(geq_diffs)
 
         return(out)
 
-    def br_cons_ipyopt_wrap(self, id):
+    def br_cons_ipyopt_wrap(self, id, v, wv):
         def f(x, out):
-            return(self.br_cons_ipyopt(x, out, id))
+            return(self.br_cons_ipyopt(x, out, id, v, wv))
         return(f)
 
-    def br_cons_ipyopt_jac(self, ge_x, out, id):
-        # br_cons_ipyopt_jac_f = ag.jacobian(self.br_cons_ipyopt)
-        br_cons_ipyopt_jac_f = ag.jacobian(self.ecmy.geq_diffs)
-        # mat = br_cons_ipyopt_jac_f(ge_x, out, id)
-        mat = br_cons_ipyopt_jac_f(ge_x)
-        out[()] = mat.ravel()
+    def br_cons_ipyopt_jac(self, ge_x, out, id, v, wv):
+
+        geq_jac_f = ag.jacobian(self.ecmy.geq_diffs)
+        mat_geq = geq_jac_f(ge_x)
+
+        if not wv is None:
+            wd_jac_f = ag.jacobian(self.war_diffs)
+            mat_wd = wd_jac_f(ge_x, v, wv, id)
+            out[()] = np.concatenate((mat_geq.ravel(), mat_wd.ravel()))
+        else:
+            out[()] = mat_geq.ravel()
         return(out)
 
-    def br_cons_ipyopt_jac_wrap(self, id):
+    def br_cons_ipyopt_jac_wrap(self, id, v, wv):
         def f(x, out):
-            return(self.br_cons_ipyopt_jac(x, out, id))
+            return(self.br_cons_ipyopt_jac(x, out, id, v, wv))
         return(f)
 
     def br_bounds_ipyopt(self, ge_x_sv, id, bound="lower"):
@@ -841,24 +839,28 @@ class policies:
             return(self.G_hat(x, v, id, sign=sign))
         return(f)
 
-    def br_ipyopt(self, v, id):
+    def br_ipyopt(self, v, id, wv=None):
 
         # verbose
         ipyopt.set_loglevel(ipyopt.LOGGING_DEBUG)
 
-        # TODO: jacs and grads and constraints need second "out" parameter
-        # TODO: how does assigning sparsity indices work
-
         x0 = self.v_sv(id, np.ones(self.x_len), v)
         # g_len = self.x_len - (self.N - 1)
-        g_len = self.x_len - self.N**2 - self.N
+        geq_c_len = self.x_len - self.N**2 - self.N
+        if not wv is None:
+            g_len = self.x_len - self.N**2
+            g_upper = np.zeros(self.x_len - self.N**2)
+            g_upper[geq_c_len:] = np.inf
+            print(g_upper)
+        else:
+            g_len = geq_c_len
 
         g_sparsity_indices_a = np.array(np.meshgrid(range(g_len), range(self.x_len))).T.reshape(-1,2)
         g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
         h_sparsity_indices_a = np.array(np.meshgrid(range(self.x_len), range(self.x_len))).T.reshape(-1,2)
         h_sparsity_indices = (h_sparsity_indices_a[:,0], h_sparsity_indices_a[:,1])
 
-        problem = ipyopt.Problem(self.x_len, self.br_bounds_ipyopt(x0, id, "lower"), self.br_bounds_ipyopt(x0, id, "upper"), g_len, np.zeros(g_len), np.zeros(g_len), g_sparsity_indices, h_sparsity_indices, self.G_hat_wrap(v, id, -1), self.G_hat_grad_ipyopt_wrap(v, id), self.br_cons_ipyopt_wrap(id), self.br_cons_ipyopt_jac_wrap(id))
+        problem = ipyopt.Problem(self.x_len, self.br_bounds_ipyopt(x0, id, "lower"), self.br_bounds_ipyopt(x0, id, "upper"), g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.G_hat_wrap(v, id, -1), self.G_hat_grad_ipyopt_wrap(v, id), self.br_cons_ipyopt_wrap(id, v, wv), self.br_cons_ipyopt_jac_wrap(id, v, wv))
 
         problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
         print("solving...")

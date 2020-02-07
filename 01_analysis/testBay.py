@@ -56,7 +56,7 @@ nu = np.genfromtxt(dataPath + 'nu.csv', delimiter=',')
 
 params = {"beta":beta,"theta":theta,"mu":mu,"nu":nu}
 
-""# Data
+# Data
 tau = np.genfromtxt(dataPath + 'tau.csv', delimiter=',')
 Xcif = np.genfromtxt(dataPath + 'Xcif.csv', delimiter=',')
 Y = np.genfromtxt(dataPath + 'Y.csv', delimiter=',')
@@ -92,16 +92,29 @@ imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
 
 v = np.array([1., 1.3, 1.9, 1.1, 1, 1.1])
-id = 5
+id = 0
+m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+m = m.T
+wv = pecmy.war_vals(v, m, theta_dict_init)
 
-_x, obj, status = pecmy.br_ipyopt(v, id)
+# _x, obj, status = pecmy.br_ipyopt(v, id, None)
+#
+# print(_x)
+# print(obj)
+# print(status)
+
+# br = pecmy.br(pecmy.v_sv(id, np.ones(pecmy.x_len), v), v, wv[:,id], id)
+# print(pecmy.ecmy.rewrap_ge_dict(br)["tau_hat"]*pecmy.ecmy.tau)
+
+_x, obj, status = pecmy.br_ipyopt(v, id, wv[:,id])
 
 print(_x)
 print(obj)
 print(status)
 
-# m = pecmy.M / np.ones((pecmy.N, pecmy.N))
-# m = m.T
+x_dict = pecmy.ecmy.rewrap_ge_dict(_x)
+print(x_dict["tau_hat"]*pecmy.ecmy.tau)
+
 # m = np.diag(pecmy.M)
 #
 # # v = np.ones(pecmy.N)
