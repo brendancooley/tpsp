@@ -81,9 +81,8 @@ E = Eq + Ex
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
 theta_dict_init = dict()
-theta_dict_init["sigma_epsilon"] = 1
-theta_dict_init["c_hat"] = .1
-theta_dict_init["alpha"] = .0001
+theta_dict_init["c_hat"] = .322
+theta_dict_init["alpha"] = 1.917e-04
 theta_dict_init["gamma"] = 1
 
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
@@ -91,29 +90,47 @@ theta_dict_init["gamma"] = 1
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
 
-v = np.array([1., 1.3, 1.9, 1.1, 1, 1.1])
+v = np.array([1.030, 1.098, 1.135, 1.021, 1.000, 1.014])
 id = 0
-m = pecmy.M / np.ones((pecmy.N, pecmy.N))
-m = m.T
+# m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+# m = m.T
+m = np.diag(pecmy.M)
 wv = pecmy.war_vals(v, m, theta_dict_init)
 
-# _x, obj, status = pecmy.br_ipyopt(v, id, None)
-#
-# print(_x)
-# print(obj)
-# print(status)
-
-# br = pecmy.br(pecmy.v_sv(id, np.ones(pecmy.x_len), v), v, wv[:,id], id)
-# print(pecmy.ecmy.rewrap_ge_dict(br)["tau_hat"]*pecmy.ecmy.tau)
-
-_x, obj, status = pecmy.br_ipyopt(v, id, wv[:,id])
+pecmy.estimator_bounds("lower")
+theta_x_sv = pecmy.unwrap_theta(theta_dict_init)
+_x, obj, status = pecmy.estimator(v, theta_x_sv, nash_eq=True)
 
 print(_x)
 print(obj)
 print(status)
 
-x_dict = pecmy.ecmy.rewrap_ge_dict(_x)
-print(x_dict["tau_hat"]*pecmy.ecmy.tau)
+# _x, obj, status = pecmy.br_ipyopt(v, id, None)
+#
+
+
+# br = pecmy.br(pecmy.v_sv(id, np.ones(pecmy.x_len), v), v, wv[:,id], id)
+# print(pecmy.ecmy.rewrap_ge_dict(br)["tau_hat"]*pecmy.ecmy.tau)
+
+# _x, obj, status = pecmy.Lsolve_i_ipopt(id, v, wv[:,id])
+#
+# print(_x)
+# print(obj)
+# print(status)
+#
+# x_dict = pecmy.ecmy.rewrap_ge_dict(_x[0:pecmy.x_len])
+# print(x_dict["tau_hat"]*pecmy.ecmy.tau)
+# print("multipliers:")
+# print(_x[pecmy.x_len:])
+
+# _x, obj, status = pecmy.br_ipyopt(v, id, wv[:,id])
+#
+# print(_x)
+# print(obj)
+# print(status)
+#
+# x_dict = pecmy.ecmy.rewrap_ge_dict(_x)
+# print(x_dict["tau_hat"]*pecmy.ecmy.tau)
 
 # m = np.diag(pecmy.M)
 #
