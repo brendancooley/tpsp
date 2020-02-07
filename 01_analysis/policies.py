@@ -17,7 +17,7 @@ import ipyopt
 
 class policies:
 
-    def __init__(self, data, params, ROWname, results_path=None, rcv_ft=False):
+    def __init__(self, data, params, ROWname, results_path):
         """
 
         Parameters
@@ -76,32 +76,18 @@ class policies:
         self.lambda_i_len = self.lambda_i_x_len + self.N
         # self.lambda_i_len_td = self.lambda_i_len + self.N ** 2 - self.N # add constraints on others' policies
 
-        # NOTE: values less than zero seem to mess with best response
-        # self.b_vals = np.arange(0, 1.1, .1)  # preference values for which to generate regime change value matrix.
-        self.v_step = .1
-        self.v_vals = np.arange(1, np.max(self.ecmy.tau), self.v_step)
-        # self.v_vals = np.arange(1, 1.1, .1)
-        self.v_max = np.max(self.ecmy.tau, axis=1) - .1
-        np.savetxt(results_path + "v_vals.csv", self.v_vals, delimiter=",")
-
         self.x_len = self.ecmy.ge_x_len
         self.xlvt_len = self.x_len + self.lambda_i_len * self.N + self.N + 3
 
         self.chi_min = .001
-        # rcv_path = results_path + "rcv.csv"
-        # if not os.path.isfile(rcv_path):
-        #     rcv = self.pop_rc_vals(rcv_ft=rcv_ft)
-        #     self.rc_vals_to_csv(rcv, rcv_path)
-        #     self.rcv = rcv
-        # else:
-        #     self.rcv = self.read_rc_vals(rcv_path)
 
         ge_x_ft_path = results_path + "ge_x_ft.csv"
         if not os.path.isfile(ge_x_ft_path):
             self.ge_x_ft = np.zeros((self.N, self.x_len))
             for i in range(self.N):
+                print(str(i) + "'s free trade vector")
                 ge_x_ft_i = self.ft_sv(i, np.ones(self.x_len))
-                ge_x_ft[i, ] = ge_x_ft_i
+                self.ge_x_ft[i, ] = ge_x_ft_i
             np.savetxt(ge_x_ft_path, self.ge_x_ft, delimiter=",")
         else:
             self.ge_x_ft = np.genfromtxt(ge_x_ft_path, delimiter=",")
@@ -420,7 +406,7 @@ class policies:
         g_sparsity_indices_a = np.array(np.meshgrid(range(g_len), range(x_len))).T.reshape(-1,2)
         g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
         # NOTE: Hessian only depends on taus
-        h_sparsity_indices_a = np.array(np.meshgrid(range(self.N**2), range(self.N**2))).T.reshape(-1,2)
+        h_sparsity_indices_a = np.array(np.meshgrid(range(x_len), range(x_len))).T.reshape(-1,2)
         h_sparsity_indices = (h_sparsity_indices_a[:,0], h_sparsity_indices_a[:,1])
 
         if nash_eq == False:

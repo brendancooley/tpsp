@@ -81,16 +81,16 @@ E = Eq + Ex
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
 theta_dict_init = dict()
-theta_dict_init["c_hat"] = .322
-theta_dict_init["alpha"] = 1.917e-04
-theta_dict_init["gamma"] = 1
+theta_dict_init["c_hat"] = .32203
+theta_dict_init["alpha"] = 1.917815e-04
+theta_dict_init["gamma"] = 1.
 
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
 
 imp.reload(policies)
-pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)  # generate pecmy and rcv vals
+pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
-v = np.array([1.030, 1.098, 1.135, 1.021, 1.000, 1.014])
+v = np.array([1.0303, 1.0977, 1.1353, 1.0214, 1.0000, 1.0143])
 id = 0
 # m = pecmy.M / np.ones((pecmy.N, pecmy.N))
 # m = m.T

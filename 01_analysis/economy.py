@@ -176,7 +176,7 @@ class economy:
         geq_diffs_grad_f = ag.jacobian(self.geq_diffs)
         return(geq_diffs_grad_f(ge_x, bound))
 
-    def geq_solve(self, tau_hat, D_hat, fct=1, mtd="hybr"):
+    def geq_solve(self, tau_hat, D_hat, fct=1, mtd="lm"):
         """Short summary.
 
         Parameters
