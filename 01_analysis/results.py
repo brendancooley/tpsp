@@ -84,10 +84,10 @@ theta_dict_init["alpha"] = .0001
 theta_dict_init["gamma"] = 1.
 
 theta_x_sv = pecmy.unwrap_theta(theta_dict_init)
-_x, obj, status = pecmy.estimator(np.ones(self.N), theta_x_sv, nash_eq=True)
+_x, obj, status = pecmy.estimator(np.ones(pecmy.N), theta_x_sv, nash_eq=False)
 
 print(_x)
 print(obj)
 print(status)
 
-np.savetxt(resultsPath + "x.csv", _x, delimiter=",")
+np.savetxt(estimatesPath + "x.csv", _x, delimiter=",")
