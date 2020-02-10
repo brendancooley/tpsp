@@ -79,7 +79,7 @@ class policies:
         self.x_len = self.ecmy.ge_x_len
         self.xlvt_len = self.x_len + self.lambda_i_len * self.N + self.N + 3
 
-        self.chi_min = 0.
+        self.chi_min = 1.0e-05
 
         ge_x_ft_path = results_path + "ge_x_ft.csv"
         if not os.path.isfile(ge_x_ft_path):
@@ -138,6 +138,7 @@ class policies:
 
         v_mat = np.array([v])
         tau_mv = self.ecmy.tau - np.tile(v_mat.transpose(), (1, self.N))
+        tau_mv = tau_mv - np.diag(np.diag(tau_mv))
         # tau_mv[tau_mv < 0] = 0
         # tau_mv = np.clip(tau_mv, 0, np.inf)
         r = np.sum(tau_mv * self.ecmy.Xcif, axis=1)
@@ -151,6 +152,7 @@ class policies:
 
         tau_prime = ge_dict["tau_hat"] * self.ecmy.tau
         tau_prime_mv = tau_prime - np.tile(v_mat.transpose(), (1, self.N))
+        tau_prime_mv = tau_prime_mv - np.diag(np.diag(tau_prime_mv))
         # tau_prime_mv = np.clip(tau_prime_mv, 0, np.inf)
         X_prime = ge_dict["X_hat"] * self.ecmy.Xcif
         r_prime = np.sum(tau_prime_mv * X_prime, axis=1)
@@ -414,17 +416,16 @@ class policies:
             b_L = self.estimator_bounds("lower", True, theta_x_sv, v_sv)
             b_U = self.estimator_bounds("upper", True, theta_x_sv, v_sv)
 
+        xlvt_sv = np.concatenate((np.ones(self.x_len), np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
         if nash_eq == False:
-            xlvt_sv = np.concatenate((np.ones(self.x_len), np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
-            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac)
-        else:
-            ge_x_sv = self.v_sv_all(v_sv)
-            print(ge_x_sv)
-            xlvt_sv = np.concatenate((ge_x_sv, np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
-            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons, self.estimator_cons_jac)
 
-        # problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
-        problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter', start_with_resto="yes", required_infeasibility_reduction=0.)
+            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac)
+            problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
+        else:
+            # ge_x_sv = self.v_sv_all(v_sv)
+            # xlvt_sv = np.concatenate((ge_x_sv, np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
+            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons, self.estimator_cons_jac)
+            problem.set(print_level=7, nlp_scaling_method="none", fixed_variable_treatment='make_parameter', derivative_test="first-order")
         print("solving...")
         _x, obj, status = problem.solve(xlvt_sv)
 

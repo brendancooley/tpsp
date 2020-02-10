@@ -94,20 +94,38 @@ pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # ge
 
 xlvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
 xlvt_dict = pecmy.rewrap_xlvt(xlvt_star)
+theta_x_star = xlvt_dict["theta"]
+v_star = xlvt_dict["v"]
 ge_dict = pecmy.ecmy.rewrap_ge_dict(xlvt_dict["ge_x"])
+ge_dict["tau_hat"] * pecmy.ecmy.tau
+#
+# pecmy.ecmy.tau
+# pecmy.r_v(ge_dict, v_star)
+# pecmy.R_hat(ge_dict, v_star)
+# wv = pecmy.war_vals(v_star, pecmy.m, pecmy.rewrap_theta(theta_x_star))
+# pecmy.Lzeros_i(np.concatenate((np.ones(pecmy.x_len), np.zeros(pecmy.lambda_i_len))), 0, v_star, wv[:,0])
+#
+# test = pecmy.ecmy.tau - np.diag(np.diag(pecmy.ecmy.tau))
+
+x, obj, status = pecmy.estimator(v_star, theta_x_star, nash_eq=True)
+
+print(x)
+print(obj)
+print(status)
+
+
+
+
+
 ge_dict
 1 / pecmy.ecmy.tau
 
-theta_x_star = xlvt_dict["theta"]
-v_star = xlvt_dict["v"]
 
-pecmy.nash_eq_ipyopt(v_star, theta_x_star)
-
-
+len(pecmy.ecmy.geq_diffs(np.ones(pecmy.x_len)))
 Lzeros_i_jac_f = ag.jacobian(pecmy.Lzeros_i_xlvt)
-pecmy.Lzeros_i_xlvt(xlvt_star, 3)
-Lzeros_i_jac = Lzeros_i_jac_f(xlvt_star, 3)
-Lzeros_i_jac
+pecmy.Lzeros_i_xlvt(xlvt_star, 0)
+Lzeros_i_jac = Lzeros_i_jac_f(xlvt_star, 0)
+# Lzeros_i_jac[3, ]
 Lzeros_i_jac
 Lzeros_i_jac.shape
 Lzeros_i_jac[61, ]
