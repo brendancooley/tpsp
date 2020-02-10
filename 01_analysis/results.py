@@ -8,8 +8,9 @@ import sys
 
 import economy
 import policies
-
 import helpers_tpsp as hp
+
+location = sys.argv[1]
 
 helpersPath = os.path.expanduser("~/Dropbox (Princeton)/14_Software/python/")
 sys.path.insert(1, helpersPath)
@@ -17,8 +18,8 @@ sys.path.insert(1, helpersPath)
 import helpers
 imp.reload(helpers)
 
-mini = True
-large = False
+mini = False
+large = True
 
 runEstimates = True
 

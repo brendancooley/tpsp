@@ -21,8 +21,8 @@ sys.path.insert(1, helpersPath)
 import helpers
 imp.reload(helpers)
 
-mini = True
-large = False
+mini = False
+large = True
 rcv_ft = True
 
 runEstimates = True
@@ -90,20 +90,27 @@ theta_dict_init["gamma"] = 1.
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
-v = np.array([1.0303, 1.0977, 1.1353, 1.0214, 1.0000, 1.0143])
-id = 0
-# m = pecmy.M / np.ones((pecmy.N, pecmy.N))
-# m = m.T
-m = np.diag(pecmy.M)
-wv = pecmy.war_vals(v, m, theta_dict_init)
+### dropbox testing
 
-pecmy.estimator_bounds("lower")
-theta_x_sv = pecmy.unwrap_theta(theta_dict_init)
-_x, obj, status = pecmy.estimator(v, theta_x_sv, nash_eq=True)
 
-print(_x)
-print(obj)
-print(status)
+
+# test_x = pecmy.ft_sv(6, np.ones(pecmy.x_len))
+# print(test_x)
+
+# v = np.array([1.0303, 1.0977, 1.1353, 1.0214, 1.0000, 1.0143])
+# id = 0
+# # m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+# # m = m.T
+# m = np.diag(pecmy.M)
+# wv = pecmy.war_vals(v, m, theta_dict_init)
+#
+# pecmy.estimator_bounds("lower")
+# theta_x_sv = pecmy.unwrap_theta(theta_dict_init)
+# _x, obj, status = pecmy.estimator(v, theta_x_sv, nash_eq=True)
+#
+# print(_x)
+# print(obj)
+# print(status)
 
 # _x, obj, status = pecmy.br_ipyopt(v, id, None)
 #

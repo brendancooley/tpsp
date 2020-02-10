@@ -1,16 +1,29 @@
 import os
 import sys
 
-helpersPath = os.path.expanduser("~/Dropbox (Princeton)/14_Software/python/")
+source_path = "~/Dropbox (Princeton)/14_Software/"
+source_path_esc = "~/Dropbox\ \(Princeton\)/14_Software/"
+
+helpersPath = os.path.expanduser(source_path + "python/")
 sys.path.insert(1, helpersPath)
 
 import helpers
 
-templatePath = "~/Dropbox\ \(Princeton\)/8_Templates/"
+conda_env = "python37"
+
 github = "~/GitHub/tpsp"
 website_docs = "~/Dropbox\ \(Princeton\)/5_CV/website/static/docs"
 website_docs_github = "~/Github/brendancooley.github.io/docs"
 templatePath = "~/Dropbox\ \(Princeton\)/8_Templates/"
+
+data_dir = "~/Dropbox\ \(Princeton\)/1_Papers/tpsp/01_data/tpsp_data_large/"
+
+code_dir = "01_analysis/"
+
+hpc_base_dir = "~/tpsp/"
+hpc_data_dir = hpc_base_dir + "data/"
+hpc_source_dir = hpc_base_dir + "source/"
+hpc_code_dir = hpc_base_dir + "code/"
 
 def task_source():
     yield {
@@ -18,7 +31,16 @@ def task_source():
         'actions': ["mkdir -p templates",
                     "cp -a " + templatePath + "cooley-paper-template.latex " + "templates/",
                     "cp -a " + templatePath + "cooley-plain.latex " + "templates/",
-                    "cp -a " + templatePath + "cooley-latex-beamer.tex " + "templates/"]
+                    "cp -a " + templatePath + "cooley-latex-beamer.tex " + "templates/",
+                    "mkdir -p source/",
+                    "cp -a " + source_path_esc + "python/ source/"]
+    }
+
+def task_results():
+    yield {
+        'name': "collecting results...",
+        'actions':["conda activate + " conda_env + "; \
+        python " + code_dir + "results.py local"]
     }
 
 def task_paper():
@@ -80,3 +102,13 @@ def task_notes():
                 'actions':["pandoc --template=templates/cooley-plain.latex -o " +
                             fName + ".pdf " + notesFiles[i]]
             }
+
+def task_transfer_hpc():
+    yield {
+        'name': "transfering files to hpc...",
+        'actions':["scp -r " + code_dir + "* " + "bcooley@adroit.princeton.edu:" + hpc_code_dir,
+        "scp -r " + data_dir + "* " +
+        "bcooley@adroit.princeton.edu:" + hpc_data_dir,
+        "spc -r source/* " +
+        "bcooley@adroit.princeton.edu:" + hpc_source_dir]
+    }

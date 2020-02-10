@@ -125,6 +125,7 @@ class economy:
         """
 
         ge_dict = self.update_ge_dict(x0, ge_dict)
+        # print(ge_dict)
         ge_x = self.unwrap_ge_dict(ge_dict)
 
         out = self.geq_diffs(ge_x)
@@ -212,7 +213,8 @@ class economy:
             return(ge_dict)
         else:
             print("recursing...")
-            if fct / 2 > .1: # recurse with smaller steps
+            print("fct: " + str(fct))
+            if fct / 2 > .05: # recurse with smaller steps
                 return(self.geq_solve(tau_hat, D_hat, fct=fct/2, mtd=mtd))
             else:
                 if mtd == "lm":
