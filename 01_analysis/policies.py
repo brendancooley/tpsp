@@ -79,7 +79,7 @@ class policies:
         self.x_len = self.ecmy.ge_x_len
         self.xlvt_len = self.x_len + self.lambda_i_len * self.N + self.N + 3
 
-        self.chi_min = .001
+        self.chi_min = 0.
 
         ge_x_ft_path = results_path + "ge_x_ft.csv"
         if not os.path.isfile(ge_x_ft_path):
@@ -394,8 +394,6 @@ class policies:
     def estimator(self, v_sv, theta_x_sv, nash_eq=False):
 
         # if nash_eq = True fix theta vals at those in theta_dict_sv and compute equilibrium
-
-        xlvt_sv = np.concatenate((np.ones(self.x_len), np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
         x_len = self.xlvt_len
 
         g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2
@@ -416,16 +414,21 @@ class policies:
             b_L = self.estimator_bounds("lower", True, theta_x_sv, v_sv)
             b_U = self.estimator_bounds("upper", True, theta_x_sv, v_sv)
 
-        problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac)
+        if nash_eq == False:
+            xlvt_sv = np.concatenate((np.ones(self.x_len), np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
+            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac)
+        else:
+            ge_x_sv = self.v_sv_all(v_sv)
+            print(ge_x_sv)
+            xlvt_sv = np.concatenate((ge_x_sv, np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
+            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons, self.estimator_cons_jac)
 
-        problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
+        # problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
+        problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter', start_with_resto="yes", required_infeasibility_reduction=0.)
         print("solving...")
         _x, obj, status = problem.solve(xlvt_sv)
 
         return(_x, obj, status)
-
-        return(0)
-
 
     def unwrap_lbda_i(self, lambda_dict_i):
         """Convert dictionary of multipliers for gov i into vector for Lagrangians
@@ -688,13 +691,13 @@ class policies:
 
         problem = ipyopt.Problem(x_len, self.Lzeros_i_bounds(ge_x0, id, "lower"), self.Lzeros_i_bounds(ge_x0, id, "upper"), g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.Lzeros_i_cons_wrap(id, v, wv), self.Lzeros_i_cons_jac_wrap(id, v, wv))
 
-        problem.set(print_level=6, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
+        problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
         print("solving...")
-        _x, obj, status = problem.solve(x0)
+        x_lbda, obj, status = problem.solve(x0)
 
-        return(_x, obj, status)
+        return(x_lbda, obj, status)
 
-        return(0)
+        return(x_lbda)
 
     def war_vals(self, v, m, theta_dict, c_bar=10):
         """Calculate war values (regime change value minus war costs)
@@ -1182,7 +1185,7 @@ class policies:
 
         tau_L = 1. / self.ecmy.tau
         # tau_U = np.reshape(np.repeat(np.inf, self.N ** 2), (self.N, self.N))
-        tau_U = (np.max(self.ecmy.tau, axis=1) / self.ecmy.tau.T).T
+        tau_U = np.max(self.ecmy.tau) / self.ecmy.tau
         np.fill_diagonal(tau_U, 1.)
         for i in range(self.N):
             for j in range(self.N):
@@ -1214,19 +1217,18 @@ class policies:
             return(self.G_hat(x, v, id, sign=sign))
         return(f)
 
-    def br_ipyopt(self, v, id, wv=None):
+    def br_ipyopt(self, x0, v, id, wv=None):
 
         # verbose
         ipyopt.set_loglevel(ipyopt.LOGGING_DEBUG)
 
-        x0 = self.v_sv(id, np.ones(self.x_len), v)
+        print(x0)
         # g_len = self.x_len - (self.N - 1)
         geq_c_len = self.x_len - self.N**2 - self.N
         if not wv is None:
             g_len = self.x_len - self.N**2
             g_upper = np.zeros(self.x_len - self.N**2)
             g_upper[geq_c_len:] = np.inf
-            print(g_upper)
         else:
             g_len = geq_c_len
 
@@ -1235,13 +1237,46 @@ class policies:
         h_sparsity_indices_a = np.array(np.meshgrid(range(self.x_len), range(self.x_len))).T.reshape(-1,2)
         h_sparsity_indices = (h_sparsity_indices_a[:,0], h_sparsity_indices_a[:,1])
 
-        problem = ipyopt.Problem(self.x_len, self.br_bounds_ipyopt(x0, id, "lower"), self.br_bounds_ipyopt(x0, id, "upper"), g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.G_hat_wrap(v, id, -1), self.G_hat_grad_ipyopt_wrap(v, id), self.br_cons_ipyopt_wrap(id, v, wv), self.br_cons_ipyopt_jac_wrap(id, v, wv))
+        x_L = self.br_bounds_ipyopt(x0, id, "lower")
+        x_U = self.br_bounds_ipyopt(x0, id, "upper")
+
+        problem = ipyopt.Problem(self.x_len, x_L, x_U, g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.G_hat_wrap(v, id, -1), self.G_hat_grad_ipyopt_wrap(v, id), self.br_cons_ipyopt_wrap(id, v, wv), self.br_cons_ipyopt_jac_wrap(id, v, wv))
 
         problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
         print("solving...")
-        _x, obj, status = problem.solve(x0)
+        x, obj, status = problem.solve(x0)
 
-        return(_x, obj, status)
+        return(x)
+
+    def br_cor_ipyopt(self, ge_x, wv, v):
+
+        tau_hat = np.zeros((self.N, self.N))
+        for i in range(self.N):
+            print("solving:")
+            print(i)
+            x0 = self.v_sv(i, ge_x, v)
+            # ge_x_i = self.br_ipyopt(ge_x, v, i, wv[:,i])
+            print(ge_x_i)
+            tau_hat[i, ] = self.ecmy.rewrap_ge_dict(ge_x_i)["tau_hat"][i, ]
+
+        print("-----")
+        print("fp iteration:")
+        print(tau_hat)
+        ge_out_dict = self.ecmy.geq_solve(tau_hat, np.ones(self.N))
+        print(ge_out_dict)
+        print("-----")
+
+        return(self.ecmy.unwrap_ge_dict(ge_out_dict))
+
+    def nash_eq_ipyopt(self, v, theta_x):
+
+        wv = self.war_vals(v, self.m, self.rewrap_theta(theta_x))
+        ge_x_sv = np.ones(self.x_len)
+
+        out = opt.fixed_point(self.br_cor_ipyopt, ge_x_sv, args=(wv, v, ), method="iteration")
+
+        return(out)
+
 
     def br(self, ge_x, v, wv_i, id, mil=True, method="SLSQP", affinity=None):
         """Calculate optimal policies for gov id, given others' policies in ge_x.
@@ -1375,10 +1410,20 @@ class policies:
         tau_v = np.tile(np.array([v]).transpose(), (1, self.N))
         tau_hat_v = (tau_v + .1) / self.ecmy.tau
         np.fill_diagonal(tau_hat_v, 1)
-        ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
+        ge_dict = self.ecmy.rewrap_ge_dict(copy.deepcopy(ge_x))
         tau_hat_sv = ge_dict["tau_hat"]
         tau_hat_sv[id, ] = tau_hat_v[id, ] # start slightly above free trade
         ge_dict_sv = self.ecmy.geq_solve(tau_hat_sv, np.ones(self.N))
+        ge_x_sv = self.ecmy.unwrap_ge_dict(ge_dict_sv)
+
+        return(ge_x_sv)
+
+    def v_sv_all(self, v):
+
+        tau_v = np.tile(np.array([v]).transpose(), (1, self.N))
+        tau_hat_v = (tau_v + .1) / self.ecmy.tau
+        np.fill_diagonal(tau_hat_v, 1)
+        ge_dict_sv = self.ecmy.geq_solve(tau_hat_v, np.ones(self.N))
         ge_x_sv = self.ecmy.unwrap_ge_dict(ge_dict_sv)
 
         return(ge_x_sv)

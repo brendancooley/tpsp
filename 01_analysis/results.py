@@ -18,10 +18,10 @@ sys.path.insert(1, helpersPath)
 import helpers
 imp.reload(helpers)
 
-mini = False
-large = True
+mini = True
+large = False
 
-runEstimates = True
+runEstimates = False
 
 # dataFiles = os.listdir("tpsp_data/")
 
@@ -79,16 +79,32 @@ imp.reload(policies)
 imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, resultsPath)
 
-theta_dict_init = dict()
-theta_dict_init["c_hat"] = .1
-theta_dict_init["alpha"] = .0001
-theta_dict_init["gamma"] = 1.
+### Estimate Model ###
 
-theta_x_sv = pecmy.unwrap_theta(theta_dict_init)
-_x, obj, status = pecmy.estimator(np.ones(pecmy.N), theta_x_sv, nash_eq=False)
+if runEstimates == True:
+    theta_dict_init = dict()
+    theta_dict_init["c_hat"] = .1
+    theta_dict_init["alpha"] = .0001
+    theta_dict_init["gamma"] = 1.
 
-print(_x)
+    theta_x_sv = pecmy.unwrap_theta(theta_dict_init)
+    xlvt_star, obj, status = pecmy.estimator(np.ones(pecmy.N), theta_x_sv, nash_eq=False)
+
+    print(xlvt_star)
+    print(obj)
+    print(status)
+
+    np.savetxt(estimatesPath + "x.csv", xlvt_star, delimiter=",")
+
+### Load Estimates ###
+
+xlvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
+xlvt_dict = pecmy.rewrap_xlvt(xlvt_star)
+theta_x_star = xlvt_dict["theta"]
+v_star = xlvt_dict["v"]
+
+x, obj, status = pecmy.estimator(v_star, theta_x_star, nash_eq=True)
+
+print(x)
 print(obj)
 print(status)
-
-np.savetxt(estimatesPath + "x.csv", _x, delimiter=",")

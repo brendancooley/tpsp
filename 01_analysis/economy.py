@@ -212,8 +212,8 @@ class economy:
             ge_dict["r_hat"][(-.0001 < ge_dict["r_hat"]) & (ge_dict["r_hat"] < .0001)] = 0  # replace small revenue counterfactuals with zeros
             return(ge_dict)
         else:
-            print("recursing...")
-            print("fct: " + str(fct))
+            # print("recursing...")
+            # print("fct: " + str(fct))
             if fct / 2 > .05: # recurse with smaller steps
                 return(self.geq_solve(tau_hat, D_hat, fct=fct/2, mtd=mtd))
             else:

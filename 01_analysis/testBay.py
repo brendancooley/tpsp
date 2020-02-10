@@ -21,9 +21,8 @@ sys.path.insert(1, helpersPath)
 import helpers
 imp.reload(helpers)
 
-mini = False
-large = True
-rcv_ft = True
+mini = True
+large = False
 
 runEstimates = True
 
@@ -47,6 +46,8 @@ else:
 helpers.mkdir(resultsPath)
 
 rcvPath = resultsPath + "rcv.csv"
+
+estimatesPath = resultsPath + "estimates/"
 
 # Economic Parameters
 beta = np.genfromtxt(dataPath + 'beta.csv', delimiter=',')
@@ -89,6 +90,42 @@ theta_dict_init["gamma"] = 1.
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
+
+
+xlvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
+xlvt_dict = pecmy.rewrap_xlvt(xlvt_star)
+ge_dict = pecmy.ecmy.rewrap_ge_dict(xlvt_dict["ge_x"])
+ge_dict
+1 / pecmy.ecmy.tau
+
+theta_x_star = xlvt_dict["theta"]
+v_star = xlvt_dict["v"]
+
+pecmy.nash_eq_ipyopt(v_star, theta_x_star)
+
+
+Lzeros_i_jac_f = ag.jacobian(pecmy.Lzeros_i_xlvt)
+pecmy.Lzeros_i_xlvt(xlvt_star, 3)
+Lzeros_i_jac = Lzeros_i_jac_f(xlvt_star, 3)
+Lzeros_i_jac
+Lzeros_i_jac
+Lzeros_i_jac.shape
+Lzeros_i_jac[61, ]
+Lzeros_i_jac.ravel()
+
+pecmy.chi(pecmy.m, pecmy.rewrap_theta(theta_x_star))
+pecmy.war_vals(v_star, pecmy.m, pecmy.rewrap_theta(theta_x_star))
+
+### test autograd and numpy clip
+
+def f_test(x):
+    return(np.clip(x, 0, np.inf))
+
+def f_test_grad(x):
+    f_test_grad_f = ag.grad(f_test)
+    return(f_test_grad_f(x))
+
+f_test_grad(-1.)
 
 ### dropbox testing
 
