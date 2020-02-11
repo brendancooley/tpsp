@@ -54,8 +54,8 @@ class policies:
         self.ecmy.update_ecmy(tau_hat_pos, np.ones(self.N))
 
         self.W = data["W"]  # distances
+        np.fill_diagonal(self.W, 0)
         self.M = data["M"]  # milex
-        # self.rhoM = self.rho()  # loss of strength gradient
 
         self.m = self.M / np.ones((self.N, self.N))
         self.m = self.m.T
@@ -79,7 +79,8 @@ class policies:
         self.x_len = self.ecmy.ge_x_len
         self.xlvt_len = self.x_len + self.lambda_i_len * self.N + self.N + 3
 
-        self.chi_min = 1.0e-05
+        self.chi_min = 1.0e-10
+        self.wv_min = -10.
 
         ge_x_ft_path = results_path + "ge_x_ft.csv"
         if not os.path.isfile(ge_x_ft_path):
@@ -377,6 +378,7 @@ class policies:
             x_L[self.x_len+self.lambda_i_len*self.N+self.N] = 0  # c_hat
             x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 1
             x_U[self.x_len+self.lambda_i_len*self.N+self.N+2] = 1  # fix gamma at 1
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0
         else:
             theta_dict = self.rewrap_theta(theta_x)
             x_L[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = v
@@ -425,7 +427,7 @@ class policies:
             # ge_x_sv = self.v_sv_all(v_sv)
             # xlvt_sv = np.concatenate((ge_x_sv, np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
             problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons, self.estimator_cons_jac)
-            problem.set(print_level=7, nlp_scaling_method="none", fixed_variable_treatment='make_parameter', derivative_test="first-order")
+            problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
         print("solving...")
         _x, obj, status = problem.solve(xlvt_sv)
 
@@ -700,7 +702,7 @@ class policies:
 
         return(x_lbda)
 
-    def war_vals(self, v, m, theta_dict, c_bar=10):
+    def war_vals(self, v, m, theta_dict):
         """Calculate war values (regime change value minus war costs)
 
         Parameters
@@ -728,7 +730,7 @@ class policies:
         wc = theta_dict["c_hat"] / chi
         rcv_ft = self.rcv_ft(v)
         wv = rcv_ft - wc
-        wv = np.clip(wv, 0, np.inf)
+        wv = np.clip(wv, self.wv_min, np.inf)
 
         return(wv)
 
@@ -904,7 +906,7 @@ class policies:
 
     def chi(self, m, theta_dict):
 
-        rhoM = self.rhoM(theta_dict, np.zeros((self.N, self.N)))
+        rhoM = self.rhoM(theta_dict)
         m_diag = np.diagonal(m)
         m_frac = m / m_diag
 
@@ -914,7 +916,7 @@ class policies:
 
         return(chi)
 
-    def rhoM(self, theta_dict, epsilon):
+    def rhoM(self, theta_dict):
         """Calculate loss of strength gradient given alphas and distance matrix (W)
 
         Parameters
@@ -930,7 +932,7 @@ class policies:
         """
 
         # rhoM = np.exp(-1 * (theta_dict["alpha"][0] + self.W * theta_dict["alpha"][1]) + epsilon)
-        rhoM = np.exp(-1 * (self.W * theta_dict["alpha"]) + epsilon)
+        rhoM = np.exp(-1 * (self.W * theta_dict["alpha"]))
 
         return(rhoM)
 

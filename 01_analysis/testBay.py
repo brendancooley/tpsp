@@ -83,8 +83,8 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 
 theta_dict_init = dict()
 theta_dict_init["c_hat"] = .32203
-theta_dict_init["alpha"] = 1.917815e-04
-theta_dict_init["gamma"] = 1.
+theta_dict_init["alpha"] = .001
+theta_dict_init["gamma"] = 5
 
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
 
@@ -106,6 +106,14 @@ ge_dict["tau_hat"] * pecmy.ecmy.tau
 # pecmy.Lzeros_i(np.concatenate((np.ones(pecmy.x_len), np.zeros(pecmy.lambda_i_len))), 0, v_star, wv[:,0])
 #
 # test = pecmy.ecmy.tau - np.diag(np.diag(pecmy.ecmy.tau))
+
+pecmy.rhoM(theta_dict_init)
+pecmy.chi(pecmy.m, theta_dict_init)
+
+rcv_ft = pecmy.rcv_ft(v_star)
+wv = rcv_ft - 275 / pecmy.chi(pecmy.m, theta_dict_init)
+pecmy.war_vals(v_star, pecmy.m, theta_dict_init)
+np.exp(-.004*pecmy.W)
 
 x, obj, status = pecmy.estimator(v_star, theta_x_star, nash_eq=True)
 

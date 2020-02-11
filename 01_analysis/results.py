@@ -21,7 +21,7 @@ imp.reload(helpers)
 mini = True
 large = False
 
-runEstimates = True
+runEstimates = False
 
 # dataFiles = os.listdir("tpsp_data/")
 
@@ -98,13 +98,13 @@ if runEstimates == True:
 
 ### Load Estimates ###
 
-# xlvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
-# xlvt_dict = pecmy.rewrap_xlvt(xlvt_star)
-# theta_x_star = xlvt_dict["theta"]
-# v_star = xlvt_dict["v"]
-#
-# x, obj, status = pecmy.estimator(v_star, theta_x_star, nash_eq=True)
-#
-# print(x)
-# print(obj)
-# print(status)
+xlvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
+xlvt_dict = pecmy.rewrap_xlvt(xlvt_star)
+theta_x_star = xlvt_dict["theta"]
+v_star = xlvt_dict["v"]
+
+x, obj, status = pecmy.estimator(v_star, theta_x_star, nash_eq=True)
+
+print(x)
+print(obj)
+print(status)
