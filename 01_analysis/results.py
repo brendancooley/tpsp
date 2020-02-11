@@ -28,7 +28,7 @@ import helpers
 mini = False
 large = True
 
-runEstimates = False
+runEstimates = True
 computeCounterfactuals = False
 
 if location == "local":

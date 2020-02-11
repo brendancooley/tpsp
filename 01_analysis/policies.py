@@ -422,7 +422,8 @@ class policies:
         if nash_eq == False:
 
             problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac)
-            problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
+            # problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter')
         else:
             # ge_x_sv = self.v_sv_all(v_sv)
             # xlvt_sv = np.concatenate((ge_x_sv, np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
