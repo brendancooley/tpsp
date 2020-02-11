@@ -37,10 +37,11 @@ def task_source():
     }
 
 def task_results():
+    # first: conda activate python3
     yield {
         'name': "collecting results...",
-        'actions':["conda activate + " conda_env + "; \
-        python " + code_dir + "results.py local"]
+        'actions':["python " + code_dir + "results.py local"],
+        'verbosity': 2,
     }
 
 def task_paper():
@@ -104,11 +105,14 @@ def task_notes():
             }
 
 def task_transfer_hpc():
+    # code
+    # data
+    # dodo.py
     yield {
         'name': "transfering files to hpc...",
         'actions':["scp -r " + code_dir + "* " + "bcooley@adroit.princeton.edu:" + hpc_code_dir,
         "scp -r " + data_dir + "* " +
         "bcooley@adroit.princeton.edu:" + hpc_data_dir,
-        "spc -r source/* " +
+        "scp -r source/* " +
         "bcooley@adroit.princeton.edu:" + hpc_source_dir]
     }
