@@ -64,6 +64,8 @@ class policies:
         self.tauMax = 15
         self.tau_nft = 1.25  # where to begin search for best response
 
+        self.max_iter_ipopt = 100000
+
         self.hhat_len = self.N**2+4*self.N  # X, d, P, w, r, E
         self.Dhat_len = self.N
         self.tauj_len = self.N**2-self.N
@@ -388,9 +390,9 @@ class policies:
         if nash_eq == False:
             x_L[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = 1. # vs
             x_L[self.x_len+self.lambda_i_len*self.N+self.N] = 0  # c_hat
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 1
-            x_U[self.x_len+self.lambda_i_len*self.N+self.N+2] = 1  # fix gamma at 1
-            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 1
+            # x_U[self.x_len+self.lambda_i_len*self.N+self.N+2] = 1  # fix gamma at 1
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0
         else:
             theta_dict = self.rewrap_theta(theta_x)
             x_L[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = v
@@ -439,7 +441,7 @@ class policies:
 
             problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac)
             # problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter')
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt)
         else:
             # ge_x_sv = self.v_sv_all(v_sv)
             # xlvt_sv = np.concatenate((ge_x_sv, np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
