@@ -97,10 +97,15 @@ imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
 xlvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
-# xlvt_dict = pecmy.rewrap_xlvt(xlvt_star)
+xlvt_dict = pecmy.rewrap_xlvt(xlvt_star)
+ge_dict = pecmy.ecmy.rewrap_ge_dict(xlvt_dict["ge_x"])
 # theta_x_star = xlvt_dict["theta"]
 # v_star = xlvt_dict["v"]
 #
+
+ge_dict["tau_hat"] * pecmy.ecmy.tau
+
+pecmy.loss(xlvt_star)
 
 
 theta_x1 = pecmy.unwrap_theta(theta_dict_1)

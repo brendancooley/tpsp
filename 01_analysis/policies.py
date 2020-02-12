@@ -226,9 +226,14 @@ class policies:
 
 
         tau_hat = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
-        loss = 0
-        for i in range(self.N):
-            loss += self.loss_tau(tau_hat[i, ], i)
+        tau_star = tau_hat * self.ecmy.tau
+
+        tau_diffs = tau_star - self.ecmy.tau
+        loss = np.sum(tau_diffs**2)
+
+        # loss = 0
+        # for i in range(self.N):
+        #     loss += self.loss_tau(tau_hat[i, ], i)
 
         return(loss)
 
@@ -440,7 +445,7 @@ class policies:
         g_sparsity_indices_a = self.g_sparsity_idx(g_sparsity_bin)
         g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
 
-        # NOTE: ipopt requires Hessian of *Lagrangian*
+        # NOTE: ipopt requires Hessian of *Lagrangian*, see hs071.py
         h_sparsity_indices_a = np.array(np.meshgrid(range(self.xlvt_len), range(self.xlvt_len))).T.reshape(-1,2)
         h_sparsity_indices = (h_sparsity_indices_a[:,0], h_sparsity_indices_a[:,1])
 
