@@ -25,8 +25,8 @@ sys.path.insert(1, helpersPath)
 
 import helpers
 
-mini = False
-large = True
+mini = True
+large = False
 
 runEstimates = True
 computeCounterfactuals = False

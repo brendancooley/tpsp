@@ -81,7 +81,7 @@ class policies:
         self.g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2  # ge_diffs, Lzeros (own policies N-1), war_diffs mat, comp_slack mat
 
         self.chi_min = 1.0e-10
-        self.wv_min = -10.
+        self.wv_min = -1.0e-4
 
         ge_x_ft_path = results_path + "ge_x_ft.csv"
         if not os.path.isfile(ge_x_ft_path):
@@ -366,7 +366,7 @@ class policies:
     def g_sparsity_idx(self, g_sparsity_bin):
 
         jac_mat = np.reshape(g_sparsity_bin, (self.g_len, self.xlvt_len))
-        # print(np.sum(jac_mat==True) / (self.xlvt_len * self.g_len))
+        print(np.sum(jac_mat==True) / (self.xlvt_len * self.g_len))
         out = np.argwhere(jac_mat==True)
 
         return(out)
@@ -430,10 +430,12 @@ class policies:
 
         xlvt_sv = np.concatenate((np.ones(self.x_len), np.repeat(.01, self.lambda_i_len*self.N), v_sv, theta_x_sv))  # NOTE: we will use these to calculate Jacobian sparsity
 
+        # Search entire Jacobian
         # g_sparsity_indices_a = np.array(np.meshgrid(range(self.g_len), range(x_len))).T.reshape(-1,2)
         # g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
         # g_sparsity_bin = np.repeat(True, self.g_len*self.xlvt_len)
 
+        # Sparse Jacobian
         g_sparsity_bin = self.g_sparsity_bin(xlvt_sv)
         g_sparsity_indices_a = self.g_sparsity_idx(g_sparsity_bin)
         g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])

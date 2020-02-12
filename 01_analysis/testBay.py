@@ -81,22 +81,54 @@ E = Eq + Ex
 
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
-theta_dict_init = dict()
-theta_dict_init["c_hat"] = .32203
-theta_dict_init["alpha"] = .001
-theta_dict_init["gamma"] = 5
+theta_dict_1 = dict()
+theta_dict_1["c_hat"] = .1
+theta_dict_1["alpha"] = .0001
+theta_dict_1["gamma"] = 1
+
+theta_dict_2 = dict()
+theta_dict_2["c_hat"] = 10
+theta_dict_2["alpha"] = -.01
+theta_dict_2["gamma"] = 5
 
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
-theta_x = pecmy.unwrap_theta(theta_dict_init)
+xlvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
+# xlvt_dict = pecmy.rewrap_xlvt(xlvt_star)
+# theta_x_star = xlvt_dict["theta"]
+# v_star = xlvt_dict["v"]
+#
 
-xlvt_sv = np.concatenate((np.ones(pecmy.x_len), np.repeat(.01, pecmy.lambda_i_len*pecmy.N), np.ones(pecmy.N), theta_x))
 
-gsb = pecmy.g_sparsity_bin(xlvt_sv)
+theta_x1 = pecmy.unwrap_theta(theta_dict_1)
+xlvt_sv1 = np.concatenate((np.ones(pecmy.x_len), np.repeat(.01, pecmy.lambda_i_len*pecmy.N), np.ones(pecmy.N), theta_x1))
+
+theta_x2 = pecmy.unwrap_theta(theta_dict_2)
+xlvt_sv2 = np.concatenate((np.ones(pecmy.x_len), np.repeat(.01, pecmy.lambda_i_len*pecmy.N), np.ones(pecmy.N), theta_x2))
+
+gsb1 = pecmy.g_sparsity_bin(xlvt_sv1).astype(int)
+gsb2 = pecmy.g_sparsity_bin(xlvt_sv2).astype(int)
+
+pecmy.war_vals(np.ones(pecmy.N), pecmy.m, theta_dict_2)
+
+diff = gsb1-gsb2
+len(diff[diff<0])
+
 pecmy.g_sparsity_idx(gsb)
+
+
+
+
+
+
+
+
+
+
+
 pecmy.g_len
 
 
