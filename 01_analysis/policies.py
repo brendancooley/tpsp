@@ -11,9 +11,6 @@ import os
 import copy
 import multiprocessing as mp
 import ipyopt
-# import nlopt # NOTE: something wrong with build of this on laptop
-
-# TODO: gradient to BR function
 
 class policies:
 
@@ -78,6 +75,8 @@ class policies:
 
         self.x_len = self.ecmy.ge_x_len
         self.xlvt_len = self.x_len + self.lambda_i_len * self.N + self.N + 3
+
+        self.g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2
 
         self.chi_min = 1.0e-10
         self.wv_min = -10.
@@ -324,6 +323,19 @@ class policies:
 
         return(out)
 
+    def g_sparsity(self):
+
+        g_mat = np.reshape(np.repeat(False, self.xlvt_len*self.g_len), (self.xlvt_len, self.g_len))
+        g_mat[0:self.hhat_len,0:self.x_len] = True  # geq_diffs
+        g_mat[self.hhat_len:(self.hhat_len + self.N - 1)*self.N,:] = True  # Lzeros
+        g_mat[self.hhat_len+(self.hhat_len + self.N - 1)*self.N+self.N**2,0:self.x_len]  = True # war_diffs, ge_x
+        g_mat[self.hhat_len+(self.hhat_len + self.N - 1)*self.N+self.N**2,self.x_len+self.lambda_i_len * self.N:] = True # war_diffs, parameters
+
+        out = np.argwhere(g_mat==True)
+
+        return(out)
+
+
     def estimator_cons_jac(self, xlvt, out):
 
         geq_diffs_jac_f = ag.jacobian(self.geq_diffs_xlvt)
@@ -400,13 +412,17 @@ class policies:
         # if nash_eq = True fix theta vals at those in theta_dict_sv and compute equilibrium
         x_len = self.xlvt_len
 
-        g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2
+
         wd_g = np.repeat(np.inf, self.N**2)
-        g_upper = np.zeros(g_len)
+        g_upper = np.zeros(self.g_len)
         g_upper[self.hhat_len + (self.hhat_len + self.N - 1)*self.N:self.hhat_len + (self.hhat_len + self.N - 1)*self.N+self.N**2] = wd_g
 
-        g_sparsity_indices_a = np.array(np.meshgrid(range(g_len), range(x_len))).T.reshape(-1,2)
+        # g_sparsity_indices_a = np.array(np.meshgrid(range(self.g_len), range(x_len))).T.reshape(-1,2)
+        # g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
+
+        g_sparsity_indices_a = self.g_sparsity()
         g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
+
         # NOTE: Hessian only depends on taus
         h_sparsity_indices_a = np.array(np.meshgrid(range(x_len), range(x_len))).T.reshape(-1,2)
         h_sparsity_indices = (h_sparsity_indices_a[:,0], h_sparsity_indices_a[:,1])
@@ -421,13 +437,13 @@ class policies:
         xlvt_sv = np.concatenate((np.ones(self.x_len), np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
         if nash_eq == False:
 
-            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac)
+            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac)
             # problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
             problem.set(print_level=5, fixed_variable_treatment='make_parameter')
         else:
             # ge_x_sv = self.v_sv_all(v_sv)
             # xlvt_sv = np.concatenate((ge_x_sv, np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
-            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons, self.estimator_cons_jac)
+            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons, self.estimator_cons_jac)
             problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
         print("solving...")
         _x, obj, status = problem.solve(xlvt_sv)
@@ -681,19 +697,19 @@ class policies:
         x0 = np.concatenate((ge_x0, lbda_i0))
         x_len = len(x0)
 
-        g_len = self.hhat_len + (self.hhat_len + self.N - 1) + self.N + self.N  # ge constraints, gradient  war diffs, complementary slackness
-        g_upper = np.zeros(g_len)
+        g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N + self.N  # ge constraints, gradient  war diffs, complementary slackness
+        g_upper = np.zeros(g_len_i)
         g_upper[self.hhat_len + (self.hhat_len + self.N - 1):self.hhat_len + (self.hhat_len + self.N - 1)+self.N] = np.inf
         print(x_len)
-        print(g_len)
+        print(g_len_i)
         print(g_upper)
 
-        g_sparsity_indices_a = np.array(np.meshgrid(range(g_len), range(x_len))).T.reshape(-1,2)
+        g_sparsity_indices_a = np.array(np.meshgrid(range(g_len_i), range(x_len))).T.reshape(-1,2)
         g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
         h_sparsity_indices_a = np.array(np.meshgrid(range(x_len), range(x_len))).T.reshape(-1,2)
         h_sparsity_indices = (h_sparsity_indices_a[:,0], h_sparsity_indices_a[:,1])
 
-        problem = ipyopt.Problem(x_len, self.Lzeros_i_bounds(ge_x0, id, "lower"), self.Lzeros_i_bounds(ge_x0, id, "upper"), g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.Lzeros_i_cons_wrap(id, v, wv), self.Lzeros_i_cons_jac_wrap(id, v, wv))
+        problem = ipyopt.Problem(x_len, self.Lzeros_i_bounds(ge_x0, id, "lower"), self.Lzeros_i_bounds(ge_x0, id, "upper"), g_len_i, np.zeros(g_len_i), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.Lzeros_i_cons_wrap(id, v, wv), self.Lzeros_i_cons_jac_wrap(id, v, wv))
 
         problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
         print("solving...")
@@ -1230,13 +1246,13 @@ class policies:
         # g_len = self.x_len - (self.N - 1)
         geq_c_len = self.x_len - self.N**2 - self.N
         if not wv is None:
-            g_len = self.x_len - self.N**2
+            g_len_br = self.x_len - self.N**2
             g_upper = np.zeros(self.x_len - self.N**2)
             g_upper[geq_c_len:] = np.inf
         else:
-            g_len = geq_c_len
+            g_len_br = geq_c_len
 
-        g_sparsity_indices_a = np.array(np.meshgrid(range(g_len), range(self.x_len))).T.reshape(-1,2)
+        g_sparsity_indices_a = np.array(np.meshgrid(range(g_len_br), range(self.x_len))).T.reshape(-1,2)
         g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
         h_sparsity_indices_a = np.array(np.meshgrid(range(self.x_len), range(self.x_len))).T.reshape(-1,2)
         h_sparsity_indices = (h_sparsity_indices_a[:,0], h_sparsity_indices_a[:,1])
@@ -1244,7 +1260,7 @@ class policies:
         x_L = self.br_bounds_ipyopt(x0, id, "lower")
         x_U = self.br_bounds_ipyopt(x0, id, "upper")
 
-        problem = ipyopt.Problem(self.x_len, x_L, x_U, g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.G_hat_wrap(v, id, -1), self.G_hat_grad_ipyopt_wrap(v, id), self.br_cons_ipyopt_wrap(id, v, wv), self.br_cons_ipyopt_jac_wrap(id, v, wv))
+        problem = ipyopt.Problem(self.x_len, x_L, x_U, g_len_br, np.zeros(g_len_br), g_upper, g_sparsity_indices, h_sparsity_indices, self.G_hat_wrap(v, id, -1), self.G_hat_grad_ipyopt_wrap(v, id), self.br_cons_ipyopt_wrap(id, v, wv), self.br_cons_ipyopt_jac_wrap(id, v, wv))
 
         problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
         print("solving...")

@@ -91,6 +91,12 @@ theta_dict_init["gamma"] = 5
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
+pecmy.g_sparsity().shape
+pecmy.xlvt_len * pecmy.g_len
+
+
+g_mat = np.reshape(np.repeat(False, pecmy.xlvt_len*pecmy.g_len), (pecmy.xlvt_len, pecmy.g_len))
+g_mat[0, ].shape
 
 xlvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
 xlvt_dict = pecmy.rewrap_xlvt(xlvt_star)
