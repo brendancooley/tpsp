@@ -11,7 +11,7 @@ import policies
 import helpers_tpsp as hp
 
 location = sys.argv[1]
-# location = "local"
+location = "local"
 
 basePath = os.path.expanduser('~')
 
@@ -25,8 +25,8 @@ sys.path.insert(1, helpersPath)
 
 import helpers
 
-mini = False
-large = True
+mini = True
+large = False
 
 runEstimates = True
 computeCounterfactuals = False
@@ -76,7 +76,7 @@ N = len(Y)
 E = Eq + Ex
 
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
-print(data)
+# print(data)
 
 ### Estimate Model ###
 

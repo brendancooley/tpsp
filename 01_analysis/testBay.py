@@ -21,8 +21,8 @@ sys.path.insert(1, helpersPath)
 import helpers
 imp.reload(helpers)
 
-mini = True
-large = False
+mini = False
+large = True
 
 runEstimates = True
 
@@ -91,17 +91,41 @@ theta_dict_init["gamma"] = 5
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
-pecmy.g_sparsity().shape
-pecmy.xlvt_len * pecmy.g_len
+pecmy.xlvt_len
+pecmy.g_len
 
-
-g_mat = np.reshape(np.repeat(False, pecmy.xlvt_len*pecmy.g_len), (pecmy.xlvt_len, pecmy.g_len))
-g_mat[0, ].shape
+pecmy.x_len+pecmy.lambda_i_len * pecmy.N
+pecmy.g_sparsity()
 
 xlvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
 xlvt_dict = pecmy.rewrap_xlvt(xlvt_star)
 theta_x_star = xlvt_dict["theta"]
 v_star = xlvt_dict["v"]
+
+xlvt_sv = np.concatenate((np.ones(pecmy.x_len), np.zeros(pecmy.lambda_i_len*pecmy.N), np.ones(pecmy.N), theta_x_star))
+pecmy.estimator_cons_jac(xlvt_sv, np.zeros(pecmy.g_len*pecmy.xlvt_len))
+
+
+pecmy.xlvt_len * pecmy.g_len
+pecmy.g_len
+
+g_sparsity_indices_a1 = np.array(np.meshgrid(range(pecmy.g_len), range(pecmy.xlvt_len))).T.reshape(-1,2)
+g_sparsity_indices1 = (g_sparsity_indices_a1[:,0], g_sparsity_indices_a1[:,1])
+
+
+
+g_sparsity_indices_a2 = pecmy.g_sparsity()
+g_sparsity_indices2 = (g_sparsity_indices_a2[:,1], g_sparsity_indices_a2[:,0])
+
+xlvt_sv = np.ones(pecmy.xlvt_len)
+pecmy.estimator_cons_jac(xlvt_sv, np.zeros(pecmy.xlvt_len*pecmy.g_len))
+
+
+
+g_mat = np.reshape(np.repeat(False, pecmy.xlvt_len*pecmy.g_len), (pecmy.xlvt_len, pecmy.g_len))
+g_mat[0, ].shape
+
+
 ge_dict = pecmy.ecmy.rewrap_ge_dict(xlvt_dict["ge_x"])
 ge_dict["tau_hat"] * pecmy.ecmy.tau
 #

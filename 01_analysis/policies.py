@@ -78,7 +78,7 @@ class policies:
         self.x_len = self.ecmy.ge_x_len
         self.xlvt_len = self.x_len + self.lambda_i_len * self.N + self.N + 3
 
-        self.g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2
+        self.g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2  # ge_diffs, Lzeros (own policies N-1), war_diffs mat, comp_slack mat
 
         self.chi_min = 1.0e-10
         self.wv_min = -10.
@@ -325,20 +325,23 @@ class policies:
 
         return(out)
 
-    def g_sparsity(self):
+    def g_sparsity(self, xlvt_sv):
 
-        g_mat = np.reshape(np.repeat(False, self.xlvt_len*self.g_len), (self.xlvt_len, self.g_len))
-        g_mat[0:self.hhat_len,0:self.x_len] = True  # geq_diffs
-        g_mat[self.hhat_len:(self.hhat_len + self.N - 1)*self.N,:] = True  # Lzeros
-        g_mat[self.hhat_len+(self.hhat_len + self.N - 1)*self.N+self.N**2,0:self.x_len]  = True # war_diffs, ge_x
-        g_mat[self.hhat_len+(self.hhat_len + self.N - 1)*self.N+self.N**2,self.x_len+self.lambda_i_len * self.N:] = True # war_diffs, parameters
+        # xlvt_sv = np.ones(self.xlvt_len)
+        jac_flat = self.estimator_cons_jac(xlvt_sv, np.zeros(self.xlvt_len*self.g_len))
+        jac_mat = np.reshape(jac_flat, (self.xlvt_len, self.g_len))
+        # print(jac_mat)
+        # print(np.count_nonzero(jac_mat))
+        print(np.count_nonzero(jac_mat) / (self.xlvt_len * self.g_len))
 
-        out = np.argwhere(g_mat==True)
+        out = np.argwhere(jac_mat!=0)
+        # print(out)
 
         return(out)
 
-
     def estimator_cons_jac(self, xlvt, out):
+
+        print(xlvt)
 
         geq_diffs_jac_f = ag.jacobian(self.geq_diffs_xlvt)
         geq_diffs_jac = geq_diffs_jac_f(xlvt)
@@ -414,19 +417,21 @@ class policies:
         # if nash_eq = True fix theta vals at those in theta_dict_sv and compute equilibrium
         x_len = self.xlvt_len
 
-
         wd_g = np.repeat(np.inf, self.N**2)
         g_upper = np.zeros(self.g_len)
         g_upper[self.hhat_len + (self.hhat_len + self.N - 1)*self.N:self.hhat_len + (self.hhat_len + self.N - 1)*self.N+self.N**2] = wd_g
 
+        xlvt_sv = np.concatenate((np.ones(self.x_len), np.repeat(.01, self.lambda_i_len*self.N), v_sv, theta_x_sv))
+
         # g_sparsity_indices_a = np.array(np.meshgrid(range(self.g_len), range(x_len))).T.reshape(-1,2)
         # g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
 
-        g_sparsity_indices_a = self.g_sparsity()
-        g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
+        g_sparsity_indices_a = self.g_sparsity(xlvt_sv)
+        g_sparsity_indices = (g_sparsity_indices_a[:,1], g_sparsity_indices_a[:,0])
+        print(g_sparsity_indices)
 
         # NOTE: Hessian only depends on taus
-        h_sparsity_indices_a = np.array(np.meshgrid(range(x_len), range(x_len))).T.reshape(-1,2)
+        h_sparsity_indices_a = np.array(np.meshgrid(range(self.N**2), range(self.N**2))).T.reshape(-1,2)
         h_sparsity_indices = (h_sparsity_indices_a[:,0], h_sparsity_indices_a[:,1])
 
         if nash_eq == False:
@@ -436,12 +441,10 @@ class policies:
             b_L = self.estimator_bounds("lower", True, theta_x_sv, v_sv)
             b_U = self.estimator_bounds("upper", True, theta_x_sv, v_sv)
 
-        xlvt_sv = np.concatenate((np.ones(self.x_len), np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
         if nash_eq == False:
-
             problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac)
-            # problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt)
+            # problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt)
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
         else:
             # ge_x_sv = self.v_sv_all(v_sv)
             # xlvt_sv = np.concatenate((ge_x_sv, np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
