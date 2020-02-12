@@ -437,8 +437,8 @@ class policies:
         g_sparsity_indices_a = self.g_sparsity_idx(g_sparsity_bin)
         g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
 
-        # NOTE: Hessian only depends on taus
-        h_sparsity_indices_a = np.array(np.meshgrid(range(self.N**2), range(self.N**2))).T.reshape(-1,2)
+        # NOTE: ipopt requires Hessian of *Lagrangian*
+        h_sparsity_indices_a = np.array(np.meshgrid(range(self.xlvt_len), range(self.xlvt_len))).T.reshape(-1,2)
         h_sparsity_indices = (h_sparsity_indices_a[:,0], h_sparsity_indices_a[:,1])
 
         if nash_eq == False:
