@@ -325,23 +325,7 @@ class policies:
 
         return(out)
 
-    def g_sparsity(self, xlvt_sv):
-
-        # xlvt_sv = np.ones(self.xlvt_len)
-        jac_flat = self.estimator_cons_jac(xlvt_sv, np.zeros(self.xlvt_len*self.g_len))
-        jac_mat = np.reshape(jac_flat, (self.xlvt_len, self.g_len))
-        # print(jac_mat)
-        # print(np.count_nonzero(jac_mat))
-        print(np.count_nonzero(jac_mat) / (self.xlvt_len * self.g_len))
-
-        out = np.argwhere(jac_mat!=0)
-        # print(out)
-
-        return(out)
-
-    def estimator_cons_jac(self, xlvt, out):
-
-        print(xlvt)
+    def estimator_cons_jac(self, xlvt, g_sparsity_bin):
 
         geq_diffs_jac_f = ag.jacobian(self.geq_diffs_xlvt)
         geq_diffs_jac = geq_diffs_jac_f(xlvt)
@@ -361,7 +345,29 @@ class policies:
             comp_slack_i_jac = comp_slack_i_jac_f(xlvt, i)
             comp_slack_flat.extend(comp_slack_i_jac.ravel())
 
-        out[()] = np.concatenate((geq_diffs_jac.ravel(), Lzeros_jac_flat, war_diffs_jac_flat, comp_slack_flat), axis=None)
+        out_full = np.concatenate((geq_diffs_jac.ravel(), Lzeros_jac_flat, war_diffs_jac_flat, comp_slack_flat), axis=None)
+        out = out_full[g_sparsity_bin]
+
+        return(out)
+
+    def estimator_cons_jac_wrap(self, g_sparsity_bin):
+        def f(x, out):
+            out[()] = self.estimator_cons_jac(x, g_sparsity_bin)
+            return(out)
+        return(f)
+
+    def g_sparsity_bin(self, xlvt_sv):
+
+        jac_flat = self.estimator_cons_jac(xlvt_sv, np.repeat(True, self.xlvt_len*self.g_len))
+        out = jac_flat != 0
+
+        return(out)
+
+    def g_sparsity_idx(self, g_sparsity_bin):
+
+        jac_mat = np.reshape(g_sparsity_bin, (self.g_len, self.xlvt_len))
+        # print(np.sum(jac_mat==True) / (self.xlvt_len * self.g_len))
+        out = np.argwhere(jac_mat==True)
 
         return(out)
 
@@ -421,14 +427,15 @@ class policies:
         g_upper = np.zeros(self.g_len)
         g_upper[self.hhat_len + (self.hhat_len + self.N - 1)*self.N:self.hhat_len + (self.hhat_len + self.N - 1)*self.N+self.N**2] = wd_g
 
-        xlvt_sv = np.concatenate((np.ones(self.x_len), np.repeat(.01, self.lambda_i_len*self.N), v_sv, theta_x_sv))
+        xlvt_sv = np.concatenate((np.ones(self.x_len), np.repeat(.01, self.lambda_i_len*self.N), v_sv, theta_x_sv))  # NOTE: we will use these to calculate Jacobian sparsity
 
         # g_sparsity_indices_a = np.array(np.meshgrid(range(self.g_len), range(x_len))).T.reshape(-1,2)
         # g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
+        # g_sparsity_bin = np.repeat(True, self.g_len*self.xlvt_len)
 
-        g_sparsity_indices_a = self.g_sparsity(xlvt_sv)
-        g_sparsity_indices = (g_sparsity_indices_a[:,1], g_sparsity_indices_a[:,0])
-        print(g_sparsity_indices)
+        g_sparsity_bin = self.g_sparsity_bin(xlvt_sv)
+        g_sparsity_indices_a = self.g_sparsity_idx(g_sparsity_bin)
+        g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
 
         # NOTE: Hessian only depends on taus
         h_sparsity_indices_a = np.array(np.meshgrid(range(self.N**2), range(self.N**2))).T.reshape(-1,2)
@@ -442,7 +449,7 @@ class policies:
             b_U = self.estimator_bounds("upper", True, theta_x_sv, v_sv)
 
         if nash_eq == False:
-            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac)
+            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac_wrap(g_sparsity_bin))
             # problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt)
             problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
         else:

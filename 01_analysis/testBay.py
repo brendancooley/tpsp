@@ -21,8 +21,8 @@ sys.path.insert(1, helpersPath)
 import helpers
 imp.reload(helpers)
 
-mini = False
-large = True
+mini = True
+large = False
 
 runEstimates = True
 
@@ -91,18 +91,22 @@ theta_dict_init["gamma"] = 5
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
+theta_x = pecmy.unwrap_theta(theta_dict_init)
+
+xlvt_sv = np.concatenate((np.ones(pecmy.x_len), np.repeat(.01, pecmy.lambda_i_len*pecmy.N), np.ones(pecmy.N), theta_x))
+
+gsb = pecmy.g_sparsity_bin(xlvt_sv)
+pecmy.g_sparsity_idx(gsb)
+pecmy.g_len
+
+
 pecmy.xlvt_len
 pecmy.g_len
 
 pecmy.x_len+pecmy.lambda_i_len * pecmy.N
 pecmy.g_sparsity()
 
-xlvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
-xlvt_dict = pecmy.rewrap_xlvt(xlvt_star)
-theta_x_star = xlvt_dict["theta"]
-v_star = xlvt_dict["v"]
 
-xlvt_sv = np.concatenate((np.ones(pecmy.x_len), np.zeros(pecmy.lambda_i_len*pecmy.N), np.ones(pecmy.N), theta_x_star))
 pecmy.estimator_cons_jac(xlvt_sv, np.zeros(pecmy.g_len*pecmy.xlvt_len))
 
 
