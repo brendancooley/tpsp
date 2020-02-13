@@ -12,13 +12,13 @@ I estimate the model on a set of `r N` governments in the year `r Y`.^[Focusing 
 
 ```{r ccodes, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
-source("../02_figs/ccodes.R")
+# source("../02_figs/ccodes.R")
 
-kable(ccodesT, "latex", booktabs = T, caption = "In-Sample Countries \\label{tab:ccodes}") %>% kable_styling(position = "center")
+# kable(ccodesT, "latex", booktabs = T, caption = "In-Sample Countries \\label{tab:ccodes}") %>% kable_styling(position = "center")
 
 ```
 
-Solving the economy in changes for a set of $\hat{\bm{\tau}}$ requires values for a vector of economic parameters $\bm{\theta}_h$ and data on trade flows, policy barriers, and and national accounts. I discuss how I calibrate the economy and the data sources used to do so in Appendix `r AeconomyC`. There, I also report the magnitude of policy barrier estimates $\bm{\tau}$ from @Cooley2019b. With $\hat{h}(\hat{\bm{\tau}}; \bm{\theta}_h)$ calibrated, $\hat{G}_i(\hat{\bm{\tau}})$ can be calculated for any set of trade policies and the optimal policy change problem (\ref{eq:optTaujHat}) can be solved, yielding $\hat{\bm{\tau}}_i^{j \star}$ for all $i, j$.
+Solving the economy in changes for a set of $\hat{\bm{\tau}}$ requires values for a vector of economic parameters $\bm{\theta}_h$ and data on trade flows, policy barriers, and and national accounts. I discuss how I calibrate the economy and the data sources used to do so in Appendix `r AeconomyC`. There, I also report the magnitude of policy barrier estimates $\tilde{\bm{\tau}}$ from @Cooley2019b. With $\hat{h}(\hat{\bm{\tau}}; \bm{\theta}_h)$ calibrated, $\hat{G}_i(\hat{\bm{\tau}})$ can be calculated for any set of trade policies and the optimal policy change problem (\ref{eq:optTaujHat}) can be solved, yielding $\hat{\bm{\tau}}_i^{j \star}$ for all $i, j$.
 
 With the economy calibrated and policy barrier estimates in hand, I require only a measure of each government's military endowment ($M_i$) and data on dyadic geography ($\bm{W}$). I use [SIPRI](https://www.sipri.org/)'s data on military expenditure to measure governments' military capacity. These values are displayed in Figure \ref{fig:milex}.
 

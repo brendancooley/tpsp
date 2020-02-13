@@ -11,7 +11,7 @@ abstract: In international relations, how does latent military coercion affect g
 # thanks: Allison Carnegie, APSA 2019.
 # jelcodes: JEL codes go here
 
-bibliography: /Users/brendancooley/Dropbox (Princeton)/References/library.bib
+bibliography: /Users/bcooley/Dropbox (Princeton)/References/library.bib
 biblio-style: apsr
 
 papersize: letter
@@ -199,37 +199,6 @@ a <- a + 1
 
 Ampec <- LETTERS[a]
 
-```
-
-## `r Ampec`: Best Responses as Mathematical Programs with Equilibrium Constraints
-
-```{r, child = "sections/Ampec.md"}
-```
-
-```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
-
-a <- a + 1
-
-Aalphagamma <- LETTERS[a]
-
-```
-
-## `r Aalphagamma`: Estimation of $\gamma$ and $\bm{\alpha}$
-
-```{r, child = "sections/Aalphagamma.md"}
-```
-
-```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
-
-a <- a + 1
-
-AestimationAlg <- LETTERS[a]
-
-```
-
-## `r AestimationAlg`: Estimation Algorithm
-
-```{r, child = "sections/AestimationAlg.md"}
 ```
 
 \clearpage

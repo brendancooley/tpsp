@@ -11,7 +11,7 @@ import policies
 import helpers_tpsp as hp
 
 location = sys.argv[1]
-location = "local"
+# location = "local"
 
 basePath = os.path.expanduser('~')
 
@@ -89,7 +89,9 @@ if runEstimates == True:
     theta_dict_init["gamma"] = 1.
 
     theta_x_sv = pecmy.unwrap_theta(theta_dict_init)
+    start_time = time.time()
     xlvt_star, obj, status = pecmy.estimator(np.ones(pecmy.N), theta_x_sv, nash_eq=False)
+    print("--- Estimator converged in %s seconds ---" % (time.time() - start_time))
 
     print(xlvt_star)
     print(obj)
