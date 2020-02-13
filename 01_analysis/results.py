@@ -25,10 +25,10 @@ sys.path.insert(1, helpersPath)
 
 import helpers
 
-mini = True
-large = False
+mini = False
+large = True
 
-runEstimates = False
+runEstimates = True
 computeCounterfactuals = False
 
 if location == "local":
@@ -112,5 +112,10 @@ if computeCounterfactuals == True:
     print(x)
     print(obj)
     print(status)
+
+# test hpc
+# if location == "hpc":
+#     test_out = np.ones(len(M))
+#     np.savetxt(estimatesPath + "test.csv", test_out, delimiter=",")
 
 print("done.")
