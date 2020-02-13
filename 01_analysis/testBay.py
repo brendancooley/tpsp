@@ -1,29 +1,53 @@
-### SETUP ###
-
-import os
+import autograd as ag
 import autograd.numpy as np
-from scipy import optimize
+import os
 import imp
 import timeit
 import time
-import autograd as ag
+import csv
+import sys
+import matplotlib.pyplot as plt
+import scipy.stats as stats
 import statsmodels.api as sm
 
 import economy
-# import economyOld
 import policies
-import helpers_tpsp
 
+import helpers_tpsp as hp
 
-### IMPORT DATA ###
+helpersPath = os.path.expanduser("~/Dropbox (Princeton)/14_Software/python/")
+sys.path.insert(1, helpersPath)
+
+import helpers
+imp.reload(helpers)
+
+mini = True
+large = False
+
+runEstimates = True
 
 # dataFiles = os.listdir("tpsp_data/")
+
 basePath = os.path.expanduser('~')
 projectPath = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
-dataPath = projectPath + "tpsp_data_mini/"
-resultsPath = projectPath + "results/"
+
+if mini is True:
+    dataPath = projectPath + "tpsp_data_mini/"
+    resultsPath = projectPath + "results_mini/"
+elif large is True:
+    dataPath = projectPath + "tpsp_data_large/"
+    resultsPath = projectPath + "results_large/"
+# elif rcv_ft is True:
+#     dataPath = projectPath + "tpsp_data_mini/"
+#     resultsPath = projectPath + "results_rcv_ft/"
+else:
+    dataPath = projectPath + "tpsp_data/"
+    resultsPath = projectPath + "results/"
+helpers.mkdir(resultsPath)
 
 rcvPath = resultsPath + "rcv.csv"
+
+estimatesPath = resultsPath + "estimates/"
 
 # Economic Parameters
 beta = np.genfromtxt(dataPath + 'beta.csv', delimiter=',')
@@ -31,19 +55,7 @@ theta = np.genfromtxt(dataPath + 'theta.csv', delimiter=',')
 mu = np.genfromtxt(dataPath + 'mu.csv', delimiter=',')
 nu = np.genfromtxt(dataPath + 'nu.csv', delimiter=',')
 
-# Military Parameters
-# alpha_0 = 1  # force gained (lost) in offensive operations, regardless of distance
-alpha_1 = .1   # extra force gained (lost) for every log km traveled
-gamma = 1
-c_hat = .2  # relative cost of war
-
-# params = {"beta":beta,"theta":theta,"mu":mu,"nu":nu, "alpha_0":alpha_0, "alpha_1":alpha_1, "c_hat":c_hat, "gamma":gamma}
-params = {"beta":beta,"theta":theta,"mu":mu,"nu":nu, "alpha_1":alpha_1, "c_hat":c_hat, "gamma":gamma}
-
-# welfare weights
-b = np.repeat(0, len(nu))
-
-vars = {"b":b}
+params = {"beta":beta,"theta":theta,"mu":mu,"nu":nu}
 
 # Data
 tau = np.genfromtxt(dataPath + 'tau.csv', delimiter=',')
@@ -56,126 +68,293 @@ D = np.genfromtxt(dataPath + 'D.csv', delimiter=',')
 ccodes = np.genfromtxt(dataPath + 'ccodes.csv', delimiter=',', dtype="str")
 dists = np.genfromtxt(dataPath + 'cDists.csv', delimiter=',')
 M = np.genfromtxt(dataPath + "milex.csv", delimiter=",")
+ROWname = np.genfromtxt(dataPath + 'ROWname.csv', delimiter=',', dtype="str")
+ROWname = str(ROWname)
 
-M = M / np.max(M)  # normalize milex
-W = np.log(dists+1)
+M = M / np.min(M)  # normalize milex
+# W = np.log(dists+1)
+W = dists
 
 N = len(Y)
 
 E = Eq + Ex
 
-data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M}  # Note: log distance (plus 1)
+data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
-### TEST B ESTIMATOR ###
+theta_dict_1 = dict()
+theta_dict_1["c_hat"] = .1
+theta_dict_1["alpha"] = .0001
+theta_dict_1["gamma"] = 1
 
-m = M / np.ones_like(tau)
-m = m.T
+theta_dict_2 = dict()
+theta_dict_2["c_hat"] = .41
+theta_dict_2["alpha"] = -.0002
+theta_dict_2["gamma"] = .25
 
-m_diag = np.diagonal(m)
-m_frac = m / m_diag
-# m = np.diag(M)
-
-
-# sigma_epsilon = .1
-# epsilon = np.reshape(np.random.normal(0, sigma_epsilon, N ** 2), (N, N))
-# np.fill_diagonal(epsilon, 0)
-
-theta_dict = dict()
-# theta_dict["b"] = b
-theta_dict["alpha"] = .5
-theta_dict["c_hat"] = .2
-theta_dict["sigma_epsilon"] = 1
-theta_dict["gamma"] = .1
+# TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
 
 imp.reload(policies)
-pecmy = policies.policies(data, params, b, rcv_path=rcvPath)
-b_k1 = np.array([.7, 0, .5, .2, 1, .3])
+pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
-out = pecmy.est_loop(b_k1, theta_dict)
+xlvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
+xlvt_dict = pecmy.rewrap_xlvt(xlvt_star)
+ge_dict = pecmy.ecmy.rewrap_ge_dict(xlvt_dict["ge_x"])
+# theta_x_star = xlvt_dict["theta"]
+# v_star = xlvt_dict["v"]
+#
 
+ge_dict["tau_hat"] * pecmy.ecmy.tau
 
-
-
-# Loss seemed monotonically decreasing in c... 1.76 - 1.39, why?
-# probably has to do with a lot of countries sitting at upper bound of preference parameter...loosening constraints makes policies more realistic
-
-# out_dict = pecmy.est_loop(b_init, theta_dict_init, est_c=True)
-rcv = np.zeros((pecmy.N, pecmy.N))  # empty regime change value matrix (row's value for invading column)
-for i in range(pecmy.N):
-    b_nearest = hp.find_nearest(b_init, b[i])
-    rcv[i, ] = pecmy.rcv[b_nearest][i, ]
-
-pecmy.ecmy.tau
-pecmy.ecmy.Y
+pecmy.loss(xlvt_star)
 
 
+theta_x1 = pecmy.unwrap_theta(theta_dict_1)
+xlvt_sv1 = np.concatenate((np.ones(pecmy.x_len), np.repeat(.01, pecmy.lambda_i_len*pecmy.N), np.ones(pecmy.N), theta_x1))
+
+theta_x2 = pecmy.unwrap_theta(theta_dict_2)
+xlvt_sv2 = np.concatenate((np.ones(pecmy.x_len), np.repeat(.01, pecmy.lambda_i_len*pecmy.N), np.ones(pecmy.N), theta_x2))
+
+gsb1 = pecmy.g_sparsity_bin(xlvt_sv1).astype(int)
+gsb2 = pecmy.g_sparsity_bin(xlvt_sv2).astype(int)
+
+pecmy.war_vals(np.ones(pecmy.N), pecmy.m, theta_dict_2)
+
+diff = gsb1-gsb2
+len(diff[diff<0])
+
+pecmy.g_sparsity_idx(gsb)
+
+
+
+
+
+
+
+
+
+
+
+pecmy.g_len
+
+
+pecmy.xlvt_len
+pecmy.g_len
+
+pecmy.x_len+pecmy.lambda_i_len * pecmy.N
+pecmy.g_sparsity()
+
+
+pecmy.estimator_cons_jac(xlvt_sv, np.zeros(pecmy.g_len*pecmy.xlvt_len))
+
+
+pecmy.xlvt_len * pecmy.g_len
+pecmy.g_len
+
+g_sparsity_indices_a1 = np.array(np.meshgrid(range(pecmy.g_len), range(pecmy.xlvt_len))).T.reshape(-1,2)
+g_sparsity_indices1 = (g_sparsity_indices_a1[:,0], g_sparsity_indices_a1[:,1])
+
+
+
+g_sparsity_indices_a2 = pecmy.g_sparsity()
+g_sparsity_indices2 = (g_sparsity_indices_a2[:,1], g_sparsity_indices_a2[:,0])
+
+xlvt_sv = np.ones(pecmy.xlvt_len)
+pecmy.estimator_cons_jac(xlvt_sv, np.zeros(pecmy.xlvt_len*pecmy.g_len))
+
+
+
+g_mat = np.reshape(np.repeat(False, pecmy.xlvt_len*pecmy.g_len), (pecmy.xlvt_len, pecmy.g_len))
+g_mat[0, ].shape
+
+
+ge_dict = pecmy.ecmy.rewrap_ge_dict(xlvt_dict["ge_x"])
+ge_dict["tau_hat"] * pecmy.ecmy.tau
+#
+# pecmy.ecmy.tau
+# pecmy.r_v(ge_dict, v_star)
+# pecmy.R_hat(ge_dict, v_star)
+# wv = pecmy.war_vals(v_star, pecmy.m, pecmy.rewrap_theta(theta_x_star))
+# pecmy.Lzeros_i(np.concatenate((np.ones(pecmy.x_len), np.zeros(pecmy.lambda_i_len))), 0, v_star, wv[:,0])
+#
+# test = pecmy.ecmy.tau - np.diag(np.diag(pecmy.ecmy.tau))
+
+pecmy.rhoM(theta_dict_init)
+pecmy.chi(pecmy.m, theta_dict_init)
+
+rcv_ft = pecmy.rcv_ft(v_star)
+wv = rcv_ft - 275 / pecmy.chi(pecmy.m, theta_dict_init)
+pecmy.war_vals(v_star, pecmy.m, theta_dict_init)
+np.exp(-.004*pecmy.W)
+
+x, obj, status = pecmy.estimator(v_star, theta_x_star, nash_eq=True)
+
+print(x)
+print(obj)
+print(status)
+
+
+
+
+
+ge_dict
+1 / pecmy.ecmy.tau
+
+
+len(pecmy.ecmy.geq_diffs(np.ones(pecmy.x_len)))
+Lzeros_i_jac_f = ag.jacobian(pecmy.Lzeros_i_xlvt)
+pecmy.Lzeros_i_xlvt(xlvt_star, 0)
+Lzeros_i_jac = Lzeros_i_jac_f(xlvt_star, 0)
+# Lzeros_i_jac[3, ]
+Lzeros_i_jac
+Lzeros_i_jac.shape
+Lzeros_i_jac[61, ]
+Lzeros_i_jac.ravel()
+
+pecmy.chi(pecmy.m, pecmy.rewrap_theta(theta_x_star))
+pecmy.war_vals(v_star, pecmy.m, pecmy.rewrap_theta(theta_x_star))
+
+### test autograd and numpy clip
+
+def f_test(x):
+    return(np.clip(x, 0, np.inf))
+
+def f_test_grad(x):
+    f_test_grad_f = ag.grad(f_test)
+    return(f_test_grad_f(x))
+
+f_test_grad(-1.)
+
+### dropbox testing
+
+
+
+# test_x = pecmy.ft_sv(6, np.ones(pecmy.x_len))
+# print(test_x)
+
+# v = np.array([1.0303, 1.0977, 1.1353, 1.0214, 1.0000, 1.0143])
+# id = 0
+# # m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+# # m = m.T
+# m = np.diag(pecmy.M)
+# wv = pecmy.war_vals(v, m, theta_dict_init)
+#
+# pecmy.estimator_bounds("lower")
+# theta_x_sv = pecmy.unwrap_theta(theta_dict_init)
+# _x, obj, status = pecmy.estimator(v, theta_x_sv, nash_eq=True)
+#
+# print(_x)
+# print(obj)
+# print(status)
+
+# _x, obj, status = pecmy.br_ipyopt(v, id, None)
+#
+
+
+# br = pecmy.br(pecmy.v_sv(id, np.ones(pecmy.x_len), v), v, wv[:,id], id)
+# print(pecmy.ecmy.rewrap_ge_dict(br)["tau_hat"]*pecmy.ecmy.tau)
+
+# _x, obj, status = pecmy.Lsolve_i_ipopt(id, v, wv[:,id])
+#
+# print(_x)
+# print(obj)
+# print(status)
+#
+# x_dict = pecmy.ecmy.rewrap_ge_dict(_x[0:pecmy.x_len])
+# print(x_dict["tau_hat"]*pecmy.ecmy.tau)
+# print("multipliers:")
+# print(_x[pecmy.x_len:])
+
+# _x, obj, status = pecmy.br_ipyopt(v, id, wv[:,id])
+#
+# print(_x)
+# print(obj)
+# print(status)
+#
+# x_dict = pecmy.ecmy.rewrap_ge_dict(_x)
+# print(x_dict["tau_hat"]*pecmy.ecmy.tau)
+
+# m = np.diag(pecmy.M)
+#
+# # v = np.ones(pecmy.N)
+# test = pecmy.rewrap_lambda_i(np.ones(pecmy.lambda_i_len))
+# len(test["tau_hat"])
+# pecmy.lambda_i_len
+# test2 = pecmy.unwrap_lambda_i(test)
+# len(test2)
+# pecmy.x_len
+#
+# wv = pecmy.war_vals(v, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N)))
+# out = pecmy.Lzeros_eq(v, wv)
+# print(out)
+
+# out = pecmy.Lzeros_min(v, theta_dict_init, mtd="SLSQP")
+# print(out)
+
+# x_lbda_theta_sv = np.zeros(pecmy.x_len+pecmy.lambda_i_len*pecmy.N+3+pecmy.N)
+# x_lbda_theta_sv[0:pecmy.x_len] = 1
+# x_lbda_theta_sv[pecmy.x_len+pecmy.lambda_i_len*pecmy.N:pecmy.x_len+pecmy.lambda_i_len*pecmy.N+pecmy.N] = np.ones(pecmy.N)
+# x_lbda_theta_sv[pecmy.x_len+pecmy.lambda_i_len*pecmy.N+pecmy.N] = theta_dict_init["c_hat"]
+# x_lbda_theta_sv[pecmy.x_len+pecmy.lambda_i_len*pecmy.N+pecmy.N+1] = theta_dict_init["alpha"]
+# x_lbda_theta_sv[pecmy.x_len+pecmy.lambda_i_len*pecmy.N+pecmy.N+2] = theta_dict_init["gamma"]
+#
+# for i in range(pecmy.N):
+#     print(np.sum(pecmy.Lzeros_i_wrap_jac(x_lbda_theta_sv, m, i, "lower")))
+#     print(np.sum(pecmy.ecmy.geq_diffs_grad(x_lbda_theta_sv, "lower"), axis=1))
+
+
+
+
+# wv = pecmy.war_vals(v, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N)))
+# # wv = np.zeros((pecmy.N, pecmy.N))
+# id = 3
+# print(wv[:,id])
+#
+# x = pecmy.Lsolve(v, m, theta_dict_init, id, enforce_geq=True)
+# x_dict = pecmy.ecmy.rewrap_ge_dict(x)
+# print(x_dict)
+# print(x_dict["tau_hat"] * pecmy.ecmy.tau)
+# pecmy.G_hat(x[0:pecmy.x_len], v, 0, all=True)
+#
+# x2 = pecmy.br(np.ones(pecmy.x_len), v, wv[:,id], id)
+# x2_dict = pecmy.ecmy.rewrap_ge_dict(x2)
+# print(x2_dict)
+# print(pecmy.G_hat(x2[0:pecmy.x_len], v, 0, all=True))
+
+
+
+# lambda_i = np.zeros(pecmy.lambda_i_len)
+# len(lambda_i)
+# lambda_i_dict = pecmy.rewrap_lambda_i(lambda_i)
+# len(lambda_i_dict["h_hat"])
+# pecmy.x_len
+# pecmy.N**2 + 4*pecmy.N + pecmy.N**2
+# pecmy.Lzeros_theta_min(theta_dict_init, np.ones(pecmy.N))
+
+
+
+# pecmy.Lzeros_i_wrap(x_lbda_theta_sv, m, 0)
 # start_time = time.time()
-# out_dict = pecmy.est_loop(b_init, theta_dict_init)
+# pecmy.Lzeros_i_wrap_jac(x_lbda_theta_sv, m, 0)
 # print("--- %s seconds ---" % (time.time() - start_time))
-
-if not os.path.exists(resultsPath + "estimates_sv.csv"):
-
-    theta_dict_init = dict()
-    theta_dict_init["alpha"] = .122
-    theta_dict_init["c_hat"] = .2
-    theta_dict_init["sigma_epsilon"] = 1
-    theta_dict_init["gamma"] = .105
-
-    b_init = np.array([.3, 1, 1, 1, .1, .7])
-
-    theta_dict_sv = pecmy.est_loop(b_init, theta_dict_init)
-    for id in range(pecmy.N):
-        theta_dict_sv["b" + str(id)] = theta_dict_sv["b"][id]
-    try:
-        del theta_dict_sv["b"]
-    except KeyError:
-        print("Key 'b' not found")
-
-    with open(resultsPath + 'estimates_sv.csv', 'w', newline="") as csv_file:
-        writer = csv.writer(csv_file)
-        for key, value in theta_dict_sv.items():
-           writer.writerow([key, value])
-else:
-    with open(resultsPath + 'estimates_sv.csv') as csv_file:
-        reader = csv.reader(csv_file)
-        theta_dict_sv = dict(reader)
-
-    b_init = np.zeros(pecmy.N)
-    for key in theta_dict_sv.keys():
-        if key[0] == 'b':
-            b_init[int(key[1])] = theta_dict_sv[key]
-        else:
-            theta_dict_sv[key] = float(theta_dict_sv[key])
-    keys_del = ['b' + str(i) for i in range(pecmy.N)]
-    for key in keys_del:
-        try:
-            del theta_dict_sv[key]
-        except KeyError:
-            print("key not found")
-
-
-# TODO: test affinity shocks on nonzero other values
-id = 5
-b_test = np.array([0.3, 1.,  1., 1.,  0.1, 0.4])
-epsilon = np.zeros((pecmy.N, pecmy.N))
-wv_m = pecmy.war_vals(b_test, m, theta_dict, epsilon) # calculate war values
-ids_j = np.delete(np.arange(pecmy.N), id)
-wv_m_i = wv_m[:,id][ids_j]
-
-tau_hat_nft = 1.25 / pecmy.ecmy.tau
-np.fill_diagonal(tau_hat_nft, 1)
-ge_x_sv = np.ones(pecmy.x_len)
-ge_dict = pecmy.ecmy.rewrap_ge_dict(ge_x_sv)
-tau_hat_sv = ge_dict["tau_hat"]
-tau_hat_sv[id] = tau_hat_nft[id] # start slightly above free trade
-ge_dict_sv = pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
-ge_x_sv = pecmy.ecmy.unwrap_ge_dict(ge_dict_sv)
-
-test = pecmy.br(ge_x_sv, b_test, m, wv_m_i, id)
-test
-# wv_m
-# wv_m_i
-
+#
+# start_time = time.time()
+# pecmy.Lzeros_all_jac(x_lbda_theta_sv, m, "lower")
+# print("--- %s seconds ---" % (time.time() - start_time))
+#
+# pecmy.Lzeros_theta_grad(theta_lbda_chi_init)
+#
+#
+# id = 2
+# L_grad_f = ag.grad(pecmy.Lagrange_i_x)
+# v = np.ones(pecmy.N)
+# v[id] = 1.3
+# L_grad = L_grad_f(np.ones(pecmy.x_len), v, np.ones((pecmy.N, pecmy.N)), wv[:,id], np.zeros(pecmy.lambda_i_len), id)
+#
+# pecmy.ecmy.rewrap_ge_dict(L_grad)
+#
+# np.sum(L_grad)
+#
+# pecmy.rcv_ft(np.ones(pecmy.N))
 #
 # m = pecmy.M / np.ones((pecmy.N, pecmy.N))
 # m = m.T
@@ -183,793 +362,367 @@ test
 # m[:,pecmy.ROW_id] = 0
 # m[pecmy.ROW_id,pecmy.ROW_id] = 1
 #
+# pecmy.chi_prime(m, theta_dict_init)
+# pecmy.W
+#
+#
+#
+#
+#
+#
+# pecmy.war_vals(v, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N)))
+#
+#
+#
 # m_diag = np.diagonal(m)
 # m_frac = m / m_diag
-# pecmy.est_theta(b_init, m, theta_dict_init)
-
-
-
-
-
-# start_time = time.time()
-# m = M / np.ones_like(tau)
+#
+# # m = np.diag(M)
+#
+# id = 2
+#
+# testL = pecmy.Lsolve(v, m, theta_dict_init, id, mtd="lm")
+# testL_dict = pecmy.ecmy.rewrap_ge_dict(testL)
+# testL_dict
+# pecmy.G_hat(testL, v, 0, all=True)
+#
+# ge_x_sv = pecmy.v_sv(id, np.ones(pecmy.x_len), v)
+# war_vals = pecmy.war_vals(v, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N)))
+# testbr = pecmy.br(ge_x_sv, v, war_vals[:,id], id)
+# testbr_dict = pecmy.ecmy.rewrap_ge_dict(testbr)
+# testbr_dict
+# pecmy.G_hat(testbr, v, 0, all=True)
+#
+# sv = np.concatenate((np.ones(pecmy.x_len), np.zeros(pecmy.lambda_i_len)))
+# pecmy.Lzeros(sv, v, np.ones((pecmy.N, pecmy.N)), war_vals[:,id], id)
+#
+#
+# test = pecmy.est_theta_inner(v, theta_dict_init, m)
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+# rcv = np.zeros((pecmy.N, pecmy.N))  # empty regime change value matrix (row's value for invading column)
+# for i in range(pecmy.N):
+#     v_nearest = hp.find_nearest(pecmy.v_vals, v[i])
+#     rcv[i, ] = pecmy.rcv[v_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
+#
+# m_diag = np.diagonal(m)
+# m_frac = m / m_diag
+#
+# epsilon_star = pecmy.epsilon_star(v, m, theta_dict_init)
+# t_epsilon = pecmy.trunc_epsilon(epsilon_star, theta_dict_init)
+# phi = stats.norm.cdf(epsilon_star.ravel(), loc=0, scale=theta_dict_init["sigma_epsilon"])
+# lhs = pecmy.Y(rcv, theta_dict_init, 1)
+#
+# X = np.column_stack((1-phi.ravel())*(np.log(m_frac.ravel()), (1-phi.ravel())*pecmy.W.ravel()))
+# X.shape
+# X_active = X[~np.isnan(X[:,0]),:]
+# X_active.shape
+# Y = lhs.ravel()
+# Y.shape
+# Y_active = Y[~np.isnan(X[:,0])]
+# len(np.isnan(X[:,0]))
+#
+# m_diag = np.diagonal(m)
+# m_frac = m / m_diag
+#
+# ests = sm.OLS(Y_active, X_active, missing="drop").fit()
+# ests.params
+#
+#
+# # pecmy.est_theta_inner(v_init, theta_dict_init, m)
+#
+# # pecmy.est_loop_interior(v_init, theta_dict_init)
+# m = pecmy.M / np.ones((pecmy.N, pecmy.N))
 # m = m.T
-# id = 0
-# wv = pecmy.war_vals(b_init, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N))) # calculate war values
-# ids_j = np.delete(np.arange(pecmy.N), id)
-# wv_i = wv[:,id][ids_j]
-# ge_x_sv = pecmy.nft_sv(id)
-# br = pecmy.br(ge_x_sv, b_init, wv_i, id, mil=False)
-# print("--- %s seconds ---" % (time.time() - start_time))
-
-
-
-# pecmy.ecmy.tau * 4.5
-
-# print(pecmy.W)
-pecmy.rhoM(theta_dict, np.zeros((pecmy.N, pecmy.N)))
-#
-# ccodes
-# m_frac
-# m
-# pecmy.rcv[1]
-pecmy.est_theta(b_k1, m, theta_dict)
-# pecmy.rcv[1]
-# ccodes
-
-
-# pecmy.est_theta(b_init, m, theta_dict)
-# pecmy.rcv[1]
-# pecmy.est_b_grid(b_init, m, theta_dict, epsilon)
-# np.any(np.array([-1, 1]) < 0)
-
-Theta = []
-b = []
-b.append(b_init)
-b.append(b_init)
-
-tau
-pecmy.rcv[.5]
-
-id = 3
-b_test = np.repeat(.5, pecmy.N)
-b_test[id] = .7
-wv_m = pecmy.war_vals(b_test, m, theta_dict, epsilon) # calculate war values
-ids_j = np.delete(np.arange(pecmy.N), id)
-wv_m_i = wv_m[:,id][ids_j]
-# wv_m
-# wv_m_i
-
-ge_x_sv = np.ones(pecmy.x_len)
-test = pecmy.br(ge_x_sv, b_test, m, wv_m_i, id)
-test
-
-np.random.choice([1, -1])
-ccodes
-
-
-pecmy.G_hat(test, b_test)
-
-
-
-
-
-
-
-out = pecmy.est_theta(b_init, m, theta_dict)
-
-out.summary()
-out.params
-out.bse
-out.resid
-out.fittedvalues
-
-estars = pecmy.epsilon_star(b_init, m, theta_dict, W)
-weights = pecmy.weights(estars, sigma_epsilon)
-
-pecmy.rcv[0]
-pecmy.rhoM(theta_dict, epsilon) # testing new rho function
-pecmy.rhoM(theta_dict, 0)
-# positive shocks give better war performance
-# pecmy.est_b_i_grid(0, b_init, m, theta_dict, epsilon)
-
-# Japan's BR is getting screwed up sometimes with positive m
-# Looks like this is because ROW is extremely threatening to Japan at trial values, hard to satisfy constraint
-    # bumping up alpha_0 seems to fix the problem
-id = 2
-b_test = np.repeat(.4, pecmy.N)
-# starting values
-tau_hat_nft = 1.1 / pecmy.ecmy.tau
-np.fill_diagonal(tau_hat_nft, 1)
-# tau_hat_nft * pecmy.ecmy.tau
-ge_x_sv = np.ones(pecmy.x_len)
-ge_dict = pecmy.ecmy.rewrap_ge_dict(ge_x_sv)
-tau_hat_sv = ge_dict["tau_hat"]
-tau_hat_sv[id] = tau_hat_nft[id] # start slightly above free trade
-ge_dict_sv = pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
-ge_x_sv = pecmy.ecmy.unwrap_ge_dict(ge_dict_sv)
-
-
-
-test = pecmy.br(ge_x_sv, b_test, m, wv_m_i, id)
-
-
-# Q: is tau_ij invariant to coerion from k?
-id = 0
-
-m = np.diag(M)
-m_prime = np.copy(m)
-m_prime[5, 0] = m[5,5]
-m_prime[5, 5] = 0  # U.S. spends all effort coercing China
-
-
-wv_m = pecmy.war_vals(b_init, m, theta_dict, epsilon) # calculate war values
-ids_j = np.delete(np.arange(pecmy.N), id)
-wv_m_i = wv_m[:,id][ids_j]
-
-
-wv_m_prime = pecmy.war_vals(b_init, m_prime, theta_dict, epsilon) # calculate war values
-wv_m_prime_i = wv_m_prime[:,id][ids_j]
-
-pecmy.br(np.ones(pecmy.x_len), b_init, m, wv_m_i, id)
-pecmy.br(np.ones(pecmy.x_len), b_init, m_prime, wv_m_prime_i, id)
-
-# A: no, substantial spillovers, China liberalizes toward everybody in response to US coercion
-
-
-
-
-
-
-
-
-
-
-### NO CHANGES ###
-
-tau_hat_base = np.ones((N, N))
-D_hat_base = np.ones(N)
-m = np.diag(M)
-
-dict_base = dict()
-dict_base["tau_hat"] = "tau_hat_base"
-
-
-### FREE TRADE ###
-
-tau_hat_ft = 1 / tau
-ecmy = economy.economy(data, params)
-ecmy.geq_solve(tau_hat_ft, np.ones(ecmy.N))
-
-### DOUBLE BARRIERS ###
-
-tau_hat_db = tau * 2
-for i in range(len(Y)):
-    tau_hat_db[i, i] = 1
-
-imp.reload(economy)
-ecmy = economy.economy(data, params)
-
-# ecmy.tau
-# tau_hat_pos = np.ones_like(ecmy.tau)
-# tau_hat_pos[ecmy.tau < 1] = 1 / ecmy.tau[ecmy.tau < 1]
-# tau_hat_pos
-
-ecmy.purgeD()
-test = ecmy.geq_solve(tau_hat_ft, D_hat_base)
-testBase = ecmy.geq_solve(tau_hat_base, D_hat_base)
-testBase_x = ecmy.unwrap_ge_dict(testBase)
-# ecmy.U_hat(test)
-test_x = ecmy.unwrap_ge_dict(test)
-
-b = np.repeat(1, len(nu))
-theta_dict = dict()
-theta_dict["b"] = b
-theta_dict["alpha"] = np.array([alpha_0, alpha_1])
-theta_dict["gamma"] = gamma
-theta_dict["c_hat"] = .2
-
-
-
-imp.reload(economy)
-imp.reload(policies)
-# pecmy = policies.policies(data, params, b)
-pecmy = policies.policies(data, params, b, rcv_path="results/rcv.csv")
-
-m = np.diag(pecmy.M)
-alpha = np.array([alpha_0, alpha_1])
-c_hat = .1
-# m = np.zeros_like(pecmy.ecmy.tau)
-# for i in range(pecmy.N):
-#     m[i, ] = pecmy.M[i] / pecmy.N
-# U.S. threatens China
-# m[5,0] = pecmy.M[5] / 2
-# m[5,5] = pecmy.M[5] / 2
-b = np.repeat(.5, pecmy.N)
-theta_dict["b"] = b
-theta_dict["alpha"] = alpha
-theta_dict["c_hat"] = c_hat
-
-lsolve_test = pecmy.Lsolve(tau_hat_base, m, theta_dict, 0)
-
-wv = pecmy.war_vals(m, theta_dict)
-i = 0
-ni = np.delete(np.arange(pecmy.N), i)
-wi = wv[:,0][ni]
-br_test = pecmy.br(np.ones_like(test_x), b, m, wi, i)
-
-test_b_i = pecmy.est_b_i(0, m, alpha, c_hat, scipy=True)
-# shrinking the bounds seems to cause more instability...
-# why is it searching such crazy numbers in the first place?
-# probably similar to the reason we had to reduce step size in solver
-
-
-# pecmy.Lsolve(tau_hat_base, m, theta_dict, 0)
-# this is just very unstable...which is probably the underlying problem in the estimation.
-
-
-
-
-
-
-
-
-
-np.array([1, 2, 3])[-1]
-
-
-test = pecmy.est_xy_tau(m, alpha, c_hat)
-
-# trying with general geq constraints and log objective
-    # maybe go back to eq constraints after this?
-    # attempting...
-
-
-pecmy.ecmy.tau
-
-
-
-
-tau_hat = np.ones_like(pecmy.ecmy.tau)
-ge_dict2 = pecmy.ecmy.geq_solve(tau_hat, np.ones(pecmy.N))
-pecmy.ecmy.unwrap_ge_dict(ge_dict2)
-
-
-wv = pecmy.war_vals(m, theta_dict)
-
-j2 = np.delete(np.arange(pecmy.N), 2)
-wv2 = wv[:,0][j2]
-tLsolve = pecmy.Lsolve(tau_hat_base, m, theta_dict, 5, ft=True)
-tLsolve
-
-
-
-
-
-
-
-ecmy.geq_solve(pecmy.tau_hat_ft_i(tau_hat_base, 5), np.ones(pecmy.N))
-tLsolve
-pecmy.br(np.ones(pecmy.x_len), b, m, wv2, 2)
-
-
-
-
-# x = tLsolve[pecmy.N:]
-#
-# ge_x = []
-# ge_x.extend(np.ones(pecmy.N**2+pecmy.N))
-# ge_x.extend(x)
-# ecmy.rewrap_ge_dict(np.array(ge_x))
-
-
-tLsolve[pecmy.N:pecmy.N**2]
-
-
-len(tLsolve) - pecmy.N - pecmy.lambda_i_len
-pecmy.x_len - pecmy.N ** 2
-
-
-# for i in range(pecmy.N):
-#     ji = np.delete(np.arange(pecmy.N), i)
-#     wvi = wv[:,i][ji]
-#
-#     tLsolve = pecmy.Lsolve(tau_hat_base, m, theta_dict, i)
+# wv = pecmy.war_vals(v, m, theta_dict_init, np.zeros((pecmy.N, pecmy.N)))
+# rcv[:,2]
+# wv
+# G_lower = pecmy.G_lower(v, m, theta_dict_init)
 #
 #
-# # solving for 2's best response requires recursion, what does this mean for estimation?
-#     # starting at free trade works
-#     # similarly with 5
 #
-# pecmy.br(np.ones(pecmy.x_len), b, m, wvi, i)
-
-
-ecmy.rewrap_ge_dict(pecmy.rewrap_xy_tau(test['x'])["ge_x"])
-
-# D_hats look weird too, is this a problem in Lsolve?
-# pecmy.ecmy.D
-# none of this matters because deficts are purged in pecmy.
-
-
-# code 3: more than 3*n iterations in LSQ subproblem seems to occur randomly
-
-# attempting with sqrt output on loss function, still gives code 3 but parameter estimates look better along the way...
-    # attempted with general ge constraints, attempting with id-specific constraints
-    # this seems to stick at corners
-
-# attempting to log G_hat output...what is wrong with this?
-    # it's bad for mil constraints but we can code these separately
-    # works fine for Lsolve
-# could also try duplicating general and id-specific ge constraints
-    # this is running now
-    # shows flashes of brilliance, and flashes of hiding in corner
-    # fails with code 3 again
-# trying with just id-specific constraints...
-    # around minute 15 bs get stuck at 2 and only multipliers are moving around, objective gets stuck at same value
-    # gets through 28 jacobian evaluations before giving code 3 again
-# diagonal is good..
-    # code 3 seems totally random, try grabbing trial output and retrying...
-    # seeing some of the same behavior here that we sometimes see in Lsolve...pushing solutions toward corner...this is probably because solver is getting into convex regions of objective
-
-
-
-np.any(np.isnan([np.nan, np.nan]))
-
-
-pecmy.x_len + pecmy.lambda_i_len * pecmy.N + pecmy.N  # input
-pecmy.x_len - pecmy.N**2 - self.N  # ge_constraints
-
-
-78 * pecmy.N
-
-
-
-
-wv = pecmy.war_vals(m, theta_dict)
-
-j0 = np.delete(np.arange(pecmy.N), 0)
-wv0 = wv[:,0][j0]
-
-pecmy.br(np.ones(pecmy.x_len), b, m, wv0, 0)
-
-
-x = []
-x.extend([1, 2, 3], [4, 5, 6])
-
-
-
-
-pecmy.x_len
-pecmy.lambda_i_len
-
-
-
-
-
-
-
-
-
-
-pecmy.lambda_i_len
-pecmy.x_len
-
-pecmy.Lsolve(tau_hat_base, m, theta_dict, 0)
-
-
-pecmy.x_len
-pecmy.lambda_i_len * pecmy.N + pecmy.N + pecmy.x_len
-
-
-
-out = pecmy.rewrap_xy_tau(test['x'])
-len(pecmy.rewrap_lambda(out["lambda_x"])[0])
-pecmy.lambda_i_len
-pecmy.lambda_i_len_td
-
-for i in range(pecmy.N):
-    pecmy.Lsolve(tau_hat_base, m, theta_dict, i)
-
-# adding bounds on b screws things up for some reason
-
-
-
-
-
-
-
-theta_dict = dict()
-
-
-test = pecmy.est_b(m, alpha, c_hat)
-# TODO: seems to want to shrink bs toward zero for some reason
-    # probably has something to do with getting revenue out of Lagrangian...this is why minimizing FOC not ideal
-
-
-
-start_time = time.time()
-pecmy.br(np.ones(pecmy.x_len), b, m, wv0, 0)
-print("--- %s seconds ---" % (time.time() - start_time))
-
-start_time = time.time()
-test = pecmy.Lsolve(tau_hat_base, m, theta_dict, 0)
-print("--- %s seconds ---" % (time.time() - start_time))
-test_li = test[pecmy.x_len:]
-pecmy.rewrap_lambda_i(test_li)
-# TODO: these aren't right (for complete m case), chi multipliers should be positive
-    # doesn't converge fully and doesn't satisfy mil constraints for U.S. and China
-    # solves ok with just U.S. threat, and returns multiplier
-
-
-
-pecmy.Lzeros(np.ones(pecmy.x_len), np.zeros(pecmy.lambda_i_len), theta_dict["b"], tau_hat_base, wv0, 0)
-
-
-
-
-
-
-
-
-
-pecmy.Lsolve(tau_hat_base, m, 0)
-
-
-test_lbda = pecmy.L_solve_lbda(np.ones(pecmy.x_len), b, np.ones_like(pecmy.ecmy.tau), wv0, 0)
-pecmy.rewrap_lambda_i(test_lbda['x'])
-
-test_b = pecmy.est_b(m, alpha, c_hat)
-
-
-
-
-
-4 % 3
-start_time = time.time()
-test_br_m1 = pecmy.br(testBase_x, m, 0, mpec=True)
-print("--- %s seconds ---" % (time.time() - start_time))
-
-
-
-
-
-test = pecmy.estimate()
-
-
-testA = np.copy(test)
-testx = np.copy(test['x'])
-test_dict = pecmy.rewrap_y(testx)
-test_dict["theta_m"]
-
-# 07/23/2019
-    # originally feeding wrong war values to Lagrangian, checking everything again w/ equality constraints
-        # compare war vals to rcvs and make sure everything looks right
-        # still fails with equality constraints, trying with lower bounds on multipliers but epsilon ball around 0 in dGm_ji
-        # still returns nonsense after 230 minutes
-
-war_diffs = np.array([-1, 1, 0])
-np.where(war_diffs < 0, 0, war_diffs)
-
-
-pecmy.rewrap_y(test['x'])
-
-
-
-
-
-
-
-
-
-np.dot(np.array([1,2,3]), np.array([1,2,3]))
-
-
-test1 = pecmy.rewrap_y(test['x'])
-pecmy.rewrap_m(test1['m'])
-
-
-
-
-
-
-
-
-
-# CLAIMS 'INEQUALITY CONSTRAINTS INCOMPATIBLE' after 8923 function evaluations, ~40 minutes of running
-# only 14 jacobian evaluations
-# attempting with equality constraints
-    # here we get 'Singular matrix C in LSQ subproblem' in first Jacobian evaluation, refers to constraint qualification problem, study up on this
-    # Might be due to starting at zero multipliers, or because derivative wrt own policy is linear combination of other derivatives when gamma = 1
-    # removing derivative wrt own allocation doesn't seem to help though
-    # problem seems to be that we weren't selecting self.M[j], rather selecting whole vector
-    # fixing this lets everything run, but gamma shrinks to zero and everything goes to shit
-    # got objective value down to 56 w/o gamma but hit same error at minute 111, not clear why here, estimates were pretty stable generally. SSE seemed to be monotonically decreasing in c_hat for most of estimation routine.
-    # try starting at zero lambda vector
-    # problem is that equality constraint jacobian inversion fails for weird trial paramters, try with upper and lower constraints?
-
-lambda_x_init = np.zeros(pecmy.lambda_i_len * pecmy.N)
-lambda_dict = pecmy.rewrap_lambda(lambda_x_init)
-pecmy.rewrap_lambda_i(lambda_dict[1])["chi_i"][0] = 1
-
-m = np.diag(M)
-rhoM = pecmy.rhoM(theta_dict)
-m[0, 1] = 2
-m[1, 1] = 1
-m_x = pecmy.unwrap_m(m)
-
-pecmy.dGdm_ji(m_x, 0, 1, theta_dict, rhoM, lambda_dict)
-pecmy.dGdm_ii(m_x, 1, theta_dict, rhoM, lambda_dict)
-
-for i in range(5):
-    print(i)
-
-rhoM
-
-pecmy.rewrap_m(m_x)
-testG = ag.grad(pecmy.chi)
-testG(m_x, 0, 1, theta_dict, rhoM)
-
-
-
-pecmy.rcv[0]
-pecmy.war_vals(np.diag(pecmy.M), theta_dict)
-# for i in range(pecmy.N):
-m[5, 0] = m[5,5] * .5
-m[5, 5] = m[5,5] * .5
-pecmy.war_vals(m, theta_dict)
-
-
-ids = np.arange(0, pecmy.N)
-test = np.delete(ids, 3)
-id = np.where(test == i)[0]
-
-test[id]
-
-test = pecmy.br_war_ji(np.ones(pecmy.ecmy.ge_x_len), b, 0, 5, full_opt=True)
-test_dict = pecmy.ecmy.rewrap_ge_dict(test)
-test_dict
-
-
-
-
-np.arange(0, 1.1, .1)
-
-
-
-lambda_x_init = np.zeros(pecmy.lambda_i_len * pecmy.N)
-m_x_init = np.diag(M).flatten()
-x_init = np.append(np.append(testBase_x, lambda_x_init), m_x_init)
-
-
-test = pecmy.br_m(x_init, 0)
-
-
-
-
-ge_ft_x = pecmy.ecmy.unwrap_ge_dict(pecmy.ecmy.geq_solve(tau_hat_ft, D_hat_base))
-
-pecmy.G_hat(testBase_x)[1]
-pecmy.G_hat(pecmy.br_war_ji(testBase_x, 1, 0))[1]
-pecmy.G_hat(ge_ft_x)[1]
-pecmy.G_hat(pecmy.br_war_ji(ge_ft_x, 1, 0))[1]
-
-
-
-
-
-
-
-
-
-m = np.diag(M)
-m_x = pecmy.unwrap_m(m)
-m = pecmy.rewrap_m(m_x)
-
-
-# lambda_x = np.zeros(pecmy.N*pecmy.lambda_i_len)
-# lambda_dict = pecmy.rewrap_lambda(lambda_x)
-# pecmy.unwrap_lambda(lambda_dict) == lambda_x
-
-
-np.append(m[0, ], m[1, ])
-m = np.diag(M)
-# for i in range(pecmy.N):
-m[5, 0] = m[5,5] * .5
-m[5, 5] = m[5,5] * .5
-
-m.flatten()
-
-test0 = pecmy.Lsolve(tau_hat_base, m, 0)  # works with mil constraints for zero when we don't square the output and use diagonal military matrix
-
-test_br_m1 = pecmy.br(testBase_x, m, 0, mpec=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-m = np.diag(M)
-m[5, 0] = m[5,5] * .5
-m[5, 5] = m[5,5] * .5
-test_br_m2 = pecmy.br(testBase_x, m, 0, mpec=True)
-np.exp(pecmy.G_hat(test_br_m2, ids=np.array([5])))
-
-
-
-# TODO: check that this still works with unlogged objective
-# recursive formulation finds zeros for all economies
-
-# lambda_base = np.zeros(pecmy.lambda_i_len)
-baseline_x = pecmy.br(testBase_x, m, 1)
-baseline_dict = pecmy.ecmy.rewrap_ge_dict(baseline_x)
-# np.exp(pecmy.G_hat(baseline_x, np.array([1])))
-
-# TODO: try starting at free trade vec for id if we don't find solution
-# ecmy.geq_solve(tau_hat_ft_i(1, pecmy.ecmy.tau), np.ones(pecmy.N))
-# lm works for id 0 and logged objective with fct=.1, starting at no change, also works for unlogged objective. Also works starting from free trade, also works with squared output
-# also works for 1 when we start at free trade and use unlogged objective, also works with squared output
-# 2 works if I square the output and start from free trade
-    # same with 3, 4
-# 5 works with squared output starting from base
-
-
-test2 = pecmy.Lsolve(tau_hat_ft_i(5, pecmy.ecmy.tau), 5)
-
-
-test_dict = pecmy.ecmy.rewrap_ge_dict(test2['x'][0:pecmy.ecmy.ge_x_len])
-
-test_dict = pecmy.ecmy.rewrap_ge_dict(test['x'][0:pecmy.ecmy.ge_x_len])
-np.exp(pecmy.G_hat(test[0][0:pecmy.ecmy.ge_x_len], np.array([1])))
-pecmy.ecmy.tau * test_dict["tau_hat"]
-
-
-
-x = []
-x.extend(testBase_x)  # TODO this doesn't work to flatten, same in Lzeros
-x.extend(lambda_base)
-
-pecmy.Lzeros(np.array(x), tau_hat_base, 0)
-
-
-testGrad = ag.grad(pecmy.Lagrange)
-testGrad(testBase_x, tau_hat_base, lambda_base, 0)
-
-
-
-
-
-start_time = time.time()
-time.time() - start_time
-
-testGrad = ag.grad(pecmy.G_hat)
-testGrad(testBase_x, np.array([0]))
-
-
-start_time = time.time()
-test_br_m1 = pecmy.br(testBase_x, m, 0, mpec=True)
-print("--- %s seconds ---" % (time.time() - start_time))
-# pecmy.G_hat(test_br_m1, np.array([0]))
-
-# start_time = time.time()
-# test_ne = pecmy.nash_eq(m)
-# pecmy.ecmy.rewrap_ge_dict(test_ne)
-# print("--- %s seconds ---" % (time.time() - start_time))
-
-# test to see if we can get constraints to bind (U.S. spends half of effort coercing China)
-m = np.diag(M)
-m[5, 0] = m[5,5] * .5
-m[5, 5] = m[5,5] * .5
-
-start_time = time.time()
-test_br_m2 = pecmy.br(testBase_x, m, 0, mpec=True)
-print("--- %s seconds ---" % (time.time() - start_time))
-pecmy.G_hat(test_br_m2, np.array([0]))
-
-start_time = time.time()
-test_ne2 = pecmy.nash_eq(m)
-pecmy.ecmy.rewrap_ge_dict(test_ne)
-print("--- %s seconds ---" % (time.time() - start_time))
-
-# np.inf
-# pecmy.rho()
-# pecmy.W
-# 1 / (1 + np.exp(1))
-# pecmy.G_hat(test_x, np.repeat(.5, len(Y)))
-
-ccodes
-ecmy.rewrap_ge_dict(pecmy.br_war_ij(testBase_x, 5, 1))
-
-
-
-start_time = time.time()
-test_ne = pecmy.nash_eq()
-pecmy.ecmy.rewrap_ge_dict(test_ne)
-print("--- %s seconds ---" % (time.time() - start_time))
-
-
-start_time = time.time()
-warij = pecmy.br_war_ij(testBase_x, 0, 1, mpec=True)
-print("--- %s seconds ---" % (time.time() - start_time))
-
-pecmy.ecmy.rewrap_ge_dict(warij)["tau_hat"] * pecmy.ecmy.tau
-pecmy.ecmy.rewrap_ge_dict(warij)["X_hat"] * pecmy.ecmy.Xcif
-
-
-# 38 seconds on laptop
-# pecmy.ecmy.tau
-
-start_time = time.time()
-test_br = pecmy.br(testBase_x, 0, mpec=False)
-print("--- %s seconds ---" % (time.time() - start_time))
-# test_brc = pecmy.br_cor(testBase_x)
-# much longer, and requires some recursion to get out of ge solution traps
-
-start_time = time.time()
-test_ne = pecmy.nash_eq()
-pecmy.ecmy.rewrap_ge_dict(test_ne)
-print("--- %s seconds ---" % (time.time() - start_time))
-# 480 with del2 method on laptop (with some printing)
-# 524 seconds for iterationstart_time = time.time()
-
-
-# trade values in the thousands, tens of thousands for unfavored countries
-
-
-
-
-
-
-### DEBUG ZONE ###
-
-imp.reload(economy)
-ecmy = economy.economy(data, params)
-ecmy.purgeD()
-
-
-tau_hat = np.ones_like(tau)
-for k in range(ecmy.N):
-    if k != 1:
-        tau_hat[1, k] = 1 / ecmy.tau[1, k]
-D_hat_base = np.ones(N)
-ge_dict = dict()
-ge_dict["tau_hat"] = tau_hat
-ge_dict["D_hat"] = D_hat_base
-
-tau_hat * ecmy.tau
-
-test = ecmy.geq_solve(tau_hat, D_hat_base, fct=1)
-
-
-# ecmy.update_ge_dict(test['x'], ge_dict)
-
-ecmy.update_ge_dict(test[1][0], ge_dict)
-
-# ecmy = economy.economy(data, params)
-# ecmy.purgeD()
-
-tau_hat_test = np.array([[1.        , 1.20908617, 1.22400761, 2.13669735, 0.29,
-        1.11933451],
-       [1.        , 1.        , 1.        , 1.        , 1.        ,
-        1.        ],
-       [1.        , 1.        , 1.        , 1.        , 1.        ,
-        1.        ],
-       [1.        , 1.        , 1.        , 1.        , 1.        ,
-        1.        ],
-       [1.        , 1.        , 1.        , 1.        , 1.        ,
-        1.        ],
-       [1.        , 1.        , 1.        , 1.        , 1.        ,
-        1.        ]])
-
-imp.reload(economy)
-imp.reload(policies)
-pecmy = policies.policies(data, params, b)
-pecmy.ecmy.geq_solve(tau_hat_test, np.ones(pecmy.N))
-
-ecmy.geq_solve(tau_hat_test, np.ones(ecmy.N))
+#
+#
+# epsilon_star = pecmy.epsilon_star(v, m, theta_dict_init)
+# Y_lower = pecmy.Y(rcv, theta_dict_init, G_lower)
+# t_epsilon = pecmy.trunc_epsilon(epsilon_star, theta_dict_init)
+#
+# lhs = pecmy.Y(rcv, theta_dict_init, 1)
+# phi = stats.norm.cdf(epsilon_star.ravel(), loc=0, scale=theta_dict_init["sigma_epsilon"])
+#
+# lhs.ravel() - Y_lower.ravel()
+#
+# Y = lhs.ravel() - (1 - phi.ravel()) * t_epsilon.ravel() - phi.ravel() * Y_lower.ravel()
+# # NOTE: truncated epsilons are very very large....is this the right way to do this?
+#
+#
+# X = np.column_stack((1-phi.ravel())*(np.log(m_frac.ravel()), (1-phi.ravel())*pecmy.W.ravel()))
+# # X = np.column_stack((np.log(m_frac.ravel()), pecmy.W.ravel()))
+# plt.plot(X[:,1], Y.ravel(), "+")
+# plt.plot(X[:,0], Y.ravel(), "+")
+# #
+# # weights = 1 - phi
+# #
+# X_active = X[X[:,0]!=-np.inf,:]
+# Y_active = lhs.ravel()[X[:,0]!=-np.inf]
+# # weights_active = weights[X[:,0]!=-np.inf]
+# Y_active = Y_active[~np.isnan(X_active[:,0])]
+# # weights_active = weights_active[~np.isnan(X_active[:,0])]
+# X_active = X_active[~np.isnan(X_active[:,0]),:]
+# # len(Y)
+# # len(X[:,0])
+# #
+# # pecmy.est_theta(X_active, Y_active)
+#
+# # test = sm.OLS(Y_active, X_active, missing="drop").fit()
+# # test2 = sm.WLS(Y_active, X_active, missing="drop").fit()
+# #
+# # test.params
+# # test2.params
+# #
+# #
+# #
+# #
+# # ge_x_sv = pecmy.v_sv(2, np.ones(pecmy.x_len), v_init)
+# # test_br1 = pecmy.br(ge_x_sv, v, wv[:,2], 2)
+# # test_br1_dict = pecmy.ecmy.rewrap_ge_dict(test_br1)
+# # test_br1_dict["tau_hat"] * pecmy.ecmy.tau
+# # test_br2 = pecmy.br(ge_x_sv, v, np.zeros(pecmy.N), 2)
+# # test_br2_dict = pecmy.ecmy.rewrap_ge_dict(test_br2)
+# #
+# # pecmy.G_hat(test_br1, v_init, 2)
+# # pecmy.G_hat(test_br2, v_init, 2)
+# # pecmy.R_hat(test_br1_dict, v_init)
+# #
+# # id = 2
+# #
+# # # m = np.diag(pecmy.M)
+# #
+# # v = np.array([1.1, 1.3, 1.9, 1.1, 1, 1.2])
+# # epsilon = np.zeros((pecmy.N, pecmy.N))
+# # wv_m = pecmy.war_vals(v, m, theta_dict_init, epsilon) # calculate war values
+# # wv_m_i = wv_m[:,id]
+# # wv_m_i
+# #
+# # v_sv = pecmy.v_sv(id, np.ones(pecmy.x_len), v)
+# #
+# # test_x = pecmy.br(v_sv, v, wv_m_i, id)
+# # test_dict = pecmy.ecmy.rewrap_ge_dict(test_x)
+# # test_dict["tau_hat"] * pecmy.ecmy.tau
+# #
+# # v_sv_0 = pecmy.v_sv(0, np.ones(pecmy.x_len), v)
+# # test = pecmy.br_war_ji(v_sv_0, v, 4, 0, full_opt=True)
+# # test_dict = pecmy.ecmy.rewrap_ge_dict(test)
+# # test_dict
+# #
+# #
+# # m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+# # m = m.T
+# # # m = np.diag(pecmy.M)
+# # v_test = np.ones(pecmy.N)
+# # epsilon = np.zeros((pecmy.N, pecmy.N))
+# # wv_m = pecmy.war_vals(v_test, m, theta_dict_init, epsilon) # calculate war values
+# #
+# #
+# # # test = pecmy.est_v_i_grid(2, v_test, m, theta_dict_init, epsilon)
+# # # test = pecmy.est_v_grid(v_test, m, theta_dict_init, epsilon)
+# # epsilon_star_test = pecmy.epsilon_star(v_sv, m, theta_dict_init)
+# # pecmy.trunc_epsilon(epsilon_star_test, theta_dict_init)
+# #
+# # epsilon_test = np.reshape(np.random.normal(0, theta_dict_init["sigma_epsilon"], pecmy.N ** 2), (pecmy.N, pecmy.N))
+# # pecmy.est_theta_outer(v_sv, theta_dict_init)
+# #
+# #
+# # theta_dict_init["gamma"] = test_params[0]
+# # theta_dict_init["alpha"] = test_params[1]
+# # rhoM = pecmy.rhoM(theta_dict_init, 0)
+# # chi_test = np.zeros((pecmy.N, pecmy.N))
+# # for i in range(pecmy.N):
+# #     for j in range(pecmy.N):
+# #         if i != j:
+# #             v_j = v_sv[j]
+# #             v_j_nearest = hp.find_nearest(pecmy.v_vals, v_j)
+# #             rcv_ji = pecmy.rcv[v_j_nearest][j, i]  # get regime change value for j controlling i's policy
+# #             m_x = pecmy.unwrap_m(m)
+# #             chi_ji = pecmy.chi(m_x, j, i, theta_dict_init, rhoM)
+# #             chi_test[j, i] = chi_ji
+# #
+# #
+# #
+# #
+# #
+# # # NOTE: increasing gamma increases epsilon star and moves trunc_epsilon, implying higher gamma...
+# #
+# # m = pecmy.M / np.ones((pecmy.N, pecmy.N))
+# # m = m.T
+# # m[pecmy.ROW_id,:] = 0
+# # m[:,pecmy.ROW_id] = 0
+# # m[pecmy.ROW_id,pecmy.ROW_id] = 1
+# # m_diag = np.diagonal(m)
+# # m_frac = m / m_diag
+# #
+# # rcv = np.zeros((pecmy.N, pecmy.N))  # empty regime change value matrix (row's value for invading column)
+# # for i in range(pecmy.N):
+# #     v_nearest = hp.find_nearest(pecmy.v_vals, v[i])
+# #     rcv[i, ] = pecmy.rcv[v_nearest][i, ]  # grab rcvs associated with b_nearest and extract ith row
+# #     # (i's value for invading all others)
+# # # rcv = rcv.T
+# # print("rcv: ")
+# # print(rcv)
+# #
+# # epsilon_star = pecmy.epsilon_star(v_sv, m, theta_dict_init)
+# # t_epsilon = pecmy.trunc_epsilon(epsilon_star, theta_dict_init)
+# #
+# # lhs = np.log( 1 / (theta_dict_init["c_hat"] ** -1 * (rcv - 1) - 1) )
+# # Y = lhs.ravel() - t_epsilon.ravel()
+# # X = np.column_stack((np.log(m_frac.ravel()), pecmy.W.ravel()))
+# #
+# # active_bin = epsilon_star < 0
+# # epsilon_star
+# # active_bin
+# # indicator = active_bin.ravel()
+# #
+# # Y_active = Y[indicator]
+# # X_active = X[indicator, ]
+# #
+# # plt.plot(X_active[:,1], Y_active, "r+")
+# #
+# #
+# # theta_dict_init["alpha"] = .0001
+# # theta_dict_init["gamma"] = 1
+# # imp.reload(policies)
+# # imp.reload(economy)
+# # pecmy = policies.policies(data, params, ROWname, results_path=resultsPath, rcv_ft=rcv_ft)
+# # pecmy.est_theta_inner(v_init, theta_dict_init, m)
+# # #
+# # #
+# # #
+# # #
+# # # np.array([1, 2, 3])[np.array([True, False, False])]
+# # #
+# # #
+# # #
+# # #
+# # # np.array([[0, 0],[1, 1]]) > np.array([[1, 1],[0, 0]])
+# # # np.zeros((2, 3))
+# # #
+# # #
+# # #
+# # #
+# # # tau_hat = np.ones((pecmy.N, pecmy.N))
+# # # tau_hat[0, ] = 3
+# # # tau_hat[0, 4] = 1 / pecmy.ecmy.tau[0, 4]
+# # # tau_hat[0, 0] = 1
+# # # ge_dict = pecmy.ecmy.geq_solve(tau_hat, np.ones(pecmy.N))
+# # #
+# # # v_test = np.ones(pecmy.N)
+# # # v_test = v_test * 1.7
+# # #
+# # # pecmy.ecmy.U_hat(ge_dict)
+# # # pecmy.r_v(ge_dict, v_test)
+# # # pecmy.R_hat(ge_dict, v_test)
+# # # pecmy.G_hat(pecmy.ecmy.unwrap_ge_dict(ge_dict), v_test)
+# # # pecmy.ecmy.tau
+# # #
+# # #
+# # #
+# # #
+# # #
+# # # ids_j = np.delete(np.arange(pecmy.N), id)
+# # # wv_m_i = wv_m[:,id][ids_j]
+# # #
+# # # tau_v = np.tile(np.array([v_test]).transpose(), (1, pecmy.N))
+# # # np.fill_diagonal(tau_v, 1)
+# # #
+# # # tau_hat_sv = np.ones((pecmy.N, pecmy.N))
+# # # tau_hat_v_sv = tau_v / pecmy.ecmy.tau
+# # # tau_hat_sv[id, ] = tau_hat_v_sv[id, ] + .01
+# # #
+# # # ge_dict = pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
+# # # ge_x_sv = pecmy.ecmy.unwrap_ge_dict(ge_dict)
+# # #
+# # # test_x = pecmy.br(ge_x_sv, v_test, wv_m_i, id)
+# # # test_dict = pecmy.ecmy.rewrap_ge_dict(test_x)
+# # # test_dict
+# # # test_dict["tau_hat"] * pecmy.ecmy.tau
+# # #
+# # # r_hat_id = []
+# # # t_vals = np.arange(0, 3, .1)
+# # # v_test[1] = 1.5
+# # # tau_v = np.tile(np.array([v_test]).transpose(), (1, pecmy.N))
+# # # np.fill_diagonal(tau_v, 1)
+# # # tau_hat_sv = np.ones((pecmy.N, pecmy.N))
+# # # for i in t_vals:
+# # #     tau_v[id, 0] = v_test[id] + i
+# # #     tau_hat_v_sv = tau_v / pecmy.ecmy.tau
+# # #     tau_hat_sv[id, 0] = tau_hat_v_sv[id, 0]
+# # #     ge_dict = pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
+# # #     r_hat_id.append(pecmy.R_hat(ge_dict, v_test)[id])
+# # #
+# # # plt.plot(t_vals, r_hat_id)
+# # #
+# # # id_i = 0
+# # # nft_sv = pecmy.nft_sv(id_i, np.ones(pecmy.x_len))
+# # #
+# # #
+# # # v_test[id] = 1.69
+# # # rc_pols_x = pecmy.br_war_ji(nft_sv, v_test, id, id_i, full_opt=True)
+# # # rc_pols_dict = pecmy.ecmy.rewrap_ge_dict(rc_pols_x)
+# # # rc_pols_dict["tau_hat"] * pecmy.ecmy.tau
+# # # pecmy.G_hat(rc_pols_x, v_test)
+# # # pecmy.R_hat(rc_pols_dict, v_test)
+# # # pecmy.ecmy.U_hat(rc_pols_dict)
+# # # pecmy.ecmy.tau
+# # #
+# # # # TODO: regime change values still very large. Need to think about structure of objective.
+# # #     # this might be ok though because it's also easier to satisfy constraints
+# # #
+# # #
+# # #
+# # #
+# # #
+# # #
+# # # tau_hat_sv = ge_dict["tau_hat"]
+# # # tau_hat_sv[id] = tau_hat_nft[id] # start slightly above free trade
+# # # ge_dict_sv = pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
+# # # ge_x_sv = pecmy.ecmy.unwrap_ge_dict(ge_dict_sv)
+# # #
+# # # # test_x = pecmy.br(ge_x_sv, b_test, wv_m_i, id)
+# # # # test_dict = pecmy.ecmy.rewrap_ge_dict(test_x)
+# # # # test_dict
+# # # # test_dict["tau_hat"] * pecmy.ecmy.tau
+# # #
+# # #
+# # #
+# # #
+# # #
+# # #
+# # #
+# # #
+# # #
+# # #
+# # #
+# # #
+# # # test_x = pecmy.Lsolve(np.ones((pecmy.N, pecmy.N)), b_test, m, theta_dict_init, id)
+# # # test_dict = pecmy.ecmy.rewrap_ge_dict(test_x)
+# # # test_dict
+# # # test_dict["tau_hat"] * pecmy.ecmy.tau
+# # #
+# # # v = np.array([1, 2])
+# # # v = np.array([v])
+# # # v
+# # # np.sum(np.array([[1, 2],[3,4]]), axis=1)
+# # #
+# # # X = np.array([[1,2],[-1,2]])
+# # # X[X<0] = 0

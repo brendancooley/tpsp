@@ -125,6 +125,7 @@ class economy:
         """
 
         ge_dict = self.update_ge_dict(x0, ge_dict)
+        # print(ge_dict)
         ge_x = self.unwrap_ge_dict(ge_dict)
 
         out = self.geq_diffs(ge_x)
@@ -172,6 +173,10 @@ class economy:
 
         return(out)
 
+    def geq_diffs_grad(self, ge_x, bound="lower"):
+        geq_diffs_grad_f = ag.jacobian(self.geq_diffs)
+        return(geq_diffs_grad_f(ge_x, bound))
+
     def geq_solve(self, tau_hat, D_hat, fct=1, mtd="hybr"):
         """Short summary.
 
@@ -207,13 +212,17 @@ class economy:
             ge_dict["r_hat"][(-.0001 < ge_dict["r_hat"]) & (ge_dict["r_hat"] < .0001)] = 0  # replace small revenue counterfactuals with zeros
             return(ge_dict)
         else:
-            if fct / 2 > .1: # recurse with smaller steps
+            # print("recursing...")
+            # print("fct: " + str(fct))
+            if fct / 2 > .05: # recurse with smaller steps
                 return(self.geq_solve(tau_hat, D_hat, fct=fct/2, mtd=mtd))
             else:
                 if mtd == "lm":
+                    print("solution not found.")
                     return("Solution not found.", geq_sol) # return 0
                 else:
-                    return(self.geq_solve(tau_hat, D_hat, mtd="lm"))
+                    print("attempting lm...")
+                    return(self.geq_solve(tau_hat, D_hat, fct=fct, mtd="lm"))
 
     def U_hat(self, ge_dict):
         """Short summary.
@@ -475,10 +484,10 @@ class economy:
         """
 
         P_hat, w_hat = ge_dict["P_hat"], ge_dict["w_hat"]
-        if np.any(P_hat == 0):
-            print(P_hat)
-        if np.any(w_hat == 0):
-            print(w_hat)
+        # if np.any(P_hat == 0):
+        #     print(P_hat)
+        # if np.any(w_hat == 0):
+        #     print(w_hat)
 
         pcdhat = np.power(P_hat, self.nu) * np.power(w_hat, 1 - self.nu)
 
