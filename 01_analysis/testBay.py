@@ -87,9 +87,9 @@ theta_dict_1["alpha"] = .0001
 theta_dict_1["gamma"] = 1
 
 theta_dict_2 = dict()
-theta_dict_2["c_hat"] = 10
-theta_dict_2["alpha"] = -.01
-theta_dict_2["gamma"] = 5
+theta_dict_2["c_hat"] = .41
+theta_dict_2["alpha"] = -.0002
+theta_dict_2["gamma"] = .25
 
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
 
