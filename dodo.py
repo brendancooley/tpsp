@@ -115,5 +115,5 @@ def task_transfer_hpc():
         "bcooley@adroit.princeton.edu:" + hpc_data_dir,
         "scp -r source/* " +
         "bcooley@adroit.princeton.edu:" + hpc_source_dir,
-        "scp tpsp_hpc.cmd bcooley@adroit.princeton.edu:" + hpc_base_dir]
+        "scp tpsp_hpc.slurm bcooley@adroit.princeton.edu:" + hpc_base_dir]
     }
