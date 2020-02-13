@@ -443,7 +443,7 @@ class policies:
         # Sparse Jacobian
         # NOTE: starting values sometimes induce sparsity for elements that have positive derivatives for some parameters. But problem seems to go away if we make wv_min low enough
             # attempting both versions of sparsity on mini problem
-            # doit results: Sparse
+            # doit results: Sparse (TODO: need to debug...runs forever for some reason)
             # python: full
             # (holding gamma fixed at 1)
         # g_sparsity_bin = self.g_sparsity_bin(xlvt_sv)

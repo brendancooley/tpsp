@@ -11,7 +11,7 @@ import policies
 import helpers_tpsp as hp
 
 location = sys.argv[1]
-# location = "local"
+location = "local"
 
 basePath = os.path.expanduser('~')
 
