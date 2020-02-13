@@ -445,6 +445,7 @@ class policies:
             # attempting both versions of sparsity on mini problem
             # doit results: Sparse
             # python: full
+            # (holding gamma fixed at 1)
         # g_sparsity_bin = self.g_sparsity_bin(xlvt_sv)
         # g_sparsity_indices_a = self.g_sparsity_idx(g_sparsity_bin)
         # g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
