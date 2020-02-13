@@ -112,3 +112,9 @@ if computeCounterfactuals == True:
     print(status)
 
 print("done.")
+
+
+### TESTING ###
+
+ge_x_dict = pecmy.ecmy.rewrap_ge_dict(xlvt_dict["ge_x"])
+ge_x_dict["tau_hat"] * pecmy.ecmy.tau
