@@ -25,22 +25,37 @@ sys.path.insert(1, helpersPath)
 
 import helpers
 
-mini = True
-large = False
+size = "mini"
 
-runEstimates = False
+runEstimates = True
 computeCounterfactuals = False
 
+
+
+
+results_dir_large = data_dir_base + "results_large/"
+results_dir_mini = data_dir_base + "results_mini/"
+results_dir_mid = data_dir_base + "results_mid/"
+
 if location == "local":
-    dataAllPath = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
-    if mini == True:
+    data_dir_base = "~/Dropbox\ \(Princeton\)/1_Papers/tpsp/01_data/"
+    data_dir_large = data_dir_base + "tpsp_data_large/"
+    data_dir_mini = data_dir_base + "tpsp_data_mini/"
+    data_dir_mid = data_dir_base + "tpsp_data_mid/"
+    if size == "mini":
         dataPath = dataAllPath + "tpsp_data_mini/"
         resultsPath = dataAllPath + "results_mini/"
-    if large == True:
+    if size == "large":
         dataPath = dataAllPath + "tpsp_data_large/"
         resultsPath = dataAllPath + "results_large/"
+    if size == "mid":
+        dataPath = dataAllPath + "tpsp_data_mid/"
+        resultsPath = dataAllPath + "results_mid/"
 if location == "hpc":
-    dataPath = projectPath + "data/"
+    data_dir_base = projectPath + "data/"
+    data_dir_large = data_dir_base + "tpsp_data_large/"
+    data_dir_mini = data_dir_base + "tpsp_data_mini/"
+    data_dir_mid = data_dir_base + "tpsp_data_mid/"
     resultsPath = projectPath + "results/"
 
 estimatesPath = resultsPath + "estimates/"
@@ -112,5 +127,10 @@ if computeCounterfactuals == True:
     print(x)
     print(obj)
     print(status)
+
+# test hpc
+# if location == "hpc":
+#     test_out = np.ones(len(M))
+#     np.savetxt(estimatesPath + "test.csv", test_out, delimiter=",")
 
 print("done.")

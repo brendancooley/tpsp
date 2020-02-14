@@ -2,11 +2,15 @@
 # scp ~/Github/tpsp/dodo_hpc.py bcooley@adroit.princeton.edu:~/tpsp/dodo.py
 # module load anaconda3
 # conda activate python37
-# conda install -c conda-forge doit
-# conda install -c anaconda numpy
-# conda install -c conda-forge autograd
-# conda install -c anaconda statsmodels
-# conda install -c conda-forge ipyopt
+    # conda install -c conda-forge doit
+    # conda install -c anaconda numpy
+    # conda install -c conda-forge autograd
+    # conda install -c anaconda statsmodels
+    # conda install -c conda-forge ipyopt
+# cd tpsp
+# doit hpc_setup
+# transfer data using other dodo.py, transfer_hpc
+# doit results
 
 
 hpc_base_dir = "~/home/bcooley/tpsp/"
@@ -14,6 +18,14 @@ hpc_data_dir = "data/"
 hpc_code_dir = "code/"
 hpc_source_dir = "source/"
 hpc_results_dir = "results/"
+
+hpc_data_dir_large = hpc_data_dir + "large/"
+hpc_data_dir_mid = hpc_data_dir + "mid/"
+hpc_data_dir_mini = hpc_data_dir + "mini/"
+
+hpc_results_dir_large = hpc_results_dir + "large/"
+hpc_results_dir_mid = hpc_results_dir + "mid/"
+hpc_results_dir_mini = hpc_results_dir + "mini/"
 
 hpc_estimates_dir = hpc_results_dir + "estimates/"
 hpc_counterfactuals_dir = hpc_results_dir + "counterfactuals/"
@@ -26,7 +38,13 @@ def task_hpc_setup():
         mkdir -p " + hpc_source_dir + "; \
         mkdir -p " + hpc_results_dir + "; \
         mkdir -p " + hpc_estimates_dir + "; \
-        mkdir -p " + hpc_counterfactuals_dir
+        mkdir -p " + hpc_counterfactuals_dir + "; \
+        mkdir -p " + hpc_data_dir_large + "; \
+        mkdir -p " + hpc_data_dir_mid + "; \
+        mkdir -p " + hpc_data_dir_mini + "; \
+        mkdir -p " + hpc_results_dir_large + "; \
+        mkdir -p " + hpc_results_dir_mid + "; \
+        mkdir -p " + hpc_results_dir_mini
         ]
     }
 
