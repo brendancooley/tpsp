@@ -122,12 +122,6 @@ def task_transfer_hpc():
     yield {
         'name': "transfering files to hpc...",
         'actions':["scp -r " + code_dir + "* " + "bcooley@adroit.princeton.edu:" + hpc_code_dir,
-        "scp -r " + data_dir_large + "* " +
-        "bcooley@adroit.princeton.edu:" + hpc_data_dir_large,
-        "scp -r " + data_dir_mini + "* " +
-        "bcooley@adroit.princeton.edu:" + hpc_data_dir_mini,
-        "scp -r " + data_dir_mid + "* " +
-        "bcooley@adroit.princeton.edu:" + hpc_data_dir_mid,
         "scp -r source/* " +
         "bcooley@adroit.princeton.edu:" + hpc_source_dir,
         "scp tpsp_hpc.slurm bcooley@adroit.princeton.edu:" + hpc_base_dir]
