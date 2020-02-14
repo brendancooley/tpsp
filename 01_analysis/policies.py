@@ -309,7 +309,7 @@ class policies:
 
         return(comp_slack_i)
 
-    def estimator_cons(self, xlvt, out):
+    def estimator_cons(self, xlvt, out, hess=False):
 
         # geq constraints
         geq_diffs = self.geq_diffs_xlvt(xlvt)
@@ -326,7 +326,15 @@ class policies:
             comp_slack_i = self.comp_slack_xlvt(xlvt, i)
             comp_slack.extend(comp_slack_i)
 
-        out[()] = np.concatenate((geq_diffs, Lzeros, war_diffs, comp_slack), axis=None)
+        if hess == False:
+            out[()] = np.concatenate((geq_diffs, Lzeros, war_diffs, comp_slack), axis=None)
+        else:
+            all = []
+            all.extend(geq_diffs)
+            all.extend(Lzeros)
+            all.extend(war_diffs)
+            all.extend(comp_slack)
+            out = np.array(all)
 
         return(out)
 
@@ -357,9 +365,26 @@ class policies:
 
     def estimator_cons_jac_wrap(self, g_sparsity_bin):
         def f(x, out):
-            out[()] = self.estimator_cons_jac(x, g_sparsity_bin)
+            out[()] = self.estimator_cons_jac(x, g_sparsity_bin, hess=False)
             return(out)
         return(f)
+
+    def estimator_lgrg(self, xlvt, lagrange, obj_factor):
+
+        loss = self.loss(xlvt)
+        cons = self.estimator_cons(xlvt, np.zeros(self.g_len), hess=True)
+
+        out = obj_factor * loss + np.sum(lagrange * cons)
+
+        return(out)
+
+    def estimator_lgrg_hess(self, xlvt, lagrange, obj_factor, out):
+
+        lgrg_hess_f = ag.hessian(self.estimator_lgrg)
+        lgrg_hess_mat = lgrg_hess_f(xlvt, lagrange, obj_factor)
+        out[()] = lgrg_hess_mat.ravel()
+
+        return(out)
 
     def g_sparsity_bin(self, xlvt_sv):
 
@@ -424,6 +449,9 @@ class policies:
         else:
             return(x_U)
 
+    def apply_new(_X):
+        return True
+
     def estimator(self, v_sv, theta_x_sv, nash_eq=False):
 
         # if nash_eq = True fix theta vals at those in theta_dict_sv and compute equilibrium
@@ -462,7 +490,7 @@ class policies:
             b_U = self.estimator_bounds("upper", True, theta_x_sv, v_sv)
 
         if nash_eq == False:
-            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac_wrap(g_sparsity_bin))
+            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac_wrap(g_sparsity_bin), self.estimator_lgrg_hess, self.apply_new)
             # problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
             problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)

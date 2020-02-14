@@ -87,7 +87,23 @@ theta_dict_2["gamma"] = .25
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
-pecmy.rhoM(theta_dict_2)
+
+theta_x1 = pecmy.unwrap_theta(theta_dict_1)
+xlvt_sv = np.concatenate((np.ones(pecmy.x_len), np.repeat(.01, pecmy.lambda_i_len*pecmy.N), np.ones(pecmy.N), theta_x1))
+
+lagrange = np.ones(pecmy.g_len)
+obj_factor = 1
+
+pecmy.estimator_cons(xlvt_sv, np.zeros(pecmy.g_len))
+pecmy.estimator_lgrg(xlvt_sv, lagrange, obj_factor)
+lgrg_hess_f = ag.hessian(pecmy.estimator_lgrg)
+lgrg_hess_mat = lgrg_hess_f(xlvt_sv, lagrange, obj_factor)
+lgrg_hess_mat.shape
+
+pecmy.estimator_lgrg_hess(xlvt_sv, lagrange, obj_factor, np.zeros(pecmy.xlvt_len**2))
+pecmy.g_len
+
+np.concatenate([[[1,2],[3,4]],[3,4],[5,6]], axis=None)
 
 xlvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
 xlvt_dict = pecmy.rewrap_xlvt(xlvt_star)
@@ -95,6 +111,9 @@ ge_dict = pecmy.ecmy.rewrap_ge_dict(xlvt_dict["ge_x"])
 # theta_x_star = xlvt_dict["theta"]
 # v_star = xlvt_dict["v"]
 #
+
+out = []
+out.extend([[1,2],[3,4]])
 
 ge_dict["tau_hat"] * pecmy.ecmy.tau
 
