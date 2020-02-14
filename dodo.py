@@ -127,5 +127,5 @@ def task_transfer_hpc():
     }
     for i in sizes:
         yield {'name': "transferring data " + i,
-                'actions': "scp -r " + data_dir_base + i + "* " +
-                "bcooley@adroit.princeton.edu:" + hpc_data_dir + i}
+                'actions': ["scp -r " + data_dir_base + i + "* " +
+                "bcooley@adroit.princeton.edu:" + hpc_data_dir + i]}
