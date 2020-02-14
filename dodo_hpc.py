@@ -19,39 +19,29 @@ hpc_code_dir = "code/"
 hpc_source_dir = "source/"
 hpc_results_dir = "results/"
 
-hpc_data_dir_large = hpc_data_dir + "large/"
-hpc_data_dir_mid = hpc_data_dir + "mid/"
-hpc_data_dir_mini = hpc_data_dir + "mini/"
-
-hpc_results_dir_large = hpc_results_dir + "large/"
-hpc_results_dir_mid = hpc_results_dir + "mid/"
-hpc_results_dir_mini = hpc_results_dir + "mini/"
-
-hpc_estimates_dir = hpc_results_dir + "estimates/"
-hpc_counterfactuals_dir = hpc_results_dir + "counterfactuals/"
+sizes = ["mini/", "mid/", "large/"]
 
 def task_hpc_setup():
     yield {
         'name': "setting up hpc...",
-        'actions':["mkdir -p " + hpc_data_dir + "; \
-        mkdir -p " + hpc_code_dir + "; \
-        mkdir -p " + hpc_source_dir + "; \
-        mkdir -p " + hpc_results_dir + "; \
-        mkdir -p " + hpc_estimates_dir + "; \
-        mkdir -p " + hpc_counterfactuals_dir + "; \
-        mkdir -p " + hpc_data_dir_large + "; \
-        mkdir -p " + hpc_data_dir_mid + "; \
-        mkdir -p " + hpc_data_dir_mini + "; \
-        mkdir -p " + hpc_results_dir_large + "; \
-        mkdir -p " + hpc_results_dir_mid + "; \
-        mkdir -p " + hpc_results_dir_mini
-        ]
-    }
+        'actions':["mkdir -p " + hpc_data_dir,
+        "mkdir -p " + hpc_code_dir,
+        "mkdir -p " + hpc_source_dir]
+        }
+    for i in sizes:
+        yield {
+            'name': "data dir " + i,
+            'actions':["mkdir -p " + hpc_data_dir + i]
+        }
 
 def task_results():
     # first: conda activate python37
     yield {
-        'name': "collecting results...",
-        'actions':["python " + hpc_code_dir + "results.py hpc"],
+        'name': "results",
+        'params':[{'name':'size',
+		      'long':'size',
+		      'type':str,
+		      'default':'mini'},
+        'actions':["python " + hpc_code_dir + "results.py hpc %(size)s"],
         'verbosity': 2,
     }
