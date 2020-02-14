@@ -309,7 +309,7 @@ class policies:
 
         return(comp_slack_i)
 
-    def estimator_cons(self, xlvt, out, hess=False):
+    def estimator_cons(self, xlvt, out):
 
         # geq constraints
         geq_diffs = self.geq_diffs_xlvt(xlvt)
@@ -326,15 +326,33 @@ class policies:
             comp_slack_i = self.comp_slack_xlvt(xlvt, i)
             comp_slack.extend(comp_slack_i)
 
-        if hess == False:
-            out[()] = np.concatenate((geq_diffs, Lzeros, war_diffs, comp_slack), axis=None)
-        else:
-            all = []
-            all.extend(geq_diffs)
-            all.extend(Lzeros)
-            all.extend(war_diffs)
-            all.extend(comp_slack)
-            out = np.array(all)
+        out[()] = np.concatenate((geq_diffs, Lzeros, war_diffs, comp_slack), axis=None)
+
+        return(out)
+
+    def estimator_cons_hess(self, xlvt):
+
+        # geq constraints
+        geq_diffs = self.geq_diffs_xlvt(xlvt)
+
+        # Lagrange gradient
+        Lzeros = []
+        war_diffs = []
+        comp_slack = []
+        for i in range(self.N):
+            Lzeros_i = self.Lzeros_i_xlvt(xlvt, i)
+            Lzeros.extend(Lzeros_i)
+            war_diffs_i = self.war_diffs_xlvt(xlvt, i)
+            war_diffs.extend(war_diffs_i)
+            comp_slack_i = self.comp_slack_xlvt(xlvt, i)
+            comp_slack.extend(comp_slack_i)
+
+        all = []
+        all.extend(geq_diffs)
+        all.extend(Lzeros)
+        all.extend(war_diffs)
+        all.extend(comp_slack)
+        out = np.array(all)
 
         return(out)
 
@@ -365,14 +383,14 @@ class policies:
 
     def estimator_cons_jac_wrap(self, g_sparsity_bin):
         def f(x, out):
-            out[()] = self.estimator_cons_jac(x, g_sparsity_bin, hess=False)
+            out[()] = self.estimator_cons_jac(x, g_sparsity_bin)
             return(out)
         return(f)
 
     def estimator_lgrg(self, xlvt, lagrange, obj_factor):
 
         loss = self.loss(xlvt)
-        cons = self.estimator_cons(xlvt, np.zeros(self.g_len), hess=True)
+        cons = self.estimator_cons_hess(xlvt)
 
         out = obj_factor * loss + np.sum(lagrange * cons)
 
@@ -430,6 +448,7 @@ class policies:
             x_L[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = 1 # vs
             x_U[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = np.max(self.ecmy.tau) # vs
             x_L[self.x_len+self.lambda_i_len*self.N+self.N] = 0  # c_hat
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # alpha
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 1
             # x_U[self.x_len+self.lambda_i_len*self.N+self.N+2] = 1  # fix gamma at 1
             x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0
@@ -450,7 +469,7 @@ class policies:
             return(x_U)
 
     def apply_new(_X):
-        return True
+        return(True)
 
     def estimator(self, v_sv, theta_x_sv, nash_eq=False):
 
@@ -490,7 +509,8 @@ class policies:
             b_U = self.estimator_bounds("upper", True, theta_x_sv, v_sv)
 
         if nash_eq == False:
-            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac_wrap(g_sparsity_bin), self.estimator_lgrg_hess, self.apply_new)
+            # problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac_wrap(g_sparsity_bin), self.estimator_lgrg_hess, self.apply_new)
+            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac_wrap(g_sparsity_bin))
             # problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
             problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
@@ -1004,7 +1024,7 @@ class policies:
 
         # rhoM = np.exp(-1 * (theta_dict["alpha"][0] + self.W * theta_dict["alpha"][1]) + epsilon)
         rhoM = np.exp(-1 * (self.W * theta_dict["alpha"]))
-        rhoM = np.clip(rhoM, 0, 1)
+        # rhoM = np.clip(rhoM, 0, 1)
 
         return(rhoM)
 
