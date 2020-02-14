@@ -14,38 +14,29 @@ import economy
 import policies
 
 import helpers_tpsp as hp
+basePath = os.path.expanduser('~')
 
-helpersPath = os.path.expanduser("~/Dropbox (Princeton)/14_Software/python/")
+projectPath = basePath + "/Github/tpsp/"
+projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
+
+size = "mini/"
+
+helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
 
 import helpers
-imp.reload(helpers)
-
-mini = True
-large = False
 
 runEstimates = True
+computeCounterfactuals = False
 
-# dataFiles = os.listdir("tpsp_data/")
+data_dir_base = projectFiles + "data/"
+results_dir_base = projectFiles + "results/"
 
-basePath = os.path.expanduser('~')
-projectPath = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
+dataPath = data_dir_base + size
+resultsPath = results_dir_base + size
 
-if mini is True:
-    dataPath = projectPath + "tpsp_data_mini/"
-    resultsPath = projectPath + "results_mini/"
-elif large is True:
-    dataPath = projectPath + "tpsp_data_large/"
-    resultsPath = projectPath + "results_large/"
-# elif rcv_ft is True:
-#     dataPath = projectPath + "tpsp_data_mini/"
-#     resultsPath = projectPath + "results_rcv_ft/"
-else:
-    dataPath = projectPath + "tpsp_data/"
-    resultsPath = projectPath + "results/"
-helpers.mkdir(resultsPath)
-
-rcvPath = resultsPath + "rcv.csv"
+estimatesPath = resultsPath + "estimates/"
+counterfactualsPath = resultsPath + "counterfactuals/"
 
 estimatesPath = resultsPath + "estimates/"
 
@@ -95,6 +86,8 @@ theta_dict_2["gamma"] = .25
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
+
+pecmy.rhoM(theta_dict_2)
 
 xlvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
 xlvt_dict = pecmy.rewrap_xlvt(xlvt_star)

@@ -976,6 +976,7 @@ class policies:
 
         # rhoM = np.exp(-1 * (theta_dict["alpha"][0] + self.W * theta_dict["alpha"][1]) + epsilon)
         rhoM = np.exp(-1 * (self.W * theta_dict["alpha"]))
+        rhoM = np.clip(rhoM, 0, 1)
 
         return(rhoM)
 
