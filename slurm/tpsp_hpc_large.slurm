@@ -13,4 +13,4 @@ module purge
 module load anaconda3
 conda activate python37
 
-srun doit results --size large/
+srun doit results:results --size large/

@@ -13,4 +13,4 @@ module purge
 module load anaconda3
 conda activate python37
 
-srun doit results --size mini/
+srun doit results:results --size mini/

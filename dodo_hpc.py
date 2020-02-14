@@ -10,7 +10,7 @@
 # cd tpsp
 # doit hpc_setup
 # transfer data using other dodo.py, transfer_hpc
-# doit results
+# sbatch *.slurm
 
 
 hpc_base_dir = "~/home/bcooley/tpsp/"
@@ -41,7 +41,7 @@ def task_results():
         'params':[{'name':'size',
 		      'long':'size',
 		      'type':str,
-		      'default':'mini'},
+		      'default':'mini'}],
         'actions':["python " + hpc_code_dir + "results.py hpc %(size)s"],
         'verbosity': 2,
     }

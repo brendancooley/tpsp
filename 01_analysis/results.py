@@ -12,8 +12,8 @@ import helpers_tpsp as hp
 
 location = sys.argv[1]  # local, hpc
 size = sys.argv[2] # mini/, mid/, large/
-location = "local"
-size = "mini/"
+# location = "local"
+# size = "mini/"
 
 basePath = os.path.expanduser('~')
 

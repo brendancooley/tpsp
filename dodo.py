@@ -42,9 +42,14 @@ def task_source():
 
 def task_results():
     # first: conda activate python3
+    # e.g. doit results:results --size mini/
     yield {
-        'name': "collecting results...",
-        'actions':["python " + code_dir + "results.py local"],
+        'name': "results",
+        'params':[{'name':'size',
+		      'long':'size',
+		      'type':str,
+		      'default':'mini/'}],
+        'actions':["python " + code_dir + "results.py local %(size)s"],
         'verbosity': 2,
     }
 
