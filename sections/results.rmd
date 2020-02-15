@@ -25,9 +25,9 @@ Estimates of preference weights are reported in Table \ref{tab:b_estsT}. In @Coo
 
 ```{r b_estsT, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
-source("../02_figs/ccodes.R")
+# source("../02_figs/ccodes.R")
 
-kable(b_estsT, "latex", booktabs = T, caption = "Preference Parameter ($\\tilde{\\bm{b}}$) Estimates \\label{tab:b_estsT}", escape = FALSE) %>% kable_styling(position = "center")
+# kable(b_estsT, "latex", booktabs = T, caption = "Preference Parameter ($\\tilde{\\bm{b}}$) Estimates \\label{tab:b_estsT}", escape = FALSE) %>% kable_styling(position = "center")
 
 ```
 
@@ -37,20 +37,20 @@ Governments that face poor market access conditions and/or are rent-maximizing g
 
 ```{r rcv_b, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Conquest values evaluated at $\\tilde{\\bm{b}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \\label{fig:rcv}"), fig.height=4, dpi=300, fig.pos="t"}
 
-source("../02_figs/rcv.R")
-rcvhm(rcv_b, mint, maxt)
+# source("../02_figs/rcv.R")
+# rcvhm(rcv_b, mint, maxt)
 
 ```
 
-Turning to these parameters, I estimate $\gamma$ to be `r round(gamma_tilde, 2)`. This is consistent with a positive effect of military advantage on counterfactual war outcomes, holding power projection capacity constant. In particular, a 2:1 advantage in military spending translates into a `r round(chi_gamma_ex * 100, 1)` percent chance of winning a war, assuming no strength is lost due to the loss of strength gradient ($\rho_{ji} = 1$). 
+Turning to these parameters, I estimate $\gamma$ to be `#r round(gamma_tilde, 2)`. This is consistent with a positive effect of military advantage on counterfactual war outcomes, holding power projection capacity constant. In particular, a 2:1 advantage in military spending translates into a `#r round(chi_gamma_ex * 100, 1)` percent chance of winning a war, assuming no strength is lost due to the loss of strength gradient ($\rho_{ji} = 1$). 
 
-Governments also face significant obstacles to projecting power. I estimate $\alpha$ to be `r round(alpha_tilde, 2)`. At this value, if the United States wished to invade China, its effective strength would decline by a factor of `r round(1 / rho_ex, 1)` due to the distance between the countries. 
+Governments also face significant obstacles to projecting power. I estimate $\alpha$ to be `#r round(alpha_tilde, 2)`. At this value, if the United States wished to invade China, its effective strength would decline by a factor of `#r round(1 / rho_ex, 1)` due to the distance between the countries. 
 
 Figure \ref{fig:chi} combines these estimates to produce estimates of the contest function $\tilde{\chi}_{ji}$ for each pair of countries. The United States' military advantage is reflected in its higher probability of success in conquest. However, conquest is estimated to be a difficult endeavor in modern international relations -- no country has a better than even chance of conquering another country within the sample.
 
 ```{r chi, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Estimated probability of successful conquest for each attacking country (row) in war against every defending country (column). Each probability is reported in the appropriate cell of the heatmap. \\label{fig:chi}"), fig.height=4, dpi=300, fig.pos="t"}
 
-source("../02_figs/chi.R")
-chihm(chi, minchi, maxchi)
+# source("../02_figs/chi.R")
+# chihm(chi, minchi, maxchi)
 
 ```

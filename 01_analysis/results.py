@@ -10,8 +10,10 @@ import economy
 import policies
 import helpers_tpsp as hp
 
-location = sys.argv[1]
-location = "local"
+location = sys.argv[1]  # local, hpc
+size = sys.argv[2] # mini/, mid/, large/
+# location = "local"
+# size = "mini/"
 
 basePath = os.path.expanduser('~')
 
@@ -20,31 +22,31 @@ if location == "local":
 if location == "hpc":
     projectPath = basePath + "/tpsp/"
 
+if location == "local":
+    projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
+if location == "hpc":
+    projectFiles = projectPath
+
 helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
 
 import helpers
 
-mini = True
-large = False
-
 runEstimates = True
 computeCounterfactuals = False
 
-if location == "local":
-    dataAllPath = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
-    if mini == True:
-        dataPath = dataAllPath + "tpsp_data_mini/"
-        resultsPath = dataAllPath + "results_mini/"
-    if large == True:
-        dataPath = dataAllPath + "tpsp_data_large/"
-        resultsPath = dataAllPath + "results_large/"
-if location == "hpc":
-    dataPath = projectPath + "data/"
-    resultsPath = projectPath + "results/"
+data_dir_base = projectFiles + "data/"
+results_dir_base = projectFiles + "results/"
+
+dataPath = data_dir_base + size
+resultsPath = results_dir_base + size
 
 estimatesPath = resultsPath + "estimates/"
 counterfactualsPath = resultsPath + "counterfactuals/"
+
+helpers.mkdir(resultsPath)
+helpers.mkdir(estimatesPath)
+helpers.mkdir(counterfactualsPath)
 
 # Economic Parameters
 beta = np.genfromtxt(dataPath + 'beta.csv', delimiter=',')
@@ -79,9 +81,9 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 
 ### Estimate Model ###
 
-if runEstimates == True:
+pecmy = policies.policies(data, params, ROWname, resultsPath)
 
-    pecmy = policies.policies(data, params, ROWname, resultsPath)
+if runEstimates == True:
 
     theta_dict_init = dict()
     theta_dict_init["c_hat"] = .1
@@ -89,7 +91,10 @@ if runEstimates == True:
     theta_dict_init["gamma"] = 1.
 
     theta_x_sv = pecmy.unwrap_theta(theta_dict_init)
+
+    start_time = time.time()
     xlvt_star, obj, status = pecmy.estimator(np.ones(pecmy.N), theta_x_sv, nash_eq=False)
+    print("--- Estimator converged in %s seconds ---" % (time.time() - start_time))
 
     print(xlvt_star)
     print(obj)
@@ -111,10 +116,9 @@ if computeCounterfactuals == True:
     print(obj)
     print(status)
 
+# test hpc
+# if location == "hpc":
+#     test_out = np.ones(len(M))
+#     np.savetxt(estimatesPath + "test.csv", test_out, delimiter=",")
+
 print("done.")
-
-
-### TESTING ###
-
-ge_x_dict = pecmy.ecmy.rewrap_ge_dict(xlvt_dict["ge_x"])
-ge_x_dict["tau_hat"] * pecmy.ecmy.tau

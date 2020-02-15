@@ -14,38 +14,29 @@ import economy
 import policies
 
 import helpers_tpsp as hp
+basePath = os.path.expanduser('~')
 
-helpersPath = os.path.expanduser("~/Dropbox (Princeton)/14_Software/python/")
+projectPath = basePath + "/Github/tpsp/"
+projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
+
+size = "mini/"
+
+helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
 
 import helpers
-imp.reload(helpers)
-
-mini = True
-large = False
 
 runEstimates = True
+computeCounterfactuals = False
 
-# dataFiles = os.listdir("tpsp_data/")
+data_dir_base = projectFiles + "data/"
+results_dir_base = projectFiles + "results/"
 
-basePath = os.path.expanduser('~')
-projectPath = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
+dataPath = data_dir_base + size
+resultsPath = results_dir_base + size
 
-if mini is True:
-    dataPath = projectPath + "tpsp_data_mini/"
-    resultsPath = projectPath + "results_mini/"
-elif large is True:
-    dataPath = projectPath + "tpsp_data_large/"
-    resultsPath = projectPath + "results_large/"
-# elif rcv_ft is True:
-#     dataPath = projectPath + "tpsp_data_mini/"
-#     resultsPath = projectPath + "results_rcv_ft/"
-else:
-    dataPath = projectPath + "tpsp_data/"
-    resultsPath = projectPath + "results/"
-helpers.mkdir(resultsPath)
-
-rcvPath = resultsPath + "rcv.csv"
+estimatesPath = resultsPath + "estimates/"
+counterfactualsPath = resultsPath + "counterfactuals/"
 
 estimatesPath = resultsPath + "estimates/"
 
@@ -83,7 +74,7 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 
 theta_dict_1 = dict()
 theta_dict_1["c_hat"] = .1
-theta_dict_1["alpha"] = .0001
+theta_dict_1["alpha"] = .006
 theta_dict_1["gamma"] = 1
 
 theta_dict_2 = dict()
@@ -96,12 +87,42 @@ theta_dict_2["gamma"] = .25
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
+theta_x1 = pecmy.unwrap_theta(theta_dict_1)
+xlvt_sv = np.concatenate((np.ones(pecmy.x_len), np.repeat(.01, pecmy.lambda_i_len*pecmy.N), np.ones(pecmy.N), theta_x1))
+
+lagrange = np.ones(pecmy.g_len)
+obj_factor = 1
+
+test = pecmy.estimator_lgrg_hess(xlvt_sv, lagrange, obj_factor, np.zeros(pecmy.xlvt_len**2))
+test.shape
+
+pecmy.rhoM(theta_dict_2)
+pecmy.W
+pecmy.chi(pecmy.m, theta_dict_1)
+pecmy.war_vals(np.ones(pecmy.N), pecmy.m, theta_dict_1)
+
+
+
+
+pecmy.estimator_cons(xlvt_sv, np.zeros(pecmy.g_len))
+pecmy.estimator_lgrg(xlvt_sv, lagrange, obj_factor)
+lgrg_hess_f = ag.hessian(pecmy.estimator_lgrg)
+lgrg_hess_mat = lgrg_hess_f(xlvt_sv, lagrange, obj_factor)
+lgrg_hess_mat.shape
+
+pecmy.g_len
+
+np.concatenate([[[1,2],[3,4]],[3,4],[5,6]], axis=None)
+
 xlvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
 xlvt_dict = pecmy.rewrap_xlvt(xlvt_star)
 ge_dict = pecmy.ecmy.rewrap_ge_dict(xlvt_dict["ge_x"])
 # theta_x_star = xlvt_dict["theta"]
 # v_star = xlvt_dict["v"]
 #
+
+out = []
+out.extend([[1,2],[3,4]])
 
 ge_dict["tau_hat"] * pecmy.ecmy.tau
 

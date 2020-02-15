@@ -11,7 +11,7 @@ abstract: In international relations, how does latent military coercion affect g
 # thanks: Allison Carnegie, APSA 2019.
 # jelcodes: JEL codes go here
 
-bibliography: /Users/brendancooley/Dropbox (Princeton)/References/library.bib
+bibliography: /Users/bcooley/Dropbox (Princeton)/References/library.bib
 biblio-style: apsr
 
 papersize: letter
@@ -26,6 +26,33 @@ output:
 ---
 
 
+```
+## Error: '~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results_mini/rcv.csv' does not exist.
+```
+
+```
+## Error: '~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results_mini/b_vals.csv' does not exist.
+```
+
+```
+## Error: '~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results_mini/b_tilde.csv' does not exist.
+```
+
+```
+## Error: '~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results_mini/gamma_tilde.csv' does not exist.
+```
+
+```
+## Error: '~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results_mini/alpha_tilde.csv' does not exist.
+```
+
+```
+## Error: '~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results_mini/c_hat_tilde.csv' does not exist.
+```
+
+```
+## Error: '~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results_mini/sigma_epsilon_tilde.csv' does not exist.
+```
 
 \newpage
 
@@ -40,7 +67,7 @@ In this paper, I propose and implement a method to assess the effect of military
 
 Assessing the effect of military power on trade policy requires imagining what policy choices governments would have made in the absence of coercion. In a coercion-free world, policies reflect preferences. If we observe policies, we can learn something about the preferences of the actors that adopted them. When coercion is possible, however, weaker governments must consider the effect of their policy choices on the powerful. If a particular policy choice harms a threatening government enough, it can choose to impose an alternative policy by force. Recognizing this threat, weaker governments adjust their policies to avoid war. In an anarchic world, policies may be determined by both power and preferences.  
 
-I proceed in three steps to untangle power and preferences as determinants of trade policies. First, I model a coercive international political economy in which governments propose trade policies, observe others proposals, and choose whether or not to fight wars in order to modify others' policies. The model's equilibrium depends on a vector of parameters governing governments' preferences for protectionism and the effectiveness of military coercion. I then estimate these parameters by minimizing the distance between the model's predictions and observed policies. Finally, I answer the question posed here: how does military coercion affect trade policy? With estimates for the model's parameters in hand, this question can be answered by a simple counterfactual experiment — eliminate governments' military capacity, and recalculate the model's equilibrium. The difference between counterfactual equilibrium policies and the factual policies represents the net effect of military coercion on trade policy.
+I proceed in three steps to untangle power and preferences as determinants of trade policies. First, I model a coercive international political economy in which governments propose trade policies, observe others proposals, and choose whether or not to fight wars in bids to modify these. The model's equilibrium depends on a vector of parameters governing governments' preferences for protectionism and the effectiveness of military coercion. I then estimate these parameters by minimizing the distance between the model's predictions and observed policies. Finally, I answer the question posed here: how does military coercion affect trade policy? With estimates for the model's parameters in hand, this question can be answered by a simple counterfactual experiment — eliminate governments' military capacity, and recalculate the model's equilibrium. The difference between counterfactual equilibrium policies and the factual policies represents the net effect of military coercion on trade policy.
 
 Within the coercive international political economy, governments choose trade policies to maximize a combination of consumer welfare and trade policy rents. Each government's trade policy is a set of taxes, one for each importing country, imposed on imports. Notably, trade policies can be discriminatory, affecting certain source countries disproportionately. A model of the international economy connects trade policy choices to consumer welfare and trade flows, which determine the magnitude of rents available to governments.^[The model of the international economy is a variant of the workhorse model of @Eaton2002. @Costinot2015 study a broader class of structural gravity models that connect trade frictions (such as trade policy) to trade and welfare outcomes.] Each government is endowed with military capacity which can be employed in wars against other governments. Winning a war allows the victor to choose the trade policy of the defeated government. Counterfactual wars constrain threatened governments and affect their trade policy choices. The effectiveness of coercion, or governments' ability to project power, depends on the geographic distance between potential adversaries.
 
@@ -48,13 +75,13 @@ Governments' ideal policies depend on their relative preference for consumer wel
 
 Within-country variation in trade policy identifies the model. Consider the ideal set of trade policies of a government whose preferences are known. The policies that achieve this objective can be readily calculated given knowledge of parameters governing international economic relations. Policies adopted toward imports from countries that pose no military threat will reflect this objective. Conversely, the imports of threatening countries will encounter lower barriers to trade, in order to satisfy the threatener's war constraint. This favoritism is informative about the effectiveness of military threats. The level of barriers toward non-threatening countries is informative about the government's preferences. Differential responses to the same level of threat from different geographic locations identifies parameters governing the effectiveness of power projection across space.
 
-The identified model enables two classes of counterfactuals. First, it allows me to quantify the "shadow of power" by comparing factual policies to those that would prevail if governments' counterfactually possessed zero military capability. These policies can then be fed into the model of the international economy to calculate the effect on trade flows, prices, and wages around the world. Would different trade blocs emerge in a coercion-free world? Which governments would benefit the most? In the model, consumers benefit from the liberalizing effect of foreign military coercion [@Antras2011]. How large are these benefits? Whose citizens benefit the most from international power politics? How would relative changes in U.S. and Chinese military strength affect the international economy?
+The identified model enables two classes of counterfactuals. First, it allows me to quantify the "shadow of power" by comparing factual policies to those that would prevail if governments' counterfactually possessed zero military capability. These policies can then be fed into the model of the international economy to calculate the effect on trade flows, prices, and wages around the world. Would different trade blocs emerge in a coercion-free world? Which governments would benefit the most? In the model, consumers benefit from the liberalizing effect of foreign military coercion [@Antras2011]. How large are these benefits? Whose citizens benefit the most from international power politics? How would relative changes to U.S. and Chinese military strength affect the international economy?
 
 The model also allows me to examine how domestic political economic changes (changes to government preferences) affect the salience of military coercion. Governments that value the welfare of consumers prefer to adopt lower barriers to trade. The returns to coercing these governments are smaller, because their ideal policies impose relatively small externalities on potential threatening governments. Military coercion plays a smaller role in influencing trade policy when governments are relatively liberal. Domestic political institutions are believed to effect trade policy preferences [@Rodrik1995; @Milner1999; @Milner2005]. The model facilitates exploration of how domestic political change affects the quality of international relations and governments' propensity to threaten, display, and use military force against one another. 
 
 Estimating the model and conducting the subsequent counterfactual exercises require knowledge of governments' trade policies, disaggregated at the trade partner level. While detailed data on a particular policy instrument (tariffs) are available to researchers, these are but one barrier governments can use to influence the flow of trade. In a companion paper [@Cooley2019b], I show that cross-national prices, trade flows, and freight costs are jointly sufficient statistics for the magnitude of aggregate policy barriers trade, given a structural model of the international economy [@Head2014; @Costinot2015]. I employ these measures of trade policy in this paper and use an identical model of the international economy to connect trade policy changes to international economic outputs.
 
-The method produces a matrix of trade barriers, in which the $i$, $j$th entry is the magnitude of policy barriers to trade an importing country $i$ imposes on goods from an exporting country $j$. In 2011, the estimated barriers were large, equivalent to a 110 percent import tariff on average.^[These results and the calibration choices that produce this value are discussed in more detail in Appendix B.] They also reveal substantial trade policy discrimination, providing necessary variation to identify the model considered here.
+The method produces a matrix of trade barriers, in which the $i$, $j$th entry is the magnitude of policy barriers to trade an importing country $i$ imposes on goods from an exporting country $j$. In 2011, the estimated barriers were large, equivalent to a 67 percent import tariff on average.^[These results and the calibration choices that produce this value are discussed in more detail in Appendix B.] They also reveal substantial trade policy discrimination, providing necessary variation to identify the model considered here.
 
 
 ## Literature
@@ -83,17 +110,17 @@ There are $N$ governments, indexed $i \in \left\{ 1, ..., N \right\}$. Governmen
 
 Throughout, I will use $\bm{\theta}_m$ to denote the vector of all parameters to be estimated and $\bm{Z}$ to denote the vector of all data observed by the researcher. $\bm{\theta}_h$ denotes parameters associated with the economy, $h$, which will be calibrated. I will explicate the elements of these vectors in the proceeding sections and the Appendix.
 
-Government welfare depends on these general equilibrium responses to trade policy choices. Governments value the welfare of a representative consumer that resides within each country and rents accrued through trade policy distortions (tariff revenues). These can be computed given knowledge of the general equilibrium function $h(\bm{\tau})$. Formally, governments' *direct* utility is 
+Government welfare depends on these general equilibrium responses to trade policy choices. Governments value the welfare of a representative consumer that resides within each country and rents accrued through trade policy distortions (tariff revenues). These can be computed given knowledge of the general equilibrium function $h(\bm{\tau})$. I assume these elements are complements in the production of government utility, formally,
 \begin{equation} \label{eq:G}
-G_i(\bm{\tau}; b_i) = V_i \left( h(\bm{\tau}) \right)^{1 - b_i} r_i \left(h(\bm{\tau}) \right)^{b_i}
+G_i(\bm{\tau}; b_i) = V_i \left( h(\bm{\tau}) \right) r_i \left( h(\bm{\tau}; v_i) \right)
 \end{equation}
-where $V_i(h(\bm{\tau}))$ is consumer welfare, $r_i(h(\bm{\tau}))$ are tariff revenues, and $b_i$ is a structural parameter that governs the government's relative preference for these. When the government values the welfare of the consumer ($b_i = 0$), it prefers to set "optimal tariffs" in the sense of @Johnson1953. Tariffs higher than these hurt consumers but raise more revenue for the government. When the government values rents ($b_i = 1$), it prefers trade policies that maximize revenue where
+where $V_i(h(\bm{\tau}))$ is consumer welfare, $r_i(h(\bm{\tau}), v_i)$ are tariff revenues, and $v_i \in [1, \infty)$ is a structural parameter that modulates the government's ability to extract trade policy rents from society. Revenues are given by
 \begin{equation} \label{eq:r}
-r_i(h(\bm{\tau})) = \sum_j (\tau_{ij} - 1) X_{ij}(h(\bm{\tau}))
+r_i(h(\bm{\tau})) = \sum_j (\tau_{ij} - v_i) X_{ij}(h(\bm{\tau}))
 \end{equation}
-and $X_{ij}(h(\bm{\tau}))$ are country $i$'s imports from country $j$.^[This object does not correspond empirically to governments' factual tariff revenues, as $\tau_{ij}$ incorporates a larger set of trade policy distortions than tariffs alone. Yet, non-tariff barriers to trade also generate rents that do not accrue directly to the government's accounts (see, for example, @Anderson1992 for the case of quotas). This revenue function is designed to capture this broader set of rents.]
+and $X_{ij}(h(\bm{\tau}))$ are country $i$'s imports from country $j$.^[This object does not correspond empirically to governments' factual tariff revenues, as $\tau_{ij}$ incorporates a larger set of trade policy distortions than tariffs alone. Yet, non-tariff barriers to trade also generate rents that do not accrue directly to the government's accounts (see, for example, @Anderson1992 for the case of quotas). This revenue function is designed to capture this broader set of rents.] When $v_i$ is close to one, small policy distortions are sufficient to generate revenue for the government. Conversely when $v_i$ is high, the government must erect large barriers to trade before revenues begin entering government coffers. Because some revenue is necessary in order to produce government welfare, increasing $v_i$ induces governments' to become more protectionist. This formulation provides substantial flexibility in rationalizing various levels of protectionism, while avoiding assuming specific political economic motivations for its genesis. From the perspective of the governments, rents extracted imports are valued equally, regardless of their source. Ex ante, governments are not discriminatory in their preferences.
 
-Characterizing the theoretical properties of this objective function is challenging due to the network effects inherent in general equilibrium trade models. Suppose $i$ increases barriers to trade with $j$. This affects wages and prices in $j$ and its competitiveness in the world economy. These changes affect its trade with all other countries $k$, which affects their welfare, and so on [@Allen2019]. In order to make progress, I assume that $G_i$ is quasiconcave in $i$'s own policies, which ensures the existence of an unconstrained optimal policy vector and a pure-strategy Nash equilibrium to the simultaneous policy-setting game.^[This property holds in my numerical applications, but may not hold more generally. The existence of a Nash equilibrium follows from the fixed point theorem of Debreu, Glicksberg, and Fan [@Fudenberg1992 p. 34].]
+Characterizing the theoretical properties of this objective function is challenging due to the network effects inherent in general equilibrium trade models. Suppose $i$ increases barriers to trade with $j$. This affects wages and prices in $j$ and its competitiveness in the world economy. These changes affect its trade with all other countries $k$, which affects their welfare, and so on [@Allen2019]. In order to make progress, I assume that $G_i$ is quasiconcave in $i$'s own policies, which ensures the existence of an unconstrained optimal policy vector and a pure-strategy Nash equilibrium to the simultaneous policy-setting game.^[This property holds in my numerical simulations, but may not hold more generally. The existence of a Nash equilibrium follows from the fixed point theorem of Debreu, Glicksberg, and Fan [@Fudenberg1992 p. 34].]
 
 
 
@@ -102,47 +129,25 @@ $G_i(\bm{\tau}; b_i)$ is quasiconcave in its own policies, $\tau_{ij} \in [1, \b
 
 These optimal policies impose externalities on other governments. By controlling the degree of market access afforded to foreign producers, trade policies affect the wages of foreign workers and the welfare of the governments that represent them. They also partially determine trade flows, which affect other governments' ability to collect rents. In this sense, protectionism is "beggar they neighbor." Governments' joint policy proposals are denoted $\tilde{\bm{\tau}}$.
 
-Governments may be induced to value the welfare of other governments for cultural, diplomatic, or other non-military reasons. These incentives are summarized in *affinity shocks*, $\xi_{ij}$, which are random variables that are realized before policies are proposed and publically observable. Governments' optimal policies maximize their utility net of these affinity shocks, denoted
-$$
-\tilde{G}_i(\bm{\tau}) = G_i(\bm{\tau}) + \sum_{j \neq i} \xi_{ij} G_j(\bm{\tau})
-$$.
-
-
-
-**Assumption 2**: 
-$\E [ \xi_{ij} ] = 0$.
-
 After trade policies announcements are made, governments decide whether or not they would like to wage war against other governments. Wars are fought in order to impose more favorable trade policies abroad. Each government is endowed with military capacity $M_i$ which can be used in wars with other governments. Wars are offensive and *directed*. Formally, let $\bm{a}_i = \left( a_{i1}, ..., a_{iN} \right)$ denote $i$'s war entry choices, where $a_{ij} \in \left\{ 0 , 1 \right\}$ denotes whether or not $i$ choose to attack $j$.^[Note that this formulation leaves open the possibility that two governments launch directed wars against one another, $a_{ij} = a_{ji} = 1$.] $a_{ii} = 1$ for all $i$ by assumption -- governments always choose to defend themselves.
 
-If $i$ is successful in defending itself against all attackers, its announced policies are implemented. Government $i$ suffers a cost $c_i$ for each war it must fight, accruing total war costs $\sum_{j \neq i} a_{ij} c_i$. Each attacker $j$ also pays $c_j$. When a government $i$ wins a war against $j$, it earns the right to dictate $j$'s trade policy. Optimal policies for a victorious government $j$ are denoted $\bm{\tau}_j^{i \star}$ and solve^[Note that these maximize $G_i$, rather than $\tilde{G}_i$. I assume that in the event of a war, affinity shocks are re-drawn, so governments receive $\E[\tilde{G}_i(\bm{\tau})] = G_i(\bm{\tau})$ where the equality follows from Assumption 2.]
-\begin{equation} \label{eq:optTauj}
-\begin{split}
-\max_{\bm{\tau}_j} & \quad G_i(\bm{\tau}_j; \tilde{\bm{\tau}}_{-j}) \\
-\text{subject to} & \quad \tau_{jj} = 1
-\end{split}
-\end{equation}
-I refer to $G_i(\bm{\tau}_j^{i \star}; \tilde{\bm{\tau}}_{-j})$ as $i$'s *conquest value* vis-à-vis $j$.
+If $i$ is successful in defending itself against all attackers, its announced policies are implemented. Government $i$ suffers a cost $c_i$ for each war it must fight, accruing total war costs $\sum_{j \neq i} a_{ij} c_i$. Each attacker $j$ also pays $c_j$. When a government $i$ wins a war against $j$, it earns the right to impose free trade on the losing government, setting $\bm{\tau}_j = \left\{ 1, \dots, 1 \right\} = \bm{1}_j$. Substituting these policies into $i$'s utility function gives $G_i(\bm{1}_j; \tilde{\bm{\tau}}_{-j})$ as $i$'s *conquest value* vis-à-vis $j$. Note that I prohibit governments from imposing discriminatory policies on conquered states. Substantively, this assumption reflects the difficulty in enforcing sub-optimal policies on prospective client states, relative to reorienting their political institutions to favor free trade.^[It also substantially eases computational burdens by avoiding re-calculating optimal imposed policies for different values of preference parameters.] This also ensures that the benefits of regime change wars are public. However, it does not guarantee non-discrimination in times of peace. Governments that pose most credible threat of conquest can extract larger policy concessions from their targets in the form of directed trade liberalization. 
 
 Governments' ability to prosecute wars against one another depend on dyadic geographic factors $\bm{W}$, such as geographic distance. For every unit of force $i$ dedicates toward attacking $j$, $\rho_{ji}(\bm{W}_{ji}; \bm{\alpha}) > 0$ units arrive. I normalize $\rho_{jj} = 1$ -- defensive operations do not result in any loss of strength. $\bm{\alpha}$ is a vector of structural parameters governing this relationship to be estimated. I adopt a simple exponential functional form for this function where
 \begin{equation} \label{eq:rho}
-\rho_{ji}(\bm{W}_{ji}; \bm{\alpha}) = e^{ -\bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ji} }
+\rho_{ji}(\bm{W}_{ji}; \bm{\alpha}) = e^{ -\bm{\alpha}^T \bm{W}_{ji} } .
 \end{equation}
-. $\bm{W}_{ji}$ is a vector of dyadic geographic features such as centroid-centroid distance, and $\bm{\alpha}$ parameterizes the effect of these features on power projection capacity. The random variable $\epsilon_{ij}$ is a *war shock* that captures determinants of power projection capacity not included in $\bm{W}_{ji}$. Like affinity shocks, war shocks are realized before policy announcements are made and publically observable.
+$\bm{W}_{ji}$ is a vector of dyadic geographic features such as centroid-centroid distance, and $\bm{\alpha}$ parameterizes the effect of these features on power projection capacity.
 
-
-
-**Assumption 3**: 
-$\epsilon_{ji} \sim \mathcal{N}(0, \sigma_{\epsilon}) \implies \E [ \epsilon_{ji} ] = 0$.
-
-War outcomes are determined by a contest function 
+War outcomes are determined by a contest function
 \begin{equation} \label{eq:chi}
-\chi_{ij}(\bm{a}) = \frac{ a_{ij} \rho_{ij}(\bm{W}; \bm{\alpha}) M_i^{\gamma} }{ \sum_k a_{kj} \rho_{kj}(\bm{W}; \bm{\alpha}) M_k^{\gamma} }
-\end{equation}.
-$\chi_{ij} \in [0, 1]$ is the probability that $i$ is successful in an offensive war against $j$. $\gamma$ is a structural parameter that governs the returns to military strength. When $\gamma = 1$, $\chi_{ij}(\bm{a}, \bm{m})$ is a standard additive contest function, where strengths are discounted by $\rho_{ij}(\bm{W}; \bm{\alpha})$. When $\gamma = 0$, military strength does not influence contest outcomes [@Jia2013]. Note that wars are multilateral and winner-take-all. Many countries can choose to attack $j$, but only one government can win the right to dictate $j$'s policy. 
+\chi_{ij}(\bm{a}) = \frac{ a_{ij} \rho_{ij}(\bm{W}; \bm{\alpha}) M_i^{\gamma} }{ \sum_k a_{kj} \rho_{kj}(\bm{W}; \bm{\alpha}) M_k^{\gamma} } .
+\end{equation}
+$\chi_{ij} \in [0, 1]$ is the probability that $i$ is successful in an offensive war against $j$. $\gamma$ is a structural parameter that governs the returns to military strength. When $\gamma = 1$, $\chi_{ij}(\bm{a}, \bm{m})$ is a standard additive contest function, where strengths are discounted by $\rho_{ij}(\bm{W}; \bm{\alpha})$. When $\gamma = 0$, military strength does not influence contest outcomes and contests are a toss-up, adjusted by $\rho_{ij}(\bm{W}; \bm{\alpha})$ [@Jia2013]. Note that wars are multilateral and winner-take-all. Many countries can choose to attack $j$, but only one government can win. 
 
 For the moment, fix $a_{jk} = 0$ for all $k \neq i$, $j \neq k$. $i$ is the only government that faces the possibility of attack. Then, all other policy proposal vectors $\tilde{\bm{\tau}}_{-i}$ are implemented with certainty and $i$'s utility as a function of war entry decisions is 
 $$
-\tilde{G}_i^{\bm{a}}(\bm{a}) = \chi_{ii}(\bm{a}) \tilde{G}_i(\tilde{\bm{\tau}}) + \sum_{j \neq i} \left( \chi_{ji}(\bm{a}) G_i(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-i}) - a_{ji} c_i \right)
+\tilde{G}_i^{\bm{a}}(\bm{a}) = \chi_{ii}(\bm{a}) G_i(\tilde{\bm{\tau}}) + \sum_{j \neq i} \left( \chi_{ji}(\bm{a}) G_i(\bm{1}_i; \tilde{\bm{\tau}}_{-i}) - a_{ji} c_i \right)
 $$
 
 Attackers consider the effect of their war entry on the anticipated policy outcome. Now consider an attacker $j$'s war entry decision vis-à-vis a defender $i$, assuming no other country launches a war. Let 
@@ -153,8 +158,8 @@ denote the probability that $j$ is successful in this contingency.
 
 Government $j$ prefers not to attack $i$ so long as
 \begin{equation} \label{eq:AwarConstraint}
-\tilde{G}_j(\tilde{\bm{\tau}}) \geq \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) \right) \tilde{G}_j(\tilde{\bm{\tau}}) - c_j
-\end{equation}. 
+G_j(\tilde{\bm{\tau}}) \geq \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) G_j(\bm{1}_i; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) \right) G_j(\tilde{\bm{\tau}}) - c_j .
+\end{equation}
 
 Let $\bm{a}^\star : \tilde{\bm{\tau}} \rightarrow \left\{ 0, 1 \right\}_{N - 1 \times N - 1}$ denote equilibrium war entry decisions as a function of announced policies and $a_{ij}^\star(\tilde{\bm{\tau}})$ denote $i$'s equilibrium decision of whether or not to attack $j$. Governments choose whether or not to enter wars simultaneously. When peace prevails, $a_{ij}^\star(\tilde{\bm{\tau}}) = 0$ for all $i \neq j$. 
 
@@ -163,8 +168,8 @@ To recap, governments make policy announcements, $\tilde{\bm{\tau}}$, and then l
 Optimal trade policies proposals for $i$ in this case solve
 \begin{equation} \label{eq:tauTildeStar}
 \begin{split}
-\max_{ \tilde{\bm{\tau}}_i } & \quad \tilde{G}_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \\
-\text{subject to} & \quad \tilde{G}_j(\tilde{\bm{\tau}}) - G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-i}) + c \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \geq 0 \quad \text{for all } j \neq i
+\max_{ \tilde{\bm{\tau}}_i } & \quad G_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \\
+\text{subject to} & \quad G_j(\tilde{\bm{\tau}}) - G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-i}) + c \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \geq 0 \quad \text{for all } j \neq i
 \end{split}
 \end{equation}
 where the constraints can be derived by rearranging \ref{eq:AwarConstraint}. Formulated in this manner, it becomes clear that military allocations affect trade policy through their effect on the $i$'s war constraints. As $M_j$ increases, $\tilde{\chi}_{ji}$ increases as well (for $\gamma > 0$), tightening the constraint on $i$'s policy choice. Let $\tilde{\bm{\tau}}_i^\star(\tilde{\bm{\tau}}_{-i})$ denote a solution to this problem and $\tilde{\bm{\tau}}^\star$ a Nash equilibrium of the constrained policy announcement game. I refer to this game as $\Gamma^{\bm{\tau}}$.
@@ -179,66 +184,39 @@ This method is detailed in Appendix A. Because structural parameters and unobser
 
 It is straightforward to extend this methodology to the game studied here. Consider a modification to the policy-setting subgame in which governments propose changes to factual trade policies $\hat{\tilde{\bm{\tau}}}$ and call this game $\Gamma^{\hat{\bm{\tau}}}$. Note that this modification is entirely cosmetic -- the corresponding equilibrium of $\Gamma^{\hat{\bm{\tau}}}$ in levels can be computed by multiplying factual policies by the "hat" equilibrium values ($\tau_{ij}^\prime = \hat{\tau}_{ij} \tau_{ij}$). I can then replace the equilibrium conditions of $\Gamma^{\bm{\tau}}$ with their analogues in changes. Each government's welfare (\ref{eq:G}) in changes is
 \begin{equation} \label{eq:Ghat}
-\hat{G}_i(\hat{\bm{\tau}}) = \hat{V}_i \left( \hat{h}(\hat{\bm{\tau}}) \right)^{1 - b_i} \hat{r}_i \left(\hat{h}(\hat{\bm{\tau}}) \right)^{b_i}
+\hat{G}_i(\hat{\bm{\tau}}) = \hat{V}_i \left( \hat{h}(\hat{\bm{\tau}}) \right) \hat{r}_i \left( \hat{h}(\hat{\bm{\tau}}; v_i) \right) .
 \end{equation}
-and its utility function is
-\begin{equation}
-\hat{\tilde{G}}_i(\hat{\bm{\tau}}) = \hat{G}_i(\hat{\bm{\tau}}; b_i) + \sum_{j \neq i} \xi_{ij} \frac{G_j(\bm{\tau})}{G_i(\bm{\tau})} \hat{G}_i(\hat{\bm{\tau}}; b_j) 
-\end{equation}
-.
 
-Optimal policy changes for governments successful in wars (\ref{eq:optTauj}) are denoted $\hat{\bm{\tau}}_i^{j \star}$ and satisfy
-\begin{equation} \label{eq:optTaujHat}
-\begin{split}
-\max_{\hat{\bm{\tau}}_j} & \quad \hat{G}_i(\hat{\bm{\tau}}_j; \hat{\tilde{\bm{\tau}}}_{-j}) \\
-\text{subject to} & \quad \hat{\tau}_{jj} = 1
-\end{split}
-\end{equation}
-By dividing the governments' war constraints (\ref{eq:AwarConstraint}) by their factual welfare $G_j(\bm{\tau})$, their constrained policy announcement problem can be rewritten as the solution to
+If $i$ loses a war, free trade is imposed, equivalent to $\hat{\bm{\tau}} = bm{\tau}_i^{-1}$ where $\bm{\tau}_i$ are observed policies. By dividing the governments' war constraints (\ref{eq:AwarConstraint}) by their factual welfare $G_j(\bm{\tau})$, their constrained policy announcement problem can be rewritten as the solution to
 \begin{equation} \label{eq:tauTildeStarHat}
 \begin{split}
-\max_{ \hat{\tilde{\bm{\tau}}}_i } & \quad \hat{\tilde{G}}_i(\hat{\tilde{\bm{\tau}}}_i; \hat{\tilde{\bm{\tau}}}_{-i}) \\
-\text{subject to} & \quad \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}) - \hat{G}_j(\hat{\bm{\tau}}_i^{j \star}) + \hat{c} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \geq 0 \quad \text{for all } j \neq i
+\max_{ \hat{\tilde{\bm{\tau}}}_i } & \quad \hat{G}_i(\hat{\tilde{\bm{\tau}}}_i; \hat{\tilde{\bm{\tau}}}_{-i}) \\
+\text{subject to} & \quad \hat{G}_j(\hat{\tilde{\bm{\tau}}}) - \hat{G}_j(\bm{\tau}_i^{-1}) + \hat{c} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \geq 0 \quad \text{for all } j \neq i
 \end{split}
 \end{equation}
 where
 $$
 \hat{c} = \frac{c_i}{G_j(\bm{\tau}; b_j)}
 $$
-is the *share* of factual utility each government pays if a war occurs. Assumption 4 requires that governments pay the same share of their factual utility in any war.^[While not innocuous, this assumption is more tenable than assumption constant absolute costs. It formalizes the idea that larger countries (that collect more rents and have high real incomes than their smaller counterparts) also pay more in military operations. It avoids the complications inherent in the more realistic but less tractable assumption that war costs depend on power ($\tilde{\chi}$).]
+is the *share* of factual utility each government pays if a war occurs. Assumption 2 requires that governments pay the same share of their factual utility in any war.^[While not innocuous, this assumption is more tenable than assumption constant absolute costs. It formalizes the idea that larger countries (that collect more rents and have high real incomes than their smaller counterparts) also pay more in military operations. It avoids the complications inherent in the more realistic but less tractable assumption that war costs depend on power ($\tilde{\chi}$).]
 
 
 
-**Assumption 4 (Constant Relative War Costs):** 
+**Assumption 2 (Constant Relative War Costs):** 
 $\hat{c}_i = \hat{c}$ for all $i$.
+
+$\hat{\tilde{\bm{\tau}}}_i^\star(\hat{\tilde{\bm{\tau}}}_{-i})$ denotes $i$'s best response function and $\hat{\tilde{\bm{\tau}}}^\star$ denotes an equilibrium in changes. 
 
 # Data and Calibration of Economy
 
 
 
 
-I estimate the model on a set of 6 governments in the year 2011.^[Focusing on a small set of governments is necessary for computational tractability. However, the largest countries (by GDP) are the most attractive targets for coercion, as changes to their trade policies return the largest welfare gains, regardless of whether the coercer is a rent-maximizer or welfare-maximizer. The estimated model is therefore more useful in understanding "great power politics," rather than smaller political-economic conflicts of interest.] These governments are listed in Table \ref{tab:ccodes}. I aggregate all European Union governments into a single entity and collapse all countries not included in the analysis into a "Rest of World" (ROW) aggregate.^[Such an aggregation is necessary in order to calculate fully general equilibrium effects of counterfactual trade policies. However, I prohibit other countries from invading ROW and likewise prohibit ROW from invading others. This ensures that estimates of military parameters depend almost entirely on interactions between countries within my sample.] Non-ROW countries make up 68 percent of world GDP.
+I estimate the model on a set of 6 governments in the year 2011.^[Focusing on a small set of governments is necessary for computational tractability. However, the largest countries (by GDP) are the most attractive targets for coercion, as changes to their trade policies return the largest welfare gains, regardless of whether the coercer is a rent-maximizer or welfare-maximizer. The estimated model is therefore more useful in understanding "great power politics," rather than smaller political-economic conflicts of interest.] These governments are listed in Table \ref{tab:ccodes}. I aggregate all European Union governments into a single entity and collapse all countries not included in the analysis into a "Rest of World" (ROW) aggregate.^[Such an aggregation is necessary in order to calculate fully general equilibrium effects of counterfactual trade policies. However, I prohibit other countries from invading ROW and likewise prohibit ROW from invading others. This ensures that estimates of military parameters depend almost entirely on interactions between countries within my sample.] Non-ROW countries make up  percent of world GDP.
 
-\begin{table}
 
-\caption{\label{tab:ccodes}In-Sample Countries \label{tab:ccodes}}
-\centering
-\begin{tabular}[t]{ll}
-\toprule
-iso3 & Country Name\\
-\midrule
-CHN & China\\
-EU & European Union\\
-JPN & Japan\\
-ROW & Rest of World\\
-RUS & Russia\\
-\addlinespace
-USA & United States\\
-\bottomrule
-\end{tabular}
-\end{table}
 
-Solving the economy in changes for a set of $\hat{\bm{\tau}}$ requires values for a vector of economic parameters $\bm{\theta}_h$ and data on trade flows, policy barriers, and and national accounts. I discuss how I calibrate the economy and the data sources used to do so in Appendix B. There, I also report the magnitude of policy barrier estimates $\bm{\tau}$ from @Cooley2019b. With $\hat{h}(\hat{\bm{\tau}}; \bm{\theta}_h)$ calibrated, $\hat{G}_i(\hat{\bm{\tau}})$ can be calculated for any set of trade policies and the optimal policy change problem (\ref{eq:optTaujHat}) can be solved, yielding $\hat{\bm{\tau}}_i^{j \star}$ for all $i, j$.
+Solving the economy in changes for a set of $\hat{\bm{\tau}}$ requires values for a vector of economic parameters $\bm{\theta}_h$ and data on trade flows, policy barriers, and and national accounts. I discuss how I calibrate the economy and the data sources used to do so in Appendix B. There, I also report the magnitude of policy barrier estimates $\tilde{\bm{\tau}}$ from @Cooley2019b. With $\hat{h}(\hat{\bm{\tau}}; \bm{\theta}_h)$ calibrated, $\hat{G}_i(\hat{\bm{\tau}})$ can be calculated for any set of trade policies and the optimal policy change problem (\ref{eq:optTaujHat}) can be solved, yielding $\hat{\bm{\tau}}_i^{j \star}$ for all $i, j$.
 
 With the economy calibrated and policy barrier estimates in hand, I require only a measure of each government's military endowment ($M_i$) and data on dyadic geography ($\bm{W}$). I use [SIPRI](https://www.sipri.org/)'s data on military expenditure to measure governments' military capacity. These values are displayed in Figure \ref{fig:milex}.
 
@@ -249,88 +227,77 @@ Finally, I use data from @Weidmann2010 to calculate centroid-centroid geographic
 # Estimation
 
 
-The model's equilibrium depends on a vector of parameters $\bm{\theta}_m = \left( \bm{b}, \bm{\alpha}, \gamma, \hat{c}, \sigma_{\epsilon}^2 \right)$, as well as the values of the shocks $\left\{ \xi_{ij} \right\}_{i,j \in \left\{ 1, \dots, N \right\}}$ and $\left\{ \epsilon_{ij} \right\}_{i,j \in \left\{ 1, \dots, N \right\}}$. Because I work with an equilibrium in changes, a prediction $\hat{\tilde{\tau}}_{ij}^\star = 1$ is consistent with the data -- the model predicts that in equilibrium, government $i$ would make no changes to its factual trade policy toward $j$.
+The model's equilibrium, $\hat{\tilde{\bm{\tau}}}^\star$ depends on a vector of parameters $\bm{\theta}_m = \left( \bm{b}, \bm{\alpha}, \gamma, \hat{c}, \right)$, as well as the values of the shocks $\left\{ \xi_{ij} \right\}_{i,j \in \left\{ 1, \dots, N \right\}}$ and $\left\{ \epsilon_{ij} \right\}_{i,j \in \left\{ 1, \dots, N \right\}}$. Because I work with an equilibrium in changes, a prediction $\hat{\tilde{\tau}}_{ij}^\star = 1$ is consistent with the data -- the model predicts that in equilibrium, government $i$ would make no changes to its factual trade policy toward $j$. I assume observed $\tilde{\bm{\tau}}^\star$ are measured with error
+$$
+\tilde{\bm{\tau}}^\star(\bm{\theta}_m) = \tilde{\bm{\tau}} + \bm{\epsilon}
+$$
+where $\bm{\epsilon}$ is an $N \times N$ matrix with $\epsilon_{ii} = 0$ for all $i$ and $\E[\epsilon_{ij}] = 0$ for all $i \neq j$. Recall that $\tilde{\bm{\tau}}^\star$ can be reconstructed from $\hat{\tilde{\bm{\tau}}}^\star$, the model's equilibrium, by simply multiplying equilibrium policies by factual policies, $\bm{\tau}$.
 
-Estimation leverages Assumptions 2 and 3. First, note that these assumptions imply
-\begin{equation*}
+Following the assumption that measurement error is mean-zero, I seek an estimator that solves
+\begin{equation} \label{eq:estimator}
+\min_{\bm{\theta}_m} \sum_i \sum_j \epsilon_{ij}(\bm{\theta}_m) .
+\end{equation}
+
+Solving this problem presents two computational challenges. First, computing government welfare changes for any given $\hat{\bm{\tau}}$ requires solving system of equations characterizing the equilibrium of the international economy, $\hat{h}(\hat{\bm{\tau}})$. Second, computing $\tilde{\bm{\tau}}^\star(\bm{\theta}_m)$ requires iteratively solving each government's best response problem (\ref{eq:tauTildeStarHat}) until covergence at a Nash equilibrium. I sidestep both of these by recasting the best response problem and estimation problem as mathematical programs with equilibrium constraints (MPECs) [@Su2012; @Ossa2014; @Ossa2016].
+
+To reformulate the best response problem, I consider an equivalent reformulation in which each government chooses trade policies and wages, subject to the additional constraint that chosen wages are consistent with the general equilibrium of the international economy ($\hat{h}(\hat{\tilde{\bm{\tau}}}) = \hat{w}$). Let $\hat{\bm{x}}_i = \left\{ \hat{\tilde{\bm{\tau}}}_i, \hat{\bm{w}} \right\}$ store $i$'s choice variables in this problem. Then, this problem can be rewritten as follows, noting explicitly dependencies on $\bm{\theta}_m$
+\begin{equation} \label{eq:tauTildeHatMPEC}
 \begin{split}
-\E_{\xi, \epsilon} \left[ \hat{\tilde{\bm{\tau}}}_i^\star(\bm{1}; \bm{\theta}_m) \right] = \argmax_{ \hat{\tilde{\bm{\tau}}}_i } & \quad \hat{G}_i(\hat{\tilde{\bm{\tau}}}_i; \bm{1}) \\
-\text{subject to} & \quad \hat{G}_j(\hat{\tilde{\bm{\tau}}}) - \hat{G}_j(\hat{\bm{\tau}}_i^{j \star}) + \hat{c} \E_{\epsilon} \left[ \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \right] \geq 0 \quad \text{for all } j \neq i
+\max_{\hat{\bm{x}}_i} & \quad \hat{G}_i(\hat{\bm{w}}; \bm{\theta}_m) \\
+\text{subject to} & \quad \hat{G}_j(\hat{\bm{w}}; \bm{\theta}_m) - \hat{G}_j \left( \bm{1}_i; \bm{\theta}_m \right) + \hat{c} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \geq 0 \quad \text{for all } j \neq i \\
+& \quad \hat{\bm{w}} = \hat{h}(\hat{\tilde{\bm{\tau}}}) .
 \end{split}
-\end{equation*}
-where the affinity shocks drop out of the maximand. For any guess of the parameter vector $\bm{\theta}_m$, I can calculate the expected best response to observed policies $\E \left[ \hat{\tilde{\bm{\tau}}}_i^\star(\bm{1}; \bm{\theta}_m) \right]$ for each $i$. In practice, I compute this quantity by recasting \ref{eq:tauTildeStarHat} as a mathematical program with equilibrium constraints [@Su2012], which I discuss further in Appendix D. From here, I can construct a loss function
-$$
-\ell_{\bm{\tau}}(\bm{\theta}_m) = \sum_i \sum_j \left| \tau_{ij} \left( \E \left[ \hat{\tilde{\tau}}_{ij}^\star(\bm{1}; \bm{\theta}_m) \right] - 1 \right) \right|
-$$
-where $\tau_{ij}$ is the observed policy and $\tau_{ij} \E \left[ \hat{\tilde{\tau}}_{ij}^\star(\bm{1}; \bm{\theta}_m) \right]$ is the predicted best response.
-
-The war constraints are informative about the value of the parameters $\bm{\alpha}$ and $\gamma$. Consider the case in which the $i$'s war constraint vis-à-vis $j$ holds with certainty. Then,
-$$
-\hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) - \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{c} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \right) = 0
-$$
-which can be rearranged as
-\begin{equation} \label{eq:constraintRegression}
-\ln \left( \frac{ 1 }{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\tau}_i^{j\star}) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1 } \right) = \gamma \ln \left( \frac{ M_j }{ M_i } \right) - \bm{\alpha}^T W_{ji} + \epsilon_{ji}
 \end{equation}
-. The left side is a measure of the difference between $j$'s equilibrium utility difference and it's conquest value ($\hat{G}_j(\hat{\tau}_i^{j\star}) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j)$) -- the benefits from conquest. The extent to which these correlates with $j$'s military advantage over $i$ ($M_j / M_i$) is informative about the returns to military power, $\gamma$. The extent to which this correlates with dyadic geography is informative about the power projection parameters $\bm{\alpha}$.
+Let $\mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i)$ denote the associated Lagrangian. This formulation allows me to quickly compute best responses $\hat{\tilde{\bm{\tau}}}_i(\hat{\tilde{\bm{\tau}}}_{-i})$ without iteratively solving $h(\hat{\tilde{\bm{\tau}}})$.
 
-In Appendix E I show that if the conquest value is sufficiently high, there exists an $\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$ such that for all $\epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)$, $i$'s constraint vis-à-vis $j$ holds. I can then construct a stochastic variant of \ref{eq:constraintRegression} which can be used as a second moment condition. This condition generates a second loss function, $\ell_{\epsilon}(\bm{\theta}_m)$ (Equation \ref{eq:lossEpsilon}).
-
-I estimate the model by minimizing the sum of these two loss functions. Formally, I seek estimates $\hat{\bm{\theta}}_m$ such that
-\begin{equation} \label{eq:thetaLoss}
-\tilde{\bm{\theta}}_m \in \argmin_{\bm{\theta}_m} \quad \ell_{\bm{\tau}}(\bm{\theta}_m) + \ell_{\epsilon}(\bm{\theta}_m)
+I reformulate the estimation problem (\ref{eq:estimator}) in a similar manner. By Assumption `AGText`, at any Nash equilibrium, we must have
+$$
+\nabla_{\hat{\tilde{\bm{\tau}}}_i} \mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i; \bm{\theta}_m) = 0 
+$$
+for each government $i$. In the reformulated estimation problem, seek to choose parameters, trade policies, and general equilibrium response variables in order to minimize measurement error while enforcing these equilibrium constraints, in addition to general equilibrium constraints. Formally, I solve
+\begin{equation} \label{eq:estimatorMPEC}
+\begin{split}
+\min_{ \bm{\theta}_m, \hat{\tilde{\bm{\tau}}}, \hat{\bm{w}} } & \quad \epsilon_{ij} \\
+\text{subject to} & \quad \nabla_{\hat{\tilde{\bm{\tau}}}_i} \mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i; \bm{\theta}_m) = 0  \text{ for all } i \\
+& \quad \hat{\bm{w}} = \hat{h}(\hat{\tilde{\bm{\tau}}}) .
+\end{split}
 \end{equation}
+The constraints collectively ensure $\hat{\tilde{\bm{\tau}}} = \tilde{\bm{\tau}}^\star(\bm{\theta}_m)$ -- or that the policies are consistent with Nash equilibrium in policies, given estimated parameters.
 
-In practice, I minimize these loss functions using an iterative procedure. In the first stage, I hold $\gamma$ and $\bm{\alpha}$ fixed and miminize $\ell_{\bm{\tau}}(\bm{\theta}_m)$ via adaptive grid search over $\bm{b}$. Then, I hold these values fixed and choose $\gamma$ and $\bm{\alpha}$ to minimize $\ell_{\epsilon}(\bm{\theta}_m)$ using an ordinary least squares variant. I then return to the first stage and iterate until the loss functions stabilize. I discuss this procedure in more detail in Appendix F. 
-
-Because they affect coercion potential similarly, $\bm{\alpha}$ and $\hat{c}$ are difficult to separately identify. I therefore set $\hat{c} =$ 0.1 and report estimates for other parameters consistent with this value.
-
-Fixing governments' preferences and the relative costs of war, the probability that constraints are binding on governments' trade policy choices can be calculated. The responsiveness of the constraints that bind with high probability to the military capability ratio ($M_j / M_i$) and dyadic geography $\bm{W}_{ji}$ are informative about $\gamma$ and $\bm{\alpha}$ respectively. 
-
-This procedure produces point estimates $\tilde{\bm{\theta}}_m$. I then construct uncertainty intervals through nonparametric bootstrap, sampling policies and constraints and re-estimating $\tilde{\bm{\theta}}_m$. 
+This procedure produces point estimates $\tilde{\bm{\theta}}_m$. I then construct uncertainty intervals through nonparametric bootstrap, sampling policies from bootstraped estimates in @Cooley2019b and re-solving (\ref{eq:estimator}).
 
 # Results
 
 
 
+```
+## Error in eval(expr, envir, enclos): object 'gamma_tilde' not found
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'alpha_tilde' not found
+```
 
 *NOTE: Computing uncertainty intervals is computationally expensive and in-progress. I report and discuss point estimates here, with the necessary caution such preliminary discussion requires.*
 
 Estimates of preference weights are reported in Table \ref{tab:b_estsT}. In @Cooley2019b, I show that developed countries tend to adopt higher trade barriers than their developing peers. Consistent with this finding, the European Union and Japan are assessed to have high values of $b_i$.
 
 
-\begin{table}
 
-\caption{\label{tab:b_estsT}Preference Parameter ($\tilde{\bm{b}}$) Estimates \label{tab:b_estsT}}
-\centering
-\begin{tabular}[t]{llr}
-\toprule
-iso3 & Country Name & $\tilde{\boldsymbol{b}}_i$\\
-\midrule
-CHN & China & 0.2\\
-EU & European Union & 2.0\\
-JPN & Japan & 1.9\\
-ROW & Rest of World & 1.2\\
-RUS & Russia & 0.0\\
-\addlinespace
-USA & United States & 0.3\\
-\bottomrule
-\end{tabular}
-\end{table}
 
 With estimates of $b_i$ in hand, I can calculate each government's conquest value vis-à-vis all other governments. Recall that $\hat{\bm{\tau}}_i^{j \star}$ is the set of policies government $j$ would impose on $i$ if it successfully prosecuted a war against the latter. Then, $j$'s counterfactual utility in this scenario can be readily calculated given knowledge of its objective function (\ref{eq:Ghat}). These values are shown in Figure \ref{fig:rcv}. Each cell measures the utility change each row government experiences when successfully conquering each column government. Darker colors correspond to larger changes in utility.
 
 Governments that face poor market access conditions and/or are rent-maximizing gain the most from successful wars, relative to the status quo. When they win wars, rent-maximizing governments impose policies designed to direct trade into their borders. As imports go up, revenue collection potential also increases. The value of war is lower for welfare-maximizing governments. Still, welfare-maximizing governments facing poor market access benefit substantially from winning wars against countries with large markets and high barriers to trade. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These values assist in the identification of the power projection and preference parameters in $\bm{\theta}_m$.
 
-![Conquest values evaluated at $\tilde{\bm{b}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \label{fig:rcv}](figure/rcv_b-1.png)
 
-Turning to these parameters, I estimate $\gamma$ to be 0.42. This is consistent with a positive effect of military advantage on counterfactual war outcomes, holding power projection capacity constant. In particular, a 2:1 advantage in military spending translates into a 57.2 percent chance of winning a war, assuming no strength is lost due to the loss of strength gradient ($\rho_{ji} = 1$). 
 
-Governments also face significant obstacles to projecting power. I estimate $\alpha$ to be 0.24. At this value, if the United States wished to invade China, its effective strength would decline by a factor of 1.7 due to the distance between the countries. 
+Turning to these parameters, I estimate $\gamma$ to be `#r round(gamma_tilde, 2)`. This is consistent with a positive effect of military advantage on counterfactual war outcomes, holding power projection capacity constant. In particular, a 2:1 advantage in military spending translates into a `#r round(chi_gamma_ex * 100, 1)` percent chance of winning a war, assuming no strength is lost due to the loss of strength gradient ($\rho_{ji} = 1$). 
+
+Governments also face significant obstacles to projecting power. I estimate $\alpha$ to be `#r round(alpha_tilde, 2)`. At this value, if the United States wished to invade China, its effective strength would decline by a factor of `#r round(1 / rho_ex, 1)` due to the distance between the countries. 
 
 Figure \ref{fig:chi} combines these estimates to produce estimates of the contest function $\tilde{\chi}_{ji}$ for each pair of countries. The United States' military advantage is reflected in its higher probability of success in conquest. However, conquest is estimated to be a difficult endeavor in modern international relations -- no country has a better than even chance of conquering another country within the sample.
 
-![Estimated probability of successful conquest for each attacking country (row) in war against every defending country (column). Each probability is reported in the appropriate cell of the heatmap. \label{fig:chi}](figure/chi-1.png)
+
 
 # Conclusion
 
@@ -546,7 +513,7 @@ Trade flows valued pre-shipment (free on board) are available from [COMTRADE](ht
 
 ### Structural Parameters
 
-I set $\theta =$ 4, in line with estimates reported in @Head2014 and @Simonovska2014. A natural empirical analogue for $\beta$ is intermediate imports $(E_i - w_i L_i)$ divided by total tradable production. This varies country to country, however, and equilibrium existence requires a common $\beta$. I therefore take the average of this quantity as the value for $\beta$, which is 0.83 in my data. This means that small changes around the factual equilibrium result in discrete jumps in counterfactual predictions. I therefore first generate counterfactual predictions with this common $\beta$, and use these as a baseline for analysis.
+I set $\theta =$ 6, in line with estimates reported in @Head2014 and @Simonovska2014. A natural empirical analogue for $\beta$ is intermediate imports $(E_i - w_i L_i)$ divided by total tradable production. This varies country to country, however, and equilibrium existence requires a common $\beta$. I therefore take the average of this quantity as the value for $\beta$, which is 0.8 in my data. This means that small changes around the factual equilibrium result in discrete jumps in counterfactual predictions. I therefore first generate counterfactual predictions with this common $\beta$, and use these as a baseline for analysis.
 
 ### Trade Imbalances
 
@@ -631,117 +598,6 @@ Finally, let $c^\star = \max \left\{ c^{\bm{\tau}}, c^{\bm{a}} \right\}$. Since 
 
 
 
-
-## D: Best Responses as Mathematical Programs with Equilibrium Constraints
-
-
-Solving each stage of the game is computationally expensive. For a given parameter vector, computing the equilibrium of $\hat{\Gamma}^{\bm{\tau}}$ computing the Nash Equilibrium of the constrained policy announcement game $\hat{\tilde{\bm{\tau}}}^\star(\bm{\theta}_m)$. In turn, computing these requires solving the equilibrium of the economy $\hat{h}(\hat{\bm{\tau}}; \bm{\theta}_h)$ for many trial $\bm{\tau}$. To ease computation, I recast governments' constrained policy problem (\ref{eq:tauTildeStarHat}) and the parameter estimation problem as mathematical programs with equilibrium constraints (MPECs) [@Su2012].
-
-Converting \ref{eq:tauTildeStarHat} to an MPEC requires allowing the government to choose policies $\hat{\tilde{\bm{\tau}}}$ and wages $\hat{\bm{w}}$ while satisfying other governments' war constraints and enforcing that wages are consistent with international economic equilibrium $\hat{h}$.^[@Ossa2014 and @Ossa2016 also study optimal trade policy using this methodology.] Let $\hat{\bm{x}}_i = \left\{ \hat{\tilde{\bm{\tau}}}_i, \hat{\bm{w}} \right\}$ store $i$'s choice variables in this problem. Then, noting explicitly dependencies on $\bm{\theta}_m$, \ref{eq:tauTildeStarHat} can be rewritten
-\begin{equation} \label{eq:tauTildeHatMPEC}
-\begin{split}
-\max_{\hat{\bm{x}}_i} & \quad \hat{\tilde{G}}_i(\hat{\bm{w}}; \bm{\theta}_m) \\
-\text{subject to} & \quad \hat{\tilde{G}}_j(\hat{\bm{w}}; \bm{\theta}_m) - \hat{G}_j \left( \hat{\bm{\tau}}_i^{j \star}(\bm{\theta}_m) \right) + \hat{c} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \geq 0 \quad \text{for all } j \neq i \\
-& \quad \hat{\bm{w}} = \hat{h}(\hat{\tilde{\bm{\tau}}})
-\end{split}
-\end{equation}
-
-
-
-## E: Estimation of $\gamma$ and $\bm{\alpha}$
-
-
-Government $i$'s war constraint vis a vis $j$ is slack in equilibrium when
-$$
-\hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) - \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{c} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \right) \geq 0
-$$
-for some proposed $\hat{\tilde{\bm{\tau}}}$. The constraint is therefore slack so long as
-\begin{align*}
-\hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) - \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{c} \tilde{\chi}(\bm{Z}; \bm{\theta}_m)^{-1} \right) &\geq 0 \\
-\tilde{\chi}(\bm{Z}; \bm{\theta}_m) &\leq \hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1}
-\end{align*}
-
-Note that
-$$
-1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) = \frac{ M_i^\gamma }{ \rho_{ji}(\bm{W}; \bm{\theta}_m) M_j^\gamma + M_i^\gamma }
-$$
-which implies
-$$
-\frac{\tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)}{1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)} =\rho_{ji}(W_{ji}; \bm{\alpha}) \left( \frac{ M_j }{ M_i } \right)^\gamma
-$$.
-
-Recall from Equation \ref{eq:rho} that
-$$
-\rho_{ji}(\bm{W}_{ji}; \bm{\alpha}) = e^{ -\bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ji} }
-$$.
-I can therefore rewrite the slackness condition as
-\begin{align*}
-\tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) &\leq \hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1} \\
-\frac{\tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)}{1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)} &\leq \frac{\hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1}}{1 - \hat{c} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right)^{-1}} \\ 
-\rho_{ji}(\bm{W}_{ji}; \bm{\alpha}) \left( \frac{ M_j }{ M_i } \right)^\gamma &\leq \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \\
-- \bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ji} + \gamma \left( \frac{ M_j }{ M_i } \right) &\leq \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right) \\
-\epsilon_{ij} &\leq \bm{\alpha}^T \bm{W}_{ji} - \gamma \left( \frac{ M_j }{ M_i } \right) + \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right)
-\end{align*}.
-Let $\epsilon_{ji}^\star$ solve this with equality,^[If $\hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) < 1$ then $\epsilon_{ji}^\star$ does not exist and $i$'s war constraint vis-à-vis $j$ will never bind.]
-\begin{equation} \label{eq:epsilon_star}
-\epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) = \bm{\alpha}^T \bm{W}_{ji} - \gamma \left( \frac{ M_j }{ M_i } \right) + \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right)
-\end{equation}
-With $\epsilon_{ij}$ distributed normal, the probability that the constraint is slack can be computed as 
-$$
-\text{Pr} \left( \epsilon_{ij} < \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right) = \Phi \left( \frac{\epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right)
-$$
-where $\Phi$ is the standard normal c.d.f.
-
-Let $Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) = \ln \left( \frac{1}{ \hat{c}^{-1} \left( \hat{G}_j(\hat{\bm{\tau}}_i^{j\star}; b_j) - \hat{\tilde{G}}_j(\hat{\tilde{\bm{\tau}}}^\star; b_j) \right) - 1} \right)$. With the above quantities in hand, we can write
-\begin{align*}
-\E_{\hat{\tilde{\bm{\tau}}}^\star, \bm{\epsilon}} \left[ Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) \right] =& \Phi \left( \frac{ \E \left[ \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right] }{\sigma_{\epsilon}} \right) \E \left[ Y_{ji} \mid \epsilon_{ji} < \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right] + \\
-& \left( 1 - \Phi \left( \frac{ \E \left[ \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right] }{\sigma_{\epsilon}} \right) \right) \E \left[ Y_{ji} \mid \epsilon_{ji} \geq \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right] \\
-=& \Phi \left( \frac{ \E \left[ \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right] }{\sigma_{\epsilon}} \right) \E \left[ Y_{ji} \mid \epsilon_{ji} < \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right] + \\
-& \left( 1 - \Phi \left( \frac{ \E \left[ \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right] }{\sigma_{\epsilon}} \right) \right) \times \\
-& \left( \gamma \left( \frac{ M_j }{ M_i } \right) - \bm{\alpha}^T \bm{W}_{ji} + \E \left[ \epsilon_{ji} \mid  \epsilon_{ji} \geq \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_m) \right] \right)
-\end{align*}
-
-$\E \left[ Y_{ji} \mid \epsilon_{ji} < \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right]$ can be approximated by simulating the integral
-$$
-\int_{-\infty}^{\epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m)} Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) f(\epsilon) d \epsilon
-$$
-and $\E \left[ \epsilon_{ji} \mid  \epsilon_{ji} \geq \epsilon_{ji}^\star(\bm{Z}; \bm{\theta}_m) \right]$ is the mean of a truncated normal distribution. 
-
-The sample analogue for $\E \left[ Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) \right]$ is $\E \left[ Y_{ji}(\bm{1}; \bm{\theta}_m) \right]$. Then, 
-\begin{equation*}
-\begin{split}
-\E \left[ Y_{ji}(\bm{1}; \bm{\theta}_m) \right] = \Phi \left( \frac{ \epsilon_{ji}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m) }{ \sigma_{\epsilon} } \right) \E \left[ Y_{ji} \mid \epsilon_{ji} < \epsilon_{ji}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m) \right] + \\
-\left( 1 - \Phi \left( \frac{ \epsilon_{ji}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m) }{ \sigma_{\epsilon} } \right) \right) \left( \gamma \left( \frac{ M_j }{ M_i } \right) - \bm{\alpha}^T \bm{W}_{ji} + \epsilon_{ij} \right)
-\end{split}
-\end{equation*}
-
-I can now construct a loss function
-\begin{equation} \label{eq:lossEpsilon}
-\ell_{\epsilon}(\bm{\theta}_m) = \sum_i \sum_j \left( \E_{\hat{\tilde{\bm{\tau}}}^\star, \bm{\epsilon}} \left[ Y_{ji}(\hat{\tilde{\bm{\tau}}}^\star; \bm{\theta}_m) \right] - \E \left[ Y_{ji}(\bm{1}; \bm{\theta}_m) \right] \right)^2
-\end{equation}
-
-In practice, I minimize this loss function by iteratively recalculating the weights, $\Phi \left( \frac{ \epsilon_{ji}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m) }{ \sigma_{\epsilon} } \right)$, and choosing $\gamma$ and $\bm{\alpha}$ via ordinary least squares.
-
-In the case where the constraint holds almost surely then $\Phi \left( \frac{\epsilon_{ij}^\star(\bm{1}, \bm{Z}; \bm{\theta}_m)}{\sigma_{\epsilon}} \right) \approx 0$ and this resembles a tobit regression of $Y_{ji}(\bm{1}; \bm{\theta}_m)$ on the military capability ratio and dyadic geography. If $Y_{ji}(\bm{1}; \bm{\theta}_m)$ varies positively with the capability ratio, this indicates higher returns to military expenditure, corresponding to a larger $\gamma$.
-
-
-
-## F: Estimation Algorithm
-
-
-The estimation algorithm iteratively grid searches over $\bm{b}$ to minimize $\ell_{\bm{\tau}}$ and chooses $\bm{\alpha}$ and $\gamma$ to minimizes $\ell_{\epsilon}$ via ordinary least squares. First, as a normalization, I set $\sigma_{\epsilon}^2 = 1$. Then, for any calibrated $\hat{c}$.
-
-1. Initialize $k=1$ and set starting values, $\bm{\theta}_k$. Let $\Delta(\bm{\theta}_{m,k}, \bm{\theta}_{m, k-1})$ be a loss function that measures the distance between any pair of parameter estimates.
-2. While $\Delta(\bm{\theta}_{m,k}, \bm{\theta}_{m, k-1}) > \delta$ (where $\delta$ is some convergence threshold):
-    - Search over a grid of values for $\bm{b}$ and set
-$$
-\bm{b}_k = \argmin_{\bm{b}} \quad\ell_{\bm{\tau}}(\bm{\theta}_{m, k})
-$$
-    - Draw many $\bm{\epsilon}$ and calculate $\E \left[ Y_{ji} \mid \epsilon_{ji} < \epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_{m,k}) \right]$ by calculating best responses $\hat{\tilde{\bm{\tau}}}_i^\star(\bm{\epsilon})$. 
-    - Calculate initial $\epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_{m, k})$
-    - Choose $\gamma_k$ and $\bm{\alpha}_k$ to minimize $\ell_{\epsilon}(\bm{\theta}_{m, k})$ via least squares, recompute $\epsilon_{ji}^\star(\hat{\tilde{\bm{\tau}}}^\star, \bm{Z}; \bm{\theta}_{m, k})$, and iterate until convergence. Update values of $\bm{\theta}_{m, k}$.
-    - $k = k + 1$
-3. Set $\bm{\theta}_m(\hat{c}) = \left( \bm{b}_k, \bm{\alpha}_k, \gamma_k, \hat{c}_{\ell}, \sigma_{\epsilon}^2 \right)$
 
 \clearpage
 

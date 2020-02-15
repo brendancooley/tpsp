@@ -16,7 +16,11 @@ website_docs = "~/Dropbox\ \(Princeton\)/5_CV/website/static/docs"
 website_docs_github = "~/Github/brendancooley.github.io/docs"
 templatePath = "~/Dropbox\ \(Princeton\)/8_Templates/"
 
-data_dir = "~/Dropbox\ \(Princeton\)/1_Papers/tpsp/01_data/tpsp_data_large/"
+csv_dir_base = "~/Dropbox\ \(Princeton\)/1_Papers/tpsp/01_data/"
+results_dir_base = csv_dir_base + "results/"
+data_dir_base = csv_dir_base + "data/"
+
+sizes = ["mini/", "mid/", "large/"]
 
 code_dir = "01_analysis/"
 
@@ -38,9 +42,14 @@ def task_source():
 
 def task_results():
     # first: conda activate python3
+    # e.g. doit results:results --size mini/
     yield {
-        'name': "collecting results...",
-        'actions':["python " + code_dir + "results.py local"],
+        'name': "results",
+        'params':[{'name':'size',
+		      'long':'size',
+		      'type':str,
+		      'default':'mini/'}],
+        'actions':["python " + code_dir + "results.py local %(size)s"],
         'verbosity': 2,
     }
 
@@ -104,6 +113,13 @@ def task_notes():
                             fName + ".pdf " + notesFiles[i]]
             }
 
+def task_setup_dirs():
+    for i in sizes:
+        yield {
+            'name': "setting up results directory " + i,
+            'actions':["mkdir -p " + results_dir_base + i]
+        }
+
 def task_transfer_hpc():
     # code
     # data
@@ -111,8 +127,10 @@ def task_transfer_hpc():
     yield {
         'name': "transfering files to hpc...",
         'actions':["scp -r " + code_dir + "* " + "bcooley@adroit.princeton.edu:" + hpc_code_dir,
-        "scp -r " + data_dir + "* " +
-        "bcooley@adroit.princeton.edu:" + hpc_data_dir,
-        "scp -r source/* " +
-        "bcooley@adroit.princeton.edu:" + hpc_source_dir]
+        "scp -r source/* " + "bcooley@adroit.princeton.edu:" + hpc_source_dir,
+        "scp -r slurm/* " + "bcooley@adroit.princeton.edu:" + hpc_base_dir]
     }
+    for i in sizes:
+        yield {'name': "transferring data " + i,
+                'actions': ["scp -r " + data_dir_base + i + "* " +
+                "bcooley@adroit.princeton.edu:" + hpc_data_dir + i]}
