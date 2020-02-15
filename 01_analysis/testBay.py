@@ -97,7 +97,9 @@ test = pecmy.estimator_lgrg_hess(xlvt_sv, lagrange, obj_factor, np.zeros(pecmy.x
 test.shape
 
 pecmy.rhoM(theta_dict_2)
-
+pecmy.W
+pecmy.chi(pecmy.m, theta_dict_1)
+pecmy.war_vals(np.ones(pecmy.N), pecmy.m, theta_dict_1)
 
 
 
