@@ -76,7 +76,7 @@ class policies:
         # self.lambda_i_len_td = self.lambda_i_len + self.N ** 2 - self.N # add constraints on others' policies
 
         self.x_len = self.ecmy.ge_x_len
-        self.xlvt_len = self.x_len + self.lambda_i_len * self.N + self.N + 3
+        self.xlvt_len = self.x_len + self.lambda_i_len * self.N + self.N + 4
 
         self.g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2  # ge_diffs, Lzeros (own policies N-1), war_diffs mat, comp_slack mat
 
@@ -187,8 +187,9 @@ class policies:
 
         theta_dict = dict()
         theta_dict["c_hat"] = theta_x[0]
-        theta_dict["alpha"] = theta_x[1]
-        theta_dict["gamma"] = theta_x[2]
+        theta_dict["gamma"] = theta_x[1]
+        theta_dict["alpha0"] = theta_x[2]
+        theta_dict["alpha1"] = theta_x[3]
 
         return(theta_dict)
 
@@ -196,8 +197,9 @@ class policies:
 
         theta_x = []
         theta_x.extend(np.array([theta_dict["c_hat"]]))
-        theta_x.extend(np.array([theta_dict["alpha"]]))
         theta_x.extend(np.array([theta_dict["gamma"]]))
+        theta_x.extend(np.array([theta_dict["alpha0"]]))
+        theta_x.extend(np.array([theta_dict["alpha1"]]))
 
         return(np.array(theta_x))
 
@@ -448,24 +450,29 @@ class policies:
             x_L[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = 1 # vs
             x_U[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = np.max(self.ecmy.tau) # vs
             x_L[self.x_len+self.lambda_i_len*self.N+self.N] = 0  # c_hat lower
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # gamma lower
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0  # alpha0 lower
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+3] = 0  # alpha1 lower
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 1
+            # x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 1  # fix gamma at 1
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N] = .25
             # x_U[self.x_len+self.lambda_i_len*self.N+self.N] = .25  # fix c_hat
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # alpha lower
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # alpha lower
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0
             # x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # fix alpha
-            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 1
-            # x_U[self.x_len+self.lambda_i_len*self.N+self.N+2] = 1  # fix gamma at 1
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0  # gamma lower
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0  # gamma lower
         else:
             theta_dict = self.rewrap_theta(theta_x)
             x_L[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = v
             x_U[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = v
             x_L[self.x_len+self.lambda_i_len*self.N+self.N] = theta_dict["c_hat"]  # c_hat
             x_U[self.x_len+self.lambda_i_len*self.N+self.N] = theta_dict["c_hat"]
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = theta_dict["alpha"]
-            x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = theta_dict["alpha"]
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = theta_dict["gamma"]  # gamma
-            x_U[self.x_len+self.lambda_i_len*self.N+self.N+2] = theta_dict["gamma"]
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = theta_dict["gamma"]  # gamma
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = theta_dict["gamma"]
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = theta_dict["alpha0"]
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N+2] = theta_dict["alpha0"]
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N+3] = theta_dict["alpha1"]
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N+3] = theta_dict["alpha1"]
 
         if bound == "lower":
             return(x_L)
@@ -877,9 +884,10 @@ class policies:
 
         v = theta[0:self.N]
         theta_dict = dict()
-        theta_dict["c_hat"] = theta[self.N]
-        theta_dict["alpha"] = theta[self.N+1]
-        theta_dict["gamma"] = theta[self.N+2]
+        # TODO need to rewrite order
+        # theta_dict["c_hat"] = theta[self.N]
+        # theta_dict["alpha"] = theta[self.N+1]
+        # theta_dict["gamma"] = theta[self.N+2]
 
         wv = self.war_vals(v, m, theta_dict, np.zeros((self.N, self.N)))
 
@@ -902,9 +910,10 @@ class policies:
         # x_lbda_theta_sv = np.random.normal(0, .1, size=self.x_len+self.lambda_i_len*self.N+3+self.N)
         x_lbda_theta_sv[0:self.x_len] = 1
         x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = v_init
-        x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N+self.N] = theta_dict_init["c_hat"]
-        x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N+self.N+1] = theta_dict_init["alpha"]
-        x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N+self.N+2] = theta_dict_init["gamma"]
+        # TODO need to rewrite order
+        # x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N+self.N] = theta_dict_init["c_hat"]
+        # x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N+self.N+1] = theta_dict_init["alpha"]
+        # x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N+self.N+2] = theta_dict_init["gamma"]
 
         m = self.M / np.ones((self.N, self.N))
         m = m.T
@@ -1028,7 +1037,7 @@ class policies:
         """
 
         # rhoM = np.exp(-1 * (theta_dict["alpha"][0] + self.W * theta_dict["alpha"][1]) + epsilon)
-        rhoM = np.exp(-1 * (self.W * theta_dict["alpha"]))
+        rhoM = np.exp(-1 * (theta_dict["alpha0"] + self.W * theta_dict["alpha1"]))
         # rhoM = np.clip(rhoM, 0, 1)
 
         return(rhoM)

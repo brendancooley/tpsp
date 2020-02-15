@@ -74,18 +74,26 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 
 theta_dict_1 = dict()
 theta_dict_1["c_hat"] = .1
-theta_dict_1["alpha"] = .006
+theta_dict_1["alpha0"] = 0
+theta_dict_1["alpha1"] = 0
 theta_dict_1["gamma"] = 1
 
 theta_dict_2 = dict()
-theta_dict_2["c_hat"] = .41
-theta_dict_2["alpha"] = -.0002
-theta_dict_2["gamma"] = .25
+theta_dict_2["c_hat"] = .78
+theta_dict_2["alpha0"] = -5
+theta_dict_2["alpha1"] = -.0001
+theta_dict_2["gamma"] = 5
 
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
+
+
+pecmy.rhoM(theta_dict_2)
+pecmy.war_vals(np.ones(pecmy.N), pecmy.m, theta_dict_1)
+pecmy.chi(pecmy.m, theta_dict_2)
+pecmy.W
 
 theta_x1 = pecmy.unwrap_theta(theta_dict_1)
 xlvt_sv = np.concatenate((np.ones(pecmy.x_len), np.repeat(.01, pecmy.lambda_i_len*pecmy.N), np.ones(pecmy.N), theta_x1))

@@ -87,7 +87,8 @@ if runEstimates == True:
 
     theta_dict_init = dict()
     theta_dict_init["c_hat"] = .1
-    theta_dict_init["alpha"] = .0001
+    theta_dict_init["alpha0"] = 0
+    theta_dict_init["alpha1"] = 0
     theta_dict_init["gamma"] = 1.
 
     theta_x_sv = pecmy.unwrap_theta(theta_dict_init)
