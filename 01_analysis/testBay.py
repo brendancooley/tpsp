@@ -74,7 +74,7 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 
 theta_dict_1 = dict()
 theta_dict_1["c_hat"] = .1
-theta_dict_1["alpha"] = .0001
+theta_dict_1["alpha"] = .006
 theta_dict_1["gamma"] = 1
 
 theta_dict_2 = dict()
@@ -95,6 +95,8 @@ obj_factor = 1
 
 test = pecmy.estimator_lgrg_hess(xlvt_sv, lagrange, obj_factor, np.zeros(pecmy.xlvt_len**2))
 test.shape
+
+pecmy.rhoM(theta_dict_2)
 
 
 
