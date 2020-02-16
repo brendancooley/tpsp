@@ -60,6 +60,8 @@ class policies:
         self.m[:,self.ROW_id] = 0
         self.m[self.ROW_id,self.ROW_id] = 1
 
+        self.mzeros = np.diag(self.M)
+
         self.tauMin = 1  # enforce lower bound on policies
         self.tauMax = 15
         self.tau_nft = 1.25  # where to begin search for best response
@@ -488,7 +490,7 @@ class policies:
     def apply_new(_X):
         return(True)
 
-    def estimator(self, v_sv, theta_x_sv, nash_eq=False):
+    def estimator(self, v_sv, theta_x_sv, m, nash_eq=False):
 
         # if nash_eq = True fix theta vals at those in theta_dict_sv and compute equilibrium
         x_len = self.xlvt_len
@@ -528,15 +530,15 @@ class policies:
 
         if nash_eq == False:
             # problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac_wrap(g_sparsity_bin), self.estimator_lgrg_hess, self.apply_new)
-            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(self.m), self.estimator_cons_jac_wrap(g_sparsity_bin, self.m))
+            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(g_sparsity_bin, m))
             # problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", required_infeasibility_reduction=.99)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
         else:
             # ge_x_sv = self.v_sv_all(v_sv)
             # xlvt_sv = np.concatenate((ge_x_sv, np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
-            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons, self.estimator_cons_jac)
-            problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
+            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(g_sparsity_bin, m))
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
         print("solving...")
         _x, obj, status = problem.solve(xlvt_sv)
 

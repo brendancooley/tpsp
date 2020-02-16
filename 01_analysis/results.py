@@ -33,7 +33,7 @@ sys.path.insert(1, helpersPath)
 import helpers
 
 runEstimates = True
-computeCounterfactuals = False
+computeCounterfactuals = True
 
 data_dir_base = projectFiles + "data/"
 results_dir_base = projectFiles + "results/"
@@ -86,7 +86,7 @@ pecmy = policies.policies(data, params, ROWname, resultsPath)
 if runEstimates == True:
 
     theta_dict_init = dict()
-    theta_dict_init["c_hat"] = .1
+    theta_dict_init["c_hat"] = .05
     theta_dict_init["alpha0"] = 0
     theta_dict_init["alpha1"] = 0
     theta_dict_init["gamma"] = 1.
@@ -94,32 +94,37 @@ if runEstimates == True:
     theta_x_sv = pecmy.unwrap_theta(theta_dict_init)
 
     start_time = time.time()
-    xlvt_star, obj, status = pecmy.estimator(np.ones(pecmy.N), theta_x_sv, nash_eq=False)
+    xlvt_star, obj, status = pecmy.estimator(np.ones(pecmy.N), theta_x_sv, pecmy.m, nash_eq=False)
     print("--- Estimator converged in %s seconds ---" % (time.time() - start_time))
 
     print(xlvt_star)
     print(obj)
     print(status)
 
-    np.savetxt(estimatesPath + "x.csv", xlvt_star, delimiter=",")
+    xlvt_star_path = estimatesPath + "x.csv"
+    np.savetxt(xlvt_star_path, xlvt_star, delimiter=",")
 
-### Load Estimates ###
+### Save Estimates ###
+
+xlvt_star = np.genfromtxt(xlvt_star_path, delimiter=",")
+
+### Compute Counterfactuals ###
 
 if computeCounterfactuals == True:
+
     xlvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
     xlvt_dict = pecmy.rewrap_xlvt(xlvt_star)
     theta_x_star = xlvt_dict["theta"]
     v_star = xlvt_dict["v"]
 
-    x, obj, status = pecmy.estimator(v_star, theta_x_star, nash_eq=True)
+    xprime, obj, status = pecmy.estimator(v_star, theta_x_star, pecmy.mzeros, nash_eq=True)
 
-    print(x)
+    print(xprime)
     print(obj)
     print(status)
 
-# test hpc
-# if location == "hpc":
-#     test_out = np.ones(len(M))
-#     np.savetxt(estimatesPath + "test.csv", test_out, delimiter=",")
+    xprime_path = counterfactualsPath + "x.csv"
+    np.savetxt(xprime_path, xprime, delimiter=",")
+
 
 print("done.")
