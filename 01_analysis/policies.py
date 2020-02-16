@@ -449,14 +449,14 @@ class policies:
         if nash_eq == False:
             x_L[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = 1 # vs
             x_U[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = np.max(self.ecmy.tau) # vs
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N] = 0  # c_hat lower
-            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # gamma lower
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N] = 0  # c_hat lower
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N] = .25
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N] = .25  # fix c_hat
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # gamma lower
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0  # alpha0 lower
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+3] = 0  # alpha1 lower
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 1
-            x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 1  # fix gamma at 1
-            # x_L[self.x_len+self.lambda_i_len*self.N+self.N] = .25
-            # x_U[self.x_len+self.lambda_i_len*self.N+self.N] = .25  # fix c_hat
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 1
+            # x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 1  # fix gamma at 1
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # alpha lower
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0
             # x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # fix alpha
