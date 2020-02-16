@@ -261,7 +261,7 @@ class policies:
         ge_x = self.rewrap_xlvt(xlvt)["ge_x"]
         return(self.ecmy.geq_diffs(ge_x))
 
-    def Lzeros_i_xlvt(self, xlvt, id):
+    def Lzeros_i_xlvt(self, xlvt, id, m):
 
         xlvt_dict = self.rewrap_xlvt(xlvt)
         ge_x = xlvt_dict["ge_x"]
@@ -271,13 +271,13 @@ class policies:
         theta_x = xlvt_dict["theta"]
         theta_dict = self.rewrap_theta(theta_x)
 
-        wv = self.war_vals(v, self.m, theta_dict)
+        wv = self.war_vals(v, m, theta_dict)
 
         Lzeros_i = self.Lzeros_i(np.concatenate((ge_x, lbda_i)), id, v, wv[:,id])
 
         return(Lzeros_i)
 
-    def war_diffs_xlvt(self, xlvt, id):
+    def war_diffs_xlvt(self, xlvt, id, m):
 
         xlvt_dict = self.rewrap_xlvt(xlvt)
         ge_x = xlvt_dict["ge_x"]
@@ -285,13 +285,13 @@ class policies:
         theta_x = xlvt_dict["theta"]
         theta_dict = self.rewrap_theta(theta_x)
 
-        wv = self.war_vals(v, self.m, theta_dict)
+        wv = self.war_vals(v, m, theta_dict)
 
         war_diffs_i = self.war_diffs(ge_x, v, wv[:,id], id)
 
         return(war_diffs_i)
 
-    def comp_slack_xlvt(self, xlvt, id):
+    def comp_slack_xlvt(self, xlvt, id, m):
 
         xlvt_dict = self.rewrap_xlvt(xlvt)
         ge_x = xlvt_dict["ge_x"]
@@ -301,7 +301,7 @@ class policies:
         theta_x = xlvt_dict["theta"]
         theta_dict = self.rewrap_theta(theta_x)
 
-        wv = self.war_vals(v, self.m, theta_dict)
+        wv = self.war_vals(v, m, theta_dict)
 
         war_diffs_i = self.war_diffs(ge_x, v, wv[:,id], id)
 
@@ -311,7 +311,7 @@ class policies:
 
         return(comp_slack_i)
 
-    def estimator_cons(self, xlvt, out):
+    def estimator_cons(self, xlvt, m):
 
         # geq constraints
         geq_diffs = self.geq_diffs_xlvt(xlvt)
@@ -321,16 +321,22 @@ class policies:
         war_diffs = []
         comp_slack = []
         for i in range(self.N):
-            Lzeros_i = self.Lzeros_i_xlvt(xlvt, i)
+            Lzeros_i = self.Lzeros_i_xlvt(xlvt, i, m)
             Lzeros.extend(Lzeros_i)
-            war_diffs_i = self.war_diffs_xlvt(xlvt, i)
+            war_diffs_i = self.war_diffs_xlvt(xlvt, i, m)
             war_diffs.extend(war_diffs_i)
-            comp_slack_i = self.comp_slack_xlvt(xlvt, i)
+            comp_slack_i = self.comp_slack_xlvt(xlvt, i, m)
             comp_slack.extend(comp_slack_i)
 
-        out[()] = np.concatenate((geq_diffs, Lzeros, war_diffs, comp_slack), axis=None)
+        out = np.concatenate((geq_diffs, Lzeros, war_diffs, comp_slack), axis=None)
 
         return(out)
+
+    def estimator_cons_wrap(self, m):
+        def f(x, out):
+            out[()] = self.estimator_cons(x, m)
+            return(out)
+        return(f)
 
     def estimator_cons_hess(self, xlvt):
 
@@ -358,7 +364,7 @@ class policies:
 
         return(out)
 
-    def estimator_cons_jac(self, xlvt, g_sparsity_bin):
+    def estimator_cons_jac(self, xlvt, g_sparsity_bin, m):
 
         geq_diffs_jac_f = ag.jacobian(self.geq_diffs_xlvt)
         geq_diffs_jac = geq_diffs_jac_f(xlvt)
@@ -371,11 +377,11 @@ class policies:
         war_diffs_jac_flat = []
         comp_slack_flat = []
         for i in range(self.N):
-            Lzeros_i_jac = Lzeros_i_jac_f(xlvt, i)
+            Lzeros_i_jac = Lzeros_i_jac_f(xlvt, i, m)
             Lzeros_jac_flat.extend(Lzeros_i_jac.ravel())
-            war_diffs_i_jac = war_diffs_i_jac_f(xlvt, i)
+            war_diffs_i_jac = war_diffs_i_jac_f(xlvt, i, m)
             war_diffs_jac_flat.extend(war_diffs_i_jac.ravel())
-            comp_slack_i_jac = comp_slack_i_jac_f(xlvt, i)
+            comp_slack_i_jac = comp_slack_i_jac_f(xlvt, i, m)
             comp_slack_flat.extend(comp_slack_i_jac.ravel())
 
         out_full = np.concatenate((geq_diffs_jac.ravel(), Lzeros_jac_flat, war_diffs_jac_flat, comp_slack_flat), axis=None)
@@ -383,9 +389,9 @@ class policies:
 
         return(out)
 
-    def estimator_cons_jac_wrap(self, g_sparsity_bin):
+    def estimator_cons_jac_wrap(self, g_sparsity_bin, m):
         def f(x, out):
-            out[()] = self.estimator_cons_jac(x, g_sparsity_bin)
+            out[()] = self.estimator_cons_jac(x, g_sparsity_bin, m)
             return(out)
         return(f)
 
@@ -453,10 +459,10 @@ class policies:
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N] = .25
             # x_U[self.x_len+self.lambda_i_len*self.N+self.N] = .25  # fix c_hat
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # gamma lower
-            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0  # alpha0 lower
-            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+3] = 0  # alpha1 lower
             x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 1
             x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 1  # fix gamma at 1
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0  # alpha0 lower
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+3] = 0  # alpha1 lower
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # alpha lower
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0
             # x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # fix alpha
@@ -522,7 +528,7 @@ class policies:
 
         if nash_eq == False:
             # problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac_wrap(g_sparsity_bin), self.estimator_lgrg_hess, self.apply_new)
-            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac_wrap(g_sparsity_bin))
+            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(self.m), self.estimator_cons_jac_wrap(g_sparsity_bin, self.m))
             # problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
             problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)

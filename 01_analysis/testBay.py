@@ -73,9 +73,9 @@ E = Eq + Ex
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
 theta_dict_1 = dict()
-theta_dict_1["c_hat"] = .339
-theta_dict_1["alpha0"] = -.319
-theta_dict_1["alpha1"] = -.0001487
+theta_dict_1["c_hat"] = .5
+theta_dict_1["alpha0"] = -1.57
+theta_dict_1["alpha1"] = .0000875
 theta_dict_1["gamma"] = 1
 
 theta_dict_2 = dict()

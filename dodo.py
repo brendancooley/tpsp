@@ -28,6 +28,7 @@ hpc_base_dir = "~/tpsp/"
 hpc_data_dir = hpc_base_dir + "data/"
 hpc_source_dir = hpc_base_dir + "source/"
 hpc_code_dir = hpc_base_dir + "code/"
+hpc_results_dir = hpc_base_dir + "results/"
 
 def task_source():
     yield {
@@ -134,3 +135,13 @@ def task_transfer_hpc():
         yield {'name': "transferring data " + i,
                 'actions': ["scp -r " + data_dir_base + i + "* " +
                 "bcooley@adroit.princeton.edu:" + hpc_data_dir + i]}
+
+def task_grab_results():
+    yield {
+        'name': "grab_results",
+        'params':[{'name':'size',
+		      'long':'size',
+		      'type':str,
+		      'default':'mini/'}],
+        'actions':["scp -r bcooley@adroit.princeton.edu:" + hpc_results_dir + "%(size)s* " + results_dir_base + "%(size)s"]
+    }
