@@ -7,11 +7,11 @@ author:
 	- name: Brendan Cooley
       affiliation: Ph.D. Candidate, Department of Politics, Princeton University
 date: \today
-abstract: In international relations, how does latent military coercion affect governments’ policy choices? Because militarily powerful governments can credibly threaten to impose their policy preferences by force, weaker governments may adjust their policy choices to avoid costly conflict. This setting raises an inference problem -- do observed policies reflect the preferences of the governments that adopted them or the military constraints of the anarchic international system? Here, I investigate the role of this “shadow of power” in determining trade policy. Specifically, I build a model of trade policy choice under threat that allows me to measure empirically governments’ underlying trade policy preferences, the returns to military advantage, and the extent to which power projection capacity degrades across space. I then estimate the parameters of the model using data on governments' observed trade policies in 2011. I find that geographic distance is not an impediment to the projection of force and that counterfactual wars destroy XXX precent of their value to the aggressor on average. Through counterfactual experiments, I can quantify the effect of military constraints on the international economy and governments' welfare. These and other exercises shed light on how military power affects international economic exchange, and how expectations about exchange affect governments’ military strategies.
+abstract: In international relations, how does latent military coercion affect governments’ policy choices? Because militarily powerful governments can credibly threaten to impose their policy preferences by force, weaker governments may adjust their policy choices to avoid costly conflict. This setting raises an inference problem -- do observed policies reflect the preferences of the governments that adopted them or the military constraints of the anarchic international system? Here, I investigate the role of this “shadow of power” in determining trade policy. Specifically, I build a model of trade policy choice under threat that allows me to measure empirically governments’ underlying trade policy preferences, the returns to military advantage, and the extent to which power projection capacity degrades across space. I then estimate the parameters of the model using data on governments' observed trade policies in 2011. I find that geographic distance is not an impediment to the projection of force and that counterfactual wars destroy half of their value to the aggressor on average. Through counterfactual experiments, I can quantify the effect of military constraints on the international economy and governments' welfare. These and other exercises shed light on how military power affects international economic exchange, and how expectations about exchange affect governments’ military strategies.
 # thanks: Allison Carnegie, APSA 2019.
 # jelcodes: JEL codes go here
 
-bibliography: /Users/brendancooley/Dropbox (Princeton)/References/library.bib
+bibliography: /Users/bcooley/Dropbox (Princeton)/References/library.bib
 biblio-style: apsr
 
 papersize: letter
@@ -249,21 +249,21 @@ This procedure produces point estimates $\tilde{\bm{\theta}}_m$. I then construc
 Estimates of preference weights are reported in Table \ref{tab:v_estsT}. In @Cooley2019b, I show that developed countries tend to adopt higher trade barriers than their developing peers. Consistent with this finding, the European Union and Japan are assessed to have high values of $v_i$.
 
 
-\begin{table}
+\begin{table}[t]
 
 \caption{\label{tab:v_estsT}Preference Parameter ($\tilde{\bm{v}}$) Estimates \label{tab:b_estsT}}
 \centering
-\begin{tabular}[t]{llr}
+\begin{tabular}{llr}
 \toprule
 iso3 & Country Name & $\tilde{v}_i$\\
 \midrule
-CHN & China & 1.102648\\
-EU & European Union & 1.350253\\
-JPN & Japan & 1.995204\\
-RoW & NA & 1.120235\\
-RUS & Russia & 1.000000\\
+CHN & China & 1.106036\\
+EU & European Union & 1.354114\\
+JPN & Japan & 1.996520\\
+RoW & Rest of World & 1.125184\\
+RUS & Russian Federation & 1.000000\\
 \addlinespace
-USA & United States & 1.191291\\
+USA & United States of America & 1.292219\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -272,15 +272,15 @@ With estimates of $v_i$ in hand, I can calculate each government's conquest valu
 
 Governments that face poor market access conditions gain the most from successful wars, relative to the status quo. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These conquest values assist in the identification of the power projection and war cost parameters in $\bm{\theta}_m$.
 
-![Conquest values evaluated at $\tilde{\bm{b}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \label{fig:rcv}](figure/rcv-1.png)
+![Conquest values evaluated at $\tilde{\bm{v}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \label{fig:rcv}](figure/rcv-1.png)
 
-Governments also do not face obstacles to projecting power over space. I estimate $\alpha$ to be 0.04557. At this value, if the United States wished to invade China, its effective strength would *increase* by a factor of 0.9 due to the distance between the countries. 
+Governments also do not face obstacles to projecting power over space. I estimate $\alpha$ to be -0.00026. At this value, if the United States wished to invade China, its effective strength would *increase* due to the distance between the countries. 
 
 Figure \ref{fig:chi} combines these estimates to produce estimates of the contest function $\tilde{\chi}_{ji}$ for each pair of countries. The United States' military advantage is reflected in its higher probability of success in conquest.
 
 ![Estimated probability of successful conquest for each attacking country (row) in war against every defending country (column). Each probability is reported in the appropriate cell of the heatmap. \label{fig:chi}](figure/chi-1.png)
 
-While governments do not face a geographic loss of strength gradient, wars are still costly. I estimate $\hat{c}$ to be 0.38. Dividing this value by governments' conquest values, shown in Figure \ref{fig:rcv}, I compute war's cost benefit ratio to be 0.34 on average. 
+While governments do not face a geographic loss of strength gradient, wars are still costly. I estimate $\hat{c}$ to be 0.53. Dividing this value by governments' conquest values, shown in Figure \ref{fig:rcv}, I compute war's cost-benefit ratio to be 0.5 on average. 
 
 # Conclusion
 

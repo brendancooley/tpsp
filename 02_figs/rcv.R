@@ -41,7 +41,7 @@ rcvhm <- function(rcv, minTau, maxTau) {
   rcv <- bind_cols(rcv, ccodes) 
   colnames(rcv)[colnames(rcv)=="X1"] <- "j_iso3"
   rcvDF <- rcv %>% gather("i_iso3", "rcv_ji", -j_iso3)
-  rcvDF <- rcvDF %>% filter(i_iso3 != "ROW", j_iso3 != "ROW")
+  rcvDF <- rcvDF %>% filter(i_iso3 != "RoW", j_iso3 != "RoW")
   rcvDF$rcv_ji <- ifelse(rcvDF$rcv_ji==0, NA, rcvDF$rcv_ji)
   rcvDF$rcv_ji <- as.numeric(rcvDF$rcv_ji)
 

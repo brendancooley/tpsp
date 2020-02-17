@@ -14,7 +14,7 @@ USA_id <- which(ccodes=="USA")
 CHN_id <- which(ccodes=="CHN")
 
 # chi_gamma_ex <- 2^gamma_tilde / (2^gamma_tilde + 1)
-rho_ex = exp(-1*alpha1*log(W[USA_id, CHN_id] %>% pull(.)))
+rho_ex = exp(-1*alpha1* W[USA_id, CHN_id] %>% pull(.))
 
 ```
 
@@ -35,14 +35,14 @@ With estimates of $v_i$ in hand, I can calculate each government's conquest valu
 
 Governments that face poor market access conditions gain the most from successful wars, relative to the status quo. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These conquest values assist in the identification of the power projection and war cost parameters in $\bm{\theta}_m$.
 
-```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Conquest values evaluated at $\\tilde{\\bm{b}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \\label{fig:rcv}"), fig.height=4, dpi=300, fig.pos="t"}
+```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Conquest values evaluated at $\\tilde{\\bm{v}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \\label{fig:rcv}"), fig.height=4, dpi=300, fig.pos="t"}
 
 source("../02_figs/rcv.R")
 rcvhm(rcv_eq, mint, maxt)
 
 ```
 
-Governments also do not face obstacles to projecting power over space. I estimate $\alpha$ to be `r round(alpha1, 5)`. At this value, if the United States wished to invade China, its effective strength would *increase* by a factor of `r round(rho_ex, 1)` due to the distance between the countries. 
+Governments also do not face obstacles to projecting power over space. I estimate $\alpha$ to be `r round(alpha1, 5)`. At this value, if the United States wished to invade China, its effective strength would *increase* due to the distance between the countries. 
 
 Figure \ref{fig:chi} combines these estimates to produce estimates of the contest function $\tilde{\chi}_{ji}$ for each pair of countries. The United States' military advantage is reflected in its higher probability of success in conquest.
 
@@ -53,4 +53,4 @@ chihm(chi, minchi, maxchi)
 
 ```
 
-While governments do not face a geographic loss of strength gradient, wars are still costly. I estimate $\hat{c}$ to be `r round(c_hat, 2)`. Dividing this value by governments' conquest values, shown in Figure \ref{fig:rcv}, I compute war's cost benefit ratio to be `r round(cb_ratio_mean, 2)` on average. 
+While governments do not face a geographic loss of strength gradient, wars are still costly. I estimate $\hat{c}$ to be `r round(c_hat, 2)`. Dividing this value by governments' conquest values, shown in Figure \ref{fig:rcv}, I compute war's cost-benefit ratio to be `r round(cb_ratio_mean, 2)` on average. 

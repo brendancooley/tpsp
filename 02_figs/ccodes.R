@@ -19,7 +19,7 @@ N <- nrow(ccodes)
 colnames(ccodesT) <- c("iso3")
 ccodesT$`Country Name` <- countrycode(ccodesT$iso3, "iso3c", "country.name")
 ccodesT$`Country Name` <- ifelse(ccodesT$iso3=="EU", "European Union", ccodesT$`Country Name`)
-ccodesT$`Country Name` <- ifelse(ccodesT$iso3=="ROW", "Rest of World", ccodesT$`Country Name`)
+ccodesT$`Country Name` <- ifelse(ccodesT$iso3=="RoW", "Rest of World", ccodesT$`Country Name`)
 
 
 v_estsT <- cbind(ccodesT, v_star)

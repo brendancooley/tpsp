@@ -81,6 +81,7 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 
 ### Estimate Model ###
 
+imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, resultsPath)
 
 if runEstimates == True:
@@ -111,7 +112,7 @@ ge_x_star = pecmy.rewrap_xlvt(xlvt_star)["ge_x"]
 v_star = pecmy.rewrap_xlvt(xlvt_star)["v"]
 theta_x_star = pecmy.rewrap_xlvt(xlvt_star)["theta"]
 theta_dict_star = pecmy.rewrap_theta(theta_x_star)
-for i in theta_dict.keys():
+for i in theta_dict_star.keys():
     np.savetxt(estimatesPath + i + ".csv", np.array([theta_dict_star[i]]), delimiter=",")
 np.savetxt(estimatesPath + "v.csv", v_star, delimiter=",")
 

@@ -7,11 +7,11 @@ author:
 	- name: Brendan Cooley
       affiliation: Ph.D. Candidate, Department of Politics, Princeton University
 date: \today
-abstract: In international relations, how does latent military coercion affect governments’ policy choices? Because militarily powerful governments can credibly threaten to impose their policy preferences by force, weaker governments may adjust their policy choices to avoid costly conflict. This setting raises an inference problem -- do observed policies reflect the preferences of the governments that adopted them or the military constraints of the anarchic international system? Here, I investigate the role of this “shadow of power” in determining trade policy. Specifically, I build a model of trade policy choice under threat that allows me to measure empirically governments’ underlying trade policy preferences, the returns to military advantage, and the extent to which power projection capacity degrades across space. I then estimate the parameters of the model using data on governments' observed trade policies in 2011. I find that geographic distance is not an impediment to the projection of force and that counterfactual wars destroy XXX precent of their value to the aggressor on average. Through counterfactual experiments, I can quantify the effect of military constraints on the international economy and governments' welfare. These and other exercises shed light on how military power affects international economic exchange, and how expectations about exchange affect governments’ military strategies.
+abstract: In international relations, how does latent military coercion affect governments’ policy choices? Because militarily powerful governments can credibly threaten to impose their policy preferences by force, weaker governments may adjust their policy choices to avoid costly conflict. This setting raises an inference problem -- do observed policies reflect the preferences of the governments that adopted them or the military constraints of the anarchic international system? Here, I investigate the role of this “shadow of power” in determining trade policy. Specifically, I build a model of trade policy choice under threat that allows me to measure empirically governments’ underlying trade policy preferences, the returns to military advantage, and the extent to which power projection capacity degrades across space. I then estimate the parameters of the model using data on governments' observed trade policies in 2011. I find that geographic distance is not an impediment to the projection of force and that counterfactual wars destroy half of their value to the aggressor on average. Through counterfactual experiments, I can quantify the effect of military constraints on the international economy and governments' welfare. These and other exercises shed light on how military power affects international economic exchange, and how expectations about exchange affect governments’ military strategies.
 # thanks: Allison Carnegie, APSA 2019.
 # jelcodes: JEL codes go here
 
-bibliography: /Users/brendancooley/Dropbox (Princeton)/References/library.bib
+bibliography: /Users/bcooley/Dropbox (Princeton)/References/library.bib
 biblio-style: apsr
 
 papersize: letter
@@ -79,7 +79,6 @@ tau <- read_csv(paste0(dataPath, "tau.csv"), col_names=FALSE)
 milex <- read_csv(paste0(dataPath, "milex.csv"), col_names=FALSE)
 # b_vals <- read_csv(paste0(resultsPath, "b_vals.csv"), col_names=FALSE)
 W <- read_csv(paste0(dataPath, "cDists.csv"), col_names=FALSE)
-W <- log(W)
 
 # estimates
 v_star <- read_csv(paste0(estimatesPath, "v.csv"), col_names=FALSE)
@@ -92,6 +91,8 @@ rcv_eq <- read_csv(paste0(estimatesPath, "rcv_eq.csv"), col_names=FALSE)
 # Ghatft <- read_csv(paste0(resultsPath, "Ghatft.csv"), col_names=FALSE)
 # rcv0 <- read_csv(paste0(resultsPath, "rcv0.csv"), col_names=FALSE)
 # rcv1 <- read_csv(paste0(resultsPath, "rcv1.csv"), col_names=FALSE)
+
+options(scipen=999)
 
 ```
 
