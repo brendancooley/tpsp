@@ -60,6 +60,8 @@ class policies:
         self.m[:,self.ROW_id] = 0
         self.m[self.ROW_id,self.ROW_id] = 1
 
+        self.mzeros = np.diag(self.M)
+
         self.tauMin = 1  # enforce lower bound on policies
         self.tauMax = 15
         self.tau_nft = 1.25  # where to begin search for best response
@@ -76,12 +78,14 @@ class policies:
         # self.lambda_i_len_td = self.lambda_i_len + self.N ** 2 - self.N # add constraints on others' policies
 
         self.x_len = self.ecmy.ge_x_len
-        self.xlvt_len = self.x_len + self.lambda_i_len * self.N + self.N + 3
+        self.xlvt_len = self.x_len + self.lambda_i_len * self.N + self.N + 4
 
         self.g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2  # ge_diffs, Lzeros (own policies N-1), war_diffs mat, comp_slack mat
 
         self.chi_min = 1.0e-10
         self.wv_min = -1.0e4
+
+        self.alpha1_ub = self.alpha1_min(.01)
 
         ge_x_ft_path = results_path + "ge_x_ft.csv"
         if not os.path.isfile(ge_x_ft_path):
@@ -187,8 +191,9 @@ class policies:
 
         theta_dict = dict()
         theta_dict["c_hat"] = theta_x[0]
-        theta_dict["alpha"] = theta_x[1]
-        theta_dict["gamma"] = theta_x[2]
+        theta_dict["gamma"] = theta_x[1]
+        theta_dict["alpha0"] = theta_x[2]
+        theta_dict["alpha1"] = theta_x[3]
 
         return(theta_dict)
 
@@ -196,8 +201,9 @@ class policies:
 
         theta_x = []
         theta_x.extend(np.array([theta_dict["c_hat"]]))
-        theta_x.extend(np.array([theta_dict["alpha"]]))
         theta_x.extend(np.array([theta_dict["gamma"]]))
+        theta_x.extend(np.array([theta_dict["alpha0"]]))
+        theta_x.extend(np.array([theta_dict["alpha1"]]))
 
         return(np.array(theta_x))
 
@@ -259,7 +265,7 @@ class policies:
         ge_x = self.rewrap_xlvt(xlvt)["ge_x"]
         return(self.ecmy.geq_diffs(ge_x))
 
-    def Lzeros_i_xlvt(self, xlvt, id):
+    def Lzeros_i_xlvt(self, xlvt, id, m):
 
         xlvt_dict = self.rewrap_xlvt(xlvt)
         ge_x = xlvt_dict["ge_x"]
@@ -269,13 +275,13 @@ class policies:
         theta_x = xlvt_dict["theta"]
         theta_dict = self.rewrap_theta(theta_x)
 
-        wv = self.war_vals(v, self.m, theta_dict)
+        wv = self.war_vals(v, m, theta_dict)
 
         Lzeros_i = self.Lzeros_i(np.concatenate((ge_x, lbda_i)), id, v, wv[:,id])
 
         return(Lzeros_i)
 
-    def war_diffs_xlvt(self, xlvt, id):
+    def war_diffs_xlvt(self, xlvt, id, m):
 
         xlvt_dict = self.rewrap_xlvt(xlvt)
         ge_x = xlvt_dict["ge_x"]
@@ -283,13 +289,13 @@ class policies:
         theta_x = xlvt_dict["theta"]
         theta_dict = self.rewrap_theta(theta_x)
 
-        wv = self.war_vals(v, self.m, theta_dict)
+        wv = self.war_vals(v, m, theta_dict)
 
         war_diffs_i = self.war_diffs(ge_x, v, wv[:,id], id)
 
         return(war_diffs_i)
 
-    def comp_slack_xlvt(self, xlvt, id):
+    def comp_slack_xlvt(self, xlvt, id, m):
 
         xlvt_dict = self.rewrap_xlvt(xlvt)
         ge_x = xlvt_dict["ge_x"]
@@ -299,7 +305,7 @@ class policies:
         theta_x = xlvt_dict["theta"]
         theta_dict = self.rewrap_theta(theta_x)
 
-        wv = self.war_vals(v, self.m, theta_dict)
+        wv = self.war_vals(v, m, theta_dict)
 
         war_diffs_i = self.war_diffs(ge_x, v, wv[:,id], id)
 
@@ -309,7 +315,7 @@ class policies:
 
         return(comp_slack_i)
 
-    def estimator_cons(self, xlvt, out):
+    def estimator_cons(self, xlvt, m):
 
         # geq constraints
         geq_diffs = self.geq_diffs_xlvt(xlvt)
@@ -319,16 +325,22 @@ class policies:
         war_diffs = []
         comp_slack = []
         for i in range(self.N):
-            Lzeros_i = self.Lzeros_i_xlvt(xlvt, i)
+            Lzeros_i = self.Lzeros_i_xlvt(xlvt, i, m)
             Lzeros.extend(Lzeros_i)
-            war_diffs_i = self.war_diffs_xlvt(xlvt, i)
+            war_diffs_i = self.war_diffs_xlvt(xlvt, i, m)
             war_diffs.extend(war_diffs_i)
-            comp_slack_i = self.comp_slack_xlvt(xlvt, i)
+            comp_slack_i = self.comp_slack_xlvt(xlvt, i, m)
             comp_slack.extend(comp_slack_i)
 
-        out[()] = np.concatenate((geq_diffs, Lzeros, war_diffs, comp_slack), axis=None)
+        out = np.concatenate((geq_diffs, Lzeros, war_diffs, comp_slack), axis=None)
 
         return(out)
+
+    def estimator_cons_wrap(self, m):
+        def f(x, out):
+            out[()] = self.estimator_cons(x, m)
+            return(out)
+        return(f)
 
     def estimator_cons_hess(self, xlvt):
 
@@ -356,7 +368,7 @@ class policies:
 
         return(out)
 
-    def estimator_cons_jac(self, xlvt, g_sparsity_bin):
+    def estimator_cons_jac(self, xlvt, g_sparsity_bin, m):
 
         geq_diffs_jac_f = ag.jacobian(self.geq_diffs_xlvt)
         geq_diffs_jac = geq_diffs_jac_f(xlvt)
@@ -369,11 +381,11 @@ class policies:
         war_diffs_jac_flat = []
         comp_slack_flat = []
         for i in range(self.N):
-            Lzeros_i_jac = Lzeros_i_jac_f(xlvt, i)
+            Lzeros_i_jac = Lzeros_i_jac_f(xlvt, i, m)
             Lzeros_jac_flat.extend(Lzeros_i_jac.ravel())
-            war_diffs_i_jac = war_diffs_i_jac_f(xlvt, i)
+            war_diffs_i_jac = war_diffs_i_jac_f(xlvt, i, m)
             war_diffs_jac_flat.extend(war_diffs_i_jac.ravel())
-            comp_slack_i_jac = comp_slack_i_jac_f(xlvt, i)
+            comp_slack_i_jac = comp_slack_i_jac_f(xlvt, i, m)
             comp_slack_flat.extend(comp_slack_i_jac.ravel())
 
         out_full = np.concatenate((geq_diffs_jac.ravel(), Lzeros_jac_flat, war_diffs_jac_flat, comp_slack_flat), axis=None)
@@ -381,9 +393,9 @@ class policies:
 
         return(out)
 
-    def estimator_cons_jac_wrap(self, g_sparsity_bin):
+    def estimator_cons_jac_wrap(self, g_sparsity_bin, m):
         def f(x, out):
-            out[()] = self.estimator_cons_jac(x, g_sparsity_bin)
+            out[()] = self.estimator_cons_jac(x, g_sparsity_bin, m)
             return(out)
         return(f)
 
@@ -448,24 +460,32 @@ class policies:
             x_L[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = 1 # vs
             x_U[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = np.max(self.ecmy.tau) # vs
             x_L[self.x_len+self.lambda_i_len*self.N+self.N] = 0  # c_hat lower
-            # x_L[self.x_len+self.lambda_i_len*self.N+self.N] = .25
-            # x_U[self.x_len+self.lambda_i_len*self.N+self.N] = .25  # fix c_hat
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # alpha lower
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N] = .5
+            # x_U[self.x_len+self.lambda_i_len*self.N+self.N] = .5  # fix c_hat
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # gamma lower
+            # x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 2  # gamma upper
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 1
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 1  # fix gamma at 1
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0  # fix alpha0
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N+3] = -self.alpha1_ub  # alpha1 lower
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N+3] = self.alpha1_ub  # alpha1 upper
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # alpha lower
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0
             # x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # fix alpha
-            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 1
-            # x_U[self.x_len+self.lambda_i_len*self.N+self.N+2] = 1  # fix gamma at 1
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0  # gamma lower
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0  # gamma lower
         else:
             theta_dict = self.rewrap_theta(theta_x)
             x_L[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = v
             x_U[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = v
             x_L[self.x_len+self.lambda_i_len*self.N+self.N] = theta_dict["c_hat"]  # c_hat
             x_U[self.x_len+self.lambda_i_len*self.N+self.N] = theta_dict["c_hat"]
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = theta_dict["alpha"]
-            x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = theta_dict["alpha"]
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = theta_dict["gamma"]  # gamma
-            x_U[self.x_len+self.lambda_i_len*self.N+self.N+2] = theta_dict["gamma"]
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = theta_dict["gamma"]  # gamma
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = theta_dict["gamma"]
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = theta_dict["alpha0"]
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N+2] = theta_dict["alpha0"]
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N+3] = theta_dict["alpha1"]
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N+3] = theta_dict["alpha1"]
 
         if bound == "lower":
             return(x_L)
@@ -475,7 +495,7 @@ class policies:
     def apply_new(_X):
         return(True)
 
-    def estimator(self, v_sv, theta_x_sv, nash_eq=False):
+    def estimator(self, v_sv, theta_x_sv, m, nash_eq=False):
 
         # if nash_eq = True fix theta vals at those in theta_dict_sv and compute equilibrium
         x_len = self.xlvt_len
@@ -515,15 +535,15 @@ class policies:
 
         if nash_eq == False:
             # problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac_wrap(g_sparsity_bin), self.estimator_lgrg_hess, self.apply_new)
-            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac_wrap(g_sparsity_bin))
+            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(g_sparsity_bin, m))
             # problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
             problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
         else:
             # ge_x_sv = self.v_sv_all(v_sv)
             # xlvt_sv = np.concatenate((ge_x_sv, np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
-            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons, self.estimator_cons_jac)
-            problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
+            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(g_sparsity_bin, m))
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
         print("solving...")
         _x, obj, status = problem.solve(xlvt_sv)
 
@@ -877,9 +897,10 @@ class policies:
 
         v = theta[0:self.N]
         theta_dict = dict()
-        theta_dict["c_hat"] = theta[self.N]
-        theta_dict["alpha"] = theta[self.N+1]
-        theta_dict["gamma"] = theta[self.N+2]
+        # TODO need to rewrite order
+        # theta_dict["c_hat"] = theta[self.N]
+        # theta_dict["alpha"] = theta[self.N+1]
+        # theta_dict["gamma"] = theta[self.N+2]
 
         wv = self.war_vals(v, m, theta_dict, np.zeros((self.N, self.N)))
 
@@ -902,9 +923,10 @@ class policies:
         # x_lbda_theta_sv = np.random.normal(0, .1, size=self.x_len+self.lambda_i_len*self.N+3+self.N)
         x_lbda_theta_sv[0:self.x_len] = 1
         x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = v_init
-        x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N+self.N] = theta_dict_init["c_hat"]
-        x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N+self.N+1] = theta_dict_init["alpha"]
-        x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N+self.N+2] = theta_dict_init["gamma"]
+        # TODO need to rewrite order
+        # x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N+self.N] = theta_dict_init["c_hat"]
+        # x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N+self.N+1] = theta_dict_init["alpha"]
+        # x_lbda_theta_sv[self.x_len+self.lambda_i_len*self.N+self.N+2] = theta_dict_init["gamma"]
 
         m = self.M / np.ones((self.N, self.N))
         m = m.T
@@ -1012,6 +1034,13 @@ class policies:
 
         return(chi)
 
+    def alpha1_min(self, thres):
+
+        Wmin = np.min(self.W[self.W>0])
+        alpha1_min = - np.log(thres) / Wmin
+
+        return(alpha1_min)
+
     def rhoM(self, theta_dict):
         """Calculate loss of strength gradient given alphas and distance matrix (W)
 
@@ -1028,7 +1057,8 @@ class policies:
         """
 
         # rhoM = np.exp(-1 * (theta_dict["alpha"][0] + self.W * theta_dict["alpha"][1]) + epsilon)
-        rhoM = np.exp(-1 * (self.W * theta_dict["alpha"]))
+        rhoM = np.exp(-1 * (theta_dict["alpha0"] + self.W * theta_dict["alpha1"]))
+        rhoM += 1 - np.diag(np.diag(rhoM))
         # rhoM = np.clip(rhoM, 0, 1)
 
         return(rhoM)

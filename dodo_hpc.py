@@ -41,7 +41,7 @@ def task_results():
         'params':[{'name':'size',
 		      'long':'size',
 		      'type':str,
-		      'default':'mini'}],
+		      'default':'mini/'}],
         'actions':["python " + hpc_code_dir + "results.py hpc %(size)s"],
         'verbosity': 2,
     }

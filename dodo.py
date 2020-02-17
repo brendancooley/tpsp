@@ -28,6 +28,7 @@ hpc_base_dir = "~/tpsp/"
 hpc_data_dir = hpc_base_dir + "data/"
 hpc_source_dir = hpc_base_dir + "source/"
 hpc_code_dir = hpc_base_dir + "code/"
+hpc_results_dir = hpc_base_dir + "results/"
 
 def task_source():
     yield {
@@ -120,17 +121,32 @@ def task_setup_dirs():
             'actions':["mkdir -p " + results_dir_base + i]
         }
 
-def task_transfer_hpc():
+def task_transfer_data_hpc():
     # code
     # data
     # dodo.py
     yield {
         'name': "transfering files to hpc...",
-        'actions':["scp -r " + code_dir + "* " + "bcooley@adroit.princeton.edu:" + hpc_code_dir,
-        "scp -r source/* " + "bcooley@adroit.princeton.edu:" + hpc_source_dir,
+        'actions':["scp -r source/* " + "bcooley@adroit.princeton.edu:" + hpc_source_dir,
         "scp -r slurm/* " + "bcooley@adroit.princeton.edu:" + hpc_base_dir]
     }
     for i in sizes:
         yield {'name': "transferring data " + i,
                 'actions': ["scp -r " + data_dir_base + i + "* " +
                 "bcooley@adroit.princeton.edu:" + hpc_data_dir + i]}
+
+def task_transfer_code_hpc():
+    yield {
+        'name': "transfering code to hpc...",
+        'actions':["scp -r " + code_dir + "* " + "bcooley@adroit.princeton.edu:" + hpc_code_dir]
+    }
+
+def task_grab_results():
+    yield {
+        'name': "grab_results",
+        'params':[{'name':'size',
+		      'long':'size',
+		      'type':str,
+		      'default':'mini/'}],
+        'actions':["scp -r bcooley@adroit.princeton.edu:" + hpc_results_dir + "%(size)s* " + results_dir_base + "%(size)s"]
+    }
