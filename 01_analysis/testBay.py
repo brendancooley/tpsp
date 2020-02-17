@@ -73,10 +73,10 @@ E = Eq + Ex
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
 theta_dict_1 = dict()
-theta_dict_1["c_hat"] = .5
-theta_dict_1["alpha0"] = -1.57
-theta_dict_1["alpha1"] = .0000875
-theta_dict_1["gamma"] = 1
+theta_dict_1["c_hat"] = .818
+theta_dict_1["alpha0"] = 0
+theta_dict_1["alpha1"] = -.0003
+theta_dict_1["gamma"] = .72
 
 theta_dict_2 = dict()
 theta_dict_2["c_hat"] = .78
@@ -89,7 +89,9 @@ theta_dict_2["gamma"] = 5
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
-v_test = np.array([1.19, 1.35, 1.96, 1.11, 1.00, 1.34])
+test = pecmy.alpha1_min(.01)
+
+v_test = np.array([1.10, 1.37, 1.96, 1.11, 1.00, 1.19])
 
 pecmy.rhoM(theta_dict_1)
 np.diag(pecmy.rhoM(theta_dict_1))

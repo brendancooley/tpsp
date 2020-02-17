@@ -85,6 +85,8 @@ class policies:
         self.chi_min = 1.0e-10
         self.wv_min = -1.0e4
 
+        self.alpha1_ub = self.alpha1_min(.01)
+
         ge_x_ft_path = results_path + "ge_x_ft.csv"
         if not os.path.isfile(ge_x_ft_path):
             self.ge_x_ft = np.zeros((self.N, self.x_len))
@@ -458,13 +460,16 @@ class policies:
             x_L[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = 1 # vs
             x_U[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = np.max(self.ecmy.tau) # vs
             x_L[self.x_len+self.lambda_i_len*self.N+self.N] = 0  # c_hat lower
-            # x_L[self.x_len+self.lambda_i_len*self.N+self.N] = .25
-            # x_U[self.x_len+self.lambda_i_len*self.N+self.N] = .25  # fix c_hat
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N] = .5
+            # x_U[self.x_len+self.lambda_i_len*self.N+self.N] = .5  # fix c_hat
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # gamma lower
+            # x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 2  # gamma upper
             x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 1
             x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 1  # fix gamma at 1
-            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0  # alpha0 lower
-            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+3] = 0  # alpha1 lower
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0  # fix alpha0
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N+3] = -self.alpha1_ub  # alpha1 lower
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N+3] = self.alpha1_ub  # alpha1 upper
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # alpha lower
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0
             # x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # fix alpha
@@ -532,7 +537,7 @@ class policies:
             # problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac_wrap(g_sparsity_bin), self.estimator_lgrg_hess, self.apply_new)
             problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(g_sparsity_bin, m))
             # problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", required_infeasibility_reduction=.99)
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
         else:
             # ge_x_sv = self.v_sv_all(v_sv)
@@ -1028,6 +1033,13 @@ class policies:
         chi = chi_logit / (1 + chi_logit)
 
         return(chi)
+
+    def alpha1_min(self, thres):
+
+        Wmin = np.min(self.W[self.W>0])
+        alpha1_min = - np.log(thres) / Wmin
+
+        return(alpha1_min)
 
     def rhoM(self, theta_dict):
         """Calculate loss of strength gradient given alphas and distance matrix (W)

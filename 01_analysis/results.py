@@ -86,7 +86,7 @@ pecmy = policies.policies(data, params, ROWname, resultsPath)
 if runEstimates == True:
 
     theta_dict_init = dict()
-    theta_dict_init["c_hat"] = .05
+    theta_dict_init["c_hat"] = .1
     theta_dict_init["alpha0"] = 0
     theta_dict_init["alpha1"] = 0
     theta_dict_init["gamma"] = 1.
@@ -94,7 +94,7 @@ if runEstimates == True:
     theta_x_sv = pecmy.unwrap_theta(theta_dict_init)
 
     start_time = time.time()
-    xlvt_star, obj, status = pecmy.estimator(np.ones(pecmy.N), theta_x_sv, pecmy.m, nash_eq=False)
+    xlvt_star, obj, status = pecmy.estimator(np.repeat(1., pecmy.N), theta_x_sv, pecmy.m, nash_eq=False)
     print("--- Estimator converged in %s seconds ---" % (time.time() - start_time))
 
     print(xlvt_star)
@@ -107,6 +107,11 @@ if runEstimates == True:
 ### Save Estimates ###
 
 xlvt_star = np.genfromtxt(xlvt_star_path, delimiter=",")
+ge_x = pecmy.rewrap_xlvt(xlvt_star)["ge_x"]
+theta_x = pecmy.rewrap_xlvt(xlvt_star)["theta"]
+theta_dict = pecmy.rewrap_theta(theta_x)
+for i in theta_dict.keys():
+    np.savetxt(estimatesPath + i + ".csv", np.array([theta_dict[i]]), delimiter=",")
 
 ### Compute Counterfactuals ###
 
@@ -117,14 +122,13 @@ if computeCounterfactuals == True:
     theta_x_star = xlvt_dict["theta"]
     v_star = xlvt_dict["v"]
 
-    xprime, obj, status = pecmy.estimator(v_star, theta_x_star, pecmy.mzeros, nash_eq=True)
+    xlvt_prime, obj, status = pecmy.estimator(v_star, theta_x_star, pecmy.mzeros, nash_eq=True)
 
-    print(xprime)
+    print(xlvt_prime)
     print(obj)
     print(status)
 
-    xprime_path = counterfactualsPath + "x.csv"
-    np.savetxt(xprime_path, xprime, delimiter=",")
-
-
+    xlvt_prime_path = counterfactualsPath + "x.csv"
+    np.savetxt(xlvt_prime_path, xlvt_prime, delimiter=",")
+#
 print("done.")
