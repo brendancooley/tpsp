@@ -22,34 +22,19 @@
 # b_tilde <- read_csv(paste0(resultsPath, "b_tilde.csv"), col_names=FALSE)
 # tau <- read_csv(paste0(dataPath, "tau.csv"), col_names=FALSE)
 
+# ccodes <- read_csv("~/Dropbox (Princeton)/1_Papers/tpsp/01_data/data/mini/ccodes.csv", col_names=FALSE)
+# N <- nrow(ccodes)
+# rcv_eq <- read_csv("~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results/mini/estimates/rcv_eq.csv", col_names=FALSE)
 
-rcvMats <- list()
-for (i in 1:nrow(rcv)) {
-  rcvMats[[i]] <- as_tibble(t(matrix(data=unlist(rcv[i, ]), nrow=N, ncol=N)))
+for (i in 1:N) {
+  rcv_eq[i, i] <- NA
 }
-
-rcv_b = matrix(data=NA, nrow=N, ncol=N)
-for (i in 1:nrow(b_tilde)) {
-  b_i = b_tilde[i,] %>% pull()
-  idx = which(b_vals==b_i)
-  vals = rcvMats[[idx]][i, ]
-  rcv_b[i, ] = unlist(vals)
-}
-rcv_b = as_tibble(rcv_b)
-for (i in 1:nrow(ccodes)) {
-  for (j in 1:nrow(ccodes)) {
-    if (ccodes_vec[i]=="ROW" | ccodes_vec[j]=="ROW" | i ==j) {
-      rcv_b[i, j] <- NA
-    }
-  }
-}
-
 
 hmColors <- colorRampPalette(c("white", bcOrange))(30)
 naColor <- "#D3D3D3"
 
-mint <- .99
-maxt <- max(rcv_b)
+mint <- 0
+maxt <- max(rcv_eq, na.rm=FALSE)
 
 rcvhm <- function(rcv, minTau, maxTau) {
   colnames(rcv) <- ccodes %>% pull(.)
@@ -77,7 +62,7 @@ rcvhm <- function(rcv, minTau, maxTau) {
           legend.position="none")
 }
 
-# rcvhm(rcv_b, mint, maxt)
+rcvhm(rcv_eq, mint, maxt)
 # rcvhm(rcv0, 0, mint, maxt) + rcvhm(rcv1, 1, mint, maxt)
 # coords = which(rcv0 == max(rcv0), arr.ind = TRUE)
 # coords[2]

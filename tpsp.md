@@ -7,11 +7,11 @@ author:
 	- name: Brendan Cooley
       affiliation: Ph.D. Candidate, Department of Politics, Princeton University
 date: \today
-abstract: In international relations, how does latent military coercion affect governments’ policy choices? Because militarily powerful governments can credibly threaten to impose their policy preferences by force, weaker governments may adjust their policy choices to avoid costly conflict. This setting raises an inference problem -- do observed policies reflect the preferences of the governments that adopted them or the military constraints of the anarchic international system? Here, I investigate the role of this “shadow of power” in determining trade policy. Specifically, I build a model of trade policy choice under threat that allows me to measure empirically governments’ underlying trade policy preferences, the returns to military advantage, and the extent to which power projection capacity degrades across space. I then estimate the parameters of the model using data on governments' observed trade policies. I find military capacity confers moderate battlefield advantages in counterfactual wars and that distance is an impediment to the projection of power. Through counterfactual experiments, I can quantify the effect of these military constraints on the international economy and governments' welfare. These and other exercises shed light on how military power affects international economic exchange, and how expectations about exchange affect governments’ military strategies.
+abstract: In international relations, how does latent military coercion affect governments’ policy choices? Because militarily powerful governments can credibly threaten to impose their policy preferences by force, weaker governments may adjust their policy choices to avoid costly conflict. This setting raises an inference problem -- do observed policies reflect the preferences of the governments that adopted them or the military constraints of the anarchic international system? Here, I investigate the role of this “shadow of power” in determining trade policy. Specifically, I build a model of trade policy choice under threat that allows me to measure empirically governments’ underlying trade policy preferences, the returns to military advantage, and the extent to which power projection capacity degrades across space. I then estimate the parameters of the model using data on governments' observed trade policies in 2011. I find that geographic distance is not an impediment to the projection of force and that counterfactual wars destroy XXX precent of their value to the aggressor on average. Through counterfactual experiments, I can quantify the effect of military constraints on the international economy and governments' welfare. These and other exercises shed light on how military power affects international economic exchange, and how expectations about exchange affect governments’ military strategies.
 # thanks: Allison Carnegie, APSA 2019.
 # jelcodes: JEL codes go here
 
-bibliography: /Users/bcooley/Dropbox (Princeton)/References/library.bib
+bibliography: /Users/brendancooley/Dropbox (Princeton)/References/library.bib
 biblio-style: apsr
 
 papersize: letter
@@ -26,33 +26,6 @@ output:
 ---
 
 
-```
-## Error: '~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results_mini/rcv.csv' does not exist.
-```
-
-```
-## Error: '~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results_mini/b_vals.csv' does not exist.
-```
-
-```
-## Error: '~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results_mini/b_tilde.csv' does not exist.
-```
-
-```
-## Error: '~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results_mini/gamma_tilde.csv' does not exist.
-```
-
-```
-## Error: '~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results_mini/alpha_tilde.csv' does not exist.
-```
-
-```
-## Error: '~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results_mini/c_hat_tilde.csv' does not exist.
-```
-
-```
-## Error: '~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results_mini/sigma_epsilon_tilde.csv' does not exist.
-```
 
 \newpage
 
@@ -116,7 +89,7 @@ G_i(\bm{\tau}; b_i) = V_i \left( h(\bm{\tau}) \right) r_i \left( h(\bm{\tau}; v_
 \end{equation}
 where $V_i(h(\bm{\tau}))$ is consumer welfare, $r_i(h(\bm{\tau}), v_i)$ are tariff revenues, and $v_i \in [1, \infty)$ is a structural parameter that modulates the government's ability to extract trade policy rents from society. Revenues are given by
 \begin{equation} \label{eq:r}
-r_i(h(\bm{\tau})) = \sum_j (\tau_{ij} - v_i) X_{ij}(h(\bm{\tau}))
+r_i(h(\bm{\tau}), v_i) = \sum_j (\tau_{ij} - v_i) X_{ij}(h(\bm{\tau}))
 \end{equation}
 and $X_{ij}(h(\bm{\tau}))$ are country $i$'s imports from country $j$.^[This object does not correspond empirically to governments' factual tariff revenues, as $\tau_{ij}$ incorporates a larger set of trade policy distortions than tariffs alone. Yet, non-tariff barriers to trade also generate rents that do not accrue directly to the government's accounts (see, for example, @Anderson1992 for the case of quotas). This revenue function is designed to capture this broader set of rents.] When $v_i$ is close to one, small policy distortions are sufficient to generate revenue for the government. Conversely when $v_i$ is high, the government must erect large barriers to trade before revenues begin entering government coffers. Because some revenue is necessary in order to produce government welfare, increasing $v_i$ induces governments' to become more protectionist. This formulation provides substantial flexibility in rationalizing various levels of protectionism, while avoiding assuming specific political economic motivations for its genesis. From the perspective of the governments, rents extracted imports are valued equally, regardless of their source. Ex ante, governments are not discriminatory in their preferences.
 
@@ -141,9 +114,9 @@ $\bm{W}_{ji}$ is a vector of dyadic geographic features such as centroid-centroi
 
 War outcomes are determined by a contest function
 \begin{equation} \label{eq:chi}
-\chi_{ij}(\bm{a}) = \frac{ a_{ij} \rho_{ij}(\bm{W}; \bm{\alpha}) M_i^{\gamma} }{ \sum_k a_{kj} \rho_{kj}(\bm{W}; \bm{\alpha}) M_k^{\gamma} } .
+\chi_{ij}(\bm{a}) = \frac{ a_{ij} \rho_{ij}(\bm{W}; \bm{\alpha}) M_i }{ \sum_k a_{kj} \rho_{kj}(\bm{W}; \bm{\alpha}) M_k } .
 \end{equation}
-$\chi_{ij} \in [0, 1]$ is the probability that $i$ is successful in an offensive war against $j$. $\gamma$ is a structural parameter that governs the returns to military strength. When $\gamma = 1$, $\chi_{ij}(\bm{a}, \bm{m})$ is a standard additive contest function, where strengths are discounted by $\rho_{ij}(\bm{W}; \bm{\alpha})$. When $\gamma = 0$, military strength does not influence contest outcomes and contests are a toss-up, adjusted by $\rho_{ij}(\bm{W}; \bm{\alpha})$ [@Jia2013]. Note that wars are multilateral and winner-take-all. Many countries can choose to attack $j$, but only one government can win. 
+$\chi_{ij} \in [0, 1]$ is the probability that $i$ is successful in an offensive war against $j$. Note that wars are multilateral and winner-take-all. Many countries can choose to attack $j$, but only one government can win. 
 
 For the moment, fix $a_{jk} = 0$ for all $k \neq i$, $j \neq k$. $i$ is the only government that faces the possibility of attack. Then, all other policy proposal vectors $\tilde{\bm{\tau}}_{-i}$ are implemented with certainty and $i$'s utility as a function of war entry decisions is 
 $$
@@ -152,7 +125,7 @@ $$
 
 Attackers consider the effect of their war entry on the anticipated policy outcome. Now consider an attacker $j$'s war entry decision vis-à-vis a defender $i$, assuming no other country launches a war. Let 
 $$
-\tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) = \frac{ \rho_{ji}(\bm{W}; \bm{\alpha}) M_j^{\gamma} }{ \rho_{ji}(\bm{W}; \bm{\alpha}) M_j^{\gamma} + M_i^{\gamma} }
+\tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) = \frac{ \rho_{ji}(\bm{W}; \bm{\alpha}) M_j }{ \rho_{ji}(\bm{W}; \bm{\alpha}) M_j + M_i }
 $$
 denote the probability that $j$ is successful in this contingency.
 
@@ -172,7 +145,7 @@ Optimal trade policies proposals for $i$ in this case solve
 \text{subject to} & \quad G_j(\tilde{\bm{\tau}}) - G_j(\bm{\tau}_i^{j \star}; \tilde{\bm{\tau}}_{-i}) + c \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \geq 0 \quad \text{for all } j \neq i
 \end{split}
 \end{equation}
-where the constraints can be derived by rearranging \ref{eq:AwarConstraint}. Formulated in this manner, it becomes clear that military allocations affect trade policy through their effect on the $i$'s war constraints. As $M_j$ increases, $\tilde{\chi}_{ji}$ increases as well (for $\gamma > 0$), tightening the constraint on $i$'s policy choice. Let $\tilde{\bm{\tau}}_i^\star(\tilde{\bm{\tau}}_{-i})$ denote a solution to this problem and $\tilde{\bm{\tau}}^\star$ a Nash equilibrium of the constrained policy announcement game. I refer to this game as $\Gamma^{\bm{\tau}}$.
+where the constraints can be derived by rearranging \ref{eq:AwarConstraint}. Formulated in this manner, it becomes clear that military allocations affect trade policy through their effect on the $i$'s war constraints. As $M_j$ increases, $\tilde{\chi}_{ji}$ increases as well, tightening the constraint on $i$'s policy choice. Let $\tilde{\bm{\tau}}_i^\star(\tilde{\bm{\tau}}_{-i})$ denote a solution to this problem and $\tilde{\bm{\tau}}^\star$ a Nash equilibrium of the constrained policy announcement game. I refer to this game as $\Gamma^{\bm{\tau}}$.
 
 ## Policy Equilibrium in Changes
 
@@ -184,7 +157,7 @@ This method is detailed in Appendix A. Because structural parameters and unobser
 
 It is straightforward to extend this methodology to the game studied here. Consider a modification to the policy-setting subgame in which governments propose changes to factual trade policies $\hat{\tilde{\bm{\tau}}}$ and call this game $\Gamma^{\hat{\bm{\tau}}}$. Note that this modification is entirely cosmetic -- the corresponding equilibrium of $\Gamma^{\hat{\bm{\tau}}}$ in levels can be computed by multiplying factual policies by the "hat" equilibrium values ($\tau_{ij}^\prime = \hat{\tau}_{ij} \tau_{ij}$). I can then replace the equilibrium conditions of $\Gamma^{\bm{\tau}}$ with their analogues in changes. Each government's welfare (\ref{eq:G}) in changes is
 \begin{equation} \label{eq:Ghat}
-\hat{G}_i(\hat{\bm{\tau}}) = \hat{V}_i \left( \hat{h}(\hat{\bm{\tau}}) \right) \hat{r}_i \left( \hat{h}(\hat{\bm{\tau}}; v_i) \right) .
+\hat{G}_i(\hat{\bm{\tau}}) = \hat{V}_i \left( \hat{h}(\hat{\bm{\tau}}) \right) \hat{r}_i \left( \hat{h}(\hat{\bm{\tau}}), v_i \right) .
 \end{equation}
 
 If $i$ loses a war, free trade is imposed, equivalent to $\hat{\bm{\tau}} = bm{\tau}_i^{-1}$ where $\bm{\tau}_i$ are observed policies. By dividing the governments' war constraints (\ref{eq:AwarConstraint}) by their factual welfare $G_j(\bm{\tau})$, their constrained policy announcement problem can be rewritten as the solution to
@@ -270,34 +243,44 @@ This procedure produces point estimates $\tilde{\bm{\theta}}_m$. I then construc
 
 
 
-```
-## Error in eval(expr, envir, enclos): object 'gamma_tilde' not found
-```
-
-```
-## Error in eval(expr, envir, enclos): object 'alpha_tilde' not found
-```
 
 *NOTE: Computing uncertainty intervals is computationally expensive and in-progress. I report and discuss point estimates here, with the necessary caution such preliminary discussion requires.*
 
-Estimates of preference weights are reported in Table \ref{tab:b_estsT}. In @Cooley2019b, I show that developed countries tend to adopt higher trade barriers than their developing peers. Consistent with this finding, the European Union and Japan are assessed to have high values of $b_i$.
+Estimates of preference weights are reported in Table \ref{tab:v_estsT}. In @Cooley2019b, I show that developed countries tend to adopt higher trade barriers than their developing peers. Consistent with this finding, the European Union and Japan are assessed to have high values of $v_i$.
 
 
+\begin{table}
 
+\caption{\label{tab:v_estsT}Preference Parameter ($\tilde{\bm{v}}$) Estimates \label{tab:b_estsT}}
+\centering
+\begin{tabular}[t]{llr}
+\toprule
+iso3 & Country Name & $\tilde{v}_i$\\
+\midrule
+CHN & China & 1.102648\\
+EU & European Union & 1.350253\\
+JPN & Japan & 1.995204\\
+RoW & NA & 1.120235\\
+RUS & Russia & 1.000000\\
+\addlinespace
+USA & United States & 1.191291\\
+\bottomrule
+\end{tabular}
+\end{table}
 
-With estimates of $b_i$ in hand, I can calculate each government's conquest value vis-à-vis all other governments. Recall that $\hat{\bm{\tau}}_i^{j \star}$ is the set of policies government $j$ would impose on $i$ if it successfully prosecuted a war against the latter. Then, $j$'s counterfactual utility in this scenario can be readily calculated given knowledge of its objective function (\ref{eq:Ghat}). These values are shown in Figure \ref{fig:rcv}. Each cell measures the utility change each row government experiences when successfully conquering each column government. Darker colors correspond to larger changes in utility.
+With estimates of $v_i$ in hand, I can calculate each government's conquest value vis-à-vis all other governments. Recall that governments impose free trade on other governments when they defeat them in wars. Then, $j$'s counterfactual utility in this scenario can be readily calculated given knowledge of its objective function (\ref{eq:Ghat}). These values are shown in Figure \ref{fig:rcv}. Each cell measures the utility change each row government experiences when successfully conquering each column government. Darker colors correspond to larger changes in utility.
 
-Governments that face poor market access conditions and/or are rent-maximizing gain the most from successful wars, relative to the status quo. When they win wars, rent-maximizing governments impose policies designed to direct trade into their borders. As imports go up, revenue collection potential also increases. The value of war is lower for welfare-maximizing governments. Still, welfare-maximizing governments facing poor market access benefit substantially from winning wars against countries with large markets and high barriers to trade. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These values assist in the identification of the power projection and preference parameters in $\bm{\theta}_m$.
+Governments that face poor market access conditions gain the most from successful wars, relative to the status quo. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These conquest values assist in the identification of the power projection and war cost parameters in $\bm{\theta}_m$.
 
+![Conquest values evaluated at $\tilde{\bm{b}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \label{fig:rcv}](figure/rcv-1.png)
 
+Governments also do not face obstacles to projecting power over space. I estimate $\alpha$ to be 0.04557. At this value, if the United States wished to invade China, its effective strength would *increase* by a factor of 0.9 due to the distance between the countries. 
 
-Turning to these parameters, I estimate $\gamma$ to be `#r round(gamma_tilde, 2)`. This is consistent with a positive effect of military advantage on counterfactual war outcomes, holding power projection capacity constant. In particular, a 2:1 advantage in military spending translates into a `#r round(chi_gamma_ex * 100, 1)` percent chance of winning a war, assuming no strength is lost due to the loss of strength gradient ($\rho_{ji} = 1$). 
+Figure \ref{fig:chi} combines these estimates to produce estimates of the contest function $\tilde{\chi}_{ji}$ for each pair of countries. The United States' military advantage is reflected in its higher probability of success in conquest.
 
-Governments also face significant obstacles to projecting power. I estimate $\alpha$ to be `#r round(alpha_tilde, 2)`. At this value, if the United States wished to invade China, its effective strength would decline by a factor of `#r round(1 / rho_ex, 1)` due to the distance between the countries. 
+![Estimated probability of successful conquest for each attacking country (row) in war against every defending country (column). Each probability is reported in the appropriate cell of the heatmap. \label{fig:chi}](figure/chi-1.png)
 
-Figure \ref{fig:chi} combines these estimates to produce estimates of the contest function $\tilde{\chi}_{ji}$ for each pair of countries. The United States' military advantage is reflected in its higher probability of success in conquest. However, conquest is estimated to be a difficult endeavor in modern international relations -- no country has a better than even chance of conquering another country within the sample.
-
-
+While governments do not face a geographic loss of strength gradient, wars are still costly. I estimate $\hat{c}$ to be 0.38. Dividing this value by governments' conquest values, shown in Figure \ref{fig:rcv}, I compute war's cost benefit ratio to be 0.34 on average. 
 
 # Conclusion
 

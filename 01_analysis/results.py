@@ -86,7 +86,7 @@ pecmy = policies.policies(data, params, ROWname, resultsPath)
 if runEstimates == True:
 
     theta_dict_init = dict()
-    theta_dict_init["c_hat"] = .1
+    theta_dict_init["c_hat"] = .2
     theta_dict_init["alpha0"] = 0
     theta_dict_init["alpha1"] = 0
     theta_dict_init["gamma"] = 1.
@@ -107,11 +107,22 @@ if runEstimates == True:
 ### Save Estimates ###
 
 xlvt_star = np.genfromtxt(xlvt_star_path, delimiter=",")
-ge_x = pecmy.rewrap_xlvt(xlvt_star)["ge_x"]
-theta_x = pecmy.rewrap_xlvt(xlvt_star)["theta"]
-theta_dict = pecmy.rewrap_theta(theta_x)
+ge_x_star = pecmy.rewrap_xlvt(xlvt_star)["ge_x"]
+v_star = pecmy.rewrap_xlvt(xlvt_star)["v"]
+theta_x_star = pecmy.rewrap_xlvt(xlvt_star)["theta"]
+theta_dict_star = pecmy.rewrap_theta(theta_x_star)
 for i in theta_dict.keys():
-    np.savetxt(estimatesPath + i + ".csv", np.array([theta_dict[i]]), delimiter=",")
+    np.savetxt(estimatesPath + i + ".csv", np.array([theta_dict_star[i]]), delimiter=",")
+np.savetxt(estimatesPath + "v.csv", v_star, delimiter=",")
+
+rcv_eq = pecmy.rcv_ft(v_star)
+np.fill_diagonal(rcv_eq, 0)
+np.savetxt(estimatesPath + "rcv_eq.csv", rcv_eq, delimiter=",")
+
+cb_ratio = theta_dict_star["c_hat"] / rcv_eq
+np.fill_diagonal(cb_ratio, 0)
+cb_ratio_mean = np.sum(cb_ratio) / (pecmy.N - 1) ** 2
+np.savetxt(estimatesPath + "cb_ratio_mean.csv", np.array([cb_ratio_mean]), delimiter=",")
 
 ### Compute Counterfactuals ###
 
@@ -130,5 +141,5 @@ if computeCounterfactuals == True:
 
     xlvt_prime_path = counterfactualsPath + "x.csv"
     np.savetxt(xlvt_prime_path, xlvt_prime, delimiter=",")
-#
+
 print("done.")

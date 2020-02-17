@@ -22,5 +22,5 @@ ccodesT$`Country Name` <- ifelse(ccodesT$iso3=="EU", "European Union", ccodesT$`
 ccodesT$`Country Name` <- ifelse(ccodesT$iso3=="ROW", "Rest of World", ccodesT$`Country Name`)
 
 
-b_estsT <- cbind(ccodesT, b_tilde)
-colnames(b_estsT) <- c("iso3", "Country Name", "$\\tilde{\\boldsymbol{b}}_i$")
+v_estsT <- cbind(ccodesT, v_star)
+colnames(v_estsT) <- c("iso3", "Country Name", "$\\tilde{v}_i$")

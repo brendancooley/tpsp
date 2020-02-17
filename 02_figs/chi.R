@@ -20,17 +20,18 @@
 # gamma_tilde <- read_csv(paste0(resultsPath, "gamma_tilde.csv"), col_names=FALSE) %>% pull(.)
 # alpha_tilde <- read_csv(paste0(resultsPath, "alpha_tilde.csv"), col_names=FALSE) %>% pull(.)
 
+
 chi_ji <- function(j, i) {
   m_j <- milex[j, ] %>% pull(.)
   m_i <- milex[i, ] %>% pull(.) 
   d_ji <- W[j, i] %>% pull(.)
-  rho_ji <- exp(-alpha_tilde*d_ji)
-  out <-  m_j^gamma_tilde * rho_ji / (m_j^gamma_tilde * rho_ji + m_i^gamma_tilde)
+  rho_ji <- exp(-alpha1*d_ji)
+  out <-  m_j * rho_ji / (m_j * rho_ji + m_i)
   return(out)
 }
 
 d_ji <- W[4,5] %>% pull(.)
-rho_ji <- exp(-alpha_tilde*d_ji)
+rho_ji <- exp(-alpha1*d_ji)
 
 chi <- matrix(data=NA, nrow=N, ncol=N)
 
