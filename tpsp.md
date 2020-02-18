@@ -185,11 +185,11 @@ $\hat{\tilde{\bm{\tau}}}_i^\star(\hat{\tilde{\bm{\tau}}}_{-i})$ denotes $i$'s be
 
 
 
-I estimate the model on a set of 6 governments in the year 2011.^[Focusing on a small set of governments is necessary for computational tractability. However, the largest countries (by GDP) are the most attractive targets for coercion, as changes to their trade policies return the largest welfare gains, regardless of whether the coercer is a rent-maximizer or welfare-maximizer. The estimated model is therefore more useful in understanding "great power politics," rather than smaller political-economic conflicts of interest.] These governments are listed in Table \ref{tab:ccodes}. I aggregate all European Union governments into a single entity and collapse all countries not included in the analysis into a "Rest of World" (ROW) aggregate.^[Such an aggregation is necessary in order to calculate fully general equilibrium effects of counterfactual trade policies. However, I prohibit other countries from invading ROW and likewise prohibit ROW from invading others. This ensures that estimates of military parameters depend almost entirely on interactions between countries within my sample.] Non-ROW countries make up  percent of world GDP.
+I estimate the model on a set of 6 governments in the year 2011.^[Focusing on a small set of governments is necessary for computational tractability. However, the largest countries (by GDP) are the most attractive targets for coercion, as changes to their trade policies return the largest welfare gains, regardless of whether the coercer is a rent-maximizer or welfare-maximizer. The estimated model is therefore more useful in understanding "great power politics," rather than smaller political-economic conflicts of interest.] These governments are listed in Table \ref{tab:v_estsT}. I aggregate all European Union governments into a single entity and collapse all countries not included in the analysis into a "Rest of World" (ROW) aggregate.^[Such an aggregation is necessary in order to calculate fully general equilibrium effects of counterfactual trade policies. However, I prohibit other countries from invading ROW and likewise prohibit ROW from invading others. This ensures that estimates of military parameters depend almost entirely on interactions between countries within my sample.] Non-ROW countries make up  percent of world GDP.
 
 
 
-Solving the economy in changes for a set of $\hat{\bm{\tau}}$ requires values for a vector of economic parameters $\bm{\theta}_h$ and data on trade flows, policy barriers, and and national accounts. I discuss how I calibrate the economy and the data sources used to do so in Appendix B. There, I also report the magnitude of policy barrier estimates $\tilde{\bm{\tau}}$ from @Cooley2019b. With $\hat{h}(\hat{\bm{\tau}}; \bm{\theta}_h)$ calibrated, $\hat{G}_i(\hat{\bm{\tau}})$ can be calculated for any set of trade policies and the optimal policy change problem (\ref{eq:optTaujHat}) can be solved, yielding $\hat{\bm{\tau}}_i^{j \star}$ for all $i, j$.
+Solving the economy in changes for a set of $\hat{\bm{\tau}}$ requires values for a vector of economic parameters $\bm{\theta}_h$ and data on trade flows, policy barriers, and and national accounts. I discuss how I calibrate the economy and the data sources used to do so in Appendix B. There, I also report the magnitude of policy barrier estimates $\tilde{\bm{\tau}}$ from @Cooley2019b. With $\hat{h}(\hat{\bm{\tau}}; \bm{\theta}_h)$ calibrated, $\hat{G}_i(\hat{\bm{\tau}})$ can be calculated for any set of trade policies and the conquest values can be computed.
 
 With the economy calibrated and policy barrier estimates in hand, I require only a measure of each government's military endowment ($M_i$) and data on dyadic geography ($\bm{W}$). I use [SIPRI](https://www.sipri.org/)'s data on military expenditure to measure governments' military capacity. These values are displayed in Figure \ref{fig:milex}.
 
@@ -213,7 +213,7 @@ Following the assumption that measurement error is mean-zero, I seek an estimato
 
 Solving this problem presents two computational challenges. First, computing government welfare changes for any given $\hat{\bm{\tau}}$ requires solving system of equations characterizing the equilibrium of the international economy, $\hat{h}(\hat{\bm{\tau}})$. Second, computing $\tilde{\bm{\tau}}^\star(\bm{\theta}_m)$ requires iteratively solving each government's best response problem (\ref{eq:tauTildeStarHat}) until covergence at a Nash equilibrium. I sidestep both of these by recasting the best response problem and estimation problem as mathematical programs with equilibrium constraints (MPECs) [@Su2012; @Ossa2014; @Ossa2016].
 
-To reformulate the best response problem, I consider an equivalent reformulation in which each government chooses trade policies and wages, subject to the additional constraint that chosen wages are consistent with the general equilibrium of the international economy ($\hat{h}(\hat{\tilde{\bm{\tau}}}) = \hat{w}$). Let $\hat{\bm{x}}_i = \left\{ \hat{\tilde{\bm{\tau}}}_i, \hat{\bm{w}} \right\}$ store $i$'s choice variables in this problem. Then, this problem can be rewritten as follows, noting explicitly dependencies on $\bm{\theta}_m$
+To reformulate the best response problem, I consider an equivalent reformulation in which each government chooses trade policies and wages, subject to the additional constraint that chosen wages are consistent with the general equilibrium of the international economy ($\hat{h}(\hat{\tilde{\bm{\tau}}}) = \hat{w}$). Let $\hat{\bm{x}}_i = \left( \hat{\tilde{\bm{\tau}}}_i, \hat{\bm{w}} \right)$ store $i$'s choice variables in this problem. Then, this problem can be rewritten as follows, noting explicitly dependencies on $\bm{\theta}_m$
 \begin{equation} \label{eq:tauTildeHatMPEC}
 \begin{split}
 \max_{\hat{\bm{x}}_i} & \quad \hat{G}_i(\hat{\bm{w}}; \bm{\theta}_m) \\
@@ -223,14 +223,14 @@ To reformulate the best response problem, I consider an equivalent reformulation
 \end{equation}
 Let $\mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i)$ denote the associated Lagrangian. This formulation allows me to quickly compute best responses $\hat{\tilde{\bm{\tau}}}_i(\hat{\tilde{\bm{\tau}}}_{-i})$ without iteratively solving $h(\hat{\tilde{\bm{\tau}}})$.
 
-I reformulate the estimation problem (\ref{eq:estimator}) in a similar manner. By Assumption `AGText`, at any Nash equilibrium, we must have
+I reformulate the estimation problem (\ref{eq:estimator}) in a similar manner. By Assumption 1, at any Nash equilibrium, we must have
 $$
 \nabla_{\hat{\tilde{\bm{\tau}}}_i} \mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i; \bm{\theta}_m) = 0 
 $$
 for each government $i$. In the reformulated estimation problem, seek to choose parameters, trade policies, and general equilibrium response variables in order to minimize measurement error while enforcing these equilibrium constraints, in addition to general equilibrium constraints. Formally, I solve
 \begin{equation} \label{eq:estimatorMPEC}
 \begin{split}
-\min_{ \bm{\theta}_m, \hat{\tilde{\bm{\tau}}}, \hat{\bm{w}} } & \quad \epsilon_{ij} \\
+\min_{ \bm{\theta}_m, \hat{\tilde{\bm{\tau}}}, \hat{\bm{w}} } & \quad \sum_i \sum_j \epsilon_{ij} \\
 \text{subject to} & \quad \nabla_{\hat{\tilde{\bm{\tau}}}_i} \mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i; \bm{\theta}_m) = 0  \text{ for all } i \\
 & \quad \hat{\bm{w}} = \hat{h}(\hat{\tilde{\bm{\tau}}}) .
 \end{split}
@@ -251,7 +251,7 @@ Estimates of preference weights are reported in Table \ref{tab:v_estsT}. In @Coo
 
 \begin{table}[t]
 
-\caption{\label{tab:v_estsT}Preference Parameter ($\tilde{\bm{v}}$) Estimates \label{tab:b_estsT}}
+\caption{\label{tab:v_estsT}Preference Parameter ($\tilde{\bm{v}}$) Estimates \label{tab:v_estsT}}
 \centering
 \begin{tabular}{llr}
 \toprule
