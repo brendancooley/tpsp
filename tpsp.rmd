@@ -62,7 +62,7 @@ size <- "mini/"
 
 tpspPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 dataPath <- paste0(tpspPath, "data/", size)
-resultsPath <- paste0(tpspPath, "results/", size)
+resultsPath <- paste0(tpspPath, "results/", "archive_fmir/")
 estimatesPath <- paste0(resultsPath, "estimates/")
 
 # economic parameters 

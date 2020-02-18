@@ -27,7 +27,7 @@ Estimates of preference weights are reported in Table \ref{tab:v_estsT}. In @Coo
 
 source("../02_figs/ccodes.R")
 
-kable(v_estsT, "latex", booktabs = T, caption = "Preference Parameter ($\\tilde{\\bm{v}}$) Estimates \\label{tab:b_estsT}", escape = FALSE) %>% kable_styling(position = "center")
+kable(v_estsT, "latex", booktabs = T, caption = "Preference Parameter ($\\tilde{\\bm{v}}$) Estimates \\label{tab:v_estsT}", escape = FALSE) %>% kable_styling(position = "center")
 
 ```
 

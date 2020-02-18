@@ -73,7 +73,7 @@ E = Eq + Ex
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
 theta_dict_1 = dict()
-theta_dict_1["c_hat"] = .818
+theta_dict_1["c_hat"] = .1
 theta_dict_1["alpha0"] = 0
 theta_dict_1["alpha1"] = -.0003
 theta_dict_1["gamma"] = .72
@@ -97,8 +97,9 @@ pecmy.rhoM(theta_dict_1)
 np.diag(pecmy.rhoM(theta_dict_1))
 pecmy.chi(pecmy.m, theta_dict_1)
 pecmy.war_vals(v_test, pecmy.m, theta_dict_1)
+pecmy.war_vals(v_test, pecmy.mzeros, theta_dict_1)
 
-
+# pecmy.alpha1_min(.01)
 pecmy.war_vals(np.ones(pecmy.N), pecmy.m, theta_dict_1)
 pecmy.chi(pecmy.m, theta_dict_2)
 pecmy.W

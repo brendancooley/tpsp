@@ -230,6 +230,14 @@ class policies:
             print("R_hat:")
             print(self.R_hat(self.ecmy.rewrap_ge_dict(ge_x), v))
 
+            for i in range(self.N):
+                print("lambda chi " + str(i))
+                lbda = np.reshape(self.rewrap_xlvt(xlvt)["lbda"], (self.N, self.lambda_i_len))
+                lbda_chi_i = self.rewrap_lbda_i(lbda[i, ])["chi_i"]
+                print(lbda_chi_i)
+
+
+
 
         tau_hat = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
         tau_star = tau_hat * self.ecmy.tau
@@ -459,9 +467,9 @@ class policies:
         if nash_eq == False:
             x_L[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = 1 # vs
             x_U[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = np.max(self.ecmy.tau) # vs
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N] = 0  # c_hat lower
-            # x_L[self.x_len+self.lambda_i_len*self.N+self.N] = .5
-            # x_U[self.x_len+self.lambda_i_len*self.N+self.N] = .5  # fix c_hat
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N] = 0  # c_hat lower
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N] = .5
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N] = .5  # fix c_hat
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # gamma lower
             # x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 2  # gamma upper
             x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 1
