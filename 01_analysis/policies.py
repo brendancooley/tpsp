@@ -86,6 +86,7 @@ class policies:
         self.wv_min = -1.0e4
 
         self.alpha1_ub = self.alpha1_min(.01)
+        self.zero_lb_relax = -1.0e-30
 
         ge_x_ft_path = results_path + "ge_x_ft.csv"
         if not os.path.isfile(ge_x_ft_path):
@@ -235,9 +236,6 @@ class policies:
                 lbda = np.reshape(self.rewrap_xlvt(xlvt)["lbda"], (self.N, self.lambda_i_len))
                 lbda_chi_i = self.rewrap_lbda_i(lbda[i, ])["chi_i"]
                 print(lbda_chi_i)
-
-
-
 
         tau_hat = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
         tau_star = tau_hat * self.ecmy.tau
@@ -457,6 +455,7 @@ class policies:
 
         lbda_i_bound_dict = dict()
         lbda_i_bound_dict["h_hat"] = np.repeat(-np.inf, self.hhat_len)
+        # lbda_i_bound_dict["chi_i"] = np.repeat(self.zero_lb_relax, self.N)
         lbda_i_bound_dict["chi_i"] = np.repeat(0., self.N)
         lbda_i_bound = self.unwrap_lbda_i(lbda_i_bound_dict)
 
@@ -505,6 +504,8 @@ class policies:
 
     def estimator(self, v_sv, theta_x_sv, m, nash_eq=False):
 
+        # print(xlvt_sv)
+
         # if nash_eq = True fix theta vals at those in theta_dict_sv and compute equilibrium
         x_len = self.xlvt_len
 
@@ -551,7 +552,8 @@ class policies:
             # ge_x_sv = self.v_sv_all(v_sv)
             # xlvt_sv = np.concatenate((ge_x_sv, np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
             problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(g_sparsity_bin, m))
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
+            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso")
         print("solving...")
         _x, obj, status = problem.solve(xlvt_sv)
 

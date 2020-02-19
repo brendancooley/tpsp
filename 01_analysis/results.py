@@ -95,7 +95,7 @@ if runEstimates == True:
     theta_x_sv = pecmy.unwrap_theta(theta_dict_init)
 
     start_time = time.time()
-    xlvt_star, obj, status = pecmy.estimator(np.repeat(1., pecmy.N), theta_x_sv, pecmy.mzeros, nash_eq=False)
+    xlvt_star, obj, status = pecmy.estimator(np.repeat(1., pecmy.N), theta_x_sv, pecmy.m, nash_eq=False)
     print("--- Estimator converged in %s seconds ---" % (time.time() - start_time))
 
     print(xlvt_star)
