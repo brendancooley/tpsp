@@ -19,19 +19,14 @@ class policies:
 
         Parameters
         ----------
-        data : type
-            Description of parameter `data`.
-        params : type
-            Description of parameter `params`.
-        b : type
-            Description of parameter `b`.
-        rcv : string
-            Path to regime change value matrix
-
-        Returns
-        -------
-        type
-            Description of returned object.
+        data : dict
+            dictionary storing data inputs
+        params : dict
+            dictionary storing economic primitive parameters
+        ROWname : str
+            name of rest of world aggregate ("RoW")
+        results_path : string
+            Path to results directory, where free trade xs will be stored
 
         """
 
@@ -43,7 +38,7 @@ class policies:
         self.ROW_id = np.where(data["ccodes"]==ROWname)[0][0]
 
         # purge deficits
-        self.ecmy.purgeD()
+        self.ecmy.purgeD()  # replicate DEK
 
         # enforce positive tariffs
         tau_hat_pos = np.ones_like(self.ecmy.tau)
@@ -51,116 +46,152 @@ class policies:
         self.ecmy.update_ecmy(tau_hat_pos, np.ones(self.N))
 
         self.W = data["W"]  # distances
-        np.fill_diagonal(self.W, 0)
+        np.fill_diagonal(self.W, 0)  # EU has positive own distance by averaging over members, zero this out
         self.M = data["M"]  # milex
 
+        # construct equal distribution m matrix, enforce zeros on ROW row and columns
         self.m = self.M / np.ones((self.N, self.N))
         self.m = self.m.T
         self.m[self.ROW_id,:] = 0
         self.m[:,self.ROW_id] = 0
         self.m[self.ROW_id,self.ROW_id] = 1
 
+        # counterfactual m, no threats
         self.mzeros = np.diag(self.M)
 
-        self.tauMin = 1  # enforce lower bound on policies
-        self.tauMax = 15
-        self.tau_nft = 1.25  # where to begin search for best response
+        self.tau_nft = 1.25  # near free trade policies, starting values to begin search for best response
 
-        self.max_iter_ipopt = 100000
-
+        # len of different variable subsets
         self.hhat_len = self.N**2+4*self.N  # X, d, P, w, r, E
         self.Dhat_len = self.N
-        self.tauj_len = self.N**2-self.N
-        # self.lambda_i_len = self.hhat_len + self.tauj_len + 1 + self.N + (self.N - 1)  # ge vars, other policies, tau_ii, deficits, mil constraints
-        # self.lambda_i_len = self.hhat_len + 1 + (self.N - 1)
-        self.lambda_i_x_len = self.hhat_len # one is own policy (redundant?)
-        self.lambda_i_len = self.lambda_i_x_len + self.N
-        # self.lambda_i_len_td = self.lambda_i_len + self.N ** 2 - self.N # add constraints on others' policies
+        self.tauj_len = self.N**2-self.N  # non i policies
+        self.lambda_i_x_len = self.hhat_len  # ge multipliers for best response
+        self.lambda_i_len = self.lambda_i_x_len + self.N  # ge multipliers plus mil multipliers
 
-        self.x_len = self.ecmy.ge_x_len
-        self.xlvt_len = self.x_len + self.lambda_i_len * self.N + self.N + 4
+        # optimizer parameters
+        self.x_len = self.ecmy.ge_x_len  # len of ge vars
+        self.xlvt_len = self.x_len + self.lambda_i_len * self.N + self.N + 4  # ge vars, all lambdas (flattened), v, theta (except v)
+        self.g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2  # constraints len: ge_diffs, Lzeros (own policies N-1), war_diffs mat, comp_slack mat
+        self.max_iter_ipopt = 100000
+        self.chi_min = 1.0e-10  # minimum value for chi
+        self.wv_min = -1.0e4  # minimum war value
+        self.alpha1_ub = self.alpha1_min(.01)  # restrict alpha search (returns alpha such that rho(alpha)=.01)
+        self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
 
-        self.g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2  # ge_diffs, Lzeros (own policies N-1), war_diffs mat, comp_slack mat
-
-        self.chi_min = 1.0e-10
-        self.wv_min = -1.0e4
-
-        self.alpha1_ub = self.alpha1_min(.01)
-        self.zero_lb_relax = -1.0e-30
-
+        # generate free trade policies
         ge_x_ft_path = results_path + "ge_x_ft.csv"
         if not os.path.isfile(ge_x_ft_path):
             self.ge_x_ft = np.zeros((self.N, self.x_len))
             for i in range(self.N):
                 print(str(i) + "'s free trade vector")
                 ge_x_ft_i = self.ft_sv(i, np.ones(self.x_len))
-                self.ge_x_ft[i, ] = ge_x_ft_i
-            np.savetxt(ge_x_ft_path, self.ge_x_ft, delimiter=",")
-        else:
+                self.ge_x_ft[i, ] = ge_x_ft_i  # save i's free trade policies and ge responses in row i of matrix
+            np.savetxt(ge_x_ft_path, self.ge_x_ft, delimiter=",")  # save to results_path
+        else:  # load existing csv if values have already been computed
             self.ge_x_ft = np.genfromtxt(ge_x_ft_path, delimiter=",")
 
-        self.tick = 0
+        self.tick = 0  # tracker for optimization calls to loss function
 
     def G_hat(self, x, v, id, sign=1, all=False):
         """Calculate changes in government welfare given ge inputs and outputs
 
         Parameters
         ----------
-        ge_x : vector (TODO: documentation for arbitrary input vector)
-            1d numpy array storing flattened ge inputs and outputs. See function for order of values.
-        affinity : matrix
-            N times N matrix of affinity shocks
-        ids : vector
-            ids of governments for which to return welfare changes. Defaults to all.
+        ge_x : vector
+            1d numpy array storing flattened ge inputs and outputs. See function ecmy.unwrap_ge_dict for order of values.
+        v : vector
+            len N array of preference values for each government
+        id : int
+            id of government to return welfare welfare changes for
         sign : scalar
             Scales output. Use to convert max problems to min.
+        all : bool
+            return all govs' welfare changes if this flag is True
 
         Returns
         -------
-        vector
+        vector or float
             G changes for selected governments
 
         """
 
-        # if affinity is None:
-        #     affinity = np.zeros((self.N, self.N))
-
         ge_dict = self.ecmy.rewrap_ge_dict(x)
         Uhat = self.ecmy.U_hat(ge_dict)
-        # Ghat = Uhat ** (1 - b) * ge_dict["r_hat"] ** b
         Ghat = Uhat * self.R_hat(ge_dict, v)
 
-        # Ghat_a = affinity * Ghat
-        # Ghat_out = Ghat + np.sum(Ghat_a, axis=1)
         if all == False:
             return(Ghat[id]*sign)
         else:
             return(Ghat*sign)
 
     def G_hat_grad(self, x, v, id, sign):
+        """Calculate gradient of G_hat (autograd wrapper)
+
+        Parameters
+        ----------
+        ge_x : vector
+            1d numpy array storing flattened ge inputs and outputs. See function ecmy.unwrap_ge_dict for order of values.
+        v : vector
+            len N array of preference values for each government
+        id : int
+            id of government to return welfare welfare changes for
+        sign : scalar
+            Scales output. Use to convert max problems to min.
+
+        Returns
+        -------
+        vector
+            vector of len self.x_len of partial derivatives of objective function
+
+        """
         G_hat_grad_f = ag.grad(self.G_hat)
         return(G_hat_grad_f(x, v, id, sign))
 
-    def r_v(self, ge_dict, v):
+    def r_v(self, v):
+        """Calculate factual government revenue for given values of v
+
+        Parameters
+        ----------
+        v : vector
+            len N array of preference values for each government
+
+        Returns
+        -------
+        vector
+            len N array of v-adjusted government revenues evaluated at self.ecmy.tau
+
+        """
 
         v_mat = np.array([v])
         tau_mv = self.ecmy.tau - np.tile(v_mat.transpose(), (1, self.N))
         tau_mv = tau_mv - np.diag(np.diag(tau_mv))
-        # tau_mv[tau_mv < 0] = 0
-        # tau_mv = np.clip(tau_mv, 0, np.inf)
         r = np.sum(tau_mv * self.ecmy.Xcif, axis=1)
 
         return(r)
 
     def R_hat(self, ge_dict, v):
+        """Calculate change in government revenue given ge values and v
+
+        Parameters
+        ----------
+        ge_dict : dict
+            Dictionary storing ge inputs and outputs
+        v : vector
+            len N array of preference values for each government
+
+        Returns
+        -------
+        vector
+            len N array of v-adjusted changes in government revenues
+
+        """
 
         v_mat = np.array([v])
-        r = self.r_v(ge_dict, v)
+        r = self.r_v(v)
 
         tau_prime = ge_dict["tau_hat"] * self.ecmy.tau
         tau_prime_mv = tau_prime - np.tile(v_mat.transpose(), (1, self.N))
         tau_prime_mv = tau_prime_mv - np.diag(np.diag(tau_prime_mv))
-        # tau_prime_mv = np.clip(tau_prime_mv, 0, np.inf)
         X_prime = ge_dict["X_hat"] * self.ecmy.Xcif
         r_prime = np.sum(tau_prime_mv * X_prime, axis=1)
 
@@ -168,17 +199,265 @@ class policies:
 
         return(r_hat)
 
+    def Lagrange_i_x(self, ge_x, lambda_i_x, id, v, wv):
+        """Short summary.
+
+        Parameters
+        ----------
+        ge_x : vector
+            1d numpy array storing flattened ge inputs and outputs. See function ecmy.unwrap_ge_dict for order of values.
+        lambda_i_x : vector
+            ge and mil multipliers for gov id
+        id : int
+            government choosing policy
+        v : vector
+            len N array of preference values for each government
+        wv : vector
+            Length N vector of war values for each non-id country in war against id (column id of wv matrix)
+
+        Returns
+        -------
+        float
+            Lagrangian evaluated at ge_x, lambda_i_x
+
+        """
+
+        lambda_dict_i = self.rewrap_lbda_i(lambda_i_x)
+        ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
+
+        G_hat_i = self.G_hat(ge_x, v, id, sign=1)
+        geq_diffs = self.ecmy.geq_diffs(ge_x)
+        war_diffs = self.war_diffs(ge_x, v, wv, id)
+
+        wd = -1 * war_diffs  # flip these so violations are positive
+
+        # mil multipliers constrained to be positive, lambda_dict_i["chi_i"] > 0
+        L_i = G_hat_i - np.dot(lambda_dict_i["h_hat"], geq_diffs) - np.dot(lambda_dict_i["chi_i"], wd)
+
+        return(L_i)
+
+    def Lzeros_i(self, ge_x_lbda_i, id, v, wv):
+        """calculate first order condition for goverment i, ge_x_lbda_i input
+
+        Parameters
+        ----------
+        ge_x_lbda_i : vector
+            len self.x_len + self.lambda_i_len vector storing concatenated ge_x and lbda_i values
+        id : int
+            id of government choosing policy vector
+        v: vector
+            len N array of preference values for each government
+        wv : vector
+            len N vector of war values for each threatening government vis a vis i
+
+
+        Returns
+        -------
+        vec
+            len self.N (policies) + self.hhat_len (ge_vars) vector storing partial derivatives of government id's Lagrangian
+
+        """
+
+        ge_x = ge_x_lbda_i[0:self.x_len]
+        lambda_i_x = ge_x_lbda_i[self.x_len:]
+
+        ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
+        L_grad_f = ag.grad(self.Lagrange_i_x)
+        L_grad = L_grad_f(ge_x, lambda_i_x, id, v, wv)
+        L_grad_i = L_grad[self.L_grad_i_ind(id)]
+
+        out = []
+        out.extend(L_grad_i)
+
+        return(L_grad_i)
+
+    def L_grad_i_ind(self, id):
+        """which elements of full Lagrange gradient to return for government id. (drops tau_{-i} and deficits)
+
+        Parameters
+        ----------
+        id : int
+            government for which to calculate indicators
+
+        Returns
+        -------
+        vector
+            vector length self.x_len of indices for gov id's first order conditions
+
+        """
+
+        ind_dict = dict()
+        ind_dict["tau_hat"] = np.reshape(np.repeat(False, self.N**2), (self.N, self.N))
+        ind_dict["tau_hat"][id, ] = True
+        np.fill_diagonal(ind_dict["tau_hat"], False)
+        ind_dict["D_hat"] = np.repeat(False, self.N)
+        ind_dict["X_hat"] = np.reshape(np.repeat(True, self.N**2), (self.N, self.N))
+        ind_dict["P_hat"] = np.repeat(True, self.N)
+        ind_dict["w_hat"] = np.repeat(True, self.N)
+        ind_dict["r_hat"] = np.repeat(True, self.N)
+        ind_dict["E_hat"] = np.repeat(True, self.N)
+
+        return(self.ecmy.unwrap_ge_dict(ind_dict))
+
+    def war_diffs(self, ge_x, v, war_vals, id):
+        """calculate difference between government id's utility at proposed vector ge_x versus war value
+
+        Parameters
+        ----------
+        ge_x : vector
+            1d numpy array storing flattened ge inputs and outputs. See function ecmy.unwrap_ge_dict for order of values.
+        v : vector
+            len self.N array of preference values for each government
+        war_vals : vector
+            Length self.N vector of war values for each non-id country in war against id
+        id : int
+            Gov id for which to calculate war constraints
+
+        Returns
+        -------
+        vector
+            Length self.N vector of peace minus war against id utility differences
+
+        """
+
+        G = self.G_hat(ge_x, v, 0, all=True)
+        war_diffs = G - war_vals
+
+        # turn to zero where negative
+        # wdz = np.where(war_diffs < 0, 0, war_diffs)
+
+        return(war_diffs)
+
+    def war_vals(self, v, m, theta_dict):
+        """Calculate matrix of war values (regime change value minus war costs)
+
+        Parameters
+        ----------
+        v : vector
+            len self.N array of preference values for each government
+        m : matrix
+            self.N times self.N matrix of military allocations
+        theta_dict : dict
+            dictionary of military parameters (see self.rewrap_theta)
+
+        Returns
+        -------
+        matrix
+            self.N times self.N matrix of war values for row id in war against col id
+
+        """
+
+        chi = self.chi(m, theta_dict)
+        chi = np.clip(chi, self.chi_min, 1)
+        wc = theta_dict["c_hat"] / chi
+        rcv_ft = self.rcv_ft(v)
+        wv = rcv_ft - wc
+        wv = np.clip(wv, self.wv_min, np.inf)  # cap minimum war values
+
+        return(wv)
+
+    def chi(self, m, theta_dict):
+        """calculate war success probability matrix
+
+        Parameters
+        ----------
+        m : matrix
+            self.N times self.N matrix of military allocations
+        theta_dict : dict
+            dictionary of military parameters (see self.rewrap_theta)
+
+        Returns
+        -------
+        matrix
+            self.N times self.N matrix of war success probabilities
+
+        """
+
+        rho = self.rho(theta_dict)  # loss of strength matrix
+        m_diag = np.diagonal(m)
+        m_frac = m / m_diag
+
+        chi_logit = rho * m_frac ** theta_dict["gamma"]  # logit transformation
+        chi = chi_logit / (1 + chi_logit)  # transform back
+
+        return(chi)
+
+    def rho(self, theta_dict):
+        """calculate loss of strength gradient given theta, data (self.W)
+
+        Parameters
+        ----------
+        theta_dict : dict
+            Dictionary storing military structural parameters
+
+        Returns
+        -------
+        matrix
+            N times N matrix loss of strength gradient
+
+        """
+
+        rho = np.exp(-1 * (theta_dict["alpha0"] + self.W * theta_dict["alpha1"]))
+        rho += 1 - np.diag(np.diag(rho))  # set diagonal to one
+
+        return(rho)
+
+    def rcv_ft(self, v):
+        """calculate matrix of G_hats, imposing free trade on each row government. (row i, column j is j's utility when i implements free trade)
+
+        Parameters
+        ----------
+        v : vector
+            len self.N array of preference values for each government
+
+        Returns
+        -------
+        matrix
+            self.N times self.N matrix of free trade values
+
+        """
+
+        out = np.array([self.G_hat(self.ge_x_ft[i, ], v, 0, all=True) for i in range(self.N)])
+
+        return(out.T)
+
     def rewrap_xlvt(self, xlvt):
+        """Convert flattened xlvt vector to dictionary
+
+        Parameters
+        ----------
+        xlvt : vector (see self.unwrap_xlvt)
+            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+
+        Returns
+        -------
+        dict
+            dictionary of flattened vectors for each sub element of xlvt
+
+        """
 
         xlvt_dict = dict()
         xlvt_dict["ge_x"] = xlvt[0:self.x_len]
-        xlvt_dict["lbda"] = xlvt[self.x_len:self.x_len+self.lambda_i_len*self.N]
+        xlvt_dict["lbda"] = xlvt[self.x_len:self.x_len+self.lambda_i_len*self.N]  # np.reshape(xlvt_dict["lbda"] (self.N, self.lambda_i_len)) gives matrix of lambdas, 1 row for each government
         xlvt_dict["v"] = xlvt[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N]
         xlvt_dict["theta"] = xlvt[self.x_len+self.lambda_i_len*self.N+self.N:]
 
         return(xlvt_dict)
 
     def unwrap_xlvt(self, xlvt_dict):
+        """Convert xlvt dictionary into flattened vector
+
+        Parameters
+        ----------
+        xlvt_dict : dict (see self.rewrap_xlvt)
+            dictionary of flattened vectors for each sub element of xlvt
+
+        Returns
+        -------
+        vector
+            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+
+        """
 
         xlvt = []
         xlvt.extend(xlvt_dict["ge_x"])
@@ -189,16 +468,42 @@ class policies:
         return(np.array(xlvt))
 
     def rewrap_theta(self, theta_x):
+        """Convert theta dictionary into flattened vector
+
+        Parameters
+        ----------
+        theta_x : vector (see self.unwrap_theta)
+            flattened vector of military parameters
+
+        Returns
+        -------
+        dict
+            dictionary of military parameters
+
+        """
 
         theta_dict = dict()
         theta_dict["c_hat"] = theta_x[0]
         theta_dict["gamma"] = theta_x[1]
-        theta_dict["alpha0"] = theta_x[2]
-        theta_dict["alpha1"] = theta_x[3]
+        theta_dict["alpha0"] = theta_x[2]  # baseline power projection loss
+        theta_dict["alpha1"] = theta_x[3]  # distance coefficient
 
         return(theta_dict)
 
     def unwrap_theta(self, theta_dict):
+        """Convert theta vector into dictionary
+
+        Parameters
+        ----------
+        theta_dict : dict (see self.rewrap_theta)
+            dictionary of military parameters
+
+        Returns
+        -------
+        vector
+            flattened vector of military parameters
+
+        """
 
         theta_x = []
         theta_x.extend(np.array([theta_dict["c_hat"]]))
@@ -208,14 +513,70 @@ class policies:
 
         return(np.array(theta_x))
 
+    def unwrap_lbda_i(self, lambda_dict_i):
+        """Convert dictionary of multipliers for gov i into vector for Lagrangians
+
+        Parameters
+        ----------
+        lambda_dict_i : dict (see self.rewrap_lbda_i)
+            dictionary storing multipliers for government i's ge constraints and mil constraints
+
+        Returns
+        -------
+        vector
+            vector length self.h_hat_len + self.N (ge constraints and i's mil constraints)
+
+        """
+
+        x = []
+        x.extend(lambda_dict_i["h_hat"])
+        x.extend(lambda_dict_i["chi_i"])
+
+        return(np.array(x))
+
+    def rewrap_lbda_i(self, x):
+        """Return dictionary of Lagrange multipliers from vector of multipliers for given gov id
+
+        Parameters
+        ----------
+        x : vector
+            vector length self.h_hat_len + self.N (ge constraints and i's mil constraints)
+
+        Returns
+        -------
+        dict
+            dictionary storing multipliers for government i's ge constraints and mil constraints
+
+        """
+
+        lambda_dict_i = dict()
+        lambda_dict_i["h_hat"] = x[0:self.hhat_len]  # ge vars
+        lambda_dict_i["chi_i"] = x[self.hhat_len:]  # mil constraints, threats against i
+
+        return(lambda_dict_i)
+
     def loss(self, xlvt):
+        """Calculate policy loss.
+
+        Parameters
+        ----------
+        xlvt : vector (see self.unwrap_xlvt)
+            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+
+        Returns
+        -------
+        float
+            loss
+
+        """
 
         ge_x = self.rewrap_xlvt(xlvt)["ge_x"]
         v = self.rewrap_xlvt(xlvt)["v"]
         theta_x = self.rewrap_xlvt(xlvt)["theta"]
 
+        # optimizer tracker
         self.tick += 1
-        if self.tick % 25 == 0:
+        if self.tick % 25 == 0:  # print output every 25 calls
             print("ge_dict:")
             print(self.ecmy.rewrap_ge_dict(ge_x))
 
@@ -238,29 +599,29 @@ class policies:
                 print(lbda_chi_i)
 
         tau_hat = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
-        tau_star = tau_hat * self.ecmy.tau
+        tau_star = tau_hat * self.ecmy.tau  # calculate equilibrium tau
 
-        tau_diffs = tau_star - self.ecmy.tau
-        loss = np.sum(tau_diffs**2)
-
-        # loss = 0
-        # for i in range(self.N):
-        #     loss += self.loss_tau(tau_hat[i, ], i)
+        tau_diffs = tau_star - self.ecmy.tau  # difference with factual tau
+        loss = np.sum(tau_diffs**2)  # euclidean norm
 
         return(loss)
 
-    def loss_tau(self, tau_i, id, weights=None):
-
-        if weights is None:
-            weights = np.ones(self.N)
-        weights = weights / np.sum(weights)  # normalize
-
-        tau_star = self.ecmy.tau[id, ] * tau_i
-        out = np.sum((self.ecmy.tau[id, ] - tau_star) ** 2 * weights)
-
-        return(out)
-
     def loss_grad(self, xlvt, out):
+        """gradient of loss function (autograd wrapper)
+
+        Parameters
+        ----------
+        xlvt : vector (see self.unwrap_xlvt)
+            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+        out : vector
+            len self.xlvt_len vector to store output (requirement for ipopt)
+
+        Returns
+        -------
+        vector
+            vector of partial derivatives of loss with respect to xlvt inputs
+
+        """
 
         loss_grad_f = ag.grad(self.loss)
         out[()] = loss_grad_f(xlvt)
@@ -268,10 +629,40 @@ class policies:
         return(out)
 
     def geq_diffs_xlvt(self, xlvt):
+        """calculate differences between ge inputs and tau_hat-consistent ge output (ge constraints satisfied when this returns zero vector)
+
+        Parameters
+        ----------
+        xlvt : vector (see self.unwrap_xlvt)
+            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+
+        Returns
+        -------
+        vector
+            len self.h_hat_len vector of differences between ge vars in xlvt and tau_hat-consistent ge_output
+
+        """
         ge_x = self.rewrap_xlvt(xlvt)["ge_x"]
         return(self.ecmy.geq_diffs(ge_x))
 
     def Lzeros_i_xlvt(self, xlvt, id, m):
+        """calculate first order condition for government i, xlvt input (wrapper around self.L_zeros_i for estimation)
+
+        Parameters
+        ----------
+        xlvt : vector (see self.unwrap_xlvt)
+            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+        id : int
+            id for country for which to calculate FOC
+        m : matrix
+            self.N times self.N matrix of military allocations
+
+        Returns
+        -------
+        vector
+            len self.N (policies) + self.hhat_len (ge_vars) vector storing partial derivatives of government id's Lagrangian
+
+        """
 
         xlvt_dict = self.rewrap_xlvt(xlvt)
         ge_x = xlvt_dict["ge_x"]
@@ -281,13 +672,30 @@ class policies:
         theta_x = xlvt_dict["theta"]
         theta_dict = self.rewrap_theta(theta_x)
 
-        wv = self.war_vals(v, m, theta_dict)
+        wv = self.war_vals(v, m, theta_dict)  # calculate war values
 
-        Lzeros_i = self.Lzeros_i(np.concatenate((ge_x, lbda_i)), id, v, wv[:,id])
+        Lzeros_i = self.Lzeros_i(np.concatenate((ge_x, lbda_i)), id, v, wv[:,id])  # flattened and concatenated ge vars and lbda_i as input
 
         return(Lzeros_i)
 
     def war_diffs_xlvt(self, xlvt, id, m):
+        """calculate values of war constraints for government id, given ge vars and parameters in xlvt (wrapper around self.war_diffs)
+
+        Parameters
+        ----------
+        xlvt : vector (see self.unwrap_xlvt)
+            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+        id : id
+            id of government for which to calculate war diffs
+        m : matrix
+            self.N times self.N matrix of military allocations
+
+        Returns
+        -------
+        vector
+            length self.N vector of war diffs
+
+        """
 
         xlvt_dict = self.rewrap_xlvt(xlvt)
         ge_x = xlvt_dict["ge_x"]
@@ -302,6 +710,23 @@ class policies:
         return(war_diffs_i)
 
     def comp_slack_xlvt(self, xlvt, id, m):
+        """calculate value of complementary slackness conditions
+
+        Parameters
+        ----------
+        xlvt : vector (see self.unwrap_xlvt)
+            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+        id : id
+            id of government for which to calculate comp slack condition
+        m : matrix
+            self.N times self.N matrix of military allocations
+
+        Returns
+        -------
+        vector
+            length self.N vector of complementary slackness conditions for government id
+
+        """
 
         xlvt_dict = self.rewrap_xlvt(xlvt)
         ge_x = xlvt_dict["ge_x"]
@@ -314,14 +739,27 @@ class policies:
         wv = self.war_vals(v, m, theta_dict)
 
         war_diffs_i = self.war_diffs(ge_x, v, wv[:,id], id)
-
         lbda_i_chi = self.rewrap_lbda_i(lbda_i)["chi_i"]
-
         comp_slack_i = war_diffs_i * lbda_i_chi
 
         return(comp_slack_i)
 
     def estimator_cons(self, xlvt, m):
+        """return flattened vector of estimation constraints (length self.g_len). Equality and inequality included. Equality constraints set to zero. Inequality constraints greater than zero. These values set in self.estimator.
+
+        Parameters
+        ----------
+        xlvt : vector (see self.unwrap_xlvt)
+            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+        m : matrix
+            self.N times self.N matrix of military allocations
+
+        Returns
+        -------
+        vector
+            length self.g_len of estimation constraints
+
+        """
 
         # geq constraints
         geq_diffs = self.geq_diffs_xlvt(xlvt)
@@ -343,38 +781,44 @@ class policies:
         return(out)
 
     def estimator_cons_wrap(self, m):
+        """wrapper around self.estimator_cons for ipopt. Returns function that maps input and out vector into new values for constraints.
+
+        Parameters
+        ----------
+        m : matrix
+            self.N times self.N matrix of military allocations
+
+        Returns
+        -------
+        funtion
+            function suitable for evaluating constraints in ipopt.
+
+        """
+
         def f(x, out):
             out[()] = self.estimator_cons(x, m)
             return(out)
+
         return(f)
 
-    def estimator_cons_hess(self, xlvt):
-
-        # geq constraints
-        geq_diffs = self.geq_diffs_xlvt(xlvt)
-
-        # Lagrange gradient
-        Lzeros = []
-        war_diffs = []
-        comp_slack = []
-        for i in range(self.N):
-            Lzeros_i = self.Lzeros_i_xlvt(xlvt, i)
-            Lzeros.extend(Lzeros_i)
-            war_diffs_i = self.war_diffs_xlvt(xlvt, i)
-            war_diffs.extend(war_diffs_i)
-            comp_slack_i = self.comp_slack_xlvt(xlvt, i)
-            comp_slack.extend(comp_slack_i)
-
-        all = []
-        all.extend(geq_diffs)
-        all.extend(Lzeros)
-        all.extend(war_diffs)
-        all.extend(comp_slack)
-        out = np.array(all)
-
-        return(out)
-
     def estimator_cons_jac(self, xlvt, g_sparsity_bin, m):
+        """calculate constraint Jacobian (autograd wrapper)
+
+        Parameters
+        ----------
+        xlvt : vector (see self.unwrap_xlvt)
+            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+        g_sparsity_bin : vector
+            flattened boolean array of indices to include in return (default: all true)
+        m : matrix
+            self.N times self.N matrix of military allocations
+
+        Returns
+        -------
+        vector
+            flattened self.xlvt_len times self.g_len matrix of constraint jacobian values
+
+        """
 
         geq_diffs_jac_f = ag.jacobian(self.geq_diffs_xlvt)
         geq_diffs_jac = geq_diffs_jac_f(xlvt)
@@ -400,50 +844,57 @@ class policies:
         return(out)
 
     def estimator_cons_jac_wrap(self, g_sparsity_bin, m):
+        """wrapper around self.estimator_cons_jac for ipopt. Returns function suitable for evaluating constraint Jacobian within ipopt.
+
+        Parameters
+        ----------
+        g_sparsity_bin : vector
+            flattened boolean array of indices to include in return (default: all true)
+        m : matrix
+            self.N times self.N matrix of military allocations
+
+        Returns
+        -------
+        function
+            function suitable for evaluating constraint Jacobian in ipopt
+
+        """
+
         def f(x, out):
             out[()] = self.estimator_cons_jac(x, g_sparsity_bin, m)
             return(out)
+
         return(f)
 
-    def estimator_lgrg(self, xlvt, lagrange, obj_factor):
-
-        loss = self.loss(xlvt)
-        cons = self.estimator_cons_hess(xlvt)
-
-        out = obj_factor * loss + np.sum(lagrange * cons)
-
-        return(out)
-
-    def estimator_lgrg_hess(self, xlvt, lagrange, obj_factor, out):
-
-        lgrg_hess_f = ag.hessian(self.estimator_lgrg)
-        lgrg_hess_mat = lgrg_hess_f(xlvt, lagrange, obj_factor)
-        out[()] = lgrg_hess_mat.ravel()
-
-        return(out)
-
-    def g_sparsity_bin(self, xlvt_sv):
-
-        jac_flat = self.estimator_cons_jac(xlvt_sv, np.repeat(True, self.xlvt_len*self.g_len))
-        out = jac_flat != 0
-
-        return(out)
-
-    def g_sparsity_idx(self, g_sparsity_bin):
-
-        jac_mat = np.reshape(g_sparsity_bin, (self.g_len, self.xlvt_len))
-        print(np.sum(jac_mat==True) / (self.xlvt_len * self.g_len))
-        out = np.argwhere(jac_mat==True)
-
-        return(out)
-
     def estimator_bounds(self, bound="lower", nash_eq=False, theta_x=None, v=None):
+        """return bounds on input variables for estimator
 
+        Parameters
+        ----------
+        bound : str
+            "lower" or "upper", return upper or lower bounds on input values
+        nash_eq : bool
+            if true, constrain all parameters to initial values
+        theta_x : vector
+            initial values for theta
+        v : vector
+            initial values for v
+
+        Returns
+        -------
+        vector
+            length self.xlvt_len vector of lower or upper bounds for input values
+
+        """
+
+        # set initial values for bounds
         x_L = np.repeat(-np.inf, self.xlvt_len)
         x_U = np.repeat(np.inf, self.xlvt_len)
 
+        # bound tau_hats below at zero
         tau_hat_lb = np.zeros((self.N, self.N))
         tau_hat_ub = np.max(self.ecmy.tau) / self.ecmy.tau
+        # bound own tau_hats at one
         np.fill_diagonal(tau_hat_lb, 1.)
         np.fill_diagonal(tau_hat_ub, 1.)
 
@@ -451,19 +902,19 @@ class policies:
         x_L[0:self.N**2] = tau_hat_lb.ravel()
         x_U[0:self.N**2] = tau_hat_ub.ravel()
         x_L[self.N**2:self.N**2+self.N] = 1.
-        x_U[self.N**2:self.N**2+self.N] = 1. # deficits
+        x_U[self.N**2:self.N**2+self.N] = 1. # fix deficits
 
         lbda_i_bound_dict = dict()
         lbda_i_bound_dict["h_hat"] = np.repeat(-np.inf, self.hhat_len)
         # lbda_i_bound_dict["chi_i"] = np.repeat(self.zero_lb_relax, self.N)
-        lbda_i_bound_dict["chi_i"] = np.repeat(0., self.N)
+        lbda_i_bound_dict["chi_i"] = np.repeat(0., self.N)  # constrain inequality constraint multipliers to be positive
         lbda_i_bound = self.unwrap_lbda_i(lbda_i_bound_dict)
 
         lbda_bound = np.tile(lbda_i_bound, self.N)
 
         x_L[self.x_len:self.x_len+self.lambda_i_len*self.N] = lbda_bound  # mil constraint multipliers
 
-        if nash_eq == False:
+        if nash_eq == False:  # set lower bounds on parameters, of fix some values for testing estimator
             x_L[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = 1 # vs
             x_U[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = np.max(self.ecmy.tau) # vs
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N] = 0  # c_hat lower
@@ -481,7 +932,7 @@ class policies:
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0
             # x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # fix alpha
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0  # gamma lower
-        else:
+        else:  # fix all parameters at initial values
             theta_dict = self.rewrap_theta(theta_x)
             x_L[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = v
             x_U[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = v
@@ -499,14 +950,47 @@ class policies:
         else:
             return(x_U)
 
-    def apply_new(_X):
-        return(True)
+    def alpha1_min(self, thres):
+        """calculate minimum value for alpha1 (distance elasticity)
+
+        Parameters
+        ----------
+        thres : float
+            minimum desired rho, evaluated at minimum nonzero distance in data
+
+        Returns
+        -------
+        float
+            minimum value for alpha1
+
+        """
+
+        Wmin = np.min(self.W[self.W>0])
+        alpha1_min = - np.log(thres) / Wmin
+
+        return(alpha1_min)
 
     def estimator(self, v_sv, theta_x_sv, m, nash_eq=False):
+        """estimate the model
 
-        # print(xlvt_sv)
+        Parameters
+        ----------
+        v_sv : vector
+            length self.N vector of staring values for preference parameters
+        theta_x_sv : vector
+            flattened vector of starting values for military parameters
+        m : matrix
+            self.N times self.N matrix of military allocations
+        nash_eq : bool
+            compute nash_equilibrium, fixing parameters, in lieu of estimating model
 
-        # if nash_eq = True fix theta vals at those in theta_dict_sv and compute equilibrium
+        Returns
+        -------
+        x, obj, status
+            ipopt standard returns
+
+        """
+
         x_len = self.xlvt_len
 
         wd_g = np.repeat(np.inf, self.N**2)
@@ -514,24 +998,14 @@ class policies:
         g_upper[self.hhat_len + (self.hhat_len + self.N - 1)*self.N:self.hhat_len + (self.hhat_len + self.N - 1)*self.N+self.N**2] = wd_g
 
         xlvt_sv_dc = np.concatenate((np.ones(self.x_len), np.repeat(.01, self.lambda_i_len*self.N), v_sv, theta_x_sv))  # NOTE: for derivative checker, we will use these to calculate Jacobian sparsity
-        xlvt_sv = np.concatenate((np.ones(self.x_len), np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
+        xlvt_sv = np.concatenate((np.ones(self.x_len), np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv)) # initialize starting values
 
-        # Search entire Jacobian
+        # Jacobian sparsity (none)
         g_sparsity_indices_a = np.array(np.meshgrid(range(self.g_len), range(x_len))).T.reshape(-1,2)
         g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
         g_sparsity_bin = np.repeat(True, self.g_len*self.xlvt_len)
 
-        # Sparse Jacobian
-        # NOTE: starting values sometimes induce sparsity for elements that have positive derivatives for some parameters. But problem seems to go away if we make wv_min low enough
-            # attempting both versions of sparsity on mini problem
-            # doit results: Sparse (TODO: need to debug...runs forever for some reason)
-            # python: full
-            # (holding gamma fixed at 1)
-        # g_sparsity_bin = self.g_sparsity_bin(xlvt_sv)
-        # g_sparsity_indices_a = self.g_sparsity_idx(g_sparsity_bin)
-        # g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
-
-        # NOTE: ipopt requires Hessian of *Lagrangian*, see hs071.py
+        # Lagrangian Hessian sparsity (none)
         h_sparsity_indices_a = np.array(np.meshgrid(range(self.xlvt_len), range(self.xlvt_len))).T.reshape(-1,2)
         h_sparsity_indices = (h_sparsity_indices_a[:,0], h_sparsity_indices_a[:,1])
 
@@ -543,162 +1017,31 @@ class policies:
             b_U = self.estimator_bounds("upper", True, theta_x_sv, v_sv)
 
         if nash_eq == False:
-            # problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons, self.estimator_cons_jac_wrap(g_sparsity_bin), self.estimator_lgrg_hess, self.apply_new)
             problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(g_sparsity_bin, m))
-            # problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
             problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
+            # for derivative test, make sure we don't travel too far from initial point with point_perturbation_radius (leads to evaluation errors)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
         else:
-            # ge_x_sv = self.v_sv_all(v_sv)
-            # xlvt_sv = np.concatenate((ge_x_sv, np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv))
             problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(g_sparsity_bin, m))
-            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
             problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso")
         print("solving...")
         _x, obj, status = problem.solve(xlvt_sv)
 
         return(_x, obj, status)
 
-    def unwrap_lbda_i(self, lambda_dict_i):
-        """Convert dictionary of multipliers for gov i into vector for Lagrangians
-
-        Parameters
-        ----------
-        lambda_dict_i : dict
-            Nested dictionary storing multipliers for constrained maximization problems
-
-        Returns
-        -------
-        vector
-            vector length of number of ge and tau constraints
-
-        """
-
-        x = []
-        x.extend(lambda_dict_i["h_hat"])
-        x.extend(lambda_dict_i["chi_i"])
-
-        return(np.array(x))
-
-    def rewrap_lbda_i(self, x):
-        """Return dictionary of Lagrange multipliers from vector of multipliers for given gov id
-
-        Parameters
-        ----------
-        x : array
-            vector length of number of ge and tau constraints for government i
-
-        Returns
-        -------
-        dict
-            Updated nested dictionary
-
-        """
-
-        lambda_dict_i = dict()
-        lambda_dict_i["h_hat"] = x[0:self.hhat_len]  # ge vars
-        lambda_dict_i["chi_i"] = x[self.hhat_len:]  # mil constraints, threats against i
-
-        return(lambda_dict_i)
-
-    def Lagrange_i_x(self, ge_x, lambda_i_x, id, v, wv):
-        """Short summary.
-
-        Parameters
-        ----------
-        ge_x : vector
-            1d numpy array storing flattened ge inputs and outputs.
-        tau_hat : matrix
-            N times N matrix of initial taus.
-        war_vals : vector
-            Length N minus one vector of war values for each non-id country in war against id
-        lambda_x : vector
-            multipliers for gov id
-        id : int
-            government choosing policy
-
-        Returns
-        -------
-        scalar
-            Value for Lagrangian
-
-        """
-
-        lambda_dict_i = self.rewrap_lbda_i(lambda_i_x)
-        ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
-
-        G_hat_i = self.G_hat(ge_x, v, id, sign=1)
-        geq_diffs = self.ecmy.geq_diffs(ge_x)
-        war_diffs = self.war_diffs(ge_x, v, wv, id)
-
-        # wdz = np.where(war_diffs > 0, 0, war_diffs)
-        # wdz = -1 * wdz
-        wd = -1 * war_diffs
-
-        L_i = G_hat_i - np.dot(lambda_dict_i["h_hat"], geq_diffs) - np.dot(lambda_dict_i["chi_i"], wd)
-
-        return(L_i)
-
-    def L_grad_i_ind(self, id):
-
-        ind_dict = dict()
-        ind_dict["tau_hat"] = np.reshape(np.repeat(False, self.N**2), (self.N, self.N))
-        ind_dict["tau_hat"][id, ] = True
-        np.fill_diagonal(ind_dict["tau_hat"], False)
-        ind_dict["D_hat"] = np.repeat(False, self.N)
-        ind_dict["X_hat"] = np.reshape(np.repeat(True, self.N**2), (self.N, self.N))
-        ind_dict["P_hat"] = np.repeat(True, self.N)
-        ind_dict["w_hat"] = np.repeat(True, self.N)
-        ind_dict["r_hat"] = np.repeat(True, self.N)
-        ind_dict["E_hat"] = np.repeat(True, self.N)
-
-        return(self.ecmy.unwrap_ge_dict(ind_dict))
-
-    def Lzeros_i(self, ge_x_lbda_i_x, id, v, wv):
-        """Short summary.
-
-        Parameters
-        ----------
-        x : vector
-            1d numpy array storing flattened ge_x values
-        tau_hat : matrix
-            N times N matrix of initial taus.
-        war_vals : vector
-            Length N minus one vector of war values for each non-id country in war against id
-        id : int
-            government choosing policy
-        bound : "lower" or "upper"
-            if "upper" multiply output vector by -1
-
-        Returns
-        -------
-        vec
-            1d array storing flattened gradient of Lagrangian and constraint diffs
-
-        """
-
-        ge_x = ge_x_lbda_i_x[0:self.x_len]
-        lambda_i_x = ge_x_lbda_i_x[self.x_len:]
-
-        ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
-        L_grad_f = ag.grad(self.Lagrange_i_x)
-        L_grad = L_grad_f(ge_x, lambda_i_x, id, v, wv)
-        L_grad_i = L_grad[self.L_grad_i_ind(id)]
-
-        out = []
-        out.extend(L_grad_i)
-
-        return(L_grad_i)
-
     def Lzeros_i_cons(self, ge_x_lbda_i_x, out, id, v, wv):
 
         ge_x = ge_x_lbda_i_x[0:self.x_len]
+
+        # print(self.ecmy.rewrap_ge_dict(ge_x))
         lambda_i_x = ge_x_lbda_i_x[self.x_len:]
 
         geq_diffs = self.ecmy.geq_diffs(ge_x)
         Lzeros = self.Lzeros_i(ge_x_lbda_i_x, id, v, wv)
         war_diffs = self.war_diffs(ge_x, v, wv, id)
+        print(np.clip(-1*war_diffs, 0, np.inf))
         comp_slack = war_diffs * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
+        print(self.rewrap_lbda_i(lambda_i_x)["chi_i"][4])
 
         out[()] = np.concatenate((geq_diffs, Lzeros, war_diffs, comp_slack))
 
@@ -757,9 +1100,11 @@ class policies:
         x_L = np.concatenate((np.zeros(self.x_len), np.repeat(-np.inf, self.lambda_i_len)))
         x_U = np.repeat(np.inf, self.x_len+self.lambda_i_len)
 
-        tau_L = 1. / self.ecmy.tau
-        # tau_U = np.reshape(np.repeat(np.inf, self.N ** 2), (self.N, self.N))
-        tau_U = (np.max(self.ecmy.tau, axis=1) / self.ecmy.tau.T).T
+        # tau_L = 1. / self.ecmy.tau
+        tau_L = np.zeros((self.N, self.N))
+        tau_U = np.reshape(np.repeat(np.inf, self.N ** 2), (self.N, self.N))
+        # tau_U = (np.max(self.ecmy.tau, axis=1) / self.ecmy.tau.T).T
+        np.fill_diagonal(tau_L, 1.)
         np.fill_diagonal(tau_U, 1.)
         for i in range(self.N):
             for j in range(self.N):
@@ -767,8 +1112,8 @@ class policies:
                     if i != id:
                         tau_L[i, j] = tau_hat[i, j]
                         tau_U[i, j] = tau_hat[i, j]
-                    else:
-                        tau_L[i, j] = 1 / self.ecmy.tau[i, j]
+                    # else:
+                    #     tau_L[i, j] = 1 / self.ecmy.tau[i, j]
                 else:
                     tau_L[i, j] = 1.
                     tau_U[i, j] = 1.
@@ -782,6 +1127,7 @@ class policies:
         x_U[self.N**2:self.N**2+self.N] = 1.
 
         x_L[-self.N:] = 0  # mil constraint multipliers
+        # x_L[-self.N:] = self.zero_lb_relax  # mil constraint multipliers
 
         if bound == "lower":
             return(x_L)
@@ -801,7 +1147,8 @@ class policies:
         # verbose
         ipyopt.set_loglevel(ipyopt.LOGGING_DEBUG)
 
-        ge_x0 = self.v_sv(id, np.ones(self.x_len), v)
+        # ge_x0 = self.v_sv(id, np.ones(self.x_len), v)
+        ge_x0 = self.nft_sv(id, np.ones(self.x_len))
         lbda_i0 = np.zeros(self.lambda_i_len)
         x0 = np.concatenate((ge_x0, lbda_i0))
         x_len = len(x0)
@@ -812,6 +1159,8 @@ class policies:
         print(x_len)
         print(g_len_i)
         print(g_upper)
+        print(self.Lzeros_i_bounds(ge_x0, id, "lower"))
+        print(self.Lzeros_i_bounds(ge_x0, id, "upper"))
 
         g_sparsity_indices_a = np.array(np.meshgrid(range(g_len_i), range(x_len))).T.reshape(-1,2)
         g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
@@ -820,51 +1169,11 @@ class policies:
 
         problem = ipyopt.Problem(x_len, self.Lzeros_i_bounds(ge_x0, id, "lower"), self.Lzeros_i_bounds(ge_x0, id, "upper"), g_len_i, np.zeros(g_len_i), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.Lzeros_i_cons_wrap(id, v, wv), self.Lzeros_i_cons_jac_wrap(id, v, wv))
 
-        problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
+        problem.set(print_level=5, fixed_variable_treatment='make_parameter')
         print("solving...")
         x_lbda, obj, status = problem.solve(x0)
 
         return(x_lbda, obj, status)
-
-        return(x_lbda)
-
-    def war_vals(self, v, m, theta_dict):
-        """Calculate war values (regime change value minus war costs)
-
-        Parameters
-        ----------
-        b : vector
-            length N vector of preference parameters
-        m : matrix
-            N times N matrix of military deployments.
-        theta_dict : dict
-            Dictionary storing military structural parameters
-        id : int
-            defending country id
-        c_bar : float
-            maximum adjusted war cost to return if chi_ji = 0
-
-        Returns
-        -------
-        vector
-            Matrix of war values for row id in war against col id, zeros on diagonal
-
-        """
-
-        chi = self.chi(m, theta_dict)
-        chi = np.clip(chi, self.chi_min, 1)
-        wc = theta_dict["c_hat"] / chi
-        rcv_ft = self.rcv_ft(v)
-        wv = rcv_ft - wc
-        wv = np.clip(wv, self.wv_min, np.inf)
-
-        return(wv)
-
-    def rcv_ft(self, v):
-
-        out = np.array([self.G_hat(self.ge_x_ft[i, ], v, 0, all=True) for i in range(self.N)])
-
-        return(out.T)
 
     def Lzeros_jac(self, ge_x_lbda_i_x, v, tau_hat, war_vals, id, enforce_geq, bound):
         Lzeros_jac_f = ag.jacobian(self.Lzeros)
@@ -1004,74 +1313,6 @@ class policies:
         #     out = opt.minimize(self.Lzeros_loss, x, method=mtd, constraints=cons, bounds=bounds)
 
         return(out)
-
-    def war_diffs(self, ge_x, v, war_vals, id):
-        """Calculate difference between government id's utility at proposed vector ge_x versus war_value
-
-        Parameters
-        ----------
-        ge_x : vector
-            1d numpy array storing flattened ge inputs and outputs.
-        war_vals : vector
-            Length N vector of war values for each non-id country in war against id
-        id : int
-            Gov id for which to calculate war constraints
-
-        Returns
-        -------
-        vector
-            Length N minus one vector of peace-war against id utility differences
-
-        """
-
-        G = self.G_hat(ge_x, v, 0, all=True)
-        war_diffs = G - war_vals
-
-        # turn to zero where negative
-        # wdz = np.where(war_diffs < 0, 0, war_diffs)
-
-        return(war_diffs)
-
-    def chi(self, m, theta_dict):
-
-        rhoM = self.rhoM(theta_dict)
-        m_diag = np.diagonal(m)
-        m_frac = m / m_diag
-
-        chi_logit = rhoM * m_frac ** theta_dict["gamma"]
-
-        chi = chi_logit / (1 + chi_logit)
-
-        return(chi)
-
-    def alpha1_min(self, thres):
-
-        Wmin = np.min(self.W[self.W>0])
-        alpha1_min = - np.log(thres) / Wmin
-
-        return(alpha1_min)
-
-    def rhoM(self, theta_dict):
-        """Calculate loss of strength gradient given alphas and distance matrix (W)
-
-        Parameters
-        ----------
-        theta_dict : dict
-            Dictionary storing military structural parameters
-
-        Returns
-        -------
-        matrix
-            N times N symmetric matrix loss of strength gradient
-
-        """
-
-        # rhoM = np.exp(-1 * (theta_dict["alpha"][0] + self.W * theta_dict["alpha"][1]) + epsilon)
-        rhoM = np.exp(-1 * (theta_dict["alpha0"] + self.W * theta_dict["alpha1"]))
-        rhoM += 1 - np.diag(np.diag(rhoM))
-        # rhoM = np.clip(rhoM, 0, 1)
-
-        return(rhoM)
 
     def Lsolve(self, v, m, theta_dict, id, epsilon=None, mtd="lm", enforce_geq=False):
         """Solves for zeros of Lagrange optimality conditions for id's policies, holding others' at values in tau_hat. If ft==True, algorithm begins searching at free trade values for gov id. Otherwise, tries "lm" and "hybr" methods recursively starting at tau_hat, before trying each starting at free trade.
@@ -1248,28 +1489,6 @@ class policies:
     def con_mil_grad(self, ge_x, i, j, wv_ji, v):
         con_mil_grad_f = ag.jacobian(self.con_mil)
         return(con_mil_grad_f(ge_x, i, j, wv_ji, v))
-
-    def bounds(self):
-        """Generate bounds for optimization algorithms. Currently requires tariffs be positive.
-
-        Returns
-        -------
-        list
-            List of tuples length self.ecmy.ge_x_len
-
-        """
-
-        bnds = []
-        tauHatMin = self.tauMin / self.ecmy.tau
-        tauHatMax = self.tauMax / self.ecmy.tau
-        for i in range(self.N):
-            for j in range(self.N):
-                # bnds.append((tauHatMin[i,j], tauHatMax[i,j]))
-                bnds.append((tauHatMin[i,j], None))
-        for i in range(self.ecmy.ge_x_len-self.N**2):
-            bnds.append((.01, None))  # positive other entries
-
-        return(bnds)
 
     def G_hat_grad_ipyopt(self, ge_x, out, v, id):
         G_hat_grad_f = ag.grad(self.G_hat)
@@ -1548,7 +1767,8 @@ class policies:
     def v_sv(self, id, ge_x, v):
 
         tau_v = np.tile(np.array([v]).transpose(), (1, self.N))
-        tau_hat_v = (tau_v + .1) / self.ecmy.tau
+        # tau_hat_v = (tau_v + .1) / self.ecmy.tau
+        tau_hat_v = tau_v / self.ecmy.tau
         np.fill_diagonal(tau_hat_v, 1)
         ge_dict = self.ecmy.rewrap_ge_dict(copy.deepcopy(ge_x))
         tau_hat_sv = ge_dict["tau_hat"]
