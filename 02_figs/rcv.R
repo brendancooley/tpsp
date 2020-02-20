@@ -21,7 +21,7 @@
 # b_vals <- read_csv(paste0(resultsPath, "b_vals.csv"), col_names=FALSE) %>% pull(.)
 # b_tilde <- read_csv(paste0(resultsPath, "b_tilde.csv"), col_names=FALSE)
 # tau <- read_csv(paste0(dataPath, "tau.csv"), col_names=FALSE)
-
+# 
 # ccodes <- read_csv("~/Dropbox (Princeton)/1_Papers/tpsp/01_data/data/mini/ccodes.csv", col_names=FALSE)
 # N <- nrow(ccodes)
 # rcv_eq <- read_csv("~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results/mini/estimates/rcv_eq.csv", col_names=FALSE)
@@ -33,8 +33,8 @@ for (i in 1:N) {
 hmColors <- colorRampPalette(c("white", bcOrange))(30)
 naColor <- "#D3D3D3"
 
-mint <- 0
-maxt <- max(rcv_eq, na.rm=FALSE)
+mint <- min(rcv_eq, na.rm=T)
+maxt <- max(rcv_eq, na.rm=T)
 
 rcvhm <- function(rcv, minTau, maxTau) {
   colnames(rcv) <- ccodes %>% pull(.)

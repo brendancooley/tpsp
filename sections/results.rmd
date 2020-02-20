@@ -53,4 +53,13 @@ chihm(chi, minchi, maxchi)
 
 ```
 
-While governments do not face a geographic loss of strength gradient, wars are still costly. I estimate $\hat{c}$ to be `r round(c_hat, 2)`. Dividing this value by governments' conquest values, shown in Figure \ref{fig:rcv}, I compute war's cost-benefit ratio to be `r round(cb_ratio_mean, 2)` on average. 
+While governments do not face a geographic loss of strength gradient, wars are still costly. I estimate $\hat{c}$ to be `r round(c_hat, 2)`. Dividing this value by governments' conquest values, shown in Figure \ref{fig:rcv}, I compute war's cost-benefit ratio to be `r round(cb_ratio_mean, 2)` on average. Figure \ref{fig:cb_ratio} shows inverse cost-benefit ratios for each potential war. 
+
+```{r cb_ratio, echo=FALSE, warning=FALSE, message=FALSE, fig.cap=paste0("Estimated inverse cost-benefit ratio for attacking country against each defending country in offensive wars. \\label{fig:cb_ratio}"), fig.height=4, dpi=300, fig.pos="t"}
+
+source("../02_figs/cbratio.R")
+cb_ratio_plot + theme(aspect.ratio=1)
+
+```
+
+test

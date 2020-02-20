@@ -280,7 +280,7 @@ Figure \ref{fig:chi} combines these estimates to produce estimates of the contes
 
 ![Estimated probability of successful conquest for each attacking country (row) in war against every defending country (column). Each probability is reported in the appropriate cell of the heatmap. \label{fig:chi}](figure/chi-1.png)
 
-While governments do not face a geographic loss of strength gradient, wars are still costly. I estimate $\hat{c}$ to be 0.53. Dividing this value by governments' conquest values, shown in Figure \ref{fig:rcv}, I compute war's cost-benefit ratio to be 0.5 on average. 
+While governments do not face a geographic loss of strength gradient, wars are still costly. I estimate $\hat{c}$ to be 0.53. Dividing this value by governments' conquest values, shown in Figure \ref{fig:rcv}, gives a cost-benefit ratio for counterfactual wars. I estimate war's cost-benefit ratio to be 0.5 on average. 
 
 # Conclusion
 
