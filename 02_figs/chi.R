@@ -50,8 +50,8 @@ for (i in 1:nrow(ccodes)) {
 }
 
 chi <- as_tibble(chi)
-minchi <- 0
-maxchi <- 1
+minchi <- min(chi, na.rm=T)
+maxchi <- max(chi, na.rm=T)
 
 hmColors <- colorRampPalette(c("white", bcOrange))(30)
 naColor <- "#D3D3D3"
