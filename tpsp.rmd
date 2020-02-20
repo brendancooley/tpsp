@@ -33,7 +33,7 @@ for (i in helperFiles) {
   source(paste0(helperPath, i))
 }
 
-libs <- c("knitr", "tidyverse", "countrycode", "kableExtra", "latex2exp", "patchwork")
+libs <- c("knitr", "tidyverse", "countrycode", "kableExtra", "latex2exp", "patchwork", "ggpubr")
 ipak(libs)
 
 # not available
