@@ -148,7 +148,7 @@ $$
 \begin{equation*}
 \begin{split}
 \max_{ \tilde{\bm{\tau}}_i } & \quad G_i \left( h( \tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i} ) \right) \\
-\text{subject to} & \quad \underbrace{\tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}) G_j \left( h( \bm{1}_i; \tilde{\bm{\tau}}_{-i} ) \right) + \left( 1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}) \right) G_j \left( h (\tilde{\bm{\tau}} ) \right) - c_j \geq 0}_{\text{war constraint}} \quad \text{for all } j 
+\text{subject to} & \quad \underbrace{\tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}) G_j \left( h( \bm{1}_i; \tilde{\bm{\tau}}_{-i} ); v_j \right) + \left( 1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}) \right) G_j \left( h (\tilde{\bm{\tau}} ); v_j \right) - c_j \geq 0}_{\text{war constraint}} \quad \text{for all } j 
 \end{split}
 \end{equation*}
 
@@ -157,7 +157,7 @@ $$
 \begin{equation*}
 \begin{split}
 \max_{ \tilde{\bm{\tau}}_i } & \quad G_i \left( h( \tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i} ) \right) \\
-\text{subject to} & \quad \color{bcOrange} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}) \color{black} G_j \left( h( \bm{1}_i; \tilde{\bm{\tau}}_{-i} ) \right) + \left( 1 - \color{bcOrange} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}) \color{black} \right) G_j \left( h (\tilde{\bm{\tau}} ) \right) - c_j \geq 0 \quad \text{for all } j
+\text{subject to} & \quad \color{bcOrange} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}) \color{black} G_j \left( h( \bm{1}_i; \tilde{\bm{\tau}}_{-i} ); v_j \right) + \left( 1 - \color{bcOrange} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}) \color{black} \right) G_j \left( h (\tilde{\bm{\tau}} ); v_j \right) - c_j \geq 0 \quad \text{for all } j
 \end{split}
 \end{equation*}
 
@@ -175,7 +175,7 @@ $$
 \begin{equation*}
 \begin{split}
 \max_{ \tilde{\bm{\tau}}_i } & \quad G_i \left( h( \tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i} ) \right) \\
-\text{subject to} & \quad \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}) \color{bcOrange} G_j \left( h( \bm{1}_i; \tilde{\bm{\tau}}_{-i} ) \right) \color{black} + \left( 1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}) \right) G_j \left( h (\tilde{\bm{\tau}} ) \right) - c_j \geq 0 \quad \text{for all } j
+\text{subject to} & \quad \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}) \color{bcOrange} G_j \left( h( \bm{1}_i; \tilde{\bm{\tau}}_{-i} ); v_j \right) \color{black} + \left( 1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}) \right) G_j \left( h (\tilde{\bm{\tau}} ); v_j \right) - c_j \geq 0 \quad \text{for all } j
 \end{split}
 \end{equation*}
 
@@ -191,7 +191,7 @@ $$
 **Conquest Values**
 
 $$
-\color{bcOrange} G_j \left( h( \bm{1}_i; \tilde{\bm{\tau}}_{-i} ) \right)
+\color{bcOrange} G_j \left( h( \bm{1}_i; \tilde{\bm{\tau}}_{-i} ); v_j \right)
 $$
 
 ## Peaceful Equilibrium
@@ -199,7 +199,7 @@ $$
 \begin{equation*}
 \begin{split}
 \max_{ \tilde{\bm{\tau}}_i } & \quad G_i \left( h( \tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i} ) \right) \\
-\text{subject to} & \quad \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}) G_j \left( h( \bm{1}_i; \tilde{\bm{\tau}}_{-i} ) \right) + \left( 1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}) \right) G_j \left( h (\tilde{\bm{\tau}} ) \right) - c_j \geq 0 \quad \text{for all } j
+\text{subject to} & \quad \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}) G_j \left( h( \bm{1}_i; \tilde{\bm{\tau}}_{-i} ); v_j \right) + \left( 1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}) \right) G_j \left( h (\tilde{\bm{\tau}} ); v_j \right) - c_j \geq 0 \quad \text{for all } j
 \end{split}
 \end{equation*}
 
@@ -215,7 +215,7 @@ $$
 **Conquest Values**
 
 $$
-G_j \left( h( \bm{1}_i; \tilde{\bm{\tau}}_{-i} ) \right)
+G_j \left( h( \bm{1}_i; \tilde{\bm{\tau}}_{-i} ); v_j \right)
 $$
 
 **Equilibrium**
@@ -615,7 +615,7 @@ kable(v_estsT, booktabs = T, caption = "Preference Parameter ($\\tilde{\\bm{v}}$
 **Conquest Values**
 
 $$
-G_j(\bm{1}_i ; \tilde{\bm{\tau}}_{-i})
+G_j \left( h(\bm{1}_i ; \tilde{\bm{\tau}}_{-i});v_j \right)
 $$
 
 ```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
