@@ -637,7 +637,7 @@ G_i \left( h(\bm{\tau}), \bm{a}; \color{bcOrange} v_i \color{black} \right)
 </ul>
 <p><strong>Conquest Values</strong></p>
 <p><span class="math display">\[
-\color{bcOrange} G_j \left( h( \bm{1}_i; \tilde{\bm{\tau}}_{-i} ) \right)
+\color{bcOrange} G_j \left( h( \bm{1}_i; \tilde{\bm{\tau}}_{-i} ); v_j \right)
 \]</span></p>
 </section>
 <section id="peaceful-equilibrium-2" class="slide level2">
@@ -658,7 +658,7 @@ G_i \left( h(\bm{\tau}), \bm{a}; \color{bcOrange} v_i \color{black} \right)
 </ul>
 <p><strong>Conquest Values</strong></p>
 <p><span class="math display">\[
-G_j \left( h( \bm{1}_i; \tilde{\bm{\tau}}_{-i} ) \right)
+G_j \left( h( \bm{1}_i; \tilde{\bm{\tau}}_{-i} ); v_j \right)
 \]</span></p>
 <p><strong>Equilibrium</strong></p>
 <p><span class="math display">\[
@@ -684,7 +684,7 @@ G_j \left( h( \bm{1}_i; \tilde{\bm{\tau}}_{-i} ) \right)
 <p><strong>Mathematical Program with Equilibrium Constraints <span class="citation" data-cites="Su2012">(Su and Judd 2012)</span></strong></p>
 <p><span class="math display">\[\begin{equation*}
 \begin{split}
-\min_{\bm{\theta}} &amp; \quad \sum_i \sum_j \epsilon_{ij}(\bm{\theta}) \\
+\min_{\bm{\theta}, \bm{\tau}^\star} &amp; \quad \sum_i \sum_j \left( \epsilon_{ij}(\bm{\theta}) \right)^2 \\
 \text{subject to} &amp; \quad \color{bcOrange} \nabla_{\bm{\tau}_i} \mathcal{L}_i(\bm{\theta}) \color{black} = 0 \quad \text{for all } i
 \end{split}
 \end{equation*}\]</span></p>
@@ -1051,7 +1051,7 @@ United States
 <h2>Conquest Values</h2>
 <p><strong>Conquest Values</strong></p>
 <p><span class="math display">\[
-G_j(\bm{1}_i ; \tilde{\bm{\tau}}_{-i})
+G_j \left( h(\bm{1}_i ; \tilde{\bm{\tau}}_{-i});v_j \right)
 \]</span></p>
 <p><img src="index_files/figure-revealjs/rcv-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p><a href="#/toc" style="float: right;">Back</a></p>

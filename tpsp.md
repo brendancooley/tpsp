@@ -11,7 +11,7 @@ abstract: In international relations, how does latent military coercion affect g
 # thanks: Allison Carnegie, APSA 2019.
 # jelcodes: JEL codes go here
 
-bibliography: /Users/bcooley/Dropbox (Princeton)/References/library.bib
+bibliography: /Users/brendancooley/Dropbox (Princeton)/References/library.bib
 biblio-style: apsr
 
 papersize: letter
@@ -208,7 +208,7 @@ where $\bm{\epsilon}$ is an $N \times N$ matrix with $\epsilon_{ii} = 0$ for all
 
 Following the assumption that measurement error is mean-zero, I seek an estimator that solves
 \begin{equation} \label{eq:estimator}
-\min_{\bm{\theta}_m} \sum_i \sum_j \epsilon_{ij}(\bm{\theta}_m) .
+\min_{\bm{\theta}_m} \sum_i \sum_j \left( \epsilon_{ij}(\bm{\theta}_m) \right)^2 .
 \end{equation}
 
 Solving this problem presents two computational challenges. First, computing government welfare changes for any given $\hat{\bm{\tau}}$ requires solving system of equations characterizing the equilibrium of the international economy, $\hat{h}(\hat{\bm{\tau}})$. Second, computing $\tilde{\bm{\tau}}^\star(\bm{\theta}_m)$ requires iteratively solving each government's best response problem (\ref{eq:tauTildeStarHat}) until covergence at a Nash equilibrium. I sidestep both of these by recasting the best response problem and estimation problem as mathematical programs with equilibrium constraints (MPECs) [@Su2012; @Ossa2014; @Ossa2016].
@@ -230,7 +230,7 @@ $$
 for each government $i$. In the reformulated estimation problem, seek to choose parameters, trade policies, and general equilibrium response variables in order to minimize measurement error while enforcing these equilibrium constraints, in addition to general equilibrium constraints. Formally, I solve
 \begin{equation} \label{eq:estimatorMPEC}
 \begin{split}
-\min_{ \bm{\theta}_m, \hat{\tilde{\bm{\tau}}}, \hat{\bm{w}} } & \quad \sum_i \sum_j \epsilon_{ij} \\
+\min_{ \bm{\theta}_m, \hat{\tilde{\bm{\tau}}}, \hat{\bm{w}} } & \quad \sum_i \sum_j \left( \epsilon_{ij} \right)^2 \\
 \text{subject to} & \quad \nabla_{\hat{\tilde{\bm{\tau}}}_i} \mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i; \bm{\theta}_m) = 0  \text{ for all } i \\
 & \quad \hat{\bm{w}} = \hat{h}(\hat{\tilde{\bm{\tau}}}) .
 \end{split}
@@ -249,11 +249,11 @@ This procedure produces point estimates $\tilde{\bm{\theta}}_m$. I then construc
 Estimates of preference weights are reported in Table \ref{tab:v_estsT}. In @Cooley2019b, I show that developed countries tend to adopt higher trade barriers than their developing peers. Consistent with this finding, the European Union and Japan are assessed to have high values of $v_i$.
 
 
-\begin{table}[t]
+\begin{table}
 
 \caption{\label{tab:v_estsT}Preference Parameter ($\tilde{\bm{v}}$) Estimates \label{tab:v_estsT}}
 \centering
-\begin{tabular}{llr}
+\begin{tabular}[t]{llr}
 \toprule
 iso3 & Country Name & $\tilde{v}_i$\\
 \midrule
@@ -261,9 +261,9 @@ CHN & China & 1.106036\\
 EU & European Union & 1.354114\\
 JPN & Japan & 1.996520\\
 RoW & Rest of World & 1.125184\\
-RUS & Russian Federation & 1.000000\\
+RUS & Russia & 1.000000\\
 \addlinespace
-USA & United States of America & 1.292219\\
+USA & United States & 1.292219\\
 \bottomrule
 \end{tabular}
 \end{table}

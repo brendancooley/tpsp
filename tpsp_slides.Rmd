@@ -243,7 +243,7 @@ $$
 
 \begin{equation*}
 \begin{split}
-\min_{\bm{\theta}} & \quad \sum_i \sum_j \epsilon_{ij}(\bm{\theta}) \\
+\min_{\bm{\theta}, \bm{\tau}^\star} & \quad \sum_i \sum_j \left( \epsilon_{ij}(\bm{\theta}) \right)^2 \\
 \text{subject to} & \quad \color{bcOrange} \nabla_{\bm{\tau}_i} \mathcal{L}_i(\bm{\theta}) \color{black} = 0 \quad \text{for all } i
 \end{split}
 \end{equation*}
