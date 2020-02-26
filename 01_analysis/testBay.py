@@ -99,12 +99,13 @@ id = 0
 x_lbda, obj, status = pecmy.Lsolve_i_ipopt(id, v_test, wv[:,id])
 
 # np.savetxt("01_analysis/x.csv", x_lbda, delimiter=",")
-#
 # x_lbda = np.genfromtxt("x.csv", delimiter=",")
-# ge_x = x_lbda[0:pecmy.x_len]
-# ge_dict1 = pecmy.ecmy.rewrap_ge_dict(ge_x)
-# ge_dict1["tau_hat"] * pecmy.ecmy.tau
-# wv[:,id]
+
+ge_x = x_lbda[0:pecmy.x_len]
+ge_dict1 = pecmy.ecmy.rewrap_ge_dict(ge_x)
+print(ge_dict1["tau_hat"] * pecmy.ecmy.tau)
+#
+#
 #
 # pecmy.ecmy.geq_solve(ge_dict1["tau_hat"], np.ones(pecmy.N))
 #

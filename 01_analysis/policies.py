@@ -1040,10 +1040,12 @@ class policies:
         Lzeros = self.Lzeros_i(ge_x_lbda_i_x, id, v, wv)
         war_diffs = self.war_diffs(ge_x, v, wv, id)
         print(np.clip(war_diffs, -np.inf, 0))
-        comp_slack = war_diffs * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
-        print(self.rewrap_lbda_i(lambda_i_x)["chi_i"][4])
+        # comp_slack = war_diffs * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
+        war_diffs = np.clip(war_diffs, -np.inf, 0)
+        print(self.rewrap_lbda_i(lambda_i_x)["chi_i"])
 
-        out[()] = np.concatenate((geq_diffs, Lzeros, war_diffs, comp_slack))
+        # out[()] = np.concatenate((geq_diffs, Lzeros, war_diffs, comp_slack))
+        out[()] = np.concatenate((geq_diffs, Lzeros, war_diffs))
 
         return(out)
 
@@ -1058,7 +1060,7 @@ class policies:
 
     def war_diffs_lbda(self, ge_x_lbda_i_x, v, wv, id):
         ge_x = ge_x_lbda_i_x[0:self.x_len]
-        return(self.war_diffs(ge_x, v, wv, id))
+        return(np.clip(self.war_diffs(ge_x, v, wv, id), -np.inf, 0))
 
     def comp_slack_lbda(self, ge_x_lbda_i_x, v, wv, id):
 
@@ -1084,7 +1086,8 @@ class policies:
         comp_slack_jac_f = ag.jacobian(self.comp_slack_lbda)
         comp_slack_jac_mat = comp_slack_jac_f(ge_x_lbda_i_x, v, wv, id)
 
-        out[()] = np.concatenate((geq_diffs_jac_mat.ravel(), Lzero_jac_f_mat.ravel(), war_diffs_jac_mat.ravel(), comp_slack_jac_mat.ravel()))
+        # out[()] = np.concatenate((geq_diffs_jac_mat.ravel(), Lzero_jac_f_mat.ravel(), war_diffs_jac_mat.ravel(), comp_slack_jac_mat.ravel()))
+        out[()] = np.concatenate((geq_diffs_jac_mat.ravel(), Lzero_jac_f_mat.ravel(), war_diffs_jac_mat.ravel()))
 
         return(out)
 
@@ -1153,9 +1156,9 @@ class policies:
         x0 = np.concatenate((ge_x0, lbda_i0))
         x_len = len(x0)
 
-        g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N + self.N  # ge constraints, gradient  war diffs, complementary slackness
+        g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N # ge constraints, gradient  war diffs, complementary slackness
         g_upper = np.zeros(g_len_i)
-        g_upper[self.hhat_len + (self.hhat_len + self.N - 1):self.hhat_len + (self.hhat_len + self.N - 1)+self.N] = np.inf
+        # g_upper[self.hhat_len + (self.hhat_len + self.N - 1):self.hhat_len + (self.hhat_len + self.N - 1)+self.N] = np.inf
         print(x_len)
         print(g_len_i)
         print(g_upper)
