@@ -1201,7 +1201,6 @@ class policies:
         comp_slack_jac_mat = comp_slack_jac_f(ge_x_lbda_i_x, v, wv, id)
 
         out = np.concatenate((geq_diffs_jac_mat.ravel(), Lzero_jac_f_mat.ravel(), war_diffs_jac_mat.ravel(), comp_slack_jac_mat.ravel()))
-
         # out = np.concatenate((geq_diffs_jac_mat.ravel(), Lzero_jac_f_mat.ravel(), war_diffs_jac_mat.ravel()))
 
         return(out)
@@ -1339,14 +1338,15 @@ class policies:
         """
 
         ge_x0 = self.v_sv(id, np.ones(self.x_len), v)
-        lbda_i0 = np.zeros(self.lambda_i_len)  # initialize lambdas
+        lbda_i0 = np.ones(self.lambda_i_len)  # initialize lambdas
         x0 = np.concatenate((ge_x0, lbda_i0))
         x_len = len(x0)
 
-        # g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N # ge constraints, gradient,  war diffs
+        # g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N # ge constraints, gradient, war diffs
         g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N + self.N # ge constraints, gradient, war diffs, comp slack
         g_upper = np.zeros(g_len_i)
         g_upper[-self.N*2:-self.N] = np.inf
+        # g_upper[-self.N:] = np.inf
 
         g_sparsity_indices_a = np.array(np.meshgrid(range(g_len_i), range(x_len))).T.reshape(-1,2)
         g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
@@ -1356,6 +1356,8 @@ class policies:
         problem = ipyopt.Problem(x_len, self.Lzeros_i_bounds(ge_x0, id, "lower"), self.Lzeros_i_bounds(ge_x0, id, "upper"), g_len_i, np.zeros(g_len_i), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.Lzeros_i_cons_wrap(id, v, wv), self.Lzeros_i_cons_jac_wrap(id, v, wv))
 
         problem.set(print_level=5, fixed_variable_treatment='make_parameter', linear_solver="pardiso")
+        # derivative checker
+        # problem.set(print_level=5, fixed_variable_treatment='make_parameter', derivative_test="first-order", point_perturbation_radius=.1)
         print("solving...")
         x_lbda, obj, status = problem.solve(x0)
 

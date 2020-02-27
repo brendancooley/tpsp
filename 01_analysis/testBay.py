@@ -88,7 +88,7 @@ wv = pecmy.war_vals(v_test, pecmy.m, theta_dict)
 np.diag(wv)
 # wv = np.clip(wv, 0, np.inf)
 wv[:,0]
-id = 1
+id = 0
 # np.fill_diagonal(wv, 0)
 
 # for id in range(pecmy.N):
