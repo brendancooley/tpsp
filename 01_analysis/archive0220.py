@@ -546,3 +546,73 @@ def constraints_tau(self, ge_dict, tau_free, wv_i, v, ge=True, deficits=True, mi
         # ge_x_sv = np.ones(self.ecmy.ge_x_len)
         ge_x_out = opt.fixed_point(self.br_cor, ge_x_sv, args=(m, affinity, epsilon, b, theta_dict, True, ), method="iteration", xtol=1e-02)
         return(ge_x_out)
+
+    def comp_slack_lbda(self, ge_x_lbda_i_x, v, wv, id):
+
+        ge_x = ge_x_lbda_i_x[0:self.x_len]
+        lambda_i_x = ge_x_lbda_i_x[self.x_len:]
+
+        war_diffs = self.war_diffs(ge_x, v, wv, id)
+        comp_slack = war_diffs * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
+
+        return(comp_slack)
+
+    def con_mil(self, ge_x, i, j, wv_ji, v):
+        """
+
+        Parameters
+        ----------
+        ge_x : vector
+            1d numpy array storing flattened ge inputs and outputs. See function for order of values.
+        i : int
+            Defending country id
+        j : int
+            Constraining country id
+        m : matrix
+            N times N matrix of military deployments.
+
+        Returns
+        -------
+        float
+            constraint satisfied at ge_x when this is positive
+
+        """
+        # G_j
+        G_j = self.G_hat(ge_x, v, j)
+
+        cons = G_j - wv_ji
+
+        return(cons)
+
+    def con_mil_grad(self, ge_x, i, j, wv_ji, v):
+        con_mil_grad_f = ag.jacobian(self.con_mil)
+        return(con_mil_grad_f(ge_x, i, j, wv_ji, v))
+
+    def br_cor_ipyopt(self, ge_x, wv, v):
+
+        tau_hat = np.zeros((self.N, self.N))
+        for i in range(self.N):
+            print("solving:")
+            print(i)
+            x0 = self.v_sv(i, ge_x, v)
+            # ge_x_i = self.br_ipyopt(ge_x, v, i, wv[:,i])
+            print(ge_x_i)
+            tau_hat[i, ] = self.ecmy.rewrap_ge_dict(ge_x_i)["tau_hat"][i, ]
+
+        print("-----")
+        print("fp iteration:")
+        print(tau_hat)
+        ge_out_dict = self.ecmy.geq_solve(tau_hat, np.ones(self.N))
+        print(ge_out_dict)
+        print("-----")
+
+        return(self.ecmy.unwrap_ge_dict(ge_out_dict))
+
+    def nash_eq_ipyopt(self, v, theta_x):
+
+        wv = self.war_vals(v, self.m, self.rewrap_theta(theta_x))
+        ge_x_sv = np.ones(self.x_len)
+
+        out = opt.fixed_point(self.br_cor_ipyopt, ge_x_sv, args=(wv, v, ), method="iteration")
+
+        return(out)

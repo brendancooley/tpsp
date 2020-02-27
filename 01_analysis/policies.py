@@ -74,7 +74,7 @@ class policies:
         self.g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2  # constraints len: ge_diffs, Lzeros (own policies N-1), war_diffs mat, comp_slack mat
         self.max_iter_ipopt = 100000
         self.chi_min = 1.0e-10  # minimum value for chi
-        self.wv_min = -1.0e4  # minimum war value
+        self.wv_min = -1.0e2  # minimum war value
         self.alpha1_ub = self.alpha1_min(.01)  # restrict alpha search (returns alpha such that rho(alpha)=.01)
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
 
@@ -230,6 +230,7 @@ class policies:
         war_diffs = self.war_diffs(ge_x, v, wv, id)
 
         wd = -1 * war_diffs  # flip these so violations are positive
+        # wd = np.clip(wd, 0, np.inf)
 
         # mil multipliers constrained to be positive, lambda_dict_i["chi_i"] > 0
         L_i = G_hat_i - np.dot(lambda_dict_i["h_hat"], geq_diffs) - np.dot(lambda_dict_i["chi_i"], wd)
@@ -1029,40 +1030,134 @@ class policies:
 
         return(_x, obj, status)
 
-    def Lzeros_i_cons(self, ge_x_lbda_i_x, out, id, v, wv):
+    def Lzeros_i_cons(self, ge_x_lbda_i_x, id, v, wv):
+        """Constraints for best response (Lagrangian version)
+
+        Parameters
+        ----------
+        ge_x_lbda_i_x : vector
+            vector length self.x_len + self.lambda_i_len of ge vars and id's multipliers
+        id : int
+            id of government for which to calculate best response
+        v : vector
+            vector length self.N of governments preference parameters
+        wv : vector
+            vector length self.N of war values against gov id
+
+        Returns
+        -------
+        vector
+            vector length self.hhat_len + self.lambda_i_len + self.N of geq_diffs, Lagrange zeros, and war diffs (clipped to convert to equality constraints)
+
+        """
 
         ge_x = ge_x_lbda_i_x[0:self.x_len]
 
-        # print(self.ecmy.rewrap_ge_dict(ge_x))
         lambda_i_x = ge_x_lbda_i_x[self.x_len:]
 
         geq_diffs = self.ecmy.geq_diffs(ge_x)
         Lzeros = self.Lzeros_i(ge_x_lbda_i_x, id, v, wv)
         war_diffs = self.war_diffs(ge_x, v, wv, id)
-        print(np.clip(war_diffs, -np.inf, 0))
-        # comp_slack = war_diffs * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
-        war_diffs = np.clip(war_diffs, -np.inf, 0)
-        print(self.rewrap_lbda_i(lambda_i_x)["chi_i"])
+        comp_slack = war_diffs * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
+        # war_diffs = np.clip(war_diffs, -np.inf, 0)
 
-        # out[()] = np.concatenate((geq_diffs, Lzeros, war_diffs, comp_slack))
-        out[()] = np.concatenate((geq_diffs, Lzeros, war_diffs))
+        print(war_diffs)
+        print(comp_slack)
+        print(self.rewrap_lbda_i(lambda_i_x)["chi_i"])
+        out = np.concatenate((geq_diffs, Lzeros, war_diffs, comp_slack))
+        # out = np.concatenate((geq_diffs, Lzeros, war_diffs))
 
         return(out)
 
     def Lzeros_i_cons_wrap(self, id, v, wv):
+        """ipopt wrapper for constraints
+
+        Parameters
+        ----------
+        id : int
+            id of government for which to calculate best response
+        v : vector
+            vector length self.N of governments preference parameters
+        wv : vector
+            vector length self.N of war values against gov id
+
+        Returns
+        -------
+        function
+            ipopt-suitable function to calculate constraints
+
+        """
         def f(x, out):
-            return(self.Lzeros_i_cons(x, out, id, v, wv))
+            out[()] = self.Lzeros_i_cons(x, id, v, wv)
+            return(out)
         return(f)
 
     def geq_diffs_lbda(self, ge_x_lbda_i_x):
+        """wrapper around geq diffs for best response (Lagrangian version)
+
+        Parameters
+        ----------
+        ge_x_lbda_i_x : vector
+            vector length self.x_len + self.lambda_i_len of ge vars and id's multipliers
+
+        Returns
+        -------
+        vector
+            length self.hhat_len of ge violations
+
+        """
         ge_x = ge_x_lbda_i_x[0:self.x_len]
-        return(self.ecmy.geq_diffs(ge_x))
+        out = self.ecmy.geq_diffs(ge_x)
+        return(out)
 
     def war_diffs_lbda(self, ge_x_lbda_i_x, v, wv, id):
+        """wrapper around war diffs for best response (Lagrangian version)
+
+        Parameters
+        ----------
+        ge_x_lbda_i_x : vector
+            vector length self.x_len + self.lambda_i_len of ge vars and id's multipliers
+        v : vector
+            vector length self.N of governments preference parameters
+        wv : vector
+            vector length self.N of war values against gov id
+        id : int
+            id of government for which to calculate war constraints
+
+        Returns
+        -------
+        vector
+            length self.N vector of war constraints (clipped to convert to equality constraints)
+
+        """
+
         ge_x = ge_x_lbda_i_x[0:self.x_len]
-        return(np.clip(self.war_diffs(ge_x, v, wv, id), -np.inf, 0))
+        wd = self.war_diffs(ge_x, v, wv, id)
+        out = wd
+        # out = np.clip(wd, -np.inf, 0)  # clip to convert to equality constraints
+
+        return(out)
 
     def comp_slack_lbda(self, ge_x_lbda_i_x, v, wv, id):
+        """calculate complementary slackness condition
+
+        Parameters
+        ----------
+        ge_x_lbda_i_x : vector
+            vector length self.x_len + self.lambda_i_len of ge vars and id's multipliers
+        v : vector
+            vector length self.N of governments preference parameters
+        wv : vector
+            vector length self.N of war values against gov id
+        id : int
+            id of government for which to calculate war constraints
+
+        Returns
+        -------
+        vector
+            length self.N vector of complementary slackness conditions
+
+        """
 
         ge_x = ge_x_lbda_i_x[0:self.x_len]
         lambda_i_x = ge_x_lbda_i_x[self.x_len:]
@@ -1072,7 +1167,26 @@ class policies:
 
         return(comp_slack)
 
-    def Lzeros_i_cons_jac(self, ge_x_lbda_i_x, out, id, v, wv):
+    def Lzeros_i_cons_jac(self, ge_x_lbda_i_x, id, v, wv):
+        """calculate constraint jacobian for best response (Lagrangian)
+
+        Parameters
+        ----------
+        ge_x_lbda_i_x : vector
+            vector length self.x_len + self.lambda_i_len of ge vars and id's multipliers
+        id : int
+            id of government for which to calculate constraint jacobian
+        v : vector
+            vector length self.N of governments preference parameters
+        wv : vector
+            vector length self.N of war values against gov id
+
+        Returns
+        -------
+        vector
+            vector of unraveled geq constraint Jacobian, Lagrange zeros Jacobian, war diffs Jacobian
+
+        """
 
         geq_diffs_jac_f = ag.jacobian(self.geq_diffs_lbda)
         geq_diffs_jac_mat = geq_diffs_jac_f(ge_x_lbda_i_x)
@@ -1086,37 +1200,70 @@ class policies:
         comp_slack_jac_f = ag.jacobian(self.comp_slack_lbda)
         comp_slack_jac_mat = comp_slack_jac_f(ge_x_lbda_i_x, v, wv, id)
 
-        # out[()] = np.concatenate((geq_diffs_jac_mat.ravel(), Lzero_jac_f_mat.ravel(), war_diffs_jac_mat.ravel(), comp_slack_jac_mat.ravel()))
-        out[()] = np.concatenate((geq_diffs_jac_mat.ravel(), Lzero_jac_f_mat.ravel(), war_diffs_jac_mat.ravel()))
+        out = np.concatenate((geq_diffs_jac_mat.ravel(), Lzero_jac_f_mat.ravel(), war_diffs_jac_mat.ravel(), comp_slack_jac_mat.ravel()))
+
+        # out = np.concatenate((geq_diffs_jac_mat.ravel(), Lzero_jac_f_mat.ravel(), war_diffs_jac_mat.ravel()))
 
         return(out)
 
     def Lzeros_i_cons_jac_wrap(self, id, v, wv):
+        """wrapper around constraint Jacobian
+
+        Parameters
+        ----------
+        id : int
+            id of government for which to calculate constraint jacobian
+        v : vector
+            vector length self.N of governments preference parameters
+        wv : vector
+            vector length self.N of war values against gov id
+
+        Returns
+        -------
+        function
+            ipopt-suitable function to calculate constraint jacobian
+
+        """
         def f(x, out):
-            return(self.Lzeros_i_cons_jac(x, out, id, v, wv))
+            out[()] = self.Lzeros_i_cons_jac(x, id, v, wv)
+            return(out)
         return(f)
 
     def Lzeros_i_bounds(self, ge_x_sv, id, bound="lower"):
+        """bound input variables for best response Lagrangian calculation
+
+        Parameters
+        ----------
+        ge_x_sv : vector
+            vector length self.x_len + self.lambda_i_len of starting values for best response calculation
+        id : int
+            id of government for which to calculate best response
+        bound : str
+            "lower" or "upper", which bound to return
+
+        Returns
+        -------
+        vector
+            vector length self.x_len + self.lambda_i_len of bounds for Lagrange best response input
+
+        """
 
         tau_hat = self.ecmy.rewrap_ge_dict(ge_x_sv)["tau_hat"]
 
         x_L = np.concatenate((np.zeros(self.x_len), np.repeat(-np.inf, self.lambda_i_len)))
         x_U = np.repeat(np.inf, self.x_len+self.lambda_i_len)
 
-        # tau_L = 1. / self.ecmy.tau
         tau_L = np.zeros((self.N, self.N))
         tau_U = np.reshape(np.repeat(np.inf, self.N ** 2), (self.N, self.N))
-        # tau_U = (np.max(self.ecmy.tau, axis=1) / self.ecmy.tau.T).T
         np.fill_diagonal(tau_L, 1.)
         np.fill_diagonal(tau_U, 1.)
         for i in range(self.N):
             for j in range(self.N):
                 if i != j:
                     if i != id:
+                        # constrain others policies at starting values
                         tau_L[i, j] = tau_hat[i, j]
                         tau_U[i, j] = tau_hat[i, j]
-                    # else:
-                    #     tau_L[i, j] = 1 / self.ecmy.tau[i, j]
                 else:
                     tau_L[i, j] = 1.
                     tau_U[i, j] = 1.
@@ -1130,7 +1277,6 @@ class policies:
         x_U[self.N**2:self.N**2+self.N] = 1.
 
         x_L[-self.N:] = 0  # mil constraint multipliers
-        # x_L[-self.N:] = self.zero_lb_relax  # mil constraint multipliers
 
         if bound == "lower":
             return(x_L)
@@ -1138,32 +1284,69 @@ class policies:
             return(x_U)
 
     def dummy(self, x):
+        """dummy objective function for ipopt (for when we only care about solving constraints)
+
+        Parameters
+        ----------
+        x : vector
+            arbitrary-lengthed vector
+
+        Returns
+        -------
+        float
+            constant
+
+        """
         c = 1
         return(c)
 
     def dummy_grad(self, x, out):
+        """dummy objective gradient for ipopt
+
+        Parameters
+        ----------
+        x : vector
+            arbirtary-lengthed input vector
+        out : vector
+            arbirtary-lengthed out vector
+
+        Returns
+        -------
+        out
+            null gradient
+
+        """
         out[()] = np.zeros(len(x))
         return(out)
 
     def Lsolve_i_ipopt(self, id, v, wv):
+        """solve best response (Lagrange) for i using ipopt
 
-        # verbose
-        ipyopt.set_loglevel(ipyopt.LOGGING_DEBUG)
+        Parameters
+        ----------
+        id : int
+            government for which to calculate best response
+        v : vector
+            vector length self.N of governments preference parameters
+        wv : vector
+            vector length self.N of war values against gov id
 
-        # ge_x0 = self.v_sv(id, np.ones(self.x_len), v)
-        ge_x0 = self.nft_sv(id, np.ones(self.x_len))
-        lbda_i0 = np.zeros(self.lambda_i_len)
+        Returns
+        -------
+        vector, float, str
+            ipopt outputs, solution is first
+
+        """
+
+        ge_x0 = self.v_sv(id, np.ones(self.x_len), v)
+        lbda_i0 = np.zeros(self.lambda_i_len)  # initialize lambdas
         x0 = np.concatenate((ge_x0, lbda_i0))
         x_len = len(x0)
 
-        g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N # ge constraints, gradient  war diffs, complementary slackness
+        # g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N # ge constraints, gradient,  war diffs
+        g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N + self.N # ge constraints, gradient, war diffs, comp slack
         g_upper = np.zeros(g_len_i)
-        # g_upper[self.hhat_len + (self.hhat_len + self.N - 1):self.hhat_len + (self.hhat_len + self.N - 1)+self.N] = np.inf
-        print(x_len)
-        print(g_len_i)
-        print(g_upper)
-        print(self.Lzeros_i_bounds(ge_x0, id, "lower"))
-        print(self.Lzeros_i_bounds(ge_x0, id, "upper"))
+        g_upper[-self.N*2:-self.N] = np.inf
 
         g_sparsity_indices_a = np.array(np.meshgrid(range(g_len_i), range(x_len))).T.reshape(-1,2)
         g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
@@ -1172,111 +1355,218 @@ class policies:
 
         problem = ipyopt.Problem(x_len, self.Lzeros_i_bounds(ge_x0, id, "lower"), self.Lzeros_i_bounds(ge_x0, id, "upper"), g_len_i, np.zeros(g_len_i), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.Lzeros_i_cons_wrap(id, v, wv), self.Lzeros_i_cons_jac_wrap(id, v, wv))
 
-        problem.set(print_level=5, fixed_variable_treatment='make_parameter')
+        problem.set(print_level=5, fixed_variable_treatment='make_parameter', linear_solver="pardiso")
         print("solving...")
         x_lbda, obj, status = problem.solve(x0)
 
         return(x_lbda, obj, status)
 
-    def con_mil(self, ge_x, i, j, wv_ji, v):
+    def G_hat_wrap(self, v, id, sign):
+        """ipopt-suitable G_hat calculator
+
+        Parameters
+        ----------
+        v : vector
+            vector length self.N of preference parameters
+        iid : int
+            id of government for which to calculate objective
+        sign : float
+            scalar for objective function
+
+        Returns
+        -------
+        function
+            ipopt-suitable objective function calculator
+
+        """
+        def f(x):
+            return(self.G_hat(x, v, id, sign=sign))
+        return(f)
+
+    def G_hat_grad(self, ge_x, v, id):
         """
 
         Parameters
         ----------
         ge_x : vector
-            1d numpy array storing flattened ge inputs and outputs. See function for order of values.
-        i : int
-            Defending country id
-        j : int
-            Constraining country id
-        m : matrix
-            N times N matrix of military deployments.
+            vector length self.x_len of input values
+        v : vector
+            vector length self.N of preference parameters
+        id : int
+            id of government for which to calculate objective gradient
 
         Returns
         -------
-        float
-            constraint satisfied at ge_x when this is positive
+        vector
+            vector length self.x_len of gradient values
 
         """
-        # G_j
-        G_j = self.G_hat(ge_x, v, j)
-
-        cons = G_j - wv_ji
-
-        return(cons)
-
-    def con_mil_grad(self, ge_x, i, j, wv_ji, v):
-        con_mil_grad_f = ag.jacobian(self.con_mil)
-        return(con_mil_grad_f(ge_x, i, j, wv_ji, v))
-
-    def G_hat_grad_ipyopt(self, ge_x, out, v, id):
         G_hat_grad_f = ag.grad(self.G_hat)
-        out[0:len(out)] = G_hat_grad_f(ge_x, v, id, -1)
+        out = G_hat_grad_f(ge_x, v, id, -1)
+        return(out)
 
     def G_hat_grad_ipyopt_wrap(self, v, id):
+        """ipopt-suitable objective function gradient
+
+        Parameters
+        ----------
+        v : vector
+            vector length self.N of preference parameters
+        id : int
+            id of government for which to calculate objective gradient
+
+        Returns
+        -------
+        function
+            ipopt-suitable gradient calculator
+
+        """
         def f(ge_x, out):
-            return(self.G_hat_grad_ipyopt(ge_x, out, v, id))
+            out[()] = self.G_hat_grad(ge_x, v, id)
+            return(out)
         return(f)
 
-    def br_cons_ipyopt(self, ge_x, out, id, v, wv=None):
+    def br_cons_ipyopt(self, ge_x, id, v, wv):
+        """calculate best response constraints (geq diffs and war diffs)
+
+        Parameters
+        ----------
+        ge_x : vector
+            vector length self.x_len of ge inputs
+        id : int
+            id of government for which to calculate best response constraints
+        v : vector
+            vector length self.N of preference parameters
+        wv : vector
+            vector length self.N of war values against gov id
+
+        Returns
+        -------
+        vector
+            vector length self.hhat_len + self.N of best response constraints (geq diffs and war diffs)
+
+        """
 
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
         geq_diffs = self.ecmy.geq_diffs(ge_x)
-        if not wv is None:
-            war_diffs = self.war_diffs(ge_x, v, wv, id)
-            out[()] = np.concatenate((geq_diffs, war_diffs))
-        else:
-            out[()] = np.array(geq_diffs)
+        war_diffs = self.war_diffs(ge_x, v, wv, id)
+        out = np.concatenate((geq_diffs, war_diffs))
 
         return(out)
 
     def br_cons_ipyopt_wrap(self, id, v, wv):
+        """ipopt-suitable best response calculator
+
+        Parameters
+        ----------
+        id : int
+            id of government for which to calculate best response constraints
+        v : vector
+            vector length self.N of preference parameters
+        wv : vector
+            vector length self.N of war values against gov id
+
+        Returns
+        -------
+        function
+            ipopt-suitable function for calculating best responses
+
+        """
         def f(x, out):
-            return(self.br_cons_ipyopt(x, out, id, v, wv))
+            out[()] = self.br_cons_ipyopt(x, id, v, wv)
+            return(out)
         return(f)
 
-    def br_cons_ipyopt_jac(self, ge_x, out, id, v, wv):
+    def br_cons_ipyopt_jac(self, ge_x, id, v, wv):
+        """best response jacobian
+
+        Parameters
+        ----------
+        ge_x : vector
+            vector length self.x_len of ge inputs
+        id : int
+            id of government for which to calculate best response constraints
+        v : vector
+            vector length self.N of preference parameters
+        wv : vector
+            vector length self.N of war values against gov id
+
+        Returns
+        -------
+        vector
+            vector of unraveled ge diff jacobian and war diff jacobian wrt ge inputs
+
+        """
 
         geq_jac_f = ag.jacobian(self.ecmy.geq_diffs)
         mat_geq = geq_jac_f(ge_x)
 
-        if not wv is None:
-            wd_jac_f = ag.jacobian(self.war_diffs)
-            mat_wd = wd_jac_f(ge_x, v, wv, id)
-            out[()] = np.concatenate((mat_geq.ravel(), mat_wd.ravel()))
-        else:
-            out[()] = mat_geq.ravel()
+        wd_jac_f = ag.jacobian(self.war_diffs)
+        mat_wd = wd_jac_f(ge_x, v, wv, id)
+        out = np.concatenate((mat_geq.ravel(), mat_wd.ravel()))
+
         return(out)
 
     def br_cons_ipyopt_jac_wrap(self, id, v, wv):
+        """ipopt-suitable best response jacobian
+
+        Parameters
+        ----------
+        id : int
+            id of government for which to calculate best response constraints
+        v : vector
+            vector length self.N of preference parameters
+        wv : vector
+            vector length self.N of war values against gov id
+
+        Returns
+        -------
+        function
+            ipopt-suitable function for calculating best response jacobian
+
+        """
         def f(x, out):
-            return(self.br_cons_ipyopt_jac(x, out, id, v, wv))
+            out[()] = self.br_cons_ipyopt_jac(x, id, v, wv)
+            return(out)
         return(f)
 
     def br_bounds_ipyopt(self, ge_x_sv, id, bound="lower"):
+        """calculate bounds for best response inputs
+
+        Parameters
+        ----------
+        ge_x_sv : vector
+            vector length self.x_len of best response inputs
+        id : int
+            id of government for which to calculate best response constraints
+        bound : str
+            "lower" or "upper"
+
+        Returns
+        -------
+        vector
+            vector length self.x_len of bounds for ipopt search
+
+        """
 
         tau_hat = self.ecmy.rewrap_ge_dict(ge_x_sv)["tau_hat"]
 
-        # TODO: set lower bounds slightly above zero
         x_L = np.zeros(self.x_len)
         x_U = np.repeat(np.inf, self.x_len)
 
         tau_L = 1. / self.ecmy.tau
-        # tau_U = np.reshape(np.repeat(np.inf, self.N ** 2), (self.N, self.N))
-        tau_U = np.max(self.ecmy.tau) / self.ecmy.tau
-        np.fill_diagonal(tau_U, 1.)
+        tau_U = np.reshape(np.repeat(np.inf, self.N ** 2), (self.N, self.N))
         for i in range(self.N):
             for j in range(self.N):
                 if i != j:
                     if i != id:
+                        # fix other governments' policies
                         tau_L[i, j] = tau_hat[i, j]
                         tau_U[i, j] = tau_hat[i, j]
-                    else:
-                        tau_L[i, j] = 1 / self.ecmy.tau[i, j]
                 else:
+                    # fix diagonal at 1
                     tau_L[i, j] = 1.
                     tau_U[i, j] = 1.
-
 
         x_L[0:self.N**2] = tau_L.ravel()
         x_U[0:self.N**2] = tau_U.ravel()
@@ -1290,32 +1580,42 @@ class policies:
         else:
             return(x_U)
 
-    def G_hat_wrap(self, v, id, sign):
-        def f(x):
-            return(self.G_hat(x, v, id, sign=sign))
-        return(f)
-
     def br_ipyopt(self, x0, v, id, wv=None):
+        """calculate best response (ipopt optimizer over G_hat, enforcing ge and war constraints)
 
-        print(x0)
-        # g_len = self.x_len - (self.N - 1)
-        geq_c_len = self.x_len - self.N**2 - self.N
-        if not wv is None:
-            g_len_br = self.x_len - self.N**2
-            g_upper = np.zeros(self.x_len - self.N**2)
-            g_upper[geq_c_len:] = np.inf
-        else:
-            g_len_br = geq_c_len
+        Parameters
+        ----------
+        x0 : vector
+            vector length self.x_len of starting values from which to optimize...fixes non-id policies at these values
+        v : vector
+            vector length self.N of preference parameters
+        id : int
+            id of government for which to calculate best response
+        wv : vector
+            vector length self.N of war values against gov id
 
-        g_sparsity_indices_a = np.array(np.meshgrid(range(g_len_br), range(self.x_len))).T.reshape(-1,2)
+        Returns
+        -------
+        vector
+            vector length self.x_len of best response values
+
+        """
+
+        # constraints
+        g_len = self.hhat_len + self.N
+        g_upper = np.zeros(g_len)
+        g_upper[-self.N:] = np.inf  # war inequalities
+
+        g_sparsity_indices_a = np.array(np.meshgrid(range(g_len), range(self.x_len))).T.reshape(-1,2)
         g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
         h_sparsity_indices_a = np.array(np.meshgrid(range(self.x_len), range(self.x_len))).T.reshape(-1,2)
         h_sparsity_indices = (h_sparsity_indices_a[:,0], h_sparsity_indices_a[:,1])
 
+        # bounds
         x_L = self.br_bounds_ipyopt(x0, id, "lower")
         x_U = self.br_bounds_ipyopt(x0, id, "upper")
 
-        problem = ipyopt.Problem(self.x_len, x_L, x_U, g_len_br, np.zeros(g_len_br), g_upper, g_sparsity_indices, h_sparsity_indices, self.G_hat_wrap(v, id, -1), self.G_hat_grad_ipyopt_wrap(v, id), self.br_cons_ipyopt_wrap(id, v, wv), self.br_cons_ipyopt_jac_wrap(id, v, wv))
+        problem = ipyopt.Problem(self.x_len, x_L, x_U, g_len, np.zeros(g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.G_hat_wrap(v, id, -1), self.G_hat_grad_ipyopt_wrap(v, id), self.br_cons_ipyopt_wrap(id, v, wv), self.br_cons_ipyopt_jac_wrap(id, v, wv))
 
         problem.set(print_level=5, nlp_scaling_method="none", fixed_variable_treatment='make_parameter')
         print("solving...")
@@ -1323,36 +1623,22 @@ class policies:
 
         return(x)
 
-    def br_cor_ipyopt(self, ge_x, wv, v):
-
-        tau_hat = np.zeros((self.N, self.N))
-        for i in range(self.N):
-            print("solving:")
-            print(i)
-            x0 = self.v_sv(i, ge_x, v)
-            # ge_x_i = self.br_ipyopt(ge_x, v, i, wv[:,i])
-            print(ge_x_i)
-            tau_hat[i, ] = self.ecmy.rewrap_ge_dict(ge_x_i)["tau_hat"][i, ]
-
-        print("-----")
-        print("fp iteration:")
-        print(tau_hat)
-        ge_out_dict = self.ecmy.geq_solve(tau_hat, np.ones(self.N))
-        print(ge_out_dict)
-        print("-----")
-
-        return(self.ecmy.unwrap_ge_dict(ge_out_dict))
-
-    def nash_eq_ipyopt(self, v, theta_x):
-
-        wv = self.war_vals(v, self.m, self.rewrap_theta(theta_x))
-        ge_x_sv = np.ones(self.x_len)
-
-        out = opt.fixed_point(self.br_cor_ipyopt, ge_x_sv, args=(wv, v, ), method="iteration")
-
-        return(out)
-
     def ft_sv(self, id, ge_x):
+        """calculate free trade equilibrium for id, holding other govs at policies in ge_x
+
+        Parameters
+        ----------
+        id : int
+            id of government over which to impose free trade
+        ge_x : vector
+            vector length self.x_len of starting values
+
+        Returns
+        -------
+        vector
+            vector length self.x_len of ge vars consistent with free trade for gov id, holding all other govs policies constant
+
+        """
 
         tau_hat_ft = 1 / self.ecmy.tau
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
@@ -1364,6 +1650,21 @@ class policies:
         return(ge_x_sv)
 
     def nft_sv(self, id, ge_x):
+        """calculate near free trade values (how close defined by self.tau_nft) for government id, holding other govs at policies in ge_x
+
+        Parameters
+        ----------
+        id : int
+            id of government over which to impose free trade
+        ge_x : vector
+            vector length self.x_len of starting values
+
+        Returns
+        -------
+        vector
+            vector length self.x_len of ge vars consistent with near free trade for gov id, holding all other govs policies constant
+
+        """
 
         tau_hat_nft = self.tau_nft / self.ecmy.tau
         np.fill_diagonal(tau_hat_nft, 1)
@@ -1376,9 +1677,25 @@ class policies:
         return(ge_x_sv)
 
     def v_sv(self, id, ge_x, v):
+        """calculate starting values consistent with goverment id setting policies at v floor
+
+        Parameters
+        ----------
+        id : int
+            id of government over which to impose free trade
+        ge_x : vector
+            vector length self.x_len of starting values
+        v : vector
+            vector length self.N of preference parameters
+
+        Returns
+        -------
+        vector
+            vector length self.x_len of ge values, holding id's policies at v_id
+
+        """
 
         tau_v = np.tile(np.array([v]).transpose(), (1, self.N))
-        # tau_hat_v = (tau_v + .1) / self.ecmy.tau
         tau_hat_v = tau_v / self.ecmy.tau
         np.fill_diagonal(tau_hat_v, 1)
         ge_dict = self.ecmy.rewrap_ge_dict(copy.deepcopy(ge_x))
@@ -1390,6 +1707,19 @@ class policies:
         return(ge_x_sv)
 
     def v_sv_all(self, v):
+        """calculate starting values imposing tau_ij = v_i for all i, j
+
+        Parameters
+        ----------
+        v : vector
+            vector length self.N of preference parameters
+
+        Returns
+        -------
+        vector
+            vector length self.x_len of starting values
+
+        """
 
         tau_v = np.tile(np.array([v]).transpose(), (1, self.N))
         tau_hat_v = (tau_v + .1) / self.ecmy.tau
