@@ -88,25 +88,28 @@ wv = pecmy.war_vals(v_test, pecmy.m, theta_dict)
 np.diag(wv)
 # wv = np.clip(wv, 0, np.inf)
 wv[:,0]
-id = 0
+id = 1
 # np.fill_diagonal(wv, 0)
 
-# for id in range(pecmy.N):
+for id in range(pecmy.N):
 
-x_sv = pecmy.v_sv(id, np.ones(pecmy.x_len), v_test)
+    print("-----")
+    print(ccodes[id])
+    x_sv = pecmy.v_sv(id, np.ones(pecmy.x_len), v_test)
 
-x = pecmy.br_ipyopt(x_sv, v_test, id, wv[:,id])
-pecmy.G_hat(x, v_test, 0, all=True)
-ge_dict = pecmy.ecmy.rewrap_ge_dict(x)
-print(ge_dict["tau_hat"]*pecmy.ecmy.tau)
+    x = pecmy.br_ipyopt(x_sv, v_test, id, wv[:,id])
+    pecmy.G_hat(x, v_test, 0, all=True)
+    ge_dict = pecmy.ecmy.rewrap_ge_dict(x)
+    print(ge_dict["tau_hat"]*pecmy.ecmy.tau)
 
 
-x_lbda, obj, status = pecmy.Lsolve_i_ipopt(id, v_test, wv[:,id])
+    x_lbda, obj, status = pecmy.Lsolve_i_ipopt(id, v_test, wv[:,id])
 
-ge_x = x_lbda[0:pecmy.x_len]
-ge_dict1 = pecmy.ecmy.rewrap_ge_dict(ge_x)
-print(ge_dict1["tau_hat"] * pecmy.ecmy.tau)
-pecmy.G_hat(ge_x, v_test, 0, all=True)
+    ge_x = x_lbda[0:pecmy.x_len]
+    ge_dict1 = pecmy.ecmy.rewrap_ge_dict(ge_x)
+    print(ge_dict1["tau_hat"] * pecmy.ecmy.tau)
+    pecmy.G_hat(ge_x, v_test, 0, all=True)
+    print("-----")
 
 
 #

@@ -71,7 +71,9 @@ class policies:
         # optimizer parameters
         self.x_len = self.ecmy.ge_x_len  # len of ge vars
         self.xlvt_len = self.x_len + self.lambda_i_len * self.N + self.N + 4  # ge vars, all lambdas (flattened), v, theta (except v)
-        self.g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2  # constraints len: ge_diffs, Lzeros (own policies N-1), war_diffs mat, comp_slack mat
+        self.g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2  #     constraints len: ge_diffs, Lzeros (own policies N-1), war_diffs mat, comp_slack mat
+        self.L_i_len = self.x_len + self.lambda_i_len + self.N
+
         self.max_iter_ipopt = 100000
         self.chi_min = 1.0e-10  # minimum value for chi
         self.wv_min = -1.0e2  # minimum war value
@@ -259,8 +261,10 @@ class policies:
 
         """
 
-        ge_x = ge_x_lbda_i[0:self.x_len]
-        lambda_i_x = ge_x_lbda_i[self.x_len:]
+        lbda_i_x_dict = self.rewrap_lbda_i_x(ge_x_lbda_i)
+
+        ge_x = lbda_i_x_dict["ge_x"]
+        lambda_i_x = lbda_i_x_dict["lambda_i"]
 
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
         L_grad_f = ag.grad(self.Lagrange_i_x)
@@ -270,7 +274,7 @@ class policies:
         out = []
         out.extend(L_grad_i)
 
-        return(L_grad_i)
+        return(np.array(out))
 
     def L_grad_i_ind(self, id):
         """which elements of full Lagrange gradient to return for government id. (drops tau_{-i} and deficits)
@@ -1030,6 +1034,24 @@ class policies:
 
         return(_x, obj, status)
 
+    def rewrap_lbda_i_x(self, ge_x_lbda_i_x):
+
+        out = dict()
+        out["ge_x"] = ge_x_lbda_i_x[0:self.x_len]
+        out["lambda_i"] = ge_x_lbda_i_x[self.x_len:self.x_len+self.lambda_i_len]
+        out["s_i"] = ge_x_lbda_i_x[self.x_len+self.lambda_i_len:]
+
+        return(out)
+
+    def unwrap_lbda_i_x(self, ge_x_lbda_i_dict):
+
+        x = []
+        x.extend(ge_x_lbda_i_dict["ge_x"])
+        x.extend(ge_x_lbda_i_dict["lambda_i"])
+        x.extend(ge_x_lbda_i_dict["s_i"])
+
+        return(np.array(x))
+
     def Lzeros_i_cons(self, ge_x_lbda_i_x, id, v, wv):
         """Constraints for best response (Lagrangian version)
 
@@ -1051,20 +1073,22 @@ class policies:
 
         """
 
-        ge_x = ge_x_lbda_i_x[0:self.x_len]
+        ge_x_lbda_i_dict = self.rewrap_lbda_i_x(ge_x_lbda_i_x)
 
-        lambda_i_x = ge_x_lbda_i_x[self.x_len:]
+        ge_x = ge_x_lbda_i_dict["ge_x"]
+        lambda_i_x = ge_x_lbda_i_dict["lambda_i"]
+        s_i = ge_x_lbda_i_dict["s_i"]
 
         geq_diffs = self.ecmy.geq_diffs(ge_x)
         Lzeros = self.Lzeros_i(ge_x_lbda_i_x, id, v, wv)
         war_diffs = self.war_diffs(ge_x, v, wv, id)
-        comp_slack = war_diffs * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
+        # comp_slack = war_diffs * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
+        comp_slack = s_i * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
+
+        wd = war_diffs - s_i
         # war_diffs = np.clip(war_diffs, -np.inf, 0)
 
-        print(war_diffs)
-        print(comp_slack)
-        print(self.rewrap_lbda_i(lambda_i_x)["chi_i"])
-        out = np.concatenate((geq_diffs, Lzeros, war_diffs, comp_slack))
+        out = np.concatenate((geq_diffs, Lzeros, wd, comp_slack))
         # out = np.concatenate((geq_diffs, Lzeros, war_diffs))
 
         return(out)
@@ -1106,8 +1130,12 @@ class policies:
             length self.hhat_len of ge violations
 
         """
-        ge_x = ge_x_lbda_i_x[0:self.x_len]
+
+        ge_x_lbda_i_dict = self.rewrap_lbda_i_x(ge_x_lbda_i_x)
+        ge_x = ge_x_lbda_i_dict["ge_x"]
+
         out = self.ecmy.geq_diffs(ge_x)
+
         return(out)
 
     def war_diffs_lbda(self, ge_x_lbda_i_x, v, wv, id):
@@ -1131,8 +1159,12 @@ class policies:
 
         """
 
-        ge_x = ge_x_lbda_i_x[0:self.x_len]
-        wd = self.war_diffs(ge_x, v, wv, id)
+        ge_x_lbda_i_dict = self.rewrap_lbda_i_x(ge_x_lbda_i_x)
+
+        ge_x = ge_x_lbda_i_dict["ge_x"]
+        s_i = ge_x_lbda_i_dict["s_i"]
+
+        wd = self.war_diffs(ge_x, v, wv, id) - s_i
         out = wd
         # out = np.clip(wd, -np.inf, 0)  # clip to convert to equality constraints
 
@@ -1159,11 +1191,15 @@ class policies:
 
         """
 
-        ge_x = ge_x_lbda_i_x[0:self.x_len]
-        lambda_i_x = ge_x_lbda_i_x[self.x_len:]
+        ge_x_lbda_i_dict = self.rewrap_lbda_i_x(ge_x_lbda_i_x)
+
+        ge_x = ge_x_lbda_i_dict["ge_x"]
+        lambda_i_x = ge_x_lbda_i_dict["lambda_i"]
+        s_i = ge_x_lbda_i_dict["s_i"]
 
         war_diffs = self.war_diffs(ge_x, v, wv, id)
-        comp_slack = war_diffs * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
+        # comp_slack = war_diffs * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
+        comp_slack = s_i * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
 
         return(comp_slack)
 
@@ -1249,8 +1285,8 @@ class policies:
 
         tau_hat = self.ecmy.rewrap_ge_dict(ge_x_sv)["tau_hat"]
 
-        x_L = np.concatenate((np.zeros(self.x_len), np.repeat(-np.inf, self.lambda_i_len)))
-        x_U = np.repeat(np.inf, self.x_len+self.lambda_i_len)
+        x_L = np.concatenate((np.zeros(self.x_len), np.repeat(-np.inf, self.lambda_i_len), np.repeat(-np.inf, self.N)))
+        x_U = np.repeat(np.inf, self.L_i_len)
 
         tau_L = np.zeros((self.N, self.N))
         tau_U = np.reshape(np.repeat(np.inf, self.N ** 2), (self.N, self.N))
@@ -1275,7 +1311,8 @@ class policies:
         x_L[self.N**2:self.N**2+self.N] = 1.
         x_U[self.N**2:self.N**2+self.N] = 1.
 
-        x_L[-self.N:] = 0  # mil constraint multipliers
+        # x_L[-self.N:] = 0  # mil constraint multipliers
+        x_L[-self.N*2:] = 0  # mil constraint multipliers
 
         if bound == "lower":
             return(x_L)
@@ -1338,14 +1375,16 @@ class policies:
         """
 
         ge_x0 = self.v_sv(id, np.ones(self.x_len), v)
-        lbda_i0 = np.ones(self.lambda_i_len)  # initialize lambdas
-        x0 = np.concatenate((ge_x0, lbda_i0))
+        lbda_i0 = np.zeros(self.lambda_i_len)  # initialize lambdas
+        s = np.zeros(self.N)
+        # x0 = np.concatenate((ge_x0, lbda_i0))
+        x0 = np.concatenate((ge_x0, lbda_i0, s))
         x_len = len(x0)
 
         # g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N # ge constraints, gradient, war diffs
         g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N + self.N # ge constraints, gradient, war diffs, comp slack
         g_upper = np.zeros(g_len_i)
-        g_upper[-self.N*2:-self.N] = np.inf
+        # g_upper[-self.N*2:-self.N] = np.inf
         # g_upper[-self.N:] = np.inf
 
         g_sparsity_indices_a = np.array(np.meshgrid(range(g_len_i), range(x_len))).T.reshape(-1,2)
@@ -1353,7 +1392,10 @@ class policies:
         h_sparsity_indices_a = np.array(np.meshgrid(range(x_len), range(x_len))).T.reshape(-1,2)
         h_sparsity_indices = (h_sparsity_indices_a[:,0], h_sparsity_indices_a[:,1])
 
-        problem = ipyopt.Problem(x_len, self.Lzeros_i_bounds(ge_x0, id, "lower"), self.Lzeros_i_bounds(ge_x0, id, "upper"), g_len_i, np.zeros(g_len_i), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.Lzeros_i_cons_wrap(id, v, wv), self.Lzeros_i_cons_jac_wrap(id, v, wv))
+        x_L = self.Lzeros_i_bounds(ge_x0, id, "lower")
+        x_U = self.Lzeros_i_bounds(ge_x0, id, "upper")
+
+        problem = ipyopt.Problem(x_len, x_L, x_U, g_len_i, np.zeros(g_len_i), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.Lzeros_i_cons_wrap(id, v, wv), self.Lzeros_i_cons_jac_wrap(id, v, wv))
 
         problem.set(print_level=5, fixed_variable_treatment='make_parameter', linear_solver="pardiso")
         # derivative checker
