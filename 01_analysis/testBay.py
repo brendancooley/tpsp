@@ -73,10 +73,10 @@ E = Eq + Ex
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
 theta_dict = dict()
-theta_dict["c_hat"] = .14
+theta_dict["c_hat"] = .5
 theta_dict["alpha0"] = 0
-theta_dict["alpha1"] = .0001
-theta_dict["gamma"] = .19
+theta_dict["alpha1"] = -.0001
+theta_dict["gamma"] = 1
 
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
 
@@ -84,6 +84,7 @@ imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
 v_test = np.array([1.10, 1.37, 1.96, 1.11, 1.00, 1.19])
+v_ones = np.ones(pecmy.N)
 wv = pecmy.war_vals(v_test, pecmy.m, theta_dict)
 rho = pecmy.rho(theta_dict)
 
@@ -94,7 +95,7 @@ m_test[5, 1] = pecmy.mzeros[5, 5]
 wv = pecmy.war_vals(v_test, m_test, theta_dict)
 # x, obj, status = pecmy.estimator(v_test, pecmy.unwrap_theta(theta_dict), pecmy.mzeros, nash_eq=True)
 # x, obj, status = pecmy.estimator(v_test, pecmy.unwrap_theta(theta_dict), m_test, nash_eq=True)
-x, obj, status = pecmy.estimator(v_test, pecmy.unwrap_theta(theta_dict), pecmy.m, nash_eq=False)
+x, obj, status = pecmy.estimator(v_ones, pecmy.unwrap_theta(theta_dict), pecmy.m, nash_eq=False)
 print(pecmy.rewrap_xlsvt(x))
 ge_dict = pecmy.ecmy.rewrap_ge_dict(pecmy.rewrap_xlsvt(x)["ge_x"])
 print(ge_dict["tau_hat"]*pecmy.ecmy.tau)
