@@ -70,7 +70,7 @@ class policies:
 
         # optimizer parameters
         self.x_len = self.ecmy.ge_x_len  # len of ge vars
-        self.xlvt_len = self.x_len + self.lambda_i_len * self.N + self.N + 4  # ge vars, all lambdas (flattened), v, theta (except v)
+        self.xlsvt_len = self.x_len + self.lambda_i_len * self.N + self.N**2 + self.N + 4  # ge vars, all lambdas (flattened), slack variables, v, theta (except v)
         self.g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2  #     constraints len: ge_diffs, Lzeros (own policies N-1), war_diffs mat, comp_slack mat
         self.L_i_len = self.x_len + self.lambda_i_len + self.N
 
@@ -403,7 +403,7 @@ class policies:
         """
 
         rho = np.exp(-1 * (theta_dict["alpha0"] + self.W * theta_dict["alpha1"]))
-        rho += 1 - np.diag(np.diag(rho))  # set diagonal to one
+        rho -= np.diag(np.diag(rho))  # set diagonal to one
 
         return(rho)
 
@@ -426,51 +426,53 @@ class policies:
 
         return(out.T)
 
-    def rewrap_xlvt(self, xlvt):
-        """Convert flattened xlvt vector to dictionary
+    def rewrap_xlsvt(self, xlsvt):
+        """Convert flattened xlsvt vector to dictionary
 
         Parameters
         ----------
-        xlvt : vector (see self.unwrap_xlvt)
-            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+        xlsvt : vector (see self.unwrap_xlsvt)
+            len self.xlsvt_len vector storing ge vars, lambdas (flattened), slack vars, vs, theta
 
         Returns
         -------
         dict
-            dictionary of flattened vectors for each sub element of xlvt
+            dictionary of flattened vectors for each sub element of xlsvt
 
         """
 
-        xlvt_dict = dict()
-        xlvt_dict["ge_x"] = xlvt[0:self.x_len]
-        xlvt_dict["lbda"] = xlvt[self.x_len:self.x_len+self.lambda_i_len*self.N]  # np.reshape(xlvt_dict["lbda"] (self.N, self.lambda_i_len)) gives matrix of lambdas, 1 row for each government
-        xlvt_dict["v"] = xlvt[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N]
-        xlvt_dict["theta"] = xlvt[self.x_len+self.lambda_i_len*self.N+self.N:]
+        xlsvt_dict = dict()
+        xlsvt_dict["ge_x"] = xlsvt[0:self.x_len]
+        xlsvt_dict["lbda"] = xlsvt[self.x_len:self.x_len+self.lambda_i_len*self.N]  # np.reshape(xlsvt_dict["lbda"] (self.N, self.lambda_i_len)) gives matrix of lambdas, 1 row for each government
+        xlsvt_dict["s"] = xlsvt[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N**2]
+        xlsvt_dict["v"] = xlsvt[self.x_len+self.lambda_i_len*self.N+self.N**2:self.x_len+self.lambda_i_len*self.N+self.N**2+self.N]
+        xlsvt_dict["theta"] = xlsvt[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N:]
 
-        return(xlvt_dict)
+        return(xlsvt_dict)
 
-    def unwrap_xlvt(self, xlvt_dict):
-        """Convert xlvt dictionary into flattened vector
+    def unwrap_xlsvt(self, xlsvt_dict):
+        """Convert xlsvt dictionary into flattened vector
 
         Parameters
         ----------
-        xlvt_dict : dict (see self.rewrap_xlvt)
-            dictionary of flattened vectors for each sub element of xlvt
+        xlsvt_dict : dict (see self.rewrap_xlsvt)
+            dictionary of flattened vectors for each sub element of xlsvt
 
         Returns
         -------
         vector
-            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+            len self.xlsvt_len vector storing ge vars, lambdas (flattened), slack vars, vs, theta
 
         """
 
-        xlvt = []
-        xlvt.extend(xlvt_dict["ge_x"])
-        xlvt.extend(xlvt_dict["lbda"])
-        xlvt.extend(xlvt_dict["v"])
-        xlvt.extend(xlvt_dict["theta"])
+        xlsvt = []
+        xlsvt.extend(xlsvt_dict["ge_x"])
+        xlsvt.extend(xlsvt_dict["lbda"])
+        xlsvt.extend(xlsvt_dict["s"])
+        xlsvt.extend(xlsvt_dict["v"])
+        xlsvt.extend(xlsvt_dict["theta"])
 
-        return(np.array(xlvt))
+        return(np.array(xlsvt))
 
     def rewrap_theta(self, theta_x):
         """Convert theta dictionary into flattened vector
@@ -560,13 +562,13 @@ class policies:
 
         return(lambda_dict_i)
 
-    def loss(self, xlvt):
+    def loss(self, xlsvt):
         """Calculate policy loss.
 
         Parameters
         ----------
-        xlvt : vector (see self.unwrap_xlvt)
-            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+        xlsvt : vector (see self.unwrap_xlsvt)
+            len self.xlsvt_len vector storing ge vars, lambdas (flattened), vs, theta
 
         Returns
         -------
@@ -575,9 +577,9 @@ class policies:
 
         """
 
-        ge_x = self.rewrap_xlvt(xlvt)["ge_x"]
-        v = self.rewrap_xlvt(xlvt)["v"]
-        theta_x = self.rewrap_xlvt(xlvt)["theta"]
+        ge_x = self.rewrap_xlsvt(xlsvt)["ge_x"]
+        v = self.rewrap_xlsvt(xlsvt)["v"]
+        theta_x = self.rewrap_xlsvt(xlsvt)["theta"]
 
         # optimizer tracker
         self.tick += 1
@@ -599,7 +601,7 @@ class policies:
 
             for i in range(self.N):
                 print("lambda chi " + str(i))
-                lbda = np.reshape(self.rewrap_xlvt(xlvt)["lbda"], (self.N, self.lambda_i_len))
+                lbda = np.reshape(self.rewrap_xlsvt(xlsvt)["lbda"], (self.N, self.lambda_i_len))
                 lbda_chi_i = self.rewrap_lbda_i(lbda[i, ])["chi_i"]
                 print(lbda_chi_i)
 
@@ -611,52 +613,52 @@ class policies:
 
         return(loss)
 
-    def loss_grad(self, xlvt, out):
+    def loss_grad(self, xlsvt, out):
         """gradient of loss function (autograd wrapper)
 
         Parameters
         ----------
-        xlvt : vector (see self.unwrap_xlvt)
-            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+        xlsvt : vector (see self.unwrap_xlsvt)
+            len self.xlsvt_len vector storing ge vars, lambdas (flattened), vs, theta
         out : vector
-            len self.xlvt_len vector to store output (requirement for ipopt)
+            len self.xlsvt_len vector to store output (requirement for ipopt)
 
         Returns
         -------
         vector
-            vector of partial derivatives of loss with respect to xlvt inputs
+            vector of partial derivatives of loss with respect to xlsvt inputs
 
         """
 
         loss_grad_f = ag.grad(self.loss)
-        out[()] = loss_grad_f(xlvt)
+        out[()] = loss_grad_f(xlsvt)
 
         return(out)
 
-    def geq_diffs_xlvt(self, xlvt):
+    def geq_diffs_xlsvt(self, xlsvt):
         """calculate differences between ge inputs and tau_hat-consistent ge output (ge constraints satisfied when this returns zero vector)
 
         Parameters
         ----------
-        xlvt : vector (see self.unwrap_xlvt)
-            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+        xlsvt : vector (see self.unwrap_xlsvt)
+            len self.xlsvt_len vector storing ge vars, lambdas (flattened), vs, theta
 
         Returns
         -------
         vector
-            len self.h_hat_len vector of differences between ge vars in xlvt and tau_hat-consistent ge_output
+            len self.h_hat_len vector of differences between ge vars in xlsvt and tau_hat-consistent ge_output
 
         """
-        ge_x = self.rewrap_xlvt(xlvt)["ge_x"]
+        ge_x = self.rewrap_xlsvt(xlsvt)["ge_x"]
         return(self.ecmy.geq_diffs(ge_x))
 
-    def Lzeros_i_xlvt(self, xlvt, id, m):
-        """calculate first order condition for government i, xlvt input (wrapper around self.L_zeros_i for estimation)
+    def Lzeros_i_xlsvt(self, xlsvt, id, m):
+        """calculate first order condition for government i, xlsvt input (wrapper around self.L_zeros_i for estimation)
 
         Parameters
         ----------
-        xlvt : vector (see self.unwrap_xlvt)
-            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+        xlsvt : vector (see self.unwrap_xlsvt)
+            len self.xlsvt_len vector storing ge vars, lambdas (flattened), vs, theta
         id : int
             id for country for which to calculate FOC
         m : matrix
@@ -669,12 +671,12 @@ class policies:
 
         """
 
-        xlvt_dict = self.rewrap_xlvt(xlvt)
-        ge_x = xlvt_dict["ge_x"]
-        lbda = np.reshape(xlvt_dict["lbda"], (self.N, self.lambda_i_len))
+        xlsvt_dict = self.rewrap_xlsvt(xlsvt)
+        ge_x = xlsvt_dict["ge_x"]
+        lbda = np.reshape(xlsvt_dict["lbda"], (self.N, self.lambda_i_len))
         lbda_i = lbda[id, ]
-        v = xlvt_dict["v"]
-        theta_x = xlvt_dict["theta"]
+        v = xlsvt_dict["v"]
+        theta_x = xlsvt_dict["theta"]
         theta_dict = self.rewrap_theta(theta_x)
 
         wv = self.war_vals(v, m, theta_dict)  # calculate war values
@@ -683,13 +685,13 @@ class policies:
 
         return(Lzeros_i)
 
-    def war_diffs_xlvt(self, xlvt, id, m):
-        """calculate values of war constraints for government id, given ge vars and parameters in xlvt (wrapper around self.war_diffs)
+    def war_diffs_xlsvt(self, xlsvt, id, m):
+        """calculate values of war constraints for government id, given ge vars and parameters in xlsvt (wrapper around self.war_diffs)
 
         Parameters
         ----------
-        xlvt : vector (see self.unwrap_xlvt)
-            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+        xlsvt : vector (see self.unwrap_xlsvt)
+            len self.xlsvt_len vector storing ge vars, lambdas (flattened), vs, theta
         id : id
             id of government for which to calculate war diffs
         m : matrix
@@ -702,25 +704,27 @@ class policies:
 
         """
 
-        xlvt_dict = self.rewrap_xlvt(xlvt)
-        ge_x = xlvt_dict["ge_x"]
-        v = xlvt_dict["v"]
-        theta_x = xlvt_dict["theta"]
+        xlsvt_dict = self.rewrap_xlsvt(xlsvt)
+        ge_x = xlsvt_dict["ge_x"]
+        s = np.reshape(xlsvt_dict["s"], (self.N, self.N))
+        s_i = s[id, ]
+        v = xlsvt_dict["v"]
+        theta_x = xlsvt_dict["theta"]
         theta_dict = self.rewrap_theta(theta_x)
 
         wv = self.war_vals(v, m, theta_dict)
 
-        war_diffs_i = self.war_diffs(ge_x, v, wv[:,id], id)
+        war_diffs_i = self.war_diffs(ge_x, v, wv[:,id], id) - s_i
 
         return(war_diffs_i)
 
-    def comp_slack_xlvt(self, xlvt, id, m):
+    def comp_slack_xlsvt(self, xlsvt, id, m):
         """calculate value of complementary slackness conditions
 
         Parameters
         ----------
-        xlvt : vector (see self.unwrap_xlvt)
-            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+        xlsvt : vector (see self.unwrap_xlsvt)
+            len self.xlsvt_len vector storing ge vars, lambdas (flattened), vs, theta
         id : id
             id of government for which to calculate comp slack condition
         m : matrix
@@ -733,29 +737,35 @@ class policies:
 
         """
 
-        xlvt_dict = self.rewrap_xlvt(xlvt)
-        ge_x = xlvt_dict["ge_x"]
-        lbda = np.reshape(xlvt_dict["lbda"], (self.N, self.lambda_i_len))
+        xlsvt_dict = self.rewrap_xlsvt(xlsvt)
+
+        ge_x = xlsvt_dict["ge_x"]
+        lbda = np.reshape(xlsvt_dict["lbda"], (self.N, self.lambda_i_len))
         lbda_i = lbda[id, ]
-        v = xlvt_dict["v"]
-        theta_x = xlvt_dict["theta"]
-        theta_dict = self.rewrap_theta(theta_x)
 
-        wv = self.war_vals(v, m, theta_dict)
+        s = np.reshape(xlsvt_dict["s"], (self.N, self.N))
+        s_i = s[id, ]
 
-        war_diffs_i = self.war_diffs(ge_x, v, wv[:,id], id)
+        # v = xlsvt_dict["v"]
+        # theta_x = xlsvt_dict["theta"]
+        # theta_dict = self.rewrap_theta(theta_x)
+
+        # wv = self.war_vals(v, m, theta_dict)
+        # war_diffs_i = self.war_diffs(ge_x, v, wv[:,id], id)
+
         lbda_i_chi = self.rewrap_lbda_i(lbda_i)["chi_i"]
-        comp_slack_i = war_diffs_i * lbda_i_chi
+        # comp_slack_i = war_diffs_i * lbda_i_chi
+        comp_slack_i = s_i * lbda_i_chi
 
         return(comp_slack_i)
 
-    def estimator_cons(self, xlvt, m):
+    def estimator_cons(self, xlsvt, m):
         """return flattened vector of estimation constraints (length self.g_len). Equality and inequality included. Equality constraints set to zero. Inequality constraints greater than zero. These values set in self.estimator.
 
         Parameters
         ----------
-        xlvt : vector (see self.unwrap_xlvt)
-            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+        xlsvt : vector (see self.unwrap_xlsvt)
+            len self.xlsvt_len vector storing ge vars, lambdas (flattened), vs, theta
         m : matrix
             self.N times self.N matrix of military allocations
 
@@ -767,18 +777,18 @@ class policies:
         """
 
         # geq constraints
-        geq_diffs = self.geq_diffs_xlvt(xlvt)
+        geq_diffs = self.geq_diffs_xlsvt(xlsvt)
 
         # Lagrange gradient
         Lzeros = []
         war_diffs = []
         comp_slack = []
         for i in range(self.N):
-            Lzeros_i = self.Lzeros_i_xlvt(xlvt, i, m)
+            Lzeros_i = self.Lzeros_i_xlsvt(xlsvt, i, m)
             Lzeros.extend(Lzeros_i)
-            war_diffs_i = self.war_diffs_xlvt(xlvt, i, m)
+            war_diffs_i = self.war_diffs_xlsvt(xlsvt, i, m)
             war_diffs.extend(war_diffs_i)
-            comp_slack_i = self.comp_slack_xlvt(xlvt, i, m)
+            comp_slack_i = self.comp_slack_xlsvt(xlsvt, i, m)
             comp_slack.extend(comp_slack_i)
 
         out = np.concatenate((geq_diffs, Lzeros, war_diffs, comp_slack), axis=None)
@@ -806,13 +816,13 @@ class policies:
 
         return(f)
 
-    def estimator_cons_jac(self, xlvt, g_sparsity_bin, m):
+    def estimator_cons_jac(self, xlsvt, g_sparsity_bin, m):
         """calculate constraint Jacobian (autograd wrapper)
 
         Parameters
         ----------
-        xlvt : vector (see self.unwrap_xlvt)
-            len self.xlvt_len vector storing ge vars, lambdas (flattened), vs, theta
+        xlsvt : vector (see self.unwrap_xlsvt)
+            len self.xlsvt_len vector storing ge vars, lambdas (flattened), vs, theta
         g_sparsity_bin : vector
             flattened boolean array of indices to include in return (default: all true)
         m : matrix
@@ -821,26 +831,26 @@ class policies:
         Returns
         -------
         vector
-            flattened self.xlvt_len times self.g_len matrix of constraint jacobian values
+            flattened self.xlsvt_len times self.g_len matrix of constraint jacobian values
 
         """
 
-        geq_diffs_jac_f = ag.jacobian(self.geq_diffs_xlvt)
-        geq_diffs_jac = geq_diffs_jac_f(xlvt)
+        geq_diffs_jac_f = ag.jacobian(self.geq_diffs_xlsvt)
+        geq_diffs_jac = geq_diffs_jac_f(xlsvt)
 
-        Lzeros_i_jac_f = ag.jacobian(self.Lzeros_i_xlvt)
-        war_diffs_i_jac_f = ag.jacobian(self.war_diffs_xlvt)
-        comp_slack_i_jac_f = ag.jacobian(self.comp_slack_xlvt)
+        Lzeros_i_jac_f = ag.jacobian(self.Lzeros_i_xlsvt)
+        war_diffs_i_jac_f = ag.jacobian(self.war_diffs_xlsvt)
+        comp_slack_i_jac_f = ag.jacobian(self.comp_slack_xlsvt)
 
         Lzeros_jac_flat = []
         war_diffs_jac_flat = []
         comp_slack_flat = []
         for i in range(self.N):
-            Lzeros_i_jac = Lzeros_i_jac_f(xlvt, i, m)
+            Lzeros_i_jac = Lzeros_i_jac_f(xlsvt, i, m)
             Lzeros_jac_flat.extend(Lzeros_i_jac.ravel())
-            war_diffs_i_jac = war_diffs_i_jac_f(xlvt, i, m)
+            war_diffs_i_jac = war_diffs_i_jac_f(xlsvt, i, m)
             war_diffs_jac_flat.extend(war_diffs_i_jac.ravel())
-            comp_slack_i_jac = comp_slack_i_jac_f(xlvt, i, m)
+            comp_slack_i_jac = comp_slack_i_jac_f(xlsvt, i, m)
             comp_slack_flat.extend(comp_slack_i_jac.ravel())
 
         out_full = np.concatenate((geq_diffs_jac.ravel(), Lzeros_jac_flat, war_diffs_jac_flat, comp_slack_flat), axis=None)
@@ -888,13 +898,13 @@ class policies:
         Returns
         -------
         vector
-            length self.xlvt_len vector of lower or upper bounds for input values
+            length self.xlsvt_len vector of lower or upper bounds for input values
 
         """
 
         # set initial values for bounds
-        x_L = np.repeat(-np.inf, self.xlvt_len)
-        x_U = np.repeat(np.inf, self.xlvt_len)
+        x_L = np.repeat(-np.inf, self.xlsvt_len)
+        x_U = np.repeat(np.inf, self.xlsvt_len)
 
         # bound tau_hats below at zero
         tau_hat_lb = np.zeros((self.N, self.N))
@@ -918,37 +928,38 @@ class policies:
         lbda_bound = np.tile(lbda_i_bound, self.N)
 
         x_L[self.x_len:self.x_len+self.lambda_i_len*self.N] = lbda_bound  # mil constraint multipliers
+        x_L[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N**2] = 0  # positive slack variables
 
         if nash_eq == False:  # set lower bounds on parameters, of fix some values for testing estimator
-            x_L[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = 1 # vs
-            x_U[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = np.max(self.ecmy.tau) # vs
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N**2:self.x_len+self.lambda_i_len*self.N+self.N**2+self.N] = 1 # vs
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N**2:self.x_len+self.lambda_i_len*self.N+self.N**2+self.N] = np.max(self.ecmy.tau) # vs
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N] = 0  # c_hat lower
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N] = .5
-            x_U[self.x_len+self.lambda_i_len*self.N+self.N] = .5  # fix c_hat
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N] = .5
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N] = .5  # fix c_hat
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # gamma lower
             # x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 2  # gamma upper
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 1
-            x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 1  # fix gamma at 1
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0  # fix alpha0
-            x_U[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N+3] = -self.alpha1_ub  # alpha1 lower
-            x_U[self.x_len+self.lambda_i_len*self.N+self.N+3] = self.alpha1_ub  # alpha1 upper
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+1] = 1
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+1] = 1  # fix gamma at 1
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+2] = 0  # fix alpha0
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+2] = 0
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+3] = -self.alpha1_ub  # alpha1 lower
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+3] = self.alpha1_ub  # alpha1 upper
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # alpha lower
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0
             # x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # fix alpha
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0  # gamma lower
         else:  # fix all parameters at initial values
             theta_dict = self.rewrap_theta(theta_x)
-            x_L[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = v
-            x_U[self.x_len+self.lambda_i_len*self.N:self.x_len+self.lambda_i_len*self.N+self.N] = v
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N] = theta_dict["c_hat"]  # c_hat
-            x_U[self.x_len+self.lambda_i_len*self.N+self.N] = theta_dict["c_hat"]
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = theta_dict["gamma"]  # gamma
-            x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = theta_dict["gamma"]
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = theta_dict["alpha0"]
-            x_U[self.x_len+self.lambda_i_len*self.N+self.N+2] = theta_dict["alpha0"]
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N+3] = theta_dict["alpha1"]
-            x_U[self.x_len+self.lambda_i_len*self.N+self.N+3] = theta_dict["alpha1"]
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N**2:self.x_len+self.lambda_i_len*self.N+self.N**2+self.N] = v
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N**2:self.x_len+self.lambda_i_len*self.N+self.N**2+self.N] = v
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N] = theta_dict["c_hat"]  # c_hat
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N] = theta_dict["c_hat"]
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+1] = theta_dict["gamma"]  # gamma
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+1] = theta_dict["gamma"]
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+2] = theta_dict["alpha0"]
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+2] = theta_dict["alpha0"]
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+3] = theta_dict["alpha1"]
+            x_U[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+3] = theta_dict["alpha1"]
 
         if bound == "lower":
             return(x_L)
@@ -996,22 +1007,23 @@ class policies:
 
         """
 
-        x_len = self.xlvt_len
+        x_len = self.xlsvt_len
 
         wd_g = np.repeat(np.inf, self.N**2)
+        g_lower = np.zeros(self.g_len)
         g_upper = np.zeros(self.g_len)
-        g_upper[self.hhat_len + (self.hhat_len + self.N - 1)*self.N:self.hhat_len + (self.hhat_len + self.N - 1)*self.N+self.N**2] = wd_g
+        # g_upper[self.hhat_len + (self.hhat_len + self.N - 1)*self.N:self.hhat_len + (self.hhat_len + self.N - 1)*self.N+self.N**2] = wd_g
 
-        xlvt_sv_dc = np.concatenate((np.ones(self.x_len), np.repeat(.01, self.lambda_i_len*self.N), v_sv, theta_x_sv))  # NOTE: for derivative checker, we will use these to calculate Jacobian sparsity
-        xlvt_sv = np.concatenate((np.ones(self.x_len), np.zeros(self.lambda_i_len*self.N), v_sv, theta_x_sv)) # initialize starting values
+        xlsvt_sv_dc = np.concatenate((np.ones(self.x_len), np.repeat(.01, self.lambda_i_len*self.N), np.zeros(self.N**2), v_sv, theta_x_sv))  # NOTE: for derivative checker, we will use these to calculate Jacobian sparsity
+        xlsvt_sv = np.concatenate((np.ones(self.x_len), np.zeros(self.lambda_i_len*self.N), np.zeros(self.N**2), v_sv, theta_x_sv)) # initialize starting values
 
         # Jacobian sparsity (none)
         g_sparsity_indices_a = np.array(np.meshgrid(range(self.g_len), range(x_len))).T.reshape(-1,2)
         g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
-        g_sparsity_bin = np.repeat(True, self.g_len*self.xlvt_len)
+        g_sparsity_bin = np.repeat(True, self.g_len*self.xlsvt_len)
 
         # Lagrangian Hessian sparsity (none)
-        h_sparsity_indices_a = np.array(np.meshgrid(range(self.xlvt_len), range(self.xlvt_len))).T.reshape(-1,2)
+        h_sparsity_indices_a = np.array(np.meshgrid(range(self.xlsvt_len), range(self.xlsvt_len))).T.reshape(-1,2)
         h_sparsity_indices = (h_sparsity_indices_a[:,0], h_sparsity_indices_a[:,1])
 
         if nash_eq == False:
@@ -1022,15 +1034,15 @@ class policies:
             b_U = self.estimator_bounds("upper", True, theta_x_sv, v_sv)
 
         if nash_eq == False:
-            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(g_sparsity_bin, m))
+            problem = ipyopt.Problem(self.xlsvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(g_sparsity_bin, m))
             problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
             # for derivative test, make sure we don't travel too far from initial point with point_perturbation_radius (leads to evaluation errors)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
         else:
-            problem = ipyopt.Problem(self.xlvt_len, b_L, b_U, self.g_len, np.zeros(self.g_len), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(g_sparsity_bin, m))
+            problem = ipyopt.Problem(self.xlsvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(g_sparsity_bin, m))
             problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso")
         print("solving...")
-        _x, obj, status = problem.solve(xlvt_sv)
+        _x, obj, status = problem.solve(xlsvt_sv)
 
         return(_x, obj, status)
 

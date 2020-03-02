@@ -76,7 +76,7 @@ theta_dict = dict()
 theta_dict["c_hat"] = .1
 theta_dict["alpha0"] = 0
 theta_dict["alpha1"] = .0001
-theta_dict["gamma"] = .5
+theta_dict["gamma"] = 1
 
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
 
@@ -85,33 +85,44 @@ pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # ge
 
 v_test = np.array([1.10, 1.37, 1.96, 1.11, 1.00, 1.19])
 wv = pecmy.war_vals(v_test, pecmy.m, theta_dict)
-np.diag(wv)
-# wv = np.clip(wv, 0, np.inf)
-wv[:,0]
-id = 1
-# np.fill_diagonal(wv, 0)
+rho = pecmy.rho(theta_dict)
 
-for id in range(pecmy.N):
+pecmy.estimator_bounds("upper", True, pecmy.unwrap_theta(theta_dict), v_test)
 
-    print("-----")
-    print(ccodes[id])
-    x_sv = pecmy.v_sv(id, np.ones(pecmy.x_len), v_test)
-
-    x = pecmy.br_ipyopt(x_sv, v_test, id, wv[:,id])
-    pecmy.G_hat(x, v_test, 0, all=True)
-    ge_dict = pecmy.ecmy.rewrap_ge_dict(x)
-    print(ge_dict["tau_hat"]*pecmy.ecmy.tau)
-
-
-    x_lbda, obj, status = pecmy.Lsolve_i_ipopt(id, v_test, wv[:,id])
-
-    ge_x = x_lbda[0:pecmy.x_len]
-    ge_dict1 = pecmy.ecmy.rewrap_ge_dict(ge_x)
-    print(ge_dict1["tau_hat"] * pecmy.ecmy.tau)
-    pecmy.G_hat(ge_x, v_test, 0, all=True)
-    print("-----")
+m_test = pecmy.mzeros
+m_test[5, 1] = pecmy.mzeros[5, 5]
+wv = pecmy.war_vals(v_test, m_test, theta_dict)
+# x, obj, status = pecmy.estimator(v_test, pecmy.unwrap_theta(theta_dict), pecmy.mzeros, nash_eq=True)
+# x, obj, status = pecmy.estimator(v_test, pecmy.unwrap_theta(theta_dict), m_test, nash_eq=True)
+x, obj, status = pecmy.estimator(v_test, pecmy.unwrap_theta(theta_dict), m_test, nash_eq=False)
+print(pecmy.rewrap_xlsvt(x))
+ge_dict = pecmy.ecmy.rewrap_ge_dict(pecmy.rewrap_xlsvt(x)["ge_x"])
+print(ge_dict["tau_hat"]*pecmy.ecmy.tau)
+print(obj)
+print(status)
 
 
+# for id in range(pecmy.N):
+#
+#     print("-----")
+#     print(ccodes[id])
+#     x_sv = pecmy.v_sv(id, np.ones(pecmy.x_len), v_test)
+#
+#     x = pecmy.br_ipyopt(x_sv, v_test, id, wv[:,id])
+#     pecmy.G_hat(x, v_test, 0, all=True)
+#     ge_dict = pecmy.ecmy.rewrap_ge_dict(x)
+#     print(ge_dict["tau_hat"]*pecmy.ecmy.tau)
+#
+#
+#     x_lbda, obj, status = pecmy.Lsolve_i_ipopt(id, v_test, wv[:,id])
+#
+#     ge_x = x_lbda[0:pecmy.x_len]
+#     ge_dict1 = pecmy.ecmy.rewrap_ge_dict(ge_x)
+#     print(ge_dict1["tau_hat"] * pecmy.ecmy.tau)
+#     pecmy.G_hat(ge_x, v_test, 0, all=True)
+#     print("-----")
+#
+#
 #
 #
 #
