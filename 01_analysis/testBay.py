@@ -73,10 +73,10 @@ E = Eq + Ex
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
 theta_dict = dict()
-theta_dict["c_hat"] = .25
+theta_dict["c_hat"] = .1
 theta_dict["alpha0"] = 0
-theta_dict["alpha1"] = .001
-theta_dict["gamma"] = .72
+theta_dict["alpha1"] = .0001
+theta_dict["gamma"] = .5
 
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
 

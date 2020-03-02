@@ -1035,6 +1035,19 @@ class policies:
         return(_x, obj, status)
 
     def rewrap_lbda_i_x(self, ge_x_lbda_i_x):
+        """convert Lagrange zeros vector to dictionary
+
+        Parameters
+        ----------
+        ge_x_lbda_i_x : vector
+            vector length self.x_len + self.lambda_i_len + self.N of ge vars, i's multipliers, and i's slack variables
+
+        Returns
+        -------
+        dict
+            dictionary of ge vars, i's multipliers, and i's slack variables
+
+        """
 
         out = dict()
         out["ge_x"] = ge_x_lbda_i_x[0:self.x_len]
@@ -1044,6 +1057,19 @@ class policies:
         return(out)
 
     def unwrap_lbda_i_x(self, ge_x_lbda_i_dict):
+        """conver Lagrange zeros dictionary to vector
+
+        Parameters
+        ----------
+        ge_x_lbda_i_dict : dict
+            dictionary of ge vars, i's multipliers, and i's slack variables
+
+        Returns
+        -------
+        vector
+            vector length self.x_len + self.lambda_i_len + self.N of ge vars, i's multipliers, and i's slack variables
+
+        """
 
         x = []
         x.extend(ge_x_lbda_i_dict["ge_x"])
@@ -1082,14 +1108,11 @@ class policies:
         geq_diffs = self.ecmy.geq_diffs(ge_x)
         Lzeros = self.Lzeros_i(ge_x_lbda_i_x, id, v, wv)
         war_diffs = self.war_diffs(ge_x, v, wv, id)
-        # comp_slack = war_diffs * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
         comp_slack = s_i * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
 
         wd = war_diffs - s_i
-        # war_diffs = np.clip(war_diffs, -np.inf, 0)
 
         out = np.concatenate((geq_diffs, Lzeros, wd, comp_slack))
-        # out = np.concatenate((geq_diffs, Lzeros, war_diffs))
 
         return(out)
 
@@ -1165,10 +1188,8 @@ class policies:
         s_i = ge_x_lbda_i_dict["s_i"]
 
         wd = self.war_diffs(ge_x, v, wv, id) - s_i
-        out = wd
-        # out = np.clip(wd, -np.inf, 0)  # clip to convert to equality constraints
 
-        return(out)
+        return(wd)
 
     def comp_slack_lbda(self, ge_x_lbda_i_x, v, wv, id):
         """calculate complementary slackness condition
@@ -1198,7 +1219,6 @@ class policies:
         s_i = ge_x_lbda_i_dict["s_i"]
 
         war_diffs = self.war_diffs(ge_x, v, wv, id)
-        # comp_slack = war_diffs * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
         comp_slack = s_i * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
 
         return(comp_slack)
@@ -1237,7 +1257,6 @@ class policies:
         comp_slack_jac_mat = comp_slack_jac_f(ge_x_lbda_i_x, v, wv, id)
 
         out = np.concatenate((geq_diffs_jac_mat.ravel(), Lzero_jac_f_mat.ravel(), war_diffs_jac_mat.ravel(), comp_slack_jac_mat.ravel()))
-        # out = np.concatenate((geq_diffs_jac_mat.ravel(), Lzero_jac_f_mat.ravel(), war_diffs_jac_mat.ravel()))
 
         return(out)
 
@@ -1311,8 +1330,7 @@ class policies:
         x_L[self.N**2:self.N**2+self.N] = 1.
         x_U[self.N**2:self.N**2+self.N] = 1.
 
-        # x_L[-self.N:] = 0  # mil constraint multipliers
-        x_L[-self.N*2:] = 0  # mil constraint multipliers
+        x_L[-self.N*2:] = 0  # mil constraint multipliers and slack variables
 
         if bound == "lower":
             return(x_L)
@@ -1381,11 +1399,9 @@ class policies:
         x0 = np.concatenate((ge_x0, lbda_i0, s))
         x_len = len(x0)
 
-        # g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N # ge constraints, gradient, war diffs
-        g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N + self.N # ge constraints, gradient, war diffs, comp slack
+        g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N + self.N # ge constraints, gradient, war diffs, slack variables
+        g_lower = np.zeros(g_len_i)
         g_upper = np.zeros(g_len_i)
-        # g_upper[-self.N*2:-self.N] = np.inf
-        # g_upper[-self.N:] = np.inf
 
         g_sparsity_indices_a = np.array(np.meshgrid(range(g_len_i), range(x_len))).T.reshape(-1,2)
         g_sparsity_indices = (g_sparsity_indices_a[:,0], g_sparsity_indices_a[:,1])
@@ -1395,7 +1411,7 @@ class policies:
         x_L = self.Lzeros_i_bounds(ge_x0, id, "lower")
         x_U = self.Lzeros_i_bounds(ge_x0, id, "upper")
 
-        problem = ipyopt.Problem(x_len, x_L, x_U, g_len_i, np.zeros(g_len_i), g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.Lzeros_i_cons_wrap(id, v, wv), self.Lzeros_i_cons_jac_wrap(id, v, wv))
+        problem = ipyopt.Problem(x_len, x_L, x_U, g_len_i, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.Lzeros_i_cons_wrap(id, v, wv), self.Lzeros_i_cons_jac_wrap(id, v, wv))
 
         problem.set(print_level=5, fixed_variable_treatment='make_parameter', linear_solver="pardiso")
         # derivative checker
