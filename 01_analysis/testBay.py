@@ -19,7 +19,7 @@ basePath = os.path.expanduser('~')
 projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
-size = "mini/"
+size = "large/"
 
 helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
@@ -75,7 +75,7 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 theta_dict = dict()
 theta_dict["c_hat"] = .5
 theta_dict["alpha0"] = 0
-theta_dict["alpha1"] = -.0001
+theta_dict["alpha1"] = -.0002
 theta_dict["gamma"] = 1
 
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
@@ -83,18 +83,17 @@ theta_dict["gamma"] = 1
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
-v_test = np.array([1.10, 1.37, 1.96, 1.11, 1.00, 1.19])
+# v_test = np.array([1.10, 1.37, 1.96, 1.11, 1.00, 1.19])
+# v_test = np.array([1.25, 1.75, 2.02, 1.39, 1.03, 1.31])
 v_ones = np.ones(pecmy.N)
-wv = pecmy.war_vals(v_test, pecmy.m, theta_dict)
+# wv = pecmy.war_vals(v_test, pecmy.m, theta_dict)
 rho = pecmy.rho(theta_dict)
 
-pecmy.estimator_bounds("upper", True, pecmy.unwrap_theta(theta_dict), v_test)
-
-m_test = pecmy.mzeros
-m_test[5, 1] = pecmy.mzeros[5, 5]
-wv = pecmy.war_vals(v_test, m_test, theta_dict)
+# m_test = pecmy.mzeros
+# m_test[5, 1] = pecmy.mzeros[5, 5]
+# wv = pecmy.war_vals(v_test, m_test, theta_dict)
 # x, obj, status = pecmy.estimator(v_test, pecmy.unwrap_theta(theta_dict), pecmy.mzeros, nash_eq=True)
-# x, obj, status = pecmy.estimator(v_test, pecmy.unwrap_theta(theta_dict), m_test, nash_eq=True)
+# x, obj, status = pecmy.estimator(v_test, pecmy.unwrap_theta(theta_dict), pecmy.m, nash_eq=True)
 x, obj, status = pecmy.estimator(v_ones, pecmy.unwrap_theta(theta_dict), pecmy.m, nash_eq=False)
 print(pecmy.rewrap_xlsvt(x))
 ge_dict = pecmy.ecmy.rewrap_ge_dict(pecmy.rewrap_xlsvt(x)["ge_x"])

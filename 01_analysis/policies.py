@@ -933,13 +933,12 @@ class policies:
         if nash_eq == False:  # set lower bounds on parameters, of fix some values for testing estimator
             x_L[self.x_len+self.lambda_i_len*self.N+self.N**2:self.x_len+self.lambda_i_len*self.N+self.N**2+self.N] = 1 # vs
             x_U[self.x_len+self.lambda_i_len*self.N+self.N**2:self.x_len+self.lambda_i_len*self.N+self.N**2+self.N] = np.max(self.ecmy.tau) # vs
-            # x_L[self.x_len+self.lambda_i_len*self.N+self.N] = 0  # c_hat lower
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N] = .5
-            x_U[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N] = .5  # fix c_hat
-            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # gamma lower
-            # x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 2  # gamma upper
-            x_L[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+1] = 1
-            x_U[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+1] = 1  # fix gamma at 1
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N] = 0  # c_hat lower
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N] = .5
+            # x_U[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N] = .5  # fix c_hat
+            x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # gamma lower
+            # x_L[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+1] = 1
+            # x_U[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+1] = 1  # fix gamma at 1
             x_L[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+2] = 0  # fix alpha0
             x_U[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+2] = 0
             x_L[self.x_len+self.lambda_i_len*self.N+self.N**2+self.N+3] = -self.alpha1_ub  # alpha1 lower
@@ -1363,6 +1362,19 @@ class policies:
             constant
 
         """
+        if len(x) == self.xlsvt_len:
+            # optimizer tracker
+            self.tick += 1
+            if self.tick % 25 == 0:  # print output every 25 calls
+                print("ge_dict:")
+                print(self.ecmy.rewrap_ge_dict(self.rewrap_xlsvt(x)["ge_x"]))
+
+                for i in range(self.N):
+                    print("lambda chi " + str(i))
+                    lbda = np.reshape(self.rewrap_xlsvt(x)["lbda"], (self.N, self.lambda_i_len))
+                    lbda_chi_i = self.rewrap_lbda_i(lbda[i, ])["chi_i"]
+                    print(lbda_chi_i)
+
         c = 1
         return(c)
 
