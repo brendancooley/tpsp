@@ -1034,7 +1034,7 @@ class policies:
 
         if nash_eq == False:
             problem = ipyopt.Problem(self.xlsvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(g_sparsity_bin, m))
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive")
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", linear_solver="pardiso")
             # for derivative test, make sure we don't travel too far from initial point with point_perturbation_radius (leads to evaluation errors)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
         else:
