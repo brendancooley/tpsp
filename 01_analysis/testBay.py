@@ -19,7 +19,7 @@ basePath = os.path.expanduser('~')
 projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
-size = "large/"
+size = "mini/"
 
 helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
@@ -73,15 +73,70 @@ E = Eq + Ex
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
 theta_dict = dict()
-theta_dict["c_hat"] = .5
+theta_dict["c_hat"] = .25
 theta_dict["alpha0"] = 0
-theta_dict["alpha1"] = -.0002
+theta_dict["alpha1"] = .0001
 theta_dict["gamma"] = 1
 
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
 
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
+
+pecmy.Lzeros_i_bounds(np.ones(pecmy.x_len), 0, "lower")
+
+ft_sv = pecmy.ft_sv(0, np.ones(pecmy.x_len))
+tau_hat_sv = pecmy.ecmy.rewrap_ge_dict(ft_sv)["tau_hat"]
+pecmy.ecmy.geq_solve(tau_hat_sv, np.ones(pecmy.N))
+
+id = 0
+v_sv = np.ones(pecmy.N)
+ge_x0 = pecmy.v_sv(id, np.ones(pecmy.x_len), v_sv)
+# lbda_i0 = np.zeros(pecmy.lambda_i_len)  # initialize lambdas
+# s = np.zeros(pecmy.N)
+# h = np.ones(pecmy.hhat_len)
+# # x0 = np.concatenate((ge_x0, lbda_i0))
+# x0 = np.concatenate((ge_x0, lbda_i0, s, h))
+#
+# tau_hat_tilde = np.ones((pecmy.N, pecmy.N))
+# tau_hat_tilde[0, 4] = 1 / pecmy.ecmy.tau[0, 4]
+# h_test_dict = pecmy.ecmy.geq_solve(tau_hat_tilde, np.ones(pecmy.N))
+# h_test = pecmy.ecmy.unwrap_ge_dict(h_test_dict)[-pecmy.hhat_len:]
+#
+# pecmy.wv_xlsh(tau_hat_tilde, h_test, 0, pecmy.m, v_sv, theta_dict)
+#
+# h_test2 = pecmy.ft_sv(id, np.ones(pecmy.x_len))[-pecmy.hhat_len:]
+# pecmy.wv_xlsh(np.ones((pecmy.N, pecmy.N)), h_test2, 0, pecmy.m, v_sv, theta_dict)
+#
+# pecmy.Lzeros_i_bounds(ge_x0, 0)[pecmy.x_len+pecmy.lambda_i_len:pecmy.x_len+pecmy.lambda_i_len+pecmy.N]
+
+pecmy.Lsolve_i_ipopt(0, pecmy.mzeros, np.ones(pecmy.N), theta_dict)
+# NOTE: p_hats in h aren't converging
+
+
+test = pecmy.Lzeros_i_cons_wrap(id, pecmy.m, v_sv, theta_dict)
+test(x0, np.zeros(pecmy.hhat_len + (pecmy.hhat_len + pecmy.N - 1) + pecmy.N + pecmy.N + pecmy.N * pecmy.hhat_len))
+
+
+
+# pecmy.Lzeros_i_bounds(np.ones(pecmy.L_i_len), 0)
+
+
+
+pecmy.rcx(np.ones((pecmy.N, pecmy.N)), np.ones((pecmy.N, pecmy.hhat_len)), 1)
+
+xlsh_sv = np.concatenate((np.ones(pecmy.x_len), np.zeros(pecmy.lambda_i_len), np.zeros(pecmy.N), np.ones(pecmy.N*pecmy.hhat_len)))
+pecmy.Lzeros_i_cons(xlsh_sv, 0, pecmy.m, np.ones(pecmy.N), theta_dict)
+pecmy.Lzeros_i_cons_jac(xlsh_sv, 0, pecmy.m, np.ones(pecmy.N), theta_dict)
+
+id_test = 0
+h_test = np.ones((pecmy.N, pecmy.hhat_len))
+
+ft_id = pecmy.ft_sv(id_test, np.ones(pecmy.x_len))
+h_test[id_test, ] = ft_id[-pecmy.hhat_len:]
+
+pecmy.wv_xlsh(np.ones((pecmy.N, pecmy.N)), h_test, id_test, pecmy.m, np.ones(pecmy.N), theta_dict)
+pecmy.rcx(np.ones((pecmy.N, pecmy.N)), np.ones((pecmy.N, pecmy.hhat_len)), 1)
 
 # v_test = np.array([1.10, 1.37, 1.96, 1.11, 1.00, 1.19])
 # v_test = np.array([1.25, 1.75, 2.02, 1.39, 1.03, 1.31])

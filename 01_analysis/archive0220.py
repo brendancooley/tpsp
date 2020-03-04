@@ -616,3 +616,128 @@ def constraints_tau(self, ge_dict, tau_free, wv_i, v, ge=True, deficits=True, mi
         out = opt.fixed_point(self.br_cor_ipyopt, ge_x_sv, args=(wv, v, ), method="iteration")
 
         return(out)
+
+    def geq_diffs_lbda(self, xlsh):
+        """wrapper around geq diffs for best response (Lagrangian version)
+
+        Parameters
+        ----------
+        ge_x_lbda_i_x : vector
+            vector length self.x_len + self.lambda_i_len of ge vars and id's multipliers
+
+        Returns
+        -------
+        vector
+            length self.hhat_len of ge violations
+
+        """
+
+        xlsh_dict = self.rewrap_lbda_i_x(xlsh)
+        ge_x = xlsh_dict["ge_x"]
+
+        out = self.ecmy.geq_diffs(ge_x)
+
+        return(out)
+
+    def war_diffs_lbda(self, xlsh, id, m, v, theta_dict):
+        """wrapper around war diffs for best response (Lagrangian version)
+
+        Parameters
+        ----------
+        ge_x_lbda_i_x : vector
+            vector length self.x_len + self.lambda_i_len of ge vars and id's multipliers
+        v : vector
+            vector length self.N of governments preference parameters
+        wv : vector
+            vector length self.N of war values against gov id
+        id : int
+            id of government for which to calculate war constraints
+
+        Returns
+        -------
+        vector
+            length self.N vector of war constraints (clipped to convert to equality constraints)
+
+        """
+
+        xlsh_dict = self.rewrap_lbda_i_x(xlsh)
+
+        ge_x = xlsh_dict["ge_x"]
+        s_i = xlsh_dict["s_i"]
+        h = xlsh_dict["h"]
+
+        tau_hat_tilde = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
+        wv = self.wv_xlsh(tau_hat_tilde, h, id, m, v, theta_dict)
+
+        wd = self.war_diffs(ge_x, v, wv, id) - s_i
+
+        return(wd)
+
+    def comp_slack_lbda(self, ge_x_lbda_i_x, v, wv, id):
+        """calculate complementary slackness condition
+
+        Parameters
+        ----------
+        ge_x_lbda_i_x : vector
+            vector length self.x_len + self.lambda_i_len of ge vars and id's multipliers
+        v : vector
+            vector length self.N of governments preference parameters
+        wv : vector
+            vector length self.N of war values against gov id
+        id : int
+            id of government for which to calculate war constraints
+
+        Returns
+        -------
+        vector
+            length self.N vector of complementary slackness conditions
+
+        """
+
+        ge_x_lbda_i_dict = self.rewrap_lbda_i_x(ge_x_lbda_i_x)
+
+        ge_x = ge_x_lbda_i_dict["ge_x"]
+        lambda_i_x = ge_x_lbda_i_dict["lambda_i"]
+        s_i = ge_x_lbda_i_dict["s_i"]
+
+        war_diffs = self.war_diffs(ge_x, v, wv, id)
+        comp_slack = s_i * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
+
+        return(comp_slack)
+
+    def Lzeros_i_cons_jac(self, ge_x_lbda_i_x, id, v, wv):
+        """calculate constraint jacobian for best response (Lagrangian)
+
+        Parameters
+        ----------
+        ge_x_lbda_i_x : vector
+            vector length self.x_len + self.lambda_i_len of ge vars and id's multipliers
+        id : int
+            id of government for which to calculate constraint jacobian
+        v : vector
+            vector length self.N of governments preference parameters
+        wv : vector
+            vector length self.N of war values against gov id
+
+        Returns
+        -------
+        vector
+            vector of unraveled geq constraint Jacobian, Lagrange zeros Jacobian, war diffs Jacobian
+
+        """
+
+        geq_diffs_jac_f = ag.jacobian(self.geq_diffs_lbda)
+        geq_diffs_jac_mat = geq_diffs_jac_f(ge_x_lbda_i_x)
+
+        Lzero_diffs_jac_f = ag.jacobian(self.Lzeros_i)
+        Lzero_jac_f_mat = Lzero_diffs_jac_f(ge_x_lbda_i_x, id, v, wv)
+
+        war_diffs_jac_f = ag.jacobian(self.war_diffs_lbda)
+        war_diffs_jac_mat = war_diffs_jac_f(ge_x_lbda_i_x, v, wv, id)
+
+        comp_slack_jac_f = ag.jacobian(self.comp_slack_lbda)
+        comp_slack_jac_mat = comp_slack_jac_f(ge_x_lbda_i_x, v, wv, id)
+
+        out = np.concatenate((geq_diffs_jac_mat.ravel(), Lzero_jac_f_mat.ravel(), war_diffs_jac_mat.ravel(), comp_slack_jac_mat.ravel()))
+
+        return(out)
