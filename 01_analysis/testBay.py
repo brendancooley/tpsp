@@ -83,6 +83,8 @@ theta_dict["gamma"] = 1
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
+1 / pecmy.ecmy.tau
+
 pecmy.Lzeros_i_bounds(np.ones(pecmy.x_len), 0, "lower")
 
 ft_sv = pecmy.ft_sv(0, np.ones(pecmy.x_len))
