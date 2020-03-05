@@ -233,15 +233,18 @@ class policies:
         # war_diffs = self.war_diffs(ge_x, v, wv, id)
 
         wd = -1 * war_diffs  # flip these so violations are positive
+        # lbda_chi = lambda_dict_i["chi_i"]
+        wd = [wd[i] for i in range(self.N) if i != id]
+        lbda_chi = [lambda_dict_i["chi_i"][i] for i in range(self.N) if i != id]
         # wd = war_diffs
         # wd = np.clip(wd, 0, np.inf)
 
         # mil multipliers constrained to be positive, lambda_dict_i["chi_i"] > 0
-        L_i = G_hat_i - np.dot(lambda_dict_i["h_hat"], geq_diffs) - np.dot(lambda_dict_i["chi_i"], wd)
+        L_i = G_hat_i - np.dot(lambda_dict_i["h_hat"], geq_diffs) - np.dot(lbda_chi, wd)
 
         return(L_i)
 
-    def Lzeros_i(self, xlsh, id, v):
+    def Lzeros_i(self, xlsh, id, v, war_diffs):
         """calculate first order condition for goverment i, ge_x_lbda_i input
 
         Parameters
@@ -271,7 +274,7 @@ class policies:
 
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
         L_grad_f = ag.grad(self.Lagrange_i_x)
-        L_grad = L_grad_f(ge_x, lambda_i_x, id, v, s_i)
+        L_grad = L_grad_f(ge_x, lambda_i_x, id, v, war_diffs)
         L_grad_i = L_grad[self.L_grad_i_ind(id)]
 
         out = []
@@ -1148,9 +1151,12 @@ class policies:
         # print("-----")
         war_diffs = self.war_diffs(ge_x, v, wv, id)
         # Lzeros = self.Lzeros_i(xlsh, id, v, war_diffs)
-        Lzeros = self.Lzeros_i(xlsh, id, v)
+        Lzeros = self.Lzeros_i(xlsh, id, v, war_diffs)
+
+        war_diffs = [war_diffs[i] for i in range(self.N) if i != id]
         # NOTE: may need to put multipliers on the hs as well in Lagrange
         comp_slack = s_i * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
+        comp_slack = [comp_slack[i] for i in range(self.N) if i != id]
         # h_diffs = []
         # for i in range(self.N):
         #     rcx = self.rcx(tau_hat_tilde, h, i)
@@ -1160,11 +1166,12 @@ class policies:
         # print("rcx:")
         # print(self.ecmy.rewrap_ge_dict(rcx))
         # print("-----")
+        s_i_sub = [s_i[i] for i in range(self.N) if i != id]
 
-        wd = war_diffs - s_i
+        wd = np.array(war_diffs) - np.array(s_i_sub)
 
         # out = np.concatenate((geq_diffs, Lzeros, wd, comp_slack))
-        out = np.concatenate((geq_diffs, Lzeros, wd, comp_slack, h_diffs))
+        out = np.concatenate((geq_diffs, Lzeros, wd, np.array(comp_slack), h_diffs))
 
         return(out)
 
@@ -1401,7 +1408,8 @@ class policies:
         x_len = len(x0)
 
         # g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N + self.N # ge constraints, gradient, war diffs, slack variables
-        g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N + self.N + self.hhat_len
+        # g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N + self.N + self.hhat_len
+        g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N + self.N + self.hhat_len - 2
         g_lower = np.zeros(g_len_i)
         g_upper = np.zeros(g_len_i)
 

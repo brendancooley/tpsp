@@ -84,6 +84,10 @@ imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
 1 / pecmy.ecmy.tau
+test = np.arange(1, 5)
+np.delete(test, 1)
+
+[test[i] for i in range(len(test)) if i != 1]
 
 pecmy.Lzeros_i_bounds(np.ones(pecmy.x_len), 0, "lower")
 
