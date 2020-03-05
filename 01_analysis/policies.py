@@ -1153,6 +1153,8 @@ class policies:
         tau_hat_tilde = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
         rcx = self.rcx(tau_hat_tilde, h, id)
         wv = self.wv_xlsh(rcx, id, m, v, theta_dict)
+        print(wv)
+        print(s_i)
 
         # NOTE: problem is in own slack variable, I can decrease it by decreasing own war value (maybe just drop this constraint correspondence entirely)
         geq_diffs = self.ecmy.geq_diffs(ge_x)
@@ -1160,9 +1162,9 @@ class policies:
         # print(self.ecmy.rewrap_ge_dict(ge_x))
         # print("-----")
         war_diffs = self.war_diffs(ge_x, v, wv, id)
+        print(war_diffs)
         # Lzeros = self.Lzeros_i(xlsh, id, v, war_diffs)
-        Lzeros = self.Lzeros_i(xlsh, id, m, v, theta_dict)
-        # NOTE: may need to put multipliers on the hs as well in Lagrange
+        Lzeros = self.Lzeros_i(xlsh, id, v)
         comp_slack = s_i * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
         # h_diffs = []
         # for i in range(self.N):
@@ -1278,8 +1280,7 @@ class policies:
         x_L = np.concatenate((np.zeros(self.x_len), np.repeat(-np.inf, self.lambda_i_len), np.repeat(-np.inf, self.N), np.zeros(self.hhat_len)))
         x_U = np.repeat(np.inf, self.L_i_len)
 
-        # tau_L = np.zeros((self.N, self.N))
-        tau_L = 1 / self.ecmy.tau
+        tau_L = np.zeros((self.N, self.N))
         tau_U = np.reshape(np.repeat(np.inf, self.N ** 2), (self.N, self.N))
         np.fill_diagonal(tau_L, 1.)
         np.fill_diagonal(tau_U, 1.)
@@ -1341,7 +1342,7 @@ class policies:
                     print(lbda_chi_i)
         if len(x == self.L_i_len):
             self.tick += 1
-            if self.tick % 5 == 0:
+            if self.tick % 25 == 0:
                 xlsh_dict = self.rewrap_lbda_i_x(x)
                 print("ge dict:")
                 print(self.ecmy.rewrap_ge_dict(xlsh_dict["ge_x"]))
@@ -1356,14 +1357,6 @@ class policies:
                 print(xlsh_dict["h"])
                 print("-----")
                 print(self.rewrap_lbda_i(xlsh_dict["lambda_i"])["h_hat_rcx"])
-
-                rcx = self.rcx(self.ecmy.rewrap_ge_dict(xlsh_dict["ge_x"])["tau_hat"], xlsh_dict["h"], 0)
-                print("rcx:")
-                print(self.ecmy.rewrap_ge_dict(rcx))
-                print("-----")
-                print("hdiffs:")
-                print(self.ecmy.geq_diffs(rcx))
-                print("-----")
 
         c = 1
         return(c)
