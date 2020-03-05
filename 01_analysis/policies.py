@@ -1148,7 +1148,7 @@ class policies:
         # print("-----")
         war_diffs = self.war_diffs(ge_x, v, wv, id)
         # Lzeros = self.Lzeros_i(xlsh, id, v, war_diffs)
-        Lzeros = self.Lzeros_i(xlsh, id, m, v, theta_dict)
+        Lzeros = self.Lzeros_i(xlsh, id, v)
         # NOTE: may need to put multipliers on the hs as well in Lagrange
         comp_slack = s_i * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
         # h_diffs = []
