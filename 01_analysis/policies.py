@@ -65,9 +65,8 @@ class policies:
         self.hhat_len = self.N**2+4*self.N  # X, d, P, w, r, E
         self.Dhat_len = self.N
         self.tauj_len = self.N**2-self.N  # non i policies
-        # self.lambda_i_x_len = self.hhat_len  # ge multipliers for best response
-        # self.lambda_i_len = self.lambda_i_x_len + self.N  # ge multipliers plus mil multipliers
-        self.lambda_i_len = 2*self.hhat_len + self.N
+        self.lambda_i_x_len = self.hhat_len  # ge multipliers for best response
+        self.lambda_i_len = self.lambda_i_x_len + self.N  # ge multipliers plus mil multipliers
 
         # optimizer parameters
         self.x_len = self.ecmy.ge_x_len  # len of ge vars
@@ -203,7 +202,7 @@ class policies:
 
         return(r_hat)
 
-    def Lagrange_i_x(self, ge_x_h, lambda_i_x, id, m, v, theta_dict):
+    def Lagrange_i_x(self, ge_x, lambda_i_x, id, v, war_diffs):
         """Short summary.
 
         Parameters
@@ -227,30 +226,22 @@ class policies:
         """
 
         lambda_dict_i = self.rewrap_lbda_i(lambda_i_x)
-        ge_x = ge_x_h[0:self.x_len]
-        h = ge_x_h[self.x_len:]
-
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
-        rcx = self.rcx(ge_dict["tau_hat"], h, id)
-        wv = self.wv_xlsh(rcx, id, m, v, theta_dict)
 
         G_hat_i = self.G_hat(ge_x, v, id, sign=1)
         geq_diffs = self.ecmy.geq_diffs(ge_x)
-        h_diffs = self.ecmy.geq_diffs(rcx)
-        print(h_diffs)
-
-        war_diffs = self.war_diffs(ge_x, v, wv, id)
+        # war_diffs = self.war_diffs(ge_x, v, wv, id)
 
         wd = -1 * war_diffs  # flip these so violations are positive
         # wd = war_diffs
         # wd = np.clip(wd, 0, np.inf)
 
         # mil multipliers constrained to be positive, lambda_dict_i["chi_i"] > 0
-        L_i = G_hat_i - np.dot(lambda_dict_i["h_hat"], geq_diffs) - np.dot(lambda_dict_i["h_hat_rcx"], h_diffs) - np.dot(lambda_dict_i["chi_i"], wd)
+        L_i = G_hat_i - np.dot(lambda_dict_i["h_hat"], geq_diffs) - np.dot(lambda_dict_i["chi_i"], wd)
 
         return(L_i)
 
-    def Lzeros_i(self, xlsh, id, m, v, theta_dict):
+    def Lzeros_i(self, xlsh, id, v):
         """calculate first order condition for goverment i, ge_x_lbda_i input
 
         Parameters
@@ -277,13 +268,11 @@ class policies:
         ge_x = xlsh_dict["ge_x"]
         lambda_i_x = xlsh_dict["lambda_i"]
         s_i = xlsh_dict["s_i"]
-        h = xlsh_dict["h"]
 
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
-
         L_grad_f = ag.grad(self.Lagrange_i_x)
-        L_grad = L_grad_f(np.concatenate((ge_x, h)), lambda_i_x, id, m, v, theta_dict)
-        L_grad_i = L_grad[np.concatenate((self.L_grad_i_ind(id), np.repeat(True, self.hhat_len)))]
+        L_grad = L_grad_f(ge_x, lambda_i_x, id, v, s_i)
+        L_grad_i = L_grad[self.L_grad_i_ind(id)]
 
         out = []
         out.extend(L_grad_i)
@@ -551,7 +540,6 @@ class policies:
 
         x = []
         x.extend(lambda_dict_i["h_hat"])
-        x.extend(lambda_dict_i["h_hat_rcx"])
         x.extend(lambda_dict_i["chi_i"])
 
         return(np.array(x))
@@ -573,8 +561,7 @@ class policies:
 
         lambda_dict_i = dict()
         lambda_dict_i["h_hat"] = x[0:self.hhat_len]  # ge vars
-        lambda_dict_i["h_hat_rcx"] = x[self.hhat_len:2*self.hhat_len]
-        lambda_dict_i["chi_i"] = x[2*self.hhat_len:]  # mil constraints, threats against i
+        lambda_dict_i["chi_i"] = x[self.hhat_len:]  # mil constraints, threats against i
 
         return(lambda_dict_i)
 
@@ -1177,6 +1164,7 @@ class policies:
         # print("-----")
 
         wd = war_diffs - s_i
+        print(Lzeros)
 
         # out = np.concatenate((geq_diffs, Lzeros, wd, comp_slack))
         out = np.concatenate((geq_diffs, Lzeros, wd, comp_slack, h_diffs))
@@ -1356,7 +1344,6 @@ class policies:
                 print("hhat:")
                 print(xlsh_dict["h"])
                 print("-----")
-                print(self.rewrap_lbda_i(xlsh_dict["lambda_i"])["h_hat_rcx"])
 
         c = 1
         return(c)
@@ -1408,8 +1395,7 @@ class policies:
         x_len = len(x0)
 
         # g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N + self.N # ge constraints, gradient, war diffs, slack variables
-        # g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N + self.N + self.hhat_len
-        g_len_i = self.hhat_len + (self.hhat_len + self.N - 1 + self.hhat_len) + self.N + self.N + self.hhat_len
+        g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N + self.N + self.hhat_len
         g_lower = np.zeros(g_len_i)
         g_upper = np.zeros(g_len_i)
 

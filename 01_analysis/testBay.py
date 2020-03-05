@@ -83,9 +83,6 @@ theta_dict["gamma"] = 1
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
-pecmy.x_len
-pecmy.hhat_len
-pecmy.lambda_i_len
 1 / pecmy.ecmy.tau
 
 pecmy.Lzeros_i_bounds(np.ones(pecmy.x_len), 0, "lower")
