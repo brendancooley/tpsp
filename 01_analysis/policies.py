@@ -1140,8 +1140,6 @@ class policies:
         tau_hat_tilde = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
         rcx = self.rcx(tau_hat_tilde, h, id)
         wv = self.wv_xlsh(rcx, id, m, v, theta_dict)
-        print(wv)
-        print(s_i)
 
         # NOTE: problem is in own slack variable, I can decrease it by decreasing own war value (maybe just drop this constraint correspondence entirely)
         geq_diffs = self.ecmy.geq_diffs(ge_x)
@@ -1149,7 +1147,6 @@ class policies:
         # print(self.ecmy.rewrap_ge_dict(ge_x))
         # print("-----")
         war_diffs = self.war_diffs(ge_x, v, wv, id)
-        print(war_diffs)
         # Lzeros = self.Lzeros_i(xlsh, id, v, war_diffs)
         Lzeros = self.Lzeros_i(xlsh, id, v)
         comp_slack = s_i * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
@@ -1164,7 +1161,6 @@ class policies:
         # print("-----")
 
         wd = war_diffs - s_i
-        print(Lzeros)
 
         # out = np.concatenate((geq_diffs, Lzeros, wd, comp_slack))
         out = np.concatenate((geq_diffs, Lzeros, wd, comp_slack, h_diffs))
