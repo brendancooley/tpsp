@@ -73,7 +73,7 @@ E = Eq + Ex
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
 theta_dict = dict()
-theta_dict["c_hat"] = .25
+theta_dict["c_hat"] = .5
 theta_dict["alpha0"] = 0
 theta_dict["alpha1"] = .0001
 theta_dict["gamma"] = 1
@@ -87,7 +87,15 @@ pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # ge
 
 id = 0
 
+
+pecmy.Lzeros_i_bounds(np.ones(pecmy.x_len), 0, "upper")
+ft_id = pecmy.ft_sv(0, np.ones(pecmy.x_len))
+tau_hat_tilde = pecmy.ecmy.rewrap_ge_dict(ft_id)["tau_hat"]
+rcx = pecmy.rcx(tau_hat_tilde, ft_id[-pecmy.hhat_len:], id)
+pecmy.wv_xlsh(rcx, 0, pecmy.m, v, theta_dict)
+geq_ft = pecmy.ecmy.geq_solve(tau_hat_tilde, np.ones(pecmy.N))
 x, obj, status = pecmy.Lsolve_i_ipopt(id, pecmy.m, v, theta_dict)
 
 x_dict = pecmy.rewrap_lbda_i_x(x)
 print(pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])["tau_hat"]*pecmy.ecmy.tau)
+# NOTE: problems are in Lzeros at the moment

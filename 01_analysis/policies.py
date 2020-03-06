@@ -233,9 +233,9 @@ class policies:
         # war_diffs = self.war_diffs(ge_x, v, wv, id)
 
         wd = -1 * war_diffs  # flip these so violations are positive
-        # lbda_chi = lambda_dict_i["chi_i"]
-        wd = [wd[i] for i in range(self.N) if i != id]
-        lbda_chi = [lambda_dict_i["chi_i"][i] for i in range(self.N) if i != id]
+        lbda_chi = lambda_dict_i["chi_i"]
+        # wd = [wd[i] for i in range(self.N) if i != id]
+        # lbda_chi = [lambda_dict_i["chi_i"][i] for i in range(self.N) if i != id]
         # wd = war_diffs
         # wd = np.clip(wd, 0, np.inf)
 
@@ -1143,8 +1143,8 @@ class policies:
         tau_hat_tilde = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
         rcx = self.rcx(tau_hat_tilde, h, id)
         wv = self.wv_xlsh(rcx, id, m, v, theta_dict)
+        wv = copy.deepcopy(wv)
 
-        # NOTE: problem is in own slack variable, I can decrease it by decreasing own war value (maybe just drop this constraint correspondence entirely)
         geq_diffs = self.ecmy.geq_diffs(ge_x)
         # print("ge_x:")
         # print(self.ecmy.rewrap_ge_dict(ge_x))
@@ -1335,7 +1335,7 @@ class policies:
                     print(lbda_chi_i)
         if len(x == self.L_i_len):
             self.tick += 1
-            if self.tick % 5 == 0:
+            if self.tick % 25 == 0:
                 xlsh_dict = self.rewrap_lbda_i_x(x)
                 print("ge dict:")
                 print(self.ecmy.rewrap_ge_dict(xlsh_dict["ge_x"]))
@@ -1350,13 +1350,32 @@ class policies:
                 print(xlsh_dict["h"])
                 print("-----")
 
+                theta_dict = dict()
+                theta_dict["c_hat"] = .5
+                theta_dict["alpha0"] = 0
+                theta_dict["alpha1"] = .0001
+                theta_dict["gamma"] = 1
                 rcx = self.rcx(self.ecmy.rewrap_ge_dict(xlsh_dict["ge_x"])["tau_hat"], xlsh_dict["h"], 0)
+                wv = self.wv_xlsh(rcx, 0, self.m, np.ones(self.N), theta_dict)
+                war_diffs = self.war_diffs(xlsh_dict["ge_x"], np.ones(self.N), wv, 0)
+
                 print("rcx:")
                 print(self.ecmy.rewrap_ge_dict(rcx))
                 print("-----")
                 print("hdiffs:")
                 print(self.ecmy.geq_diffs(rcx))
                 print("-----")
+                print("wv:")
+                print(wv)
+                print("-----")
+                print("G_hat:")
+                print(self.G_hat(xlsh_dict["ge_x"], np.ones(self.N), 0, all=True))
+                print("-----")
+                print("geq_diffs:")
+                print(self.ecmy.geq_diffs(xlsh_dict["ge_x"]))
+                print("-----")
+                print("Lzeros:")
+                print(self.Lzeros_i(x, 0, np.ones(self.N), war_diffs))
 
         c = 1
         return(c)
