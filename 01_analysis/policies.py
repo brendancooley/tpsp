@@ -1117,7 +1117,6 @@ class policies:
         h_diffs = self.ecmy.geq_diffs(rcx)
 
         wd = war_diffs - s_i
-        print(s_i)
 
         out = np.concatenate((geq_diffs, Lzeros, wd, comp_slack, h_diffs))
 
