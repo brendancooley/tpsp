@@ -73,7 +73,7 @@ E = Eq + Ex
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
 theta_dict = dict()
-theta_dict["c_hat"] = .5
+theta_dict["c_hat"] = .1
 theta_dict["alpha0"] = 0
 theta_dict["alpha1"] = .0001
 theta_dict["gamma"] = 1
@@ -85,7 +85,37 @@ v = np.ones(N)
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
-id = 0
+id = 1
+
+ge_x0 = pecmy.v_sv(id, np.ones(pecmy.x_len), v)
+lbda_i0 = np.repeat(.01, pecmy.lambda_i_len)  # initialize lambdas
+s = np.zeros(pecmy.N)
+h = np.ones(pecmy.hhat_len)
+x0 = np.concatenate((ge_x0, lbda_i0, s, h))
+len(x0)
+len(pecmy.Lzeros_i_cons(x0, id, pecmy.m, v, theta_dict))
+
+ge_x_rch = np.concatenate((ge_x0, h))
+ge_x = ge_x_rch[0:pecmy.x_len]
+h = ge_x_rch[pecmy.x_len:]
+ge_dict = pecmy.ecmy.rewrap_ge_dict(ge_x)
+rcx = pecmy.rcx(ge_dict["tau_hat"], h, id)
+wv = pecmy.wv_xlsh(rcx, id, pecmy.m, v, theta_dict)
+war_diffs = pecmy.war_diffs(ge_x, v, wv, id)
+war_diffs
+
+# def wv_test(ge_x_rch):
+#     ge_x = ge_x_rch[0:pecmy.x_len]
+#     h = ge_x_rch[pecmy.x_len:]
+#     ge_dict = pecmy.ecmy.rewrap_ge_dict(ge_x)
+#     rcx = pecmy.rcx(ge_dict["tau_hat"], h, id)
+#     wv = pecmy.wv_xlsh(rcx, id, pecmy.m, v, theta_dict)
+#     war_diffs = pecmy.war_diffs(ge_x, v, wv, id)
+#     return(war_diffs)
+#
+# wv_test_grad = ag.jacobian(wv_test)
+# wv_test_grad(np.concatenate((ge_x0, h)))
+# pecmy.Lzeros_i(x0, id, pecmy.m, v, theta_dict)
 
 
 pecmy.Lzeros_i_bounds(np.ones(pecmy.x_len), 0, "upper")
@@ -94,7 +124,7 @@ tau_hat_tilde = pecmy.ecmy.rewrap_ge_dict(ft_id)["tau_hat"]
 rcx = pecmy.rcx(tau_hat_tilde, ft_id[-pecmy.hhat_len:], id)
 pecmy.wv_xlsh(rcx, 0, pecmy.m, v, theta_dict)
 geq_ft = pecmy.ecmy.geq_solve(tau_hat_tilde, np.ones(pecmy.N))
-x, obj, status = pecmy.Lsolve_i_ipopt(id, pecmy.m, v, theta_dict)
+x, obj, status = pecmy.Lsolve_i_ipopt(id, pecmy.mzeros, v, theta_dict)
 
 x_dict = pecmy.rewrap_lbda_i_x(x)
 print(pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])["tau_hat"]*pecmy.ecmy.tau)
