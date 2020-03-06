@@ -741,3 +741,63 @@ def constraints_tau(self, ge_dict, tau_free, wv_i, v, ge=True, deficits=True, mi
         out = np.concatenate((geq_diffs_jac_mat.ravel(), Lzero_jac_f_mat.ravel(), war_diffs_jac_mat.ravel(), comp_slack_jac_mat.ravel()))
 
         return(out)
+
+    def war_vals(self, v, m, theta_dict):
+        """Calculate matrix of war values (regime change value minus war costs)
+
+        Parameters
+        ----------
+        v : vector
+            len self.N array of preference values for each government
+        m : matrix
+            self.N times self.N matrix of military allocations
+        theta_dict : dict
+            dictionary of military parameters (see self.rewrap_theta)
+
+        Returns
+        -------
+        matrix
+            self.N times self.N matrix of war values for row id in war against col id
+
+        """
+
+        chi = self.chi(m, theta_dict)
+        chi = np.clip(chi, self.chi_min, 1)
+        wc = theta_dict["c_hat"] / chi
+        rcv_ft = self.rcv_ft(v)
+        wv = rcv_ft - wc
+        wv = np.clip(wv, self.wv_min, np.inf)  # cap minimum war values
+
+        return(wv)
+
+    def rcv_ft(self, v):
+        """calculate matrix of G_hats, imposing free trade on each row government. (row i, column j is j's utility when i implements free trade)
+
+        Parameters
+        ----------
+        v : vector
+            len self.N array of preference values for each government
+
+        Returns
+        -------
+        matrix
+            self.N times self.N matrix of free trade values
+
+        """
+
+        out = np.array([self.G_hat(self.ge_x_ft[i, ], v, 0, all=True) for i in range(self.N)])
+
+        return(out.T)
+
+
+    # generate free trade policies
+    ge_x_ft_path = results_path + "ge_x_ft.csv"
+    if not os.path.isfile(ge_x_ft_path):
+        self.ge_x_ft = np.zeros((self.N, self.x_len))
+        for i in range(self.N):
+            print(str(i) + "'s free trade vector")
+            ge_x_ft_i = self.ft_sv(i, np.ones(self.x_len))
+            self.ge_x_ft[i, ] = ge_x_ft_i  # save i's free trade policies and ge responses in row i of matrix
+        np.savetxt(ge_x_ft_path, self.ge_x_ft, delimiter=",")  # save to results_path
+    else:  # load existing csv if values have already been computed
+        self.ge_x_ft = np.genfromtxt(ge_x_ft_path, delimiter=",")

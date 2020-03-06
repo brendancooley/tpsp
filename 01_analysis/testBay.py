@@ -85,7 +85,7 @@ v = np.ones(N)
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 
-id = 1
+id = 2
 
 ge_x0 = pecmy.v_sv(id, np.ones(pecmy.x_len), v)
 lbda_i0 = np.repeat(.01, pecmy.lambda_i_len)  # initialize lambdas
@@ -97,10 +97,12 @@ len(pecmy.Lzeros_i_cons(x0, id, pecmy.m, v, theta_dict))
 
 ge_x_rch = np.concatenate((ge_x0, h))
 ge_x = ge_x_rch[0:pecmy.x_len]
-h = ge_x_rch[pecmy.x_len:]
 ge_dict = pecmy.ecmy.rewrap_ge_dict(ge_x)
-rcx = pecmy.rcx(ge_dict["tau_hat"], h, id)
+ft_id = pecmy.ecmy.rewrap_ge_dict(pecmy.ft_sv(id, ge_x0))
+h_sv = pecmy.ecmy.unwrap_ge_dict(pecmy.ecmy.geq_solve(ft_id["tau_hat"], np.ones(pecmy.N)))[-pecmy.hhat_len:]
+rcx = pecmy.rcx(ge_dict["tau_hat"], h_sv, id)
 wv = pecmy.wv_xlsh(rcx, id, pecmy.m, v, theta_dict)
+wv
 war_diffs = pecmy.war_diffs(ge_x, v, wv, id)
 war_diffs
 
@@ -124,8 +126,9 @@ tau_hat_tilde = pecmy.ecmy.rewrap_ge_dict(ft_id)["tau_hat"]
 rcx = pecmy.rcx(tau_hat_tilde, ft_id[-pecmy.hhat_len:], id)
 pecmy.wv_xlsh(rcx, 0, pecmy.m, v, theta_dict)
 geq_ft = pecmy.ecmy.geq_solve(tau_hat_tilde, np.ones(pecmy.N))
-x, obj, status = pecmy.Lsolve_i_ipopt(id, pecmy.mzeros, v, theta_dict)
+x, obj, status = pecmy.Lsolve_i_ipopt(id, pecmy.m, v, theta_dict)
 
 x_dict = pecmy.rewrap_lbda_i_x(x)
 print(pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])["tau_hat"]*pecmy.ecmy.tau)
+print(pecmy.G_hat(x_dict["ge_x"], v, id, all=True))
 # NOTE: problems are in Lzeros at the moment
