@@ -73,10 +73,10 @@ E = Eq + Ex
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
 theta_dict = dict()
-theta_dict["c_hat"] = .2
+theta_dict["c_hat"] = .25
 theta_dict["alpha0"] = 0
 theta_dict["alpha1"] = 0
-theta_dict["gamma"] = .5
+theta_dict["gamma"] = 1.
 
 # v = np.ones(N)
 # v = np.array([1.08, 1.65, 1.61, 1.05, 1.05, 1.30])
@@ -91,9 +91,13 @@ theta_x = pecmy.unwrap_theta(theta_dict)
 pecmy.estimator_bounds(theta_x, np.ones(pecmy.N), bound="upper")
 
 # v = np.repeat(1.05, pecmy.N)
-v = (pecmy.v_max() - 1) / 2 + 1
+# v = (pecmy.v_max() - 1) / 2 + 1
 # v = np.array([1.03, 1.08, 1.04, 1.06, 1.02, 1.00])
-# v = np.ones(pecmy.N)
+v = np.ones(pecmy.N)
+
+test = np.ones(pecmy.xlshvt_len)
+test += np.random.normal(0, .2, len(test))
+pecmy.loss(test)
 
 # ge_v_sv = pecmy.v_sv_all(v)
 # ft_sv = pecmy.ecmy.geq_solve(1 / pecmy.ecmy.tau, np.ones(pecmy.N))
@@ -118,7 +122,7 @@ v = (pecmy.v_max() - 1) / 2 + 1
 # x_dict = pecmy.rewrap_lbda_i_x(x)
 # print(pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])["tau_hat"]*pecmy.ecmy.tau)
 
-x, obj, status = pecmy.estimator(v, theta_x, pecmy.mzeros, nash_eq=False)
+x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
 x_dict = pecmy.rewrap_xlshvt(x)
 ge_dict = pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])
 
@@ -200,3 +204,29 @@ for i in range(pecmy.N):
     # this helps a lot
 # 4) larger v_step and pardiso (estimation)
     # larger v_step makes a huge difference
+    # also starting v at v_max mid
+
+### full estimator
+
+# 1) derivative checker
+    # no errors
+# 4) turn off adaptive mu strategy
+    # also start lambdas at zero
+    # this ends up "solving to acceptable level"
+
+
+# 1) just estimate alpha
+    # OPTIMAL SOLUTION FOUND at alpha = .0002, loss = 17.9
+
+# 2) 1-norm, decrease v lower bound
+# 4) try with 1-norm for loss (just vs)
+
+# 1-norm might be a mess because we keep hopping around minimum
+
+# 1) smooth l-1 loss, sv=1, lb=.75
+    # went to corner
+# 2) estimate alpha, 2-norm, sv=1, lb=.75
+# 3) back to 2-norm, sv=1, lb=.75
+    # converges nicely in 140 iterations, loss = 6.2
+# 4) everything, 2-norm, sv=1, lb=.75
+    # gamma went to corner
