@@ -88,41 +88,12 @@ imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 theta_x = pecmy.unwrap_theta(theta_dict)
 
-pecmy.estimator_bounds(theta_x, np.ones(pecmy.N), bound="upper")
-
-# v = np.repeat(1.05, pecmy.N)
-# v = (pecmy.v_max() - 1) / 2 + 1
-# v = np.array([1.03, 1.08, 1.04, 1.06, 1.02, 1.00])
-v = np.ones(pecmy.N)
-
-test = np.ones(pecmy.xlshvt_len)
-test += np.random.normal(0, .2, len(test))
-pecmy.loss(test)
-
-# ge_v_sv = pecmy.v_sv_all(v)
-# ft_sv = pecmy.ecmy.geq_solve(1 / pecmy.ecmy.tau, np.ones(pecmy.N))
-# ge_dict = pecmy.ecmy.rewrap_ge_dict(ge_v_sv)
-# pecmy.R_hat(ft_sv, v)
-# pecmy.r_v(v)
-# pecmy.ecmy.tau
-# pecmy.x_len + pecmy.lambda_i_len*pecmy.N + pecmy.N**2 + pecmy.N**2
-# pecmy.x_len + pecmy.lambda_i_len*pecmy.N + pecmy.N**2 + pecmy.hhat_len
-
-# pecmy.ecmy.tau
-# np.max(pecmy.ecmy.tau)
-# pecmy.rho(theta_dict)
-# pecmy.chi(pecmy.m, theta_dict)
-# ft_id = pecmy.ft_sv(id, np.ones(pecmy.x_len))
-# pecmy.G_hat(ft_id, v, id, all=True)
-# pecmy.R_hat(pecmy.ecmy.rewrap_ge_dict(ft_id), v)
-# pecmy.wv_rcx(ft_id, id, pecmy.m, v, theta_dict)
-
 # id = 1
 # x, obj, status = pecmy.Lsolve_i_ipopt(id, pecmy.m, v, theta_dict)
 # x_dict = pecmy.rewrap_lbda_i_x(x)
 # print(pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])["tau_hat"]*pecmy.ecmy.tau)
 
-x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
+x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=True)
 x_dict = pecmy.rewrap_xlshvt(x)
 ge_dict = pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])
 
