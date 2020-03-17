@@ -19,7 +19,7 @@ basePath = os.path.expanduser('~')
 projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
-size = "mini/"
+size = "mid/"
 
 helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
@@ -73,7 +73,7 @@ E = Eq + Ex
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
 theta_dict = dict()
-theta_dict["c_hat"] = .25
+theta_dict["c_hat"] = .1
 theta_dict["alpha0"] = 0
 theta_dict["alpha1"] = 0
 theta_dict["gamma"] = 1.
@@ -88,12 +88,20 @@ imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 theta_x = pecmy.unwrap_theta(theta_dict)
 
+# v = pecmy.v_max() - pecmy.v_buffer
+v = (pecmy.v_max() - 1) / 2 + 1
+# v = np.ones(pecmy.N)
+# v = np.array([1.10122687, 1.37060769, 1.99432529, 1.12005803, 0.89220011, 1.18619372])
+
+pecmy.rho(theta_dict)
+pecmy.chi(pecmy.m, theta_dict)
+
 # id = 1
 # x, obj, status = pecmy.Lsolve_i_ipopt(id, pecmy.m, v, theta_dict)
 # x_dict = pecmy.rewrap_lbda_i_x(x)
 # print(pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])["tau_hat"]*pecmy.ecmy.tau)
 
-x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=True)
+x, obj, status = pecmy.estimator(v, theta_x, pecmy.mzeros, nash_eq=False)
 x_dict = pecmy.rewrap_xlshvt(x)
 ge_dict = pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])
 
@@ -106,6 +114,12 @@ print("-----")
 theta_dict = pecmy.rewrap_theta(x_dict["theta"])
 print("theta:")
 print(theta_dict)
+
+print("G_hat:")
+print(pecmy.G_hat(x_dict["ge_x"], v, 0, all=True))
+
+print("R_hat:")
+print(pecmy.R_hat(ge_dict, v))
 
 for i in range(pecmy.N):
     h_i = np.reshape(x_dict["h"], (pecmy.N, pecmy.hhat_len))[i, ]

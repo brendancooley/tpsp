@@ -83,7 +83,7 @@ class policies:
         self.wv_min = -1.0e2  # minimum war value
         self.alpha1_ub = self.alpha1_min(.01)  # restrict alpha search (returns alpha such that rho(alpha)=.01)
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
-        self.v_min = .75
+        self.v_min = 1
         self.v_buffer = .025
 
         self.tick = 0  # tracker for optimization calls to loss function
@@ -986,9 +986,9 @@ class policies:
 
         if nash_eq == False:  # set lower bounds on parameters, of fix some values for testing estimator
             x_L[b:b+self.N] = self.v_min # vs
-            # x_L[b:b+self.N] = .75 # vs
-            # x_U[b:b+self.N] = np.max(self.ecmy.tau) # vs
             x_U[b:b+self.N] = self.v_max() - self.v_buffer # vs
+            # x_L[b:b+self.N] = v #
+            # x_U[b:b+self.N] = v # fixed vs
             b += self.N
             x_L[b] = 0  # c_hat lower
             # x_L[b] = .25
@@ -1001,7 +1001,8 @@ class policies:
             x_L[b] = 0  # fix alpha0
             x_U[b] = 0
             b += 1
-            x_L[b] = -self.alpha1_ub  # alpha1 lower
+            # x_L[b] = -self.alpha1_ub  # alpha1 lower
+            x_L[b] = 0  # alpha1 lower
             x_U[b] = self.alpha1_ub  # alpha1 upper
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # alpha lower
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0
@@ -1062,7 +1063,8 @@ class policies:
         ge_x_sv = self.v_sv_all(v)
         # ge_x_sv = np.ones(self.x_len)
 
-        lambda_sv = np.zeros(self.lambda_i_len*self.N)
+        # lambda_sv = np.zeros(self.lambda_i_len*self.N)
+        lambda_sv = np.ones(self.lambda_i_len*self.N)
         # lambda_sv = np.repeat(.01, self.lambda_i_len*self.N)
 
         h_sv = []
