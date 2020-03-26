@@ -83,7 +83,7 @@ class policies:
         self.wv_min = -1.0e2  # minimum war value
         self.alpha1_ub = self.alpha1_min(.01)  # restrict alpha search (returns alpha such that rho(alpha)=.01)
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
-        self.v_min = 1
+        self.v_min = .75
         self.v_buffer = .025
 
         self.tick = 0  # tracker for optimization calls to loss function
@@ -357,6 +357,7 @@ class policies:
         rho = self.rho(theta_dict)  # loss of strength matrix
         m_diag = np.diagonal(m)
         m_frac = m / m_diag
+        # m_frac = np.zeros((self.N, self.N))
 
         chi_logit = rho * m_frac ** theta_dict["gamma"]  # logit transformation
         chi = chi_logit / (1 + chi_logit)  # transform back
@@ -538,13 +539,20 @@ class policies:
 
         alpha = .1
 
-        ge_x = self.rewrap_xlshvt(xlshvt)["ge_x"]
-        v = self.rewrap_xlshvt(xlshvt)["v"]
-        theta_x = self.rewrap_xlshvt(xlshvt)["theta"]
+        xlshvt_dict = self.rewrap_xlshvt(xlshvt)
+
+        ge_x = xlshvt_dict["ge_x"]
+        v = xlshvt_dict["v"]
+        theta_x = xlshvt_dict["theta"]
+        # print(theta_x)
 
         # optimizer tracker
         self.tick += 1
-        if self.tick % 25 == 0:  # print output every 25 calls
+        if self.tick % 50 == 0:  # print output every 25 calls
+
+            s = np.reshape(xlshvt_dict["s"], (self.N, self.N))
+            print("s:")
+            print(s)
             ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
 
             print("tau:")
@@ -572,6 +580,8 @@ class policies:
                 lbda = np.reshape(self.rewrap_xlshvt(xlshvt)["lbda"], (self.N, self.lambda_i_len))
                 lbda_chi_i = self.rewrap_lbda_i(lbda[i, ])["chi_i"]
                 print(lbda_chi_i)
+                print("s " + str(i))
+                print(s[i, ])
 
         tau_hat = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
         tau_star = tau_hat * self.ecmy.tau  # calculate equilibrium tau
@@ -673,10 +683,11 @@ class policies:
         v = xlshvt_dict["v"]
         theta_x = xlshvt_dict["theta"]
         theta_dict = self.rewrap_theta(theta_x)
+        # print(theta_dict)
 
         tau_hat_tilde = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
         h_i = np.reshape(xlshvt_dict["h"], (self.N, self.hhat_len))[id, ]
-        rcx = self.rcx(tau_hat_tilde, h_i, id)
+        # rcx = self.rcx(tau_hat_tilde, h_i, id)
 
         xlsh = np.concatenate((ge_x, lbda_i, s_i, h_i))
 
@@ -712,12 +723,14 @@ class policies:
         v = xlshvt_dict["v"]
         theta_x = xlshvt_dict["theta"]
         theta_dict = self.rewrap_theta(theta_x)
+        # print(theta_dict)
 
         tau_hat_tilde = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
         h_i = np.reshape(xlshvt_dict["h"], (self.N, self.hhat_len))[id, ]
         rcx = self.rcx(tau_hat_tilde, h_i, id)
 
         wv = self.wv_rcx(rcx, id, m, v, theta_dict)
+        # wv = np.clip(wv, 0, np.inf)
 
         war_diffs_i = self.war_diffs(ge_x, v, wv, id) - s_i
 
@@ -781,6 +794,7 @@ class policies:
 
         """
 
+        # print(m)
         # geq constraints
         geq_diffs = self.geq_diffs_xlshvt(xlshvt)
 
@@ -845,6 +859,7 @@ class policies:
 
         """
 
+        # print(m)
         geq_diffs_jac_f = ag.jacobian(self.geq_diffs_xlshvt)
         geq_diffs_jac = geq_diffs_jac_f(xlshvt)
 
@@ -907,8 +922,8 @@ class policies:
         lb_dict["X_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
         lb_dict["P_hat"] = np.repeat(0, self.N)
         lb_dict["w_hat"] = np.repeat(0, self.N)
-        lb_dict["r_hat"] = np.repeat(-np.inf, self.N)
-        # lb_dict["r_hat"] = np.repeat(0, self.N)
+        # lb_dict["r_hat"] = np.repeat(-np.inf, self.N)
+        lb_dict["r_hat"] = np.repeat(0, self.N)
         lb_dict["E_hat"] = np.repeat(0, self.N)
 
         out = self.ecmy.unwrap_ge_dict(lb_dict)
@@ -919,6 +934,7 @@ class policies:
 
         ub_dict = dict()
         ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
+        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         np.fill_diagonal(ub_dict["tau_hat"], 1)
         ub_dict["D_hat"] = np.repeat(1, self.N)
         ub_dict["X_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
@@ -1001,9 +1017,11 @@ class policies:
             x_L[b] = 0  # fix alpha0
             x_U[b] = 0
             b += 1
-            # x_L[b] = -self.alpha1_ub  # alpha1 lower
-            x_L[b] = 0  # alpha1 lower
+            x_L[b] = -self.alpha1_ub  # alpha1 lower
+            # x_L[b] = 0  # alpha1 lower
             x_U[b] = self.alpha1_ub  # alpha1 upper
+            # x_L[b] = -np.inf  # alpha1 lower
+            # x_U[b] = np.inf  # alpha1 upper
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # alpha lower
             # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0
             # x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # fix alpha
@@ -1060,11 +1078,11 @@ class policies:
 
         theta_dict = self.rewrap_theta(theta_x)
 
-        ge_x_sv = self.v_sv_all(v)
-        # ge_x_sv = np.ones(self.x_len)
+        # ge_x_sv = self.v_sv_all(v)
+        ge_x_sv = np.ones(self.x_len)
 
-        # lambda_sv = np.zeros(self.lambda_i_len*self.N)
-        lambda_sv = np.ones(self.lambda_i_len*self.N)
+        lambda_sv = np.zeros(self.lambda_i_len*self.N)
+        # lambda_sv = np.ones(self.lambda_i_len*self.N)
         # lambda_sv = np.repeat(.01, self.lambda_i_len*self.N)
 
         h_sv = []
@@ -1081,7 +1099,8 @@ class policies:
             s_sv.extend(wd)
 
         h_sv = np.array(h_sv)
-        s_sv = np.array(s_sv)
+        # s_sv = np.array(s_sv)
+        s_sv = np.zeros(self.N**2)
 
         v_sv = v
         theta_sv = theta_x
@@ -1140,12 +1159,12 @@ class policies:
 
         if nash_eq == False:
             problem = ipyopt.Problem(self.xlshvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso")
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes")
             # for derivative test, make sure we don't travel too far from initial point with point_perturbation_radius (leads to evaluation errors)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
         else:
             problem = ipyopt.Problem(self.xlshvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", mu_strategy="adaptive")
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes")
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", derivative_test="first-order", point_perturbation_radius=0.)
         print("solving...")
         _x, obj, status = problem.solve(xlshvt_sv)
@@ -1225,9 +1244,12 @@ class policies:
 
         chi = self.chi(m, theta_dict)
         chi = np.clip(chi, self.chi_min, 1)
+        # print(theta_dict["c_hat"])
         wc = theta_dict["c_hat"] / chi
 
         wv = cv - wc[:,id]  # cost for each country for invading id
+        wv = np.clip(wv, 0, np.inf)
+        # print(wv)
 
         return(wv)
 
@@ -1383,6 +1405,7 @@ class policies:
         tau_L = np.zeros((self.N, self.N))
         # tau_L = 1 / self.ecmy.tau
         tau_U = np.reshape(np.repeat(np.inf, self.N ** 2), (self.N, self.N))
+        # tau_U = np.max(self.ecmy.tau, axis=1)
         np.fill_diagonal(tau_L, 1.)
         np.fill_diagonal(tau_U, 1.)
         for i in range(self.N):
@@ -1405,8 +1428,11 @@ class policies:
         x_U[self.N**2:self.N**2+self.N] = 1.
 
         # revenues
-        x_L[-self.N*2:-self.N] = -np.inf
-        x_L[self.x_len-self.N*2:self.x_len-self.N] = -np.inf
+        # x_L[-self.N*2:-self.N] = -np.inf
+        # x_L[self.x_len-self.N*2:self.x_len-self.N] = -np.inf
+        # NOTE: eq (true) revenues cannot be negative in any equilibrium
+        x_L[-self.N*2:-self.N] = 0
+        x_L[self.x_len-self.N*2:self.x_len-self.N] = 0
 
         x_L[self.x_len+self.lambda_i_len-self.N:self.x_len+self.lambda_i_len+self.N] = 0  # mil constraint multipliers and slack variables
 

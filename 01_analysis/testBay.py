@@ -19,7 +19,7 @@ basePath = os.path.expanduser('~')
 projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
-size = "mid/"
+size = "mini/"
 
 helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
@@ -75,8 +75,8 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 theta_dict = dict()
 theta_dict["c_hat"] = .1
 theta_dict["alpha0"] = 0
-theta_dict["alpha1"] = 0
-theta_dict["gamma"] = 1.
+theta_dict["alpha1"] = .0001
+theta_dict["gamma"] = .5
 
 # v = np.ones(N)
 # v = np.array([1.08, 1.65, 1.61, 1.05, 1.05, 1.30])
@@ -87,21 +87,61 @@ theta_dict["gamma"] = 1.
 imp.reload(policies)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 theta_x = pecmy.unwrap_theta(theta_dict)
+# np.reshape(np.repeat(np.max(pecmy.ecmy.tau, axis=1), pecmy.N), (pecmy.N, pecmy.N))
+# pecmy.xlshvt_len
 
+# v = (pecmy.v_max() - 1) / 2 + 1
+v = np.ones(pecmy.N)
+# pecmy.r_v(np.repeat(.9, pecmy.N))
+
+# test_f = ag.grad(pecmy.wv_rcx)
+
+# i = 0
+# ge_x_sv = np.ones(pecmy.x_len)
+# ft_id = pecmy.ecmy.rewrap_ge_dict(pecmy.ft_sv(i, ge_x_sv))
+# h_sv_i = pecmy.ecmy.unwrap_ge_dict(pecmy.ecmy.geq_solve(ft_id["tau_hat"], np.ones(pecmy.N)))[-pecmy.hhat_len:]
+#
+# rcx = pecmy.rcx(np.ones((pecmy.N, pecmy.N)), h_sv_i, i)
+# wv_i = pecmy.wv_rcx(rcx, i, pecmy.mzeros, v, theta_dict)
+#
+# def wv_rcx_wrap(theta_x):
+#     theta_dict = pecmy.rewrap_theta(theta_x)
+#     return(pecmy.wv_rcx(rcx, i, pecmy.mzeros, v, theta_dict))
+#
+# xlshvt_test = pecmy.estimator_sv(pecmy.mzeros, v, theta_x)
+# test_f = pecmy.estimator_cons_jac_wrap(pecmy.mzeros)
+# test = test_f(xlshvt_test, np.zeros(pecmy.xlshvt_len*pecmy.g_len))
+# test_jac = np.reshape(test, (pecmy.g_len, pecmy.xlshvt_len))
+# test_jac.shape
+# np.sum(test_jac[:,-4:])
+# pecmy.loss_grad(xlshvt_test, np.zeros(len(xlshvt_test)))[-4:]
+# # pecmy.geq_ub()[0:pecmy.N**2] * pecmy.ecmy.tau.ravel()
+#
+# war_diffs_i_jac_f = ag.jacobian(pecmy.war_diffs_xlshvt)
+# test = war_diffs_i_jac_f(xlshvt_test, i, pecmy.mzeros)
+# test[:,-4:]
+# Lzeros_i_jac_f = ag.jacobian(pecmy.Lzeros_i_xlshvt)
+# test2 = Lzeros_i_jac_f(xlshvt_test, i, pecmy.mzeros)
+# test2[:,-4:]
+# comp_slack_i_jac_f = ag.jacobian(pecmy.comp_slack_xlshvt)
+# test3 = comp_slack_i_jac_f(xlshvt_test, i, pecmy.mzeros)
+# test3[:,-4:]
+# h_diffs_i_jac_f = ag.jacobian(pecmy.h_diffs_xlshvt)
+# test4 = h_diffs_i_jac_f(xlshvt_test, i)
+# test4[:,-4:]
 # v = pecmy.v_max() - pecmy.v_buffer
-v = (pecmy.v_max() - 1) / 2 + 1
-# v = np.ones(pecmy.N)
 # v = np.array([1.10122687, 1.37060769, 1.99432529, 1.12005803, 0.89220011, 1.18619372])
-
-pecmy.rho(theta_dict)
-pecmy.chi(pecmy.m, theta_dict)
-
+#
+# pecmy.rho(theta_dict)
+# pecmy.chi(pecmy.mzeros, theta_dict)
+#
 # id = 1
 # x, obj, status = pecmy.Lsolve_i_ipopt(id, pecmy.m, v, theta_dict)
 # x_dict = pecmy.rewrap_lbda_i_x(x)
 # print(pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])["tau_hat"]*pecmy.ecmy.tau)
 
-x, obj, status = pecmy.estimator(v, theta_x, pecmy.mzeros, nash_eq=False)
+x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
+# x, obj, status = pecmy.estimator(v, theta_x, np.zeros((pecmy.N, pecmy.N)), nash_eq=False)
 x_dict = pecmy.rewrap_xlshvt(x)
 ge_dict = pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])
 
