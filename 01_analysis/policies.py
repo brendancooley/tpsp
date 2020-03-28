@@ -83,7 +83,7 @@ class policies:
         self.wv_min = -1.0e2  # minimum war value
         self.alpha1_ub = self.alpha1_min(.01)  # restrict alpha search (returns alpha such that rho(alpha)=.01)
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
-        self.v_min = .75
+        self.v_min = .8
         self.v_buffer = .025
 
         self.tick = 0  # tracker for optimization calls to loss function
@@ -113,6 +113,7 @@ class policies:
 
         ge_dict = self.ecmy.rewrap_ge_dict(x)
         Uhat = self.ecmy.U_hat(ge_dict)
+        # print(Uhat)
         Ghat = Uhat * self.R_hat(ge_dict, v)
 
         if all == False:
@@ -933,8 +934,8 @@ class policies:
     def geq_ub(self):
 
         ub_dict = dict()
-        ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
-        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
+        ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         np.fill_diagonal(ub_dict["tau_hat"], 1)
         ub_dict["D_hat"] = np.repeat(1, self.N)
         ub_dict["X_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
@@ -1006,19 +1007,19 @@ class policies:
             # x_L[b:b+self.N] = v #
             # x_U[b:b+self.N] = v # fixed vs
             b += self.N
-            x_L[b] = 0  # c_hat lower
-            # x_L[b] = .25
-            # x_U[b] = .25  # fix c_hat
+            # x_L[b] = 0  # c_hat lower
+            x_L[b] = .25
+            x_U[b] = .25  # fix c_hat
             b += 1
-            x_L[b] = .01  # gamma lower
-            # x_L[b] = 1
-            # x_U[b] = 1  # fix gamma at 1
+            # x_L[b] = .01  # gamma lower
+            x_L[b] = 1
+            x_U[b] = 1  # fix gamma at 1
             b += 1
             x_L[b] = 0  # fix alpha0
             x_U[b] = 0
             b += 1
-            x_L[b] = -self.alpha1_ub  # alpha1 lower
-            # x_L[b] = 0  # alpha1 lower
+            # x_L[b] = -self.alpha1_ub  # alpha1 lower
+            x_L[b] = 0  # alpha1 lower
             x_U[b] = self.alpha1_ub  # alpha1 upper
             # x_L[b] = -np.inf  # alpha1 lower
             # x_U[b] = np.inf  # alpha1 upper

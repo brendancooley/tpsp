@@ -241,6 +241,8 @@ class economy:
 
         eu_hat = self.Eu_hat(ge_dict)
         Pcd_hat = self.Pcd_hat(ge_dict)
+        # print(eu_hat)
+        # print(Pcd_hat)
         U_hat = eu_hat / Pcd_hat
 
         return(U_hat)

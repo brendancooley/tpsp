@@ -85,14 +85,20 @@ theta_dict["gamma"] = .5
 # TODO try just running inner loop, problem is that values of v change with theta as well, no reason we should run theta until covergence rather than iterating on v first.
 
 imp.reload(policies)
+imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 theta_x = pecmy.unwrap_theta(theta_dict)
 # np.reshape(np.repeat(np.max(pecmy.ecmy.tau, axis=1), pecmy.N), (pecmy.N, pecmy.N))
 # pecmy.xlshvt_len
 
-# v = (pecmy.v_max() - 1) / 2 + 1
-v = np.ones(pecmy.N)
-# pecmy.r_v(np.repeat(.9, pecmy.N))
+v = (pecmy.v_max() - 1) / 2 + 1
+# v = np.ones(pecmy.N)
+ft_x = pecmy.ft_sv(0, np.ones(pecmy.x_len))
+pecmy.r_v(np.repeat(.9, pecmy.N))
+pecmy.R_hat(pecmy.ecmy.rewrap_ge_dict(ft_x), np.repeat(.6, pecmy.N))
+pecmy.ecmy.rewrap_ge_dict(ft_x)
+pecmy.G_hat(ft_x, np.repeat(.6, pecmy.N), 0, 1)
+
 
 # test_f = ag.grad(pecmy.wv_rcx)
 
