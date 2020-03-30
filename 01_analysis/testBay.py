@@ -19,7 +19,7 @@ basePath = os.path.expanduser('~')
 projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
-size = "mini/"
+size = "mid/"
 
 helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
@@ -91,8 +91,8 @@ theta_x = pecmy.unwrap_theta(theta_dict)
 # np.reshape(np.repeat(np.max(pecmy.ecmy.tau, axis=1), pecmy.N), (pecmy.N, pecmy.N))
 # pecmy.xlshvt_len
 
-# v = (pecmy.v_max() - 1) / 2 + 1
-v = np.ones(pecmy.N)
+v = (pecmy.v_max() - 1) / 2 + 1
+# v = np.ones(pecmy.N)
 # ft_x = pecmy.ft_sv(0, np.ones(pecmy.x_len))
 # pecmy.r_v(np.repeat(.9, pecmy.N))
 # pecmy.R_hat(pecmy.ecmy.rewrap_ge_dict(ft_x), np.repeat(.6, pecmy.N))
