@@ -148,11 +148,16 @@ v = np.ones(pecmy.N)
 # x_dict = pecmy.rewrap_lbda_i_x(x)
 # print(pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])["tau_hat"]*pecmy.ecmy.tau)
 
-x, obj, status = pecmy.estimator(v, theta_x, pecmy.mzeros, nash_eq=False)
+fname = "out/est_mid_loqo.csv"
+x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
 # x, obj, status = pecmy.estimator(v, theta_x, np.zeros((pecmy.N, pecmy.N)), nash_eq=False)
+np.savetxt(fname, x, delimiter=",")
+x = np.genfromtxt(fname, delimiter=",")
+
 x_dict = pecmy.rewrap_xlshvt(x)
 ge_dict = pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])
-
+s = np.reshape(x_dict["s"], (pecmy.N, pecmy.N))
+lbda = np.reshape(x_dict["lbda"], (pecmy.N, pecmy.lambda_i_len))
 
 print(ge_dict["tau_hat"]*pecmy.ecmy.tau)
 print("-----")
@@ -170,14 +175,35 @@ print("R_hat:")
 print(pecmy.R_hat(ge_dict, v))
 
 for i in range(pecmy.N):
+
+    print("s_i")
+    print(s[i, ])
+
+    lbda_chi_i = pecmy.rewrap_lbda_i(lbda[i, ])["chi_i"]
+    print("lbda_chi_i:")
+    print(lbda_chi_i)
+
     h_i = np.reshape(x_dict["h"], (pecmy.N, pecmy.hhat_len))[i, ]
+    print("h_i:")
     print(h_i)
 
     ft_i = pecmy.ft_sv(i, x_dict["ge_x"])
+    print("ft_i")
     print(ft_i)
     print("-----")
 
-
+# ge_dict["tau_hat"] * pecmy.ecmy.tau
+# id = 0
+# h_i = np.reshape(x_dict["h"], (pecmy.N, pecmy.hhat_len))[id, ]
+# s_i = s[id, ]
+# lbda_chi_i = pecmy.rewrap_lbda_i(lbda[id, ])["chi_i"]
+# s_i
+# lbda_chi_i
+# pecmy.G_hat(x_dict["ge_x"], x_dict["v"], 0, all=True)
+# rcx_i = pecmy.rcx(ge_dict["tau_hat"], h_i, id)
+# pecmy.G_hat(rcx_i, x_dict["v"], 0, all=True)
+# pecmy.ecmy.rewrap_ge_dict(rcx_i)
+# pecmy.wv_rcx(rcx_i, id, pecmy.m, x_dict["v"], theta_dict)
 
 
 # testing:

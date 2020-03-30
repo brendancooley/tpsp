@@ -983,9 +983,10 @@ class policies:
         lbda_i_bound_dict = dict()
         lbda_i_bound_dict["h_hat"] = np.repeat(-np.inf, self.hhat_len)
         # lbda_i_bound_dict["chi_i"] = np.repeat(self.zero_lb_relax, self.N)
-        lbda_i_bound_dict["chi_i"] = np.repeat(0., self.N)  # constrain inequality constraint multipliers to be positive
+        lbda_i_bound_dict["chi_i"] = np.zeros(self.N)  # constrain inequality constraint multipliers to be positive
         lbda_i_bound = self.unwrap_lbda_i(lbda_i_bound_dict)
         lbda_bound = np.tile(lbda_i_bound, self.N)
+        # print(lbda_bound)
 
         # constraints and slack variables
         x_L[b:b+self.lambda_i_len*self.N] = lbda_bound  # mil constraint multipliers
@@ -1082,9 +1083,9 @@ class policies:
         ge_x_sv = self.v_sv_all(v)
         # ge_x_sv = np.ones(self.x_len)
 
-        # lambda_sv = np.zeros(self.lambda_i_len*self.N)
+        lambda_sv = np.zeros(self.lambda_i_len*self.N)
         # lambda_sv = np.ones(self.lambda_i_len*self.N)
-        lambda_sv = np.repeat(.01, self.lambda_i_len*self.N)
+        # lambda_sv = np.repeat(.01, self.lambda_i_len*self.N)
 
         h_sv = []
         s_sv = []
@@ -1160,7 +1161,7 @@ class policies:
 
         if nash_eq == False:
             problem = ipyopt.Problem(self.xlshvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes")
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", mu_strategy="adaptive", mu_oracle="loqo", fixed_mu_oracle="loqo", adaptive_mu_restore_previous_iterate="yes")
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", mehrotra_algorithm="yes")
             # for derivative test, make sure we don't travel too far from initial point with point_perturbation_radius (leads to evaluation errors)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
