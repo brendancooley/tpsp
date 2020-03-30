@@ -148,7 +148,7 @@ v = np.ones(pecmy.N)
 # x_dict = pecmy.rewrap_lbda_i_x(x)
 # print(pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])["tau_hat"]*pecmy.ecmy.tau)
 
-x, obj, status = pecmy.estimator(v, theta_x, pecmy.mzeros, nash_eq=False)
+x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
 # x, obj, status = pecmy.estimator(v, theta_x, np.zeros((pecmy.N, pecmy.N)), nash_eq=False)
 x_dict = pecmy.rewrap_xlshvt(x)
 ge_dict = pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])
