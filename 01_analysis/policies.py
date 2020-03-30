@@ -1007,13 +1007,13 @@ class policies:
             # x_L[b:b+self.N] = v #
             # x_U[b:b+self.N] = v # fixed vs
             b += self.N
-            # x_L[b] = 0  # c_hat lower
-            x_L[b] = .25
-            x_U[b] = .25  # fix c_hat
+            x_L[b] = 0  # c_hat lower
+            # x_L[b] = .25
+            # x_U[b] = .25  # fix c_hat
             b += 1
-            # x_L[b] = .01  # gamma lower
-            x_L[b] = 1
-            x_U[b] = 1  # fix gamma at 1
+            x_L[b] = .01  # gamma lower
+            # x_L[b] = 1
+            # x_U[b] = 1  # fix gamma at 1
             b += 1
             x_L[b] = 0  # fix alpha0
             x_U[b] = 0
@@ -1079,12 +1079,12 @@ class policies:
 
         theta_dict = self.rewrap_theta(theta_x)
 
-        # ge_x_sv = self.v_sv_all(v)
-        ge_x_sv = np.ones(self.x_len)
+        ge_x_sv = self.v_sv_all(v)
+        # ge_x_sv = np.ones(self.x_len)
 
-        lambda_sv = np.zeros(self.lambda_i_len*self.N)
+        # lambda_sv = np.zeros(self.lambda_i_len*self.N)
         # lambda_sv = np.ones(self.lambda_i_len*self.N)
-        # lambda_sv = np.repeat(.01, self.lambda_i_len*self.N)
+        lambda_sv = np.repeat(.01, self.lambda_i_len*self.N)
 
         h_sv = []
         s_sv = []
@@ -1161,6 +1161,7 @@ class policies:
         if nash_eq == False:
             problem = ipyopt.Problem(self.xlshvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
             problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes")
+            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", mehrotra_algorithm="yes")
             # for derivative test, make sure we don't travel too far from initial point with point_perturbation_radius (leads to evaluation errors)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
         else:

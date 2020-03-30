@@ -73,7 +73,7 @@ E = Eq + Ex
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
 theta_dict = dict()
-theta_dict["c_hat"] = .1
+theta_dict["c_hat"] = .25
 theta_dict["alpha0"] = 0
 theta_dict["alpha1"] = .0001
 theta_dict["gamma"] = .5
@@ -91,13 +91,13 @@ theta_x = pecmy.unwrap_theta(theta_dict)
 # np.reshape(np.repeat(np.max(pecmy.ecmy.tau, axis=1), pecmy.N), (pecmy.N, pecmy.N))
 # pecmy.xlshvt_len
 
-v = (pecmy.v_max() - 1) / 2 + 1
-# v = np.ones(pecmy.N)
-ft_x = pecmy.ft_sv(0, np.ones(pecmy.x_len))
-pecmy.r_v(np.repeat(.9, pecmy.N))
-pecmy.R_hat(pecmy.ecmy.rewrap_ge_dict(ft_x), np.repeat(.6, pecmy.N))
-pecmy.ecmy.rewrap_ge_dict(ft_x)
-pecmy.G_hat(ft_x, np.repeat(.6, pecmy.N), 0, 1)
+# v = (pecmy.v_max() - 1) / 2 + 1
+v = np.ones(pecmy.N)
+# ft_x = pecmy.ft_sv(0, np.ones(pecmy.x_len))
+# pecmy.r_v(np.repeat(.9, pecmy.N))
+# pecmy.R_hat(pecmy.ecmy.rewrap_ge_dict(ft_x), np.repeat(.6, pecmy.N))
+# pecmy.ecmy.rewrap_ge_dict(ft_x)
+# pecmy.G_hat(ft_x, np.repeat(.6, pecmy.N), 0, 1)
 
 
 # test_f = ag.grad(pecmy.wv_rcx)
@@ -108,7 +108,9 @@ pecmy.G_hat(ft_x, np.repeat(.6, pecmy.N), 0, 1)
 # h_sv_i = pecmy.ecmy.unwrap_ge_dict(pecmy.ecmy.geq_solve(ft_id["tau_hat"], np.ones(pecmy.N)))[-pecmy.hhat_len:]
 #
 # rcx = pecmy.rcx(np.ones((pecmy.N, pecmy.N)), h_sv_i, i)
-# wv_i = pecmy.wv_rcx(rcx, i, pecmy.mzeros, v, theta_dict)
+# wv_i = pecmy.wv_rcx(rcx, i, pecmy.m, v, theta_dict)
+# -1*pecmy.war_diffs(np.ones(pecmy.x_len), v, wv_i, i)
+
 #
 # def wv_rcx_wrap(theta_x):
 #     theta_dict = pecmy.rewrap_theta(theta_x)
@@ -146,7 +148,7 @@ pecmy.G_hat(ft_x, np.repeat(.6, pecmy.N), 0, 1)
 # x_dict = pecmy.rewrap_lbda_i_x(x)
 # print(pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])["tau_hat"]*pecmy.ecmy.tau)
 
-x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
+x, obj, status = pecmy.estimator(v, theta_x, pecmy.mzeros, nash_eq=False)
 # x, obj, status = pecmy.estimator(v, theta_x, np.zeros((pecmy.N, pecmy.N)), nash_eq=False)
 x_dict = pecmy.rewrap_xlshvt(x)
 ge_dict = pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])
