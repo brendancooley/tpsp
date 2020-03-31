@@ -148,7 +148,7 @@ v = (pecmy.v_max() - 1) / 2 + 1
 # x_dict = pecmy.rewrap_lbda_i_x(x)
 # print(pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])["tau_hat"]*pecmy.ecmy.tau)
 
-fname = "out/est_mid_loqo.csv"
+fname = "out/est_mid_loqo_vmids.csv"
 x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
 # x, obj, status = pecmy.estimator(v, theta_x, np.zeros((pecmy.N, pecmy.N)), nash_eq=False)
 np.savetxt(fname, x, delimiter=",")
