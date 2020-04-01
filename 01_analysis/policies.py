@@ -79,7 +79,8 @@ class policies:
         # self.g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2  #     constraints len: ge_diffs, Lzeros (own policies N-1), war_diffs mat, comp_slack mat
         self.g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2 + self.hhat_len*self.N
         # self.L_i_len = self.x_len + self.lambda_i_len + self.N
-        self.L_i_len = self.x_len + self.lambda_i_len + self.N + self.hhat_len
+        # self.L_i_len = self.x_len + self.lambda_i_len + self.N + self.hhat_len
+        self.L_i_len = self.x_len + self.lambda_i_len + self.hhat_len
 
         self.max_iter_ipopt = 100000
         self.chi_min = 1.0e-4  # minimum value for chi
@@ -448,6 +449,14 @@ class policies:
 
         """
 
+        # pr_peace_ji = np.exp(chi_ji)
+        chi_ji = self.peace_probs(ge_x, h, id, m, v, theta_dict)[0]
+        pr_peace = np.exp(np.sum(chi_ji))
+
+        return(pr_peace)
+
+    def peace_probs(self, ge_x, h, id, m, v, theta_dict):
+
         Cinv = theta_dict["C"] ** -1
         eta = theta_dict["eta"]
         gamma = theta_dict["gamma"]
@@ -462,15 +471,13 @@ class policies:
         G = self.G_hat(ge_x, v, id, all=True)
         rcv = self.G_hat(rcx, v, id, all=True)
         DeltaG = rcv - G
+        # print(DeltaG)
         DeltaG = np.clip(DeltaG, 0, np.inf)
         # DeltaG[id] = 0
 
         chi_ji = -Cinv * m_frac[:,id]**gamma * self.W[:,id]**(-1*alpha) * DeltaG**eta
 
-        # pr_peace_ji = np.exp(chi_ji)
-        pr_peace = np.exp(np.sum(chi_ji))
-
-        return(pr_peace)
+        return(chi_ji, np.exp(chi_ji))
 
     def rewrap_xlshvt(self, xlshvt):
         """Convert flattened xlshvt vector to dictionary
@@ -1494,7 +1501,7 @@ class policies:
 
         tau_hat = self.ecmy.rewrap_ge_dict(ge_x_sv)["tau_hat"]
 
-        x_L = np.concatenate((np.zeros(self.x_len), np.repeat(-np.inf, self.lambda_i_len), np.repeat(-np.inf, self.N), np.zeros(self.hhat_len)))
+        x_L = np.concatenate((np.zeros(self.x_len), np.repeat(-np.inf, self.lambda_i_len), np.zeros(self.hhat_len)))
         x_U = np.repeat(np.inf, self.L_i_len)
 
         tau_L = np.zeros((self.N, self.N))
@@ -1519,6 +1526,7 @@ class policies:
         x_U[0:self.N**2] = tau_U.ravel()
 
         x_L[self.N**2:self.x_len] = self.geq_lb()[self.N**2:]  # ge lower bounds
+        x_U[self.N**2:self.x_len] = self.geq_ub()[self.N**2:]  # ge upper bounds
         x_L[-self.hhat_len:] = self.geq_lb()[-self.hhat_len:]  # rc-ge lower bounds
 
         # x_L[self.x_len+self.lambda_i_len-self.N:self.x_len+self.lambda_i_len+self.N] = 0  # mil constraint multipliers and slack variables
@@ -1579,35 +1587,34 @@ class policies:
                 #     print("rhat_i:")
                 #     print(self.R_hat(self.ecmy.rewrap_ge_dict(rcx_i), x_dict["v"]))
                 #     print("-----")
-        # if len(x) == self.xlsh_len:
-        #
-        #     if self.tick % 25 == 0:
-        #
-        #         v = np.array([1.03, 1.60, 1.04, 1.06, 1.02, 1.00])
-        #         id = 1
-        #         m = self.m
-        #         theta_dict = dict()
-        #         theta_dict["c_hat"] = .5
-        #         theta_dict["alpha0"] = 0
-        #         theta_dict["alpha1"] = 0
-        #         theta_dict["gamma"] = 1
-        #
-        #         x_dict = self.rewrap_lbda_i_x(x)
-        #         ge_dict = self.ecmy.rewrap_ge_dict(x_dict["ge_x"])
-        #         print("tau:")
-        #         print(ge_dict["tau_hat"]*self.ecmy.tau)
-        #         print("-----")
-        #         rcx_i = self.rcx(ge_dict["tau_hat"], x_dict["h"], id)
-        #         print("rcx_i:")
-        #         print(self.ecmy.rewrap_ge_dict(rcx_i))
-        #         print("rcv_i:")
-        #         print(self.G_hat(rcx_i, v, 0, all=True))
-        #         print("rhat_i:")
-        #         print(self.R_hat(self.ecmy.rewrap_ge_dict(rcx_i), v))
-        #
-        #         diffs = self.Lzeros_i_cons(x, id, m, v, theta_dict)
-        #
-        #         print(np.argmax(diffs))
+        if len(x) == self.xlh_len:
+
+            if self.tick % 10 == 0:
+
+                id = 2
+                v = (self.v_max() - 1) / 2 + 1
+                theta_dict = dict()
+                theta_dict["eta"] = 1
+                theta_dict["alpha0"] = 0
+                theta_dict["alpha1"] = .25
+                theta_dict["gamma"] = 1
+                theta_dict["C"] = np.repeat(.25, self.N)
+
+                x_dict = self.rewrap_xlh(x)
+                ge_dict = self.ecmy.rewrap_ge_dict(x_dict["ge_x"])
+                print("tau:")
+                print(ge_dict["tau_hat"]*self.ecmy.tau)
+                print("-----")
+                print("ge_dict:")
+                print(ge_dict)
+                print("-----")
+                rcx_i = self.rcx(ge_dict["tau_hat"], x_dict["h"], id)
+                # print("rcx_i:")
+                # print(self.ecmy.rewrap_ge_dict(rcx_i))
+                peace_probs = self.peace_probs(x_dict["ge_x"], x_dict["h"], id, self.m, v, theta_dict)
+                print("peace probs:")
+                print(peace_probs)
+
 
         c = 1
         return(c)
@@ -1659,6 +1666,7 @@ class policies:
 
         ft_id = self.ecmy.rewrap_ge_dict(self.ft_sv(id, ge_x0))
         h_sv = self.ecmy.unwrap_ge_dict(self.ecmy.geq_solve(ft_id["tau_hat"], np.ones(self.N)))[-self.hhat_len:]
+        # h_sv = np.ones(self.hhat_len)
 
         # rcx_sv = self.rcx(self.ecmy.rewrap_ge_dict(ge_x0)["tau_hat"], h_sv, id)
         # wv = self.wv_rcx(rcx_sv, id, m, v, theta_dict)
@@ -2055,8 +2063,8 @@ class policies:
         """
 
         tau_v = np.tile(np.array([v]).transpose(), (1, self.N))
-        tau_hat_v = tau_v / self.ecmy.tau
-        # tau_hat_v = (tau_v + .1) / self.ecmy.tau
+        # tau_hat_v = tau_v / self.ecmy.tau
+        tau_hat_v = (tau_v + .1) / self.ecmy.tau
         np.fill_diagonal(tau_hat_v, 1)
         ge_dict = self.ecmy.rewrap_ge_dict(copy.deepcopy(ge_x))
         tau_hat_sv = ge_dict["tau_hat"]
