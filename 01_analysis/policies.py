@@ -46,7 +46,8 @@ class policies:
         self.ecmy.update_ecmy(tau_hat_pos, np.ones(self.N))
 
         self.W = data["W"]  # distances
-        np.fill_diagonal(self.W, 0)  # EU has positive own distance by averaging over members, zero this out
+        np.fill_diagonal(self.W, 1)
+        # np.fill_diagonal(self.W, 0)  # EU has positive own distance by averaging over members, zero this out
         self.M = data["M"]  # milex
 
         # construct equal distribution m matrix, enforce zeros on ROW row and columns
@@ -65,13 +66,15 @@ class policies:
         self.hhat_len = self.N**2+4*self.N  # X, d, P, w, r, E
         self.Dhat_len = self.N
         self.tauj_len = self.N**2-self.N  # non i policies
-        self.lambda_i_len = self.hhat_len + self.N  # ge multipliers plus mil multipliers
+        # self.lambda_i_len = self.hhat_len + self.N  # ge multipliers plus mil multipliers
+        self.lambda_i_len = self.hhat_len
 
         # optimizer parameters
         self.x_len = self.ecmy.ge_x_len  # len of ge vars
         # self.xlshvt_len = self.x_len + self.lambda_i_len * self.N + self.N**2 + self.N + 4  # ge vars, all lambdas (flattened), slack variables, v, theta (except v)
         self.xlshvt_len = self.x_len + self.lambda_i_len * self.N + self.N**2 + self.hhat_len*self.N + self.N + 4
-        self.xlsh_len = self.x_len + self.lambda_i_len + self.N + self.hhat_len
+        # self.xlsh_len = self.x_len + self.lambda_i_len + self.N + self.hhat_len
+        self.xlh_len = self.x_len + self.lambda_i_len + self.hhat_len
 
         # self.g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2  #     constraints len: ge_diffs, Lzeros (own policies N-1), war_diffs mat, comp_slack mat
         self.g_len = self.hhat_len + (self.hhat_len + self.N - 1)*self.N + self.N**2 + self.N**2 + self.hhat_len*self.N
@@ -144,6 +147,38 @@ class policies:
         G_hat_grad_f = ag.grad(self.G_hat)
         return(G_hat_grad_f(x, v, id, sign))
 
+    def G_hat_tilde(self, ge_x, h, id, m, v, theta_dict):
+        """Calculate war-risk inclusive utility change
+
+        Parameters
+        ----------
+        ge_x : vector
+            1d numpy array storing flattened ge inputs and outputs. See function ecmy.unwrap_ge_dict for order of values.
+        h : vector
+            vector length self.hhat of regime change ge response vars
+        id : int
+            Gov id for which to calculate probability of survival
+        m : matrix
+            self.N times self.N matrix of military allocations
+        v : vector
+            len self.N array of preference values for each government
+        theta_dict : dict
+            dictionary of military parameters (see self.rewrap_theta)
+
+        Returns
+        -------
+        float
+            Utility change at g_x times probability of survival
+
+        """
+
+        H_i = self.H(ge_x, h, id, m, v, theta_dict)
+        G_i = self.G_hat(ge_x, v, id)
+
+        out = H_i * G_i
+
+        return(out)
+
     def r_v(self, v):
         """Calculate factual government revenue for given values of v
 
@@ -207,7 +242,7 @@ class policies:
         h : vector
             vector length self.hhat of regime change ge response vars
         lambda_i_x : vector
-            ge and mil multipliers for gov id
+            ge and for gov id
         id : int
             government choosing policy
         m : matrix
@@ -224,24 +259,27 @@ class policies:
 
         """
 
-        lambda_dict_i = self.rewrap_lbda_i(lambda_i_x)
+        # lambda_dict_i = self.rewrap_lbda_i(lambda_i_x)
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
         rcx = self.rcx(ge_dict["tau_hat"], h, id)
 
-        G_hat_i = self.G_hat(ge_x, v, id, sign=1)
+        # G_hat_i = self.G_hat(ge_x, v, id, sign=1)
+        G_hat_tilde_i = self.G_hat_tilde(ge_x, h, id, m, v, theta_dict)
+
         geq_diffs = self.ecmy.geq_diffs(ge_x)
-        h_diffs = self.ecmy.geq_diffs(rcx)
+        # h_diffs = self.ecmy.geq_diffs(rcx)
 
-        wv = self.wv_rcx(rcx, id, m, v, theta_dict)
-        war_diffs = self.war_diffs(ge_x, v, wv, id)
+        # wv = self.wv_rcx(rcx, id, m, v, theta_dict)
+        # war_diffs = self.war_diffs(ge_x, v, wv, id)
 
-        wd = -1 * war_diffs  # flip these so violations are positive
+        # wd = -1 * war_diffs  # flip these so violations are positive
 
-        L_i = G_hat_i - np.dot(lambda_dict_i["h_hat"], geq_diffs) - np.dot(lambda_dict_i["chi_i"], wd)
+        # L_i = G_hat_i - np.dot(lambda_dict_i["h_hat"], geq_diffs) - np.dot(lambda_dict_i["chi_i"], wd)
+        L_i = G_hat_tilde_i - np.dot(lambda_i_x, geq_diffs)
 
         return(L_i)
 
-    def Lzeros_i(self, xlsh, id, m, v, theta_dict):
+    def Lzeros_i(self, xlh, id, m, v, theta_dict):
         """calculate first order condition for goverment i, ge_x_lbda_i input
 
         Parameters
@@ -265,16 +303,16 @@ class policies:
 
         """
 
-        xlsh_dict = self.rewrap_lbda_i_x(xlsh)
+        xlh_dict = self.rewrap_xlh(xlh)
 
-        ge_x = xlsh_dict["ge_x"]
-        lambda_i_x = xlsh_dict["lambda_i"]
-        s_i = xlsh_dict["s_i"]
-        h = xlsh_dict["h"]
+        ge_x = xlh_dict["ge_x"]
+        lambda_i_x = xlh_dict["lambda_i"]
+        # s_i = xlsh_dict["s_i"]
+        h = xlh_dict["h"]
 
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
         L_grad_f = ag.grad(self.Lagrange_i_x)
-        ge_x_rch = np.concatenate((ge_x, h))
+        # ge_x_rch = np.concatenate((ge_x, h))
         L_grad = L_grad_f(ge_x, h, lambda_i_x, id, m, v, theta_dict)
         inds = self.L_grad_i_ind(id)
         L_grad_i = L_grad[inds]
@@ -386,28 +424,53 @@ class policies:
         return(rho)
 
     def H(self, ge_x, h, id, m, v, theta_dict):
+        """Compute probability nobody attacks government id
+
+        Parameters
+        ----------
+        ge_x : vector
+            1d numpy array storing flattened ge inputs and outputs. See function ecmy.unwrap_ge_dict for order of values.
+        h : vector
+            vector length self.hhat of regime change ge response vars
+        id : int
+            Gov id for which to calculate probability of survival
+        m : matrix
+            self.N times self.N matrix of military allocations
+        v : vector
+            len self.N array of preference values for each government
+        theta_dict : dict
+            dictionary of military parameters (see self.rewrap_theta)
+
+        Returns
+        -------
+        float
+            probability government id is not attacked
+
+        """
 
         Cinv = theta_dict["C"] ** -1
         eta = theta_dict["eta"]
-        chi = self.chi(m, theta_dict)
+        gamma = theta_dict["gamma"]
+        alpha = theta_dict["alpha1"]
+
+        m_diag = np.diagonal(m)
+        m_frac = m / m_diag
+        np.fill_diagonal(m_frac, 0)
 
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
         rcx = self.rcx(ge_dict["tau_hat"], h, id)
         G = self.G_hat(ge_x, v, id, all=True)
         rcv = self.G_hat(rcx, v, id, all=True)
         DeltaG = rcv - G
+        DeltaG = np.clip(DeltaG, 0, np.inf)
+        # DeltaG[id] = 0
 
-        print(np.exp(-1*Cinv * (chi[:,id]*DeltaG) ** eta))
-        pr_nowar = np.exp(-np.sum(Cinv * (chi[:,id]*DeltaG) ** eta))
-        print("pr(no war):")
-        print(pr_nowar)
-        pr_winwar = np.sum((1 - np.exp(-1*Cinv * (chi[:,id]*DeltaG) ** eta)) * (1 - chi[:,id]))
-        print("pr(win war):")
-        print((1 - np.exp(-1*Cinv * (chi[:,id]*DeltaG) ** eta)) * (1 - chi[:,id]))
+        chi_ji = -Cinv * m_frac[:,id]**gamma * self.W[:,id]**(-1*alpha) * DeltaG**eta
 
-        out = pr_nowar + pr_winwar
+        # pr_peace_ji = np.exp(chi_ji)
+        pr_peace = np.exp(np.sum(chi_ji))
 
-        return(out)
+        return(pr_peace)
 
     def rewrap_xlshvt(self, xlshvt):
         """Convert flattened xlshvt vector to dictionary
@@ -1202,13 +1265,13 @@ class policies:
 
         return(_x, obj, status)
 
-    def rewrap_lbda_i_x(self, xlsh):
+    def rewrap_xlh(self, xlh):
         """convert Lagrange zeros vector to dictionary
 
         Parameters
         ----------
-        xlsh : vector
-            vector length self.x_len + self.lambda_i_len + self.N + self.hhat of ge vars, i's multipliers, i's slack variables, and regime change h vars
+        xlh : vector
+            vector length self.x_len + self.lambda_i_len + self.N + self.hhat of ge vars, i's multipliers, and regime change h vars
 
         Returns
         -------
@@ -1218,33 +1281,33 @@ class policies:
         """
 
         out = dict()
-        out["ge_x"] = xlsh[0:self.x_len]
-        out["lambda_i"] = xlsh[self.x_len:self.x_len+self.lambda_i_len]
-        out["s_i"] = xlsh[self.x_len+self.lambda_i_len:self.x_len+self.lambda_i_len+self.N]
-        out["h"] = xlsh[self.x_len+self.lambda_i_len+self.N:self.x_len+self.lambda_i_len+self.N+self.hhat_len]
+        out["ge_x"] = xlh[0:self.x_len]
+        out["lambda_i"] = xlh[self.x_len:self.x_len+self.lambda_i_len]
+        # out["s_i"] = xlsh[self.x_len+self.lambda_i_len:self.x_len+self.lambda_i_len+self.N]
+        out["h"] = xlh[self.x_len+self.lambda_i_len:self.x_len+self.lambda_i_len+self.hhat_len]
 
         return(out)
 
-    def unwrap_lbda_i_x(self, xlsh_dict):
+    def unwrap_xlh(self, xlh_dict):
         """conver Lagrange zeros dictionary to vector
 
         Parameters
         ----------
-        xlsh_dict : dict
-            dictionary of ge vars, i's multipliers, i's slack variables, and regime change h vars
+        xlh_dict : dict
+            dictionary of ge vars, i's multipliers, and regime change h vars
 
         Returns
         -------
         vector
-            vector length self.x_len + self.lambda_i_len + self.N of ge vars, i's multipliers,  i's slack variables, and regime change h vars
+            vector length self.x_len + self.lambda_i_len + self.hhat_len of ge vars, i's multipliers, and regime change h vars
 
         """
 
         x = []
-        x.extend(xlsh_dict["ge_x"])
-        x.extend(xlsh_dict["lambda_i"])
-        x.extend(xlsh_dict["s_i"])
-        x.extend(xlsh_dict["h"])
+        x.extend(xlh_dict["ge_x"])
+        x.extend(xlh_dict["lambda_i"])
+        # x.extend(xlh_dict["s_i"])
+        x.extend(xlh_dict["h"])
 
         return(np.array(x))
 
@@ -1284,13 +1347,13 @@ class policies:
 
         return(wv)
 
-    def Lzeros_i_cons(self, xlsh, id, m, v, theta_dict):
+    def Lzeros_i_cons(self, xlh, id, m, v, theta_dict):
         """Constraints for best response (Lagrangian version)
 
         # Parameters
         ----------
-        xlsh : vector
-            vector length self.x_len + self.lambda_i_len of ge vars and id's multipliers
+        xlh : vector
+            vector length self.xlh_len of ge vars, id's multipliers, and regimge change vars
         id : int
             id of government for which to calculate best response
         m : matrix
@@ -1303,31 +1366,32 @@ class policies:
         Returns
         -------
         vector
-            vector length self.hhat_len + self.lambda_i_len + self.N of geq_diffs, Lagrange zeros, and war diffs (clipped to convert to equality constraints)
+            vector length self.hhat_len + self.lambda_i_len + self.hhat_len of geq_diffs, Lagrange zeros, and rc_ge diffs
 
         """
 
-        xlsh_dict = self.rewrap_lbda_i_x(xlsh)
+        xlh_dict = self.rewrap_xlh(xlh)
 
-        ge_x = xlsh_dict["ge_x"]
-        lambda_i_x = xlsh_dict["lambda_i"]
-        s_i = xlsh_dict["s_i"]
-        h = xlsh_dict["h"]
+        ge_x = xlh_dict["ge_x"]
+        lambda_i_x = xlh_dict["lambda_i"]
+        # s_i = xlsh_dict["s_i"]
+        h = xlh_dict["h"]
 
         tau_hat_tilde = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
         rcx = self.rcx(tau_hat_tilde, h, id)
-        wv = self.wv_rcx(rcx, id, m, v, theta_dict)
+        # wv = self.wv_rcx(rcx, id, m, v, theta_dict)
 
         geq_diffs = self.ecmy.geq_diffs(ge_x)
-        war_diffs = self.war_diffs(ge_x, v, wv, id)
-        Lzeros = self.Lzeros_i(xlsh, id, m, v, theta_dict)
+        # war_diffs = self.war_diffs(ge_x, v, wv, id)
+        Lzeros = self.Lzeros_i(xlh, id, m, v, theta_dict)
 
-        comp_slack = s_i * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
+        # comp_slack = s_i * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
         h_diffs = self.ecmy.geq_diffs(rcx)
 
-        wd = war_diffs - s_i
+        # wd = war_diffs - s_i
 
-        out = np.concatenate((geq_diffs, Lzeros, wd, comp_slack, h_diffs))
+        # out = np.concatenate((geq_diffs, Lzeros, wd, comp_slack, h_diffs))
+        out = np.concatenate((geq_diffs, Lzeros, h_diffs))
 
         return(out)
 
@@ -1415,7 +1479,7 @@ class policies:
         Parameters
         ----------
         ge_x_sv : vector
-            vector length self.x_len + self.lambda_i_len of starting values for best response calculation
+            vector length self.xlh_len of starting values for best response calculation
         id : int
             id of government for which to calculate best response
         bound : str
@@ -1454,18 +1518,10 @@ class policies:
         x_L[0:self.N**2] = tau_L.ravel()
         x_U[0:self.N**2] = tau_U.ravel()
 
-        # deficits
-        x_L[self.N**2:self.N**2+self.N] = 1.
-        x_U[self.N**2:self.N**2+self.N] = 1.
+        x_L[self.N**2:self.x_len] = self.geq_lb()[self.N**2:]  # ge lower bounds
+        x_L[-self.hhat_len:] = self.geq_lb()[-self.hhat_len:]  # rc-ge lower bounds
 
-        # revenues
-        # x_L[-self.N*2:-self.N] = -np.inf
-        # x_L[self.x_len-self.N*2:self.x_len-self.N] = -np.inf
-        # NOTE: eq (true) revenues cannot be negative in any equilibrium
-        x_L[-self.N*2:-self.N] = 0
-        x_L[self.x_len-self.N*2:self.x_len-self.N] = 0
-
-        x_L[self.x_len+self.lambda_i_len-self.N:self.x_len+self.lambda_i_len+self.N] = 0  # mil constraint multipliers and slack variables
+        # x_L[self.x_len+self.lambda_i_len-self.N:self.x_len+self.lambda_i_len+self.N] = 0  # mil constraint multipliers and slack variables
 
         if bound == "lower":
             return(x_L)
@@ -1604,15 +1660,17 @@ class policies:
         ft_id = self.ecmy.rewrap_ge_dict(self.ft_sv(id, ge_x0))
         h_sv = self.ecmy.unwrap_ge_dict(self.ecmy.geq_solve(ft_id["tau_hat"], np.ones(self.N)))[-self.hhat_len:]
 
-        rcx_sv = self.rcx(self.ecmy.rewrap_ge_dict(ge_x0)["tau_hat"], h_sv, id)
-        wv = self.wv_rcx(rcx_sv, id, m, v, theta_dict)
-        war_diffs = self.war_diffs(ge_x0, v, wv, id)
-        s = war_diffs
+        # rcx_sv = self.rcx(self.ecmy.rewrap_ge_dict(ge_x0)["tau_hat"], h_sv, id)
+        # wv = self.wv_rcx(rcx_sv, id, m, v, theta_dict)
+        # war_diffs = self.war_diffs(ge_x0, v, wv, id)
+        # s = war_diffs
 
-        x0 = np.concatenate((ge_x0, lbda_i0, s, h_sv))
+        # x0 = np.concatenate((ge_x0, lbda_i0, s, h_sv))
+        x0 = np.concatenate((ge_x0, lbda_i0, h_sv))
         x_len = len(x0)
 
-        g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N + self.N + self.hhat_len
+        # g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.N + self.N + self.hhat_len
+        g_len_i = self.hhat_len + (self.hhat_len + self.N - 1) + self.hhat_len
         g_lower = np.zeros(g_len_i)
         g_upper = np.zeros(g_len_i)
 
