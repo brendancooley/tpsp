@@ -385,6 +385,30 @@ class policies:
 
         return(rho)
 
+    def H(self, ge_x, h, id, m, v, theta_dict):
+
+        Cinv = theta_dict["C"] ** -1
+        eta = theta_dict["eta"]
+        chi = self.chi(m, theta_dict)
+
+        ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
+        rcx = self.rcx(ge_dict["tau_hat"], h, id)
+        G = self.G_hat(ge_x, v, id, all=True)
+        rcv = self.G_hat(rcx, v, id, all=True)
+        DeltaG = rcv - G
+
+        print(np.exp(-1*Cinv * (chi[:,id]*DeltaG) ** eta))
+        pr_nowar = np.exp(-np.sum(Cinv * (chi[:,id]*DeltaG) ** eta))
+        print("pr(no war):")
+        print(pr_nowar)
+        pr_winwar = np.sum((1 - np.exp(-1*Cinv * (chi[:,id]*DeltaG) ** eta)) * (1 - chi[:,id]))
+        print("pr(win war):")
+        print((1 - np.exp(-1*Cinv * (chi[:,id]*DeltaG) ** eta)) * (1 - chi[:,id]))
+
+        out = pr_nowar + pr_winwar
+
+        return(out)
+
     def rewrap_xlshvt(self, xlshvt):
         """Convert flattened xlshvt vector to dictionary
 
@@ -451,10 +475,12 @@ class policies:
         """
 
         theta_dict = dict()
-        theta_dict["c_hat"] = theta_x[0]
+        # theta_dict["c_hat"] = theta_x[0]
+        theta_dict["eta"] = theta_x[0]
         theta_dict["gamma"] = theta_x[1]
         theta_dict["alpha0"] = theta_x[2]  # baseline power projection loss
         theta_dict["alpha1"] = theta_x[3]  # distance coefficient
+        theta_dict["C"] = theta_x[4:4+self.N]
 
         return(theta_dict)
 
@@ -474,10 +500,12 @@ class policies:
         """
 
         theta_x = []
-        theta_x.extend(np.array([theta_dict["c_hat"]]))
+        # theta_x.extend(np.array([theta_dict["c_hat"]]))
+        theta_x.extend(np.array([theta_dict["eta"]]))
         theta_x.extend(np.array([theta_dict["gamma"]]))
         theta_x.extend(np.array([theta_dict["alpha0"]]))
         theta_x.extend(np.array([theta_dict["alpha1"]]))
+        theta_x.extend(np.array(theta_dict["C"]))
 
         return(np.array(theta_x))
 

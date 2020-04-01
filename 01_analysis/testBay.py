@@ -19,7 +19,7 @@ basePath = os.path.expanduser('~')
 projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
-size = "mid/"
+size = "mini/"
 
 helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
@@ -73,10 +73,12 @@ E = Eq + Ex
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
 theta_dict = dict()
-theta_dict["c_hat"] = .25
+# theta_dict["c_hat"] = .25
+theta_dict["eta"] = 1
 theta_dict["alpha0"] = 0
 theta_dict["alpha1"] = .0001
 theta_dict["gamma"] = .5
+theta_dict["C"] = np.repeat(.25, N)
 
 # v = np.ones(N)
 # v = np.array([1.08, 1.65, 1.61, 1.05, 1.05, 1.30])
@@ -90,8 +92,17 @@ pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # ge
 theta_x = pecmy.unwrap_theta(theta_dict)
 # np.reshape(np.repeat(np.max(pecmy.ecmy.tau, axis=1), pecmy.N), (pecmy.N, pecmy.N))
 # pecmy.xlshvt_len
+chi_test = pecmy.chi(pecmy.m, theta_dict)
+chi_test[:,0]
 
+id = 0
 v = (pecmy.v_max() - 1) / 2 + 1
+ge_x_test = np.ones(pecmy.x_len)
+ft_x = pecmy.ft_sv(id, np.ones(pecmy.x_len))
+ft_h = ft_x[-pecmy.hhat_len:]
+
+pecmy.H(ge_x_test, ft_h, id, pecmy.m, v, theta_dict)
+
 # v = np.ones(pecmy.N)
 # ft_x = pecmy.ft_sv(0, np.ones(pecmy.x_len))
 # pecmy.r_v(np.repeat(.9, pecmy.N))
