@@ -1255,9 +1255,13 @@ class policies:
         # s_sv = []
         for i in range(self.N):
 
-            ft_id = self.ecmy.rewrap_ge_dict(self.ft_sv(i, ge_x_sv))
-            h_sv_i = self.ecmy.unwrap_ge_dict(self.ecmy.geq_solve(ft_id["tau_hat"], np.ones(self.N)))[-self.hhat_len:]
-            if h_sv_i[0] == "Solution not found."
+            ft_id = self.ft_sv(i, ge_x_sv)
+            # ft_id = self.ecmy.rewrap_ge_dict(self.ft_sv(i, ge_x_sv))
+            # h_sv_i = self.ecmy.unwrap_ge_dict(self.ecmy.geq_solve(ft_id["tau_hat"], np.ones(self.N)))[-self.hhat_len:]
+            # print(ft_id)
+            if len(ft_id) > 1:
+                h_sv_i = ft_id[-self.hhat_len:]
+            else:
                 h_sv_i = np.ones(self.hhat_len)
             h_sv.extend(h_sv_i)
 
@@ -2086,9 +2090,11 @@ class policies:
         tau_hat_sv = ge_dict["tau_hat"]
         tau_hat_sv[id, ] = tau_hat_ft[id, ]
         ge_dict_sv = self.ecmy.geq_solve(tau_hat_sv, np.ones(self.N))
-        ge_x_sv = self.ecmy.unwrap_ge_dict(ge_dict_sv)
-
-        return(ge_x_sv)
+        if ge_dict_sv == 0:
+            return(0)
+        else:
+            ge_x_sv = self.ecmy.unwrap_ge_dict(ge_dict_sv)
+            return(ge_x_sv)
 
     def nft_sv(self, id, ge_x):
         """calculate near free trade values (how close defined by self.tau_nft) for government id, holding other govs at policies in ge_x

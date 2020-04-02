@@ -219,7 +219,7 @@ class economy:
             else:
                 if mtd == "lm":
                     print("solution not found.")
-                    return("Solution not found.", geq_sol) # return 0
+                    return(0) # return 0
                 else:
                     print("attempting lm...")
                     return(self.geq_solve(tau_hat, D_hat, fct=fct, mtd="lm"))
