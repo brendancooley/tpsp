@@ -8,6 +8,7 @@ import csv
 import sys
 import matplotlib.pyplot as plt
 import scipy.stats as stats
+import scipy.optimize as opt
 import statsmodels.api as sm
 
 import economy
@@ -87,17 +88,17 @@ theta_dict = dict()
 # theta_dict["c_hat"] = .25
 theta_dict["eta"] = 1
 theta_dict["alpha0"] = 0
-theta_dict["alpha1"] = .75
-theta_dict["gamma"] = 1
+theta_dict["alpha1"] = .2
+theta_dict["gamma"] = .5
 theta_dict["C"] = np.repeat(.5, pecmy.N)
 theta_x = pecmy.unwrap_theta(theta_dict)
 
 # pecmy.W ** - .75
 
-# v = (pecmy.v_max() - 1) / 2 + 1
-v = np.ones(pecmy.N)
+v = (pecmy.v_max() - 1) / 2 + 1
+# v = np.ones(pecmy.N)
 
-pecmy.estimator_bounds(theta_x, v, "lower")
+pecmy.estimator_bounds(theta_x, v, "upper")
 
 x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
 x_dict = pecmy.rewrap_xlhvt(x)
@@ -113,6 +114,32 @@ ft_x = pecmy.ft_sv(id, np.ones(pecmy.x_len))
 ft_h = ft_x[-pecmy.hhat_len:]
 
 pecmy.peace_probs(ge_x_test, ft_h, id, pecmy.m, v, theta_dict)
+
+
+def peace_probs_wrap_C(C, thres):
+
+    Cinv = C ** -1
+    chi_ji = -Cinv
+    pr_peace = np.exp(chi_ji)
+
+    out = pr_peace - thres
+
+    return(out)
+
+opt.root(peace_probs_wrap_C, .5, args=(.01, ))
+
+def peace_probs_wrap_alpha(alpha, thres):
+
+    chi_ji = -np.min(pecmy.W[pecmy.W>1])**(-1*alpha)
+    pr_peace = np.exp(chi_ji)
+
+    out = pr_peace - thres
+
+    return(out)
+
+opt.root(peace_probs_wrap_alpha, .5, args=(.99, ))
+
+
 # pecmy.H(ge_x_test, ft_h, id, pecmy.m, v, theta_dict)
 # pecmy.G_hat_tilde(ge_x_test, ft_h, id, pecmy.m, v, theta_dict)
 #

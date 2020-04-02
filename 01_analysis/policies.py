@@ -178,7 +178,8 @@ class policies:
         H_i = self.H(ge_x, h, id, m, v, theta_dict)
         G_i = self.G_hat(ge_x, v, id)
 
-        out = H_i * G_i
+        # out = H_i * G_i
+        out = np.log(H_i) + np.log(G_i)
 
         return(out)
 
@@ -487,8 +488,8 @@ class policies:
         # print(self.W[:,id]**(-1*alpha))
         # print(DeltaG**eta)
 
-        # chi_ji = -Cinv * m_frac[:,id]**gamma * self.W[:,id]**(-1*alpha) * DeltaG**eta
-        chi_ji = - m_frac[:,id]**gamma * self.W[:,id]**(-1*alpha) * DeltaG**eta
+        chi_ji = -Cinv * m_frac[:,id]**gamma * self.W[:,id]**(-1*alpha) * DeltaG**eta
+        # chi_ji = - m_frac[:,id]**gamma * self.W[:,id]**(-1*alpha) * DeltaG**eta
         # print(chi_ji)
 
         return(chi_ji, np.exp(chi_ji))
@@ -680,8 +681,12 @@ class policies:
             print("v:")
             print(v)
 
+            theta_dict = self.rewrap_theta(theta_x)
             print("theta_dict:")
-            print(self.rewrap_theta(theta_x))
+            for i in theta_dict.keys():
+                print(i)
+                print(theta_dict[i])
+            # print(self.rewrap_theta(theta_x))
 
             print("G_hat:")
             print(self.G_hat(ge_x, v, 0, all=True))
@@ -698,7 +703,7 @@ class policies:
                 # print(s[i, ])
                 h_i = h[i, ]
                 print("peace probs " + str(i) + ":")
-                peace_probs_i = self.peace_probs(ge_x, h_i, i, self.m, v, self.rewrap_theta(theta_x))
+                peace_probs_i = self.peace_probs(ge_x, h_i, i, self.m, v, self.rewrap_theta(theta_x))[1]
                 print(peace_probs_i)
 
         tau_hat = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
@@ -1134,11 +1139,11 @@ class policies:
             # x_L[b] = .25
             # x_U[b] = .25  # fix c_hat
             # b += 1
-            x_L[b] = .01 # eta lower
-            # x_U[b] = 1  # eta upper
+            x_L[b] = .5 # eta lower
+            # x_U[b] = 5  # eta upper
             b += 1
             x_L[b] = .01  # gamma lower
-            # x_U[b] = 1  # gamma upper
+            # x_U[b] = 2  # gamma upper
             # x_L[b] = 1
             # x_U[b] = 1  # fix gamma at 1
             b += 1
@@ -1147,9 +1152,11 @@ class policies:
             b += 1
             # x_L[b] = -self.alpha1_ub  # alpha1 lower
             x_L[b] = .0001  # alpha1 lower
-            # x_U[b] = 1  # alpha1 upper
+            x_U[b] = opt.root(self.pp_wrap_alpha, .5, args=(.99, ))['x']  # alpha1 upper
             b += 1
-            x_L[b:b+self.N] = .01  # cs
+            # x_L[b:b+self.N] = .01  # cs
+            x_L[b:b+self.N] = opt.root(self.pp_wrap_C, .5, args=(.01, ))['x']  # cs
+            x_U[b:b+self.N] = 15
             # x_U[b] = self.alpha1_ub  # alpha1 upper
             # x_L[b] = -np.inf  # alpha1 lower
             # x_U[b] = np.inf  # alpha1 upper
@@ -1209,6 +1216,25 @@ class policies:
         alpha1_min = - np.log(thres) / Wmin
 
         return(alpha1_min)
+
+    def pp_wrap_C(self, C, thres):
+
+        Cinv = C ** -1
+        chi_ji = -Cinv
+        pr_peace = np.exp(chi_ji)
+
+        out = pr_peace - thres
+
+        return(out)
+
+    def pp_wrap_alpha(self, alpha, thres):
+
+        chi_ji = -np.min(self.W[self.W>1])**(-1*alpha)
+        pr_peace = np.exp(chi_ji)
+
+        out = pr_peace - thres
+
+        return(out)
 
     def estimator_sv(self, m, v, theta_x, nash_eq=False):
 
