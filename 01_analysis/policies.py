@@ -466,7 +466,8 @@ class policies:
         #     print(i)
         #     print(theta_dict[i])
 
-        Cinv = theta_dict["C"] ** -1
+        # Cinv = theta_dict["C"] ** -1
+        Cinv = theta_dict["c_hat"] ** -1
         eta = theta_dict["eta"]
         gamma = theta_dict["gamma"]
         alpha = theta_dict["alpha1"]
@@ -563,7 +564,8 @@ class policies:
         # theta_dict["c_hat"] = theta_x[0]
         theta_dict["eta"] = theta_x[0]
         theta_dict["gamma"] = theta_x[1]
-        theta_dict["alpha0"] = theta_x[2]  # baseline power projection loss
+        # theta_dict["alpha0"] = theta_x[2]  # baseline power projection loss
+        theta_dict["c_hat"] = theta_x[2]
         theta_dict["alpha1"] = theta_x[3]  # distance coefficient
         theta_dict["C"] = theta_x[4:4+self.N]
 
@@ -588,7 +590,8 @@ class policies:
         # theta_x.extend(np.array([theta_dict["c_hat"]]))
         theta_x.extend(np.array([theta_dict["eta"]]))
         theta_x.extend(np.array([theta_dict["gamma"]]))
-        theta_x.extend(np.array([theta_dict["alpha0"]]))
+        # theta_x.extend(np.array([theta_dict["alpha0"]]))
+        theta_x.extend(np.array([theta_dict["c_hat"]]))
         theta_x.extend(np.array([theta_dict["alpha1"]]))
         theta_x.extend(np.array(theta_dict["C"]))
 
@@ -1147,8 +1150,8 @@ class policies:
             # x_L[b] = 1
             # x_U[b] = 1  # fix gamma at 1
             b += 1
-            x_L[b] = 0  # fix alpha0
-            x_U[b] = 0
+            x_L[b] = opt.root(self.pp_wrap_C, .5, args=(.01, ))['x'] # fix c_hat
+            x_U[b] = 10
             b += 1
             # x_L[b] = -self.alpha1_ub  # alpha1 lower
             x_L[b] = .0001  # alpha1 lower

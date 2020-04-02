@@ -20,7 +20,7 @@ basePath = os.path.expanduser('~')
 projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
-size = "mid/"
+size = "mini/"
 
 helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
@@ -87,7 +87,7 @@ pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # ge
 theta_dict = dict()
 # theta_dict["c_hat"] = .25
 theta_dict["eta"] = 1
-theta_dict["alpha0"] = 0
+theta_dict["c_hat"] = .5
 theta_dict["alpha1"] = .2
 theta_dict["gamma"] = .5
 theta_dict["C"] = np.repeat(.5, pecmy.N)
