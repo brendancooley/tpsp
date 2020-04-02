@@ -19,7 +19,7 @@ basePath = os.path.expanduser('~')
 projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
-size = "mini/"
+size = "mid/"
 
 helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
@@ -81,43 +81,58 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 imp.reload(policies)
 imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
-
-id = 2
-v = (pecmy.v_max() - 1) / 2 + 1
-ge_x_test = np.ones(pecmy.x_len)
-ft_x = pecmy.ft_sv(id, np.ones(pecmy.x_len))
-ft_h = ft_x[-pecmy.hhat_len:]
+# np.seterr(all='raise')
 
 theta_dict = dict()
 # theta_dict["c_hat"] = .25
 theta_dict["eta"] = 1
 theta_dict["alpha0"] = 0
-theta_dict["alpha1"] = .25
+theta_dict["alpha1"] = .75
 theta_dict["gamma"] = 1
 theta_dict["C"] = np.repeat(.5, pecmy.N)
 theta_x = pecmy.unwrap_theta(theta_dict)
 
-pecmy.peace_probs(ge_x_test, ft_h, id, pecmy.m, v, theta_dict)
-pecmy.H(ge_x_test, ft_h, id, pecmy.m, v, theta_dict)
-pecmy.G_hat_tilde(ge_x_test, ft_h, id, pecmy.m, v, theta_dict)
+# pecmy.W ** - .75
 
-xlh_test = np.concatenate((ge_x_test, np.zeros(pecmy.lambda_i_len), ft_h))
-pecmy.Lzeros_i_cons(xlh_test, id, pecmy.m, v, theta_dict)
+# v = (pecmy.v_max() - 1) / 2 + 1
+v = np.ones(pecmy.N)
 
-pecmy.Lzeros_i_bounds(ge_x_test, id, "lower")
-pecmy.Lzeros_i_bounds(ge_x_test, id, "upper")
-np.reshape(pecmy.v_sv(id, ge_x_test, v)[0:pecmy.N**2], (pecmy.N, pecmy.N))*pecmy.ecmy.tau
+pecmy.estimator_bounds(theta_x, v, "lower")
 
-x, obj, status = pecmy.Lsolve_i_ipopt(id, pecmy.m, v, theta_dict)
-x_dict = pecmy.rewrap_xlh(x)
+x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
+x_dict = pecmy.rewrap_xlhvt(x)
 ge_dict = pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])
-print("tau:")
+
 print(ge_dict["tau_hat"]*pecmy.ecmy.tau)
-print("h:")
-print(x_dict["h"])
-print("peace probs:")
-peace_probs = pecmy.peace_probs(x_dict["ge_x"], x_dict["h"], id, pecmy.m, v, theta_dict)
-print(peace_probs)
+print("-----")
+
+id = 0
+v = (pecmy.v_max() - 1) / 2 + 1
+ge_x_test = np.ones(pecmy.x_len)
+ft_x = pecmy.ft_sv(id, np.ones(pecmy.x_len))
+ft_h = ft_x[-pecmy.hhat_len:]
+
+pecmy.peace_probs(ge_x_test, ft_h, id, pecmy.m, v, theta_dict)
+# pecmy.H(ge_x_test, ft_h, id, pecmy.m, v, theta_dict)
+# pecmy.G_hat_tilde(ge_x_test, ft_h, id, pecmy.m, v, theta_dict)
+#
+# xlh_test = np.concatenate((ge_x_test, np.zeros(pecmy.lambda_i_len), ft_h))
+# pecmy.Lzeros_i_cons(xlh_test, id, pecmy.m, v, theta_dict)
+#
+# pecmy.Lzeros_i_bounds(ge_x_test, id, "lower")
+# pecmy.Lzeros_i_bounds(ge_x_test, id, "upper")
+# np.reshape(pecmy.v_sv(id, ge_x_test, v)[0:pecmy.N**2], (pecmy.N, pecmy.N))*pecmy.ecmy.tau
+#
+# x, obj, status = pecmy.Lsolve_i_ipopt(id, pecmy.m, v, theta_dict)
+# x_dict = pecmy.rewrap_xlh(x)
+# ge_dict = pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])
+# print("tau:")
+# print(ge_dict["tau_hat"]*pecmy.ecmy.tau)
+# print("h:")
+# print(x_dict["h"])
+# print("peace probs:")
+# peace_probs = pecmy.peace_probs(x_dict["ge_x"], x_dict["h"], id, pecmy.m, v, theta_dict)
+# print(peace_probs)
 
 # tau_hat_prime = [ge_dict["tau_hat"][j, ] if j != id else 1 / pecmy.ecmy.tau[j, ] for j in range(pecmy.N)]
 # pecmy.ecmy.geq_solve(np.array(tau_hat_prime), np.ones(pecmy.N))
