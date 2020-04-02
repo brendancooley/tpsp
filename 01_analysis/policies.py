@@ -466,8 +466,8 @@ class policies:
         #     print(i)
         #     print(theta_dict[i])
 
-        # Cinv = theta_dict["C"] ** -1
-        Cinv = theta_dict["c_hat"] ** -1
+        Cinv = theta_dict["C"] ** -1
+        # Cinv = theta_dict["c_hat"] ** -1
         eta = theta_dict["eta"]
         gamma = theta_dict["gamma"]
         alpha = theta_dict["alpha1"]
@@ -1138,10 +1138,10 @@ class policies:
             # x_L[b:b+self.N] = v #
             # x_U[b:b+self.N] = v # fixed vs
             b += self.N
-            # x_L[b] = .5 # eta lower
-            # x_U[b] = 5  # eta upper
-            x_L[b] = 1 # eta lower
-            x_U[b] = 1  # eta upper
+            x_L[b] = .5 # eta lower
+            x_U[b] = 5  # eta upper
+            # x_L[b] = 1 # eta lower
+            # x_U[b] = 1  # eta upper
             b += 1
             x_L[b] = .01  # gamma lower
             # x_U[b] = 2  # gamma upper
@@ -1153,11 +1153,11 @@ class policies:
             b += 1
             # x_L[b] = -self.alpha1_ub  # alpha1 lower
             x_L[b] = .0001  # alpha1 lower
-            x_U[b] = opt.root(self.pp_wrap_alpha, .5, args=(.8, ))['x']  # alpha1 upper
+            x_U[b] = opt.root(self.pp_wrap_alpha, .5, args=(.9, ))['x']  # alpha1 upper
             b += 1
             # x_L[b:b+self.N] = .01  # cs
-            x_L[b:b+self.N] = opt.root(self.pp_wrap_C, .5, args=(.01, ))['x']  # cs
-            x_U[b:b+self.N] = 15
+            x_L[b:b+self.N] = opt.root(self.pp_wrap_C, .5, args=(.005, ))['x']  # cs
+            x_U[b:b+self.N] = 10
             # x_U[b] = self.alpha1_ub  # alpha1 upper
             # x_L[b] = -np.inf  # alpha1 lower
             # x_U[b] = np.inf  # alpha1 upper
@@ -1257,6 +1257,8 @@ class policies:
 
             ft_id = self.ecmy.rewrap_ge_dict(self.ft_sv(i, ge_x_sv))
             h_sv_i = self.ecmy.unwrap_ge_dict(self.ecmy.geq_solve(ft_id["tau_hat"], np.ones(self.N)))[-self.hhat_len:]
+            if h_sv_i[0] == "Solution not found."
+                h_sv_i = np.ones(self.hhat_len)
             h_sv.extend(h_sv_i)
 
             # rcx = self.rcx(np.ones((self.N, self.N)), h_sv_i, i)
