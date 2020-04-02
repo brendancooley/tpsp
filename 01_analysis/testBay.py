@@ -20,7 +20,7 @@ basePath = os.path.expanduser('~')
 projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
-size = "mid/"
+size = "large/"
 
 helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
@@ -83,6 +83,9 @@ imp.reload(policies)
 imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 # np.seterr(all='raise')
+
+# ccodes
+# pecmy.ft_sv(6, np.ones(pecmy.x_len))
 
 theta_dict = dict()
 # theta_dict["c_hat"] = .25

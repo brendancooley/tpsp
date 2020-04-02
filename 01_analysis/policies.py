@@ -36,6 +36,7 @@ class policies:
         self.ids = np.arange(self.N)
 
         self.ROW_id = np.where(data["ccodes"]==ROWname)[0][0]
+        self.ccodes = data["ccodes"]
 
         # purge deficits
         self.ecmy.purgeD()  # replicate DEK
@@ -1262,6 +1263,7 @@ class policies:
             if type(ft_id) is not int:
                 h_sv_i = ft_id[-self.hhat_len:]
             else:
+                print("cannot compute regime change ge vars for " + self.ccodes[i])
                 h_sv_i = np.ones(self.hhat_len)
             h_sv.extend(h_sv_i)
 
