@@ -1259,7 +1259,7 @@ class policies:
             # ft_id = self.ecmy.rewrap_ge_dict(self.ft_sv(i, ge_x_sv))
             # h_sv_i = self.ecmy.unwrap_ge_dict(self.ecmy.geq_solve(ft_id["tau_hat"], np.ones(self.N)))[-self.hhat_len:]
             # print(ft_id)
-            if len(ft_id) > 1:
+            if type(ft_id) is not int:
                 h_sv_i = ft_id[-self.hhat_len:]
             else:
                 h_sv_i = np.ones(self.hhat_len)
