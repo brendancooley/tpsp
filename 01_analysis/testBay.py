@@ -82,32 +82,42 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 imp.reload(policies)
 imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)
-pecmy.m
 # generate pecmy and rcv vals
 # np.seterr(all='raise')
 
+np.max(pecmy.ecmy.tau, axis=1)
 
 # ccodes
 # pecmy.ft_sv(6, np.ones(pecmy.x_len))
 
 theta_dict = dict()
 # theta_dict["c_hat"] = .25
-theta_dict["eta"] = 1
+theta_dict["eta"] = 1.
 theta_dict["c_hat"] = .5
-theta_dict["alpha1"] = .25
-theta_dict["gamma"] = .5
-theta_dict["C"] = np.repeat(1, pecmy.N)
+theta_dict["alpha1"] = .05
+theta_dict["gamma"] = 1.
+theta_dict["C"] = np.repeat(.5, pecmy.N)
 theta_x = pecmy.unwrap_theta(theta_dict)
+
 
 # pecmy.W ** - .75
 
-# v = (pecmy.v_max() - 1) / 2 + 1
-v = np.ones(pecmy.N)
+# v = np.mean(pecmy.ecmy.tau, axis=1)
+# v = np.repeat(2, pecmy.N)
+v = (pecmy.v_max() - 1) / 2 + 1
+# v = np.repeat(.9, pecmy.N)
+# v = np.ones(pecmy.N)
+id = 0
+ft_id = pecmy.ft_sv(id, np.ones(pecmy.x_len), v)
+ft_id_dict = pecmy.ecmy.rewrap_ge_dict(ft_id)
+pecmy.ecmy.U_hat(ft_id_dict, v)
+pecmy.peace_probs(np.ones(pecmy.x_len), ft_id[-pecmy.hhat_len:], id, pecmy.m, v, theta_dict)
 
-pecmy.estimator_bounds(theta_x, v, "upper")
+# pecmy.v_max()
+# pecmy.estimator_sv(pecmy.mzeros, v, theta_x)
 
 fname = "out/mid_frechet_eq.csv"
-x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=True)
+x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
 
 
 x_dict = pecmy.rewrap_xlhvt(x)
@@ -119,6 +129,7 @@ print("-----")
 for i in theta_dict.keys():
     print(i)
     print(theta_dict[i])
+
 
 np.savetxt(fname, x, delimiter=",")
 

@@ -44,7 +44,7 @@ class policies:
         # enforce positive tariffs
         tau_hat_pos = np.ones_like(self.ecmy.tau)
         tau_hat_pos[self.ecmy.tau < 1] = 1 / self.ecmy.tau[self.ecmy.tau < 1]
-        self.ecmy.update_ecmy(tau_hat_pos, np.ones(self.N))
+        self.ecmy.update_ecmy(tau_hat_pos, np.ones(self.N), np.ones(self.N))
 
         self.W = data["W"]  # distances
         np.fill_diagonal(self.W, 1)
@@ -54,9 +54,9 @@ class policies:
         # construct equal distribution m matrix, enforce zeros on ROW row and columns
         self.m = self.M / np.ones((self.N, self.N))
         self.m = self.m.T
-        self.m[self.ROW_id,:] = 0
-        self.m[:,self.ROW_id] = 0
-        self.m[self.ROW_id,self.ROW_id] = 1
+        # self.m[self.ROW_id,:] = 0
+        # self.m[:,self.ROW_id] = 0
+        # self.m[self.ROW_id,self.ROW_id] = 1
 
         # counterfactual m, no threats
         self.mzeros = np.diag(self.M)
@@ -90,7 +90,7 @@ class policies:
         self.wv_min = -1.0e2  # minimum war value
         self.alpha1_ub = self.alpha1_min(.01)  # restrict alpha search (returns alpha such that rho(alpha)=.01)
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
-        self.v_min = .8
+        self.v_min = 1.
         self.v_buffer = .025
 
         self.tick = 0  # tracker for optimization calls to loss function
@@ -119,10 +119,12 @@ class policies:
         """
 
         ge_dict = self.ecmy.rewrap_ge_dict(x)
-        Uhat = self.ecmy.U_hat(ge_dict)
+        # Uhat = self.ecmy.U_hat(ge_dict, v)
+        Uhat = self.ecmy.U_hat(ge_dict, v)
         # print(Uhat)
-        Ghat = Uhat * self.R_hat(ge_dict, v)
+        # Ghat = Uhat * self.R_hat(ge_dict, v)
         # Ghat = .75 * np.log(Uhat) + .25 * np.log(R_hat)
+        Ghat = Uhat
 
         if all == False:
             return(Ghat[id]*sign)
@@ -179,9 +181,11 @@ class policies:
 
         H_i = self.H(ge_x, h, id, m, v, theta_dict)
         G_i = self.G_hat(ge_x, v, id)
+        rcx = self.rcx(self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"], h, id)
+        G_i_ft = self.G_hat(rcx, v, id)
 
-        # out = H_i * G_i
-        out = np.log(H_i) + np.log(G_i)
+        out = H_i * G_i + (1 - H_i) * G_i_ft
+        # out = np.log(H_i) + np.log(G_i)
         # out = np.log(H_i) + G_i
 
         return(out)
@@ -273,7 +277,7 @@ class policies:
         # G_hat_i = self.G_hat(ge_x, v, id, sign=1)
         G_hat_tilde_i = self.G_hat_tilde(ge_x, h, id, m, v, theta_dict)
 
-        geq_diffs = self.ecmy.geq_diffs(ge_x)
+        geq_diffs = self.ecmy.geq_diffs(ge_x, v)
         # h_diffs = self.ecmy.geq_diffs(rcx)
 
         # wv = self.wv_rcx(rcx, id, m, v, theta_dict)
@@ -668,7 +672,7 @@ class policies:
 
         # optimizer tracker
         self.tick += 1
-        if self.tick % 10 == 0:  # print output every 25 calls
+        if self.tick % 25 == 0:  # print output every 25 calls
 
             # s = np.reshape(xlshvt_dict["s"], (self.N, self.N))
             # print("s:")
@@ -699,6 +703,8 @@ class policies:
 
             print("R_hat:")
             print(self.R_hat(self.ecmy.rewrap_ge_dict(ge_x), v))
+            print("r_v:")
+            print(self.r_v(v))
 
             for i in range(self.N):
                 # print("lambda chi " + str(i))
@@ -759,7 +765,8 @@ class policies:
 
         """
         ge_x = self.rewrap_xlhvt(xlhvt)["ge_x"]
-        geq_diffs = self.ecmy.geq_diffs(ge_x)
+        v = self.rewrap_xlhvt(xlhvt)["v"]
+        geq_diffs = self.ecmy.geq_diffs(ge_x, v)
         return(geq_diffs)
 
     def h_diffs_xlhvt(self, xlhvt, id):
@@ -778,10 +785,11 @@ class policies:
         """
         xlhvt_dict = self.rewrap_xlhvt(xlhvt)
         ge_x = xlhvt_dict["ge_x"]
+        v = xlhvt_dict["v"]
         tau_hat_tilde = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
         h_i = np.reshape(xlhvt_dict["h"], (self.N, self.hhat_len))[id, ]
         rcx = self.rcx(tau_hat_tilde, h_i, id)
-        h_diffs = self.ecmy.geq_diffs(rcx)
+        h_diffs = self.ecmy.geq_diffs(rcx, v)
         return(h_diffs)
 
     def Lzeros_i_xlhvt(self, xlhvt, id, m):
@@ -990,6 +998,7 @@ class policies:
         """
 
         # print(m)
+        # print(xlhvt)
         geq_diffs_jac_f = ag.jacobian(self.geq_diffs_xlhvt)
         geq_diffs_jac = geq_diffs_jac_f(xlhvt)
 
@@ -1046,8 +1055,8 @@ class policies:
     def geq_lb(self):
 
         lb_dict = dict()
-        # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
-        lb_dict["tau_hat"] = 1 / self.ecmy.tau
+        lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
+        # lb_dict["tau_hat"] = 1 / self.ecmy.tau
         # lb_dict["tau_hat"] = 1.01 / self.ecmy.tau
         np.fill_diagonal(lb_dict["tau_hat"], 1)
         lb_dict["D_hat"] = np.repeat(1, self.N)
@@ -1065,8 +1074,8 @@ class policies:
     def geq_ub(self):
 
         ub_dict = dict()
-        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
-        ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
+        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         np.fill_diagonal(ub_dict["tau_hat"], 1)
         ub_dict["D_hat"] = np.repeat(1, self.N)
         ub_dict["X_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
@@ -1137,7 +1146,9 @@ class policies:
 
         if nash_eq == False:  # set lower bounds on parameters, of fix some values for testing estimator
             x_L[b:b+self.N] = self.v_min # vs
-            x_U[b:b+self.N] = self.v_max() - self.v_buffer # vs
+            # x_U[b:b+self.N] = self.v_max() - self.v_buffer # vs
+            # x_U[b:b+self.N] = self.v_max() # vs
+            x_U[b:b+self.N] = 5 # vs
             # x_L[b:b+self.N] = v #
             # x_U[b:b+self.N] = v # fixed vs
             b += self.N
@@ -1147,7 +1158,7 @@ class policies:
             # x_U[b] = 1  # eta upper
             b += 1
             x_L[b] = .01  # gamma lower
-            # x_U[b] = 2  # gamma upper
+            x_U[b] = 1.25  # gamma upper
             # x_L[b] = 1
             # x_U[b] = 1  # fix gamma at 1
             b += 1
@@ -1160,7 +1171,7 @@ class policies:
             b += 1
             # x_L[b:b+self.N] = .01  # cs
             x_L[b:b+self.N] = opt.root(self.pp_wrap_C, .5, args=(.001, ))['x']  # cs
-            x_U[b:b+self.N] = 10
+            x_U[b:b+self.N] = 5
             # x_U[b] = self.alpha1_ub  # alpha1 upper
             # x_L[b] = -np.inf  # alpha1 lower
             # x_U[b] = np.inf  # alpha1 upper
@@ -1260,7 +1271,7 @@ class policies:
         # s_sv = []
         for i in range(self.N):
 
-            ft_id = self.ft_sv(i, ge_x_sv)
+            ft_id = self.ft_sv(i, ge_x_sv, v)
             # ft_id = self.ecmy.rewrap_ge_dict(self.ft_sv(i, ge_x_sv))
             # h_sv_i = self.ecmy.unwrap_ge_dict(self.ecmy.geq_solve(ft_id["tau_hat"], np.ones(self.N)))[-self.hhat_len:]
             # print(ft_id)
@@ -1467,12 +1478,12 @@ class policies:
         rcx = self.rcx(tau_hat_tilde, h, id)
         # wv = self.wv_rcx(rcx, id, m, v, theta_dict)
 
-        geq_diffs = self.ecmy.geq_diffs(ge_x)
+        geq_diffs = self.ecmy.geq_diffs(ge_x, v)
         # war_diffs = self.war_diffs(ge_x, v, wv, id)
         Lzeros = self.Lzeros_i(xlh, id, m, v, theta_dict)
 
         # comp_slack = s_i * self.rewrap_lbda_i(lambda_i_x)["chi_i"]
-        h_diffs = self.ecmy.geq_diffs(rcx)
+        h_diffs = self.ecmy.geq_diffs(rcx, v)
 
         # wd = war_diffs - s_i
 
@@ -1637,6 +1648,7 @@ class policies:
                 lbda = np.reshape(x_dict["lbda"], (self.N, self.lambda_i_len))
                 # s = np.reshape(x_dict["s"], (self.N, self.N))
                 h = np.reshape(x_dict["h"], (self.N, self.hhat_len))
+                v = x_dict["v"]
                 print("tau:")
                 print(ge_dict["tau_hat"]*self.ecmy.tau)
                 print("-----")
@@ -1645,12 +1657,12 @@ class policies:
                     h_diffs_i = self.h_diffs_xlhvt(x, i)
                     lbda_i = self.rewrap_lbda_i(lbda[i, ])
                     h_i = h[i, ]
-                    print("h " + str(i) + ":")
-                    print(h_i)
-                    print("h_diffs" + str(i) + ":")
-                    print(h_diffs_i)
-                    print("Lzeros:" + str(i) + ":")
-                    print(Lzeros_i)
+                    # print("h " + str(i) + ":")
+                    # print(h_i)
+                    # print("h_diffs" + str(i) + ":")
+                    # print(h_diffs_i)
+                    # print("Lzeros:" + str(i) + ":")
+                    # print(Lzeros_i)
                     print("peace probs " + str(i) + ":")
                     peace_probs_i = self.peace_probs(x_dict["ge_x"], h_i, i, self.m, x_dict["v"], self.rewrap_theta(x_dict["theta"]))
                     print(peace_probs_i)
@@ -1669,7 +1681,7 @@ class policies:
                 print(self.R_hat(ge_dict, x_dict["v"]))
                 print("-----")
                 print("geq_diffs:")
-                print(self.ecmy.geq_diffs(x_dict["ge_x"]))
+                print(self.ecmy.geq_diffs(x_dict["ge_x"], v))
                 # for i in range(self.N):
                 #     rcx_i = self.rcx(ge_dict["tau_hat"], h[i, ], i)
                 #     print("rcx_i:")
@@ -2080,7 +2092,7 @@ class policies:
 
         return(rcx)
 
-    def ft_sv(self, id, ge_x):
+    def ft_sv(self, id, ge_x, v):
         """calculate free trade equilibrium for id, holding other govs at policies in ge_x
 
         Parameters
@@ -2103,7 +2115,7 @@ class policies:
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x_copy)
         tau_hat_sv = ge_dict["tau_hat"]
         tau_hat_sv[id, ] = tau_hat_ft[id, ]
-        ge_dict_sv = self.ecmy.geq_solve(tau_hat_sv, np.ones(self.N))
+        ge_dict_sv = self.ecmy.geq_solve(tau_hat_sv, np.ones(self.N), v)
         if ge_dict_sv == 0:
             return(0)
         else:
@@ -2183,12 +2195,12 @@ class policies:
 
         """
 
-        step = .4
+        step = 0
 
         tau_v = np.tile(np.array([v]).transpose(), (1, self.N))
         tau_hat_v = (tau_v + step) / self.ecmy.tau
         np.fill_diagonal(tau_hat_v, 1)
-        ge_dict_sv = self.ecmy.geq_solve(tau_hat_v, np.ones(self.N))
+        ge_dict_sv = self.ecmy.geq_solve(tau_hat_v, np.ones(self.N), v)
         ge_x_sv = self.ecmy.unwrap_ge_dict(ge_dict_sv)
 
         return(ge_x_sv)
