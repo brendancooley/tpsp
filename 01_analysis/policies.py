@@ -467,8 +467,8 @@ class policies:
         #     print(i)
         #     print(theta_dict[i])
 
-        Cinv = theta_dict["C"] ** -1
-        # Cinv = theta_dict["c_hat"] ** -1
+        # Cinv = theta_dict["C"] ** -1
+        Cinv = theta_dict["c_hat"] ** -1
         eta = theta_dict["eta"]
         gamma = theta_dict["gamma"]
         alpha = theta_dict["alpha1"]
@@ -1149,12 +1149,12 @@ class policies:
             # x_L[b] = 1
             # x_U[b] = 1  # fix gamma at 1
             b += 1
-            x_L[b] = opt.root(self.pp_wrap_C, .5, args=(.01, ))['x'] # fix c_hat
+            x_L[b] = opt.root(self.pp_wrap_C, .5, args=(.01, ))['x'] # c_hat
             x_U[b] = 2
             b += 1
             # x_L[b] = -self.alpha1_ub  # alpha1 lower
             x_L[b] = .0001  # alpha1 lower
-            x_U[b] = opt.root(self.pp_wrap_alpha, .5, args=(.9, ))['x']  # alpha1 upper
+            x_U[b] = opt.root(self.pp_wrap_alpha, .5, args=(.8, ))['x']  # alpha1 upper
             b += 1
             # x_L[b:b+self.N] = .01  # cs
             x_L[b:b+self.N] = opt.root(self.pp_wrap_C, .5, args=(.005, ))['x']  # cs

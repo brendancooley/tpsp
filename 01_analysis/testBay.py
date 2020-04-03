@@ -20,7 +20,7 @@ basePath = os.path.expanduser('~')
 projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
-size = "mid/"
+size = "mini/"
 
 helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
@@ -105,45 +105,27 @@ v = (pecmy.v_max() - 1) / 2 + 1
 
 pecmy.estimator_bounds(theta_x, v, "upper")
 
+fname = "out/mini_frechet.csv"
 x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
+
+
 x_dict = pecmy.rewrap_xlhvt(x)
 ge_dict = pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])
+theta_dict = pecmy.rewrap_theta(x_dict["theta"])
 
 print(ge_dict["tau_hat"]*pecmy.ecmy.tau)
 print("-----")
+for i in theta_dict.keys():
+    print(i)
+    print(theta_dict[i])
 
-id = 0
-v = (pecmy.v_max() - 1) / 2 + 1
-ge_x_test = np.ones(pecmy.x_len)
-ft_x = pecmy.ft_sv(id, np.ones(pecmy.x_len))
-ft_h = ft_x[-pecmy.hhat_len:]
-
-pecmy.peace_probs(ge_x_test, ft_h, id, pecmy.m, v, theta_dict)
+np.savetxt(fname, x, delimiter=",")
 
 
-def peace_probs_wrap_C(C, thres):
-
-    Cinv = C ** -1
-    chi_ji = -Cinv
-    pr_peace = np.exp(chi_ji)
-
-    out = pr_peace - thres
-
-    return(out)
-
-opt.root(peace_probs_wrap_C, .5, args=(.01, ))
-
-def peace_probs_wrap_alpha(alpha, thres):
-
-    chi_ji = -np.min(pecmy.W[pecmy.W>1])**(-1*alpha)
-    pr_peace = np.exp(chi_ji)
-
-    out = pr_peace - thres
-
-    return(out)
-
-opt.root(peace_probs_wrap_alpha, .5, args=(.99, ))
-
+# x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
+# # x, obj, status = pecmy.estimator(v, theta_x, np.zeros((pecmy.N, pecmy.N)), nash_eq=False)
+# np.savetxt(fname, x, delimiter=",")
+# x = np.genfromtxt(fname, delimiter=",")
 
 # pecmy.H(ge_x_test, ft_h, id, pecmy.m, v, theta_dict)
 # pecmy.G_hat_tilde(ge_x_test, ft_h, id, pecmy.m, v, theta_dict)
