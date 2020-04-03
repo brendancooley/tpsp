@@ -181,7 +181,8 @@ class policies:
         G_i = self.G_hat(ge_x, v, id)
 
         # out = H_i * G_i
-        out = np.log(H_i) + np.log(G_i)
+        # out = np.log(H_i) + np.log(G_i)
+        out = np.log(G_i)
 
         return(out)
 
