@@ -121,8 +121,8 @@ class policies:
         ge_dict = self.ecmy.rewrap_ge_dict(x)
         Uhat = self.ecmy.U_hat(ge_dict)
         # print(Uhat)
-        # Ghat = Uhat * self.R_hat(ge_dict, v)
-        Ghat = .75 * np.log(Uhat) + .25 * np.log(R_hat)
+        Ghat = Uhat * self.R_hat(ge_dict, v)
+        # Ghat = .75 * np.log(Uhat) + .25 * np.log(R_hat)
 
         if all == False:
             return(Ghat[id]*sign)
@@ -181,8 +181,8 @@ class policies:
         G_i = self.G_hat(ge_x, v, id)
 
         # out = H_i * G_i
-        # out = np.log(H_i) + np.log(G_i)
-        out = np.log(G_i)
+        out = np.log(H_i) + np.log(G_i)
+        # out = np.log(H_i) + G_i
 
         return(out)
 
