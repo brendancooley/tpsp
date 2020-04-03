@@ -116,7 +116,7 @@ pecmy.peace_probs(np.ones(pecmy.x_len), ft_id[-pecmy.hhat_len:], id, pecmy.m, v,
 # pecmy.v_max()
 # pecmy.estimator_sv(pecmy.mzeros, v, theta_x)
 
-fname = "out/mid_frechet_eq.csv"
+fname = "out/est_mini.csv"
 x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
 
 
