@@ -20,7 +20,7 @@ basePath = os.path.expanduser('~')
 projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
-size = "mid/"
+size = "mini/"
 
 helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
@@ -103,7 +103,7 @@ v = (pecmy.v_max() - 1) / 2 + 1
 
 pecmy.estimator_bounds(theta_x, v, "upper")
 
-fname = "out/mid_frechet.csv"
+fname = "out/mini_frechet.csv"
 x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
 
 

@@ -1052,8 +1052,8 @@ class policies:
         lb_dict["X_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
         lb_dict["P_hat"] = np.repeat(0, self.N)
         lb_dict["w_hat"] = np.repeat(0, self.N)
-        # lb_dict["r_hat"] = np.repeat(-np.inf, self.N)
-        lb_dict["r_hat"] = np.repeat(0, self.N)
+        lb_dict["r_hat"] = np.repeat(-np.inf, self.N)
+        # lb_dict["r_hat"] = np.repeat(0, self.N)
         lb_dict["E_hat"] = np.repeat(0, self.N)
 
         out = self.ecmy.unwrap_ge_dict(lb_dict)
