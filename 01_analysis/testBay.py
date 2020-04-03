@@ -106,9 +106,14 @@ pecmy.estimator_bounds(theta_x, v, "upper")
 x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
 x_dict = pecmy.rewrap_xlhvt(x)
 ge_dict = pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])
+theta_dict = pecmy.rewrap_theta(x_dict["theta"])
 
 print(ge_dict["tau_hat"]*pecmy.ecmy.tau)
 print("-----")
+for i in theta_dict.keys():
+    print(i)
+    print(theta_dict[i])
+
 
 id = 0
 v = (pecmy.v_max() - 1) / 2 + 1
