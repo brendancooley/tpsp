@@ -20,7 +20,7 @@ basePath = os.path.expanduser('~')
 projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
-size = "mid/"
+size = "mini/"
 
 helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
@@ -81,7 +81,9 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 
 imp.reload(policies)
 imp.reload(economy)
-pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
+pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)
+pecmy.m
+# generate pecmy and rcv vals
 # np.seterr(all='raise')
 
 
@@ -92,15 +94,15 @@ theta_dict = dict()
 # theta_dict["c_hat"] = .25
 theta_dict["eta"] = 1
 theta_dict["c_hat"] = .5
-theta_dict["alpha1"] = .15
+theta_dict["alpha1"] = .25
 theta_dict["gamma"] = .5
-theta_dict["C"] = np.repeat(.5, pecmy.N)
+theta_dict["C"] = np.repeat(1, pecmy.N)
 theta_x = pecmy.unwrap_theta(theta_dict)
 
 # pecmy.W ** - .75
 
-v = (pecmy.v_max() - 1) / 2 + 1
-# v = np.ones(pecmy.N)
+# v = (pecmy.v_max() - 1) / 2 + 1
+v = np.ones(pecmy.N)
 
 pecmy.estimator_bounds(theta_x, v, "upper")
 

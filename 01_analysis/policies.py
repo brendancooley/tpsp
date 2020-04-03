@@ -121,7 +121,8 @@ class policies:
         ge_dict = self.ecmy.rewrap_ge_dict(x)
         Uhat = self.ecmy.U_hat(ge_dict)
         # print(Uhat)
-        Ghat = Uhat * self.R_hat(ge_dict, v)
+        # Ghat = Uhat * self.R_hat(ge_dict, v)
+        Ghat = .75 * np.log(Uhat) + .25 * np.log(R_hat)
 
         if all == False:
             return(Ghat[id]*sign)
@@ -1044,8 +1045,8 @@ class policies:
     def geq_lb(self):
 
         lb_dict = dict()
-        lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
-        # lb_dict["tau_hat"] = 1 / self.ecmy.tau
+        # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
+        lb_dict["tau_hat"] = 1 / self.ecmy.tau
         # lb_dict["tau_hat"] = 1.01 / self.ecmy.tau
         np.fill_diagonal(lb_dict["tau_hat"], 1)
         lb_dict["D_hat"] = np.repeat(1, self.N)
@@ -1063,8 +1064,8 @@ class policies:
     def geq_ub(self):
 
         ub_dict = dict()
-        ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
-        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
+        ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         np.fill_diagonal(ub_dict["tau_hat"], 1)
         ub_dict["D_hat"] = np.repeat(1, self.N)
         ub_dict["X_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
@@ -1639,7 +1640,7 @@ class policies:
                 print(ge_dict["tau_hat"]*self.ecmy.tau)
                 print("-----")
                 for i in range(self.N):
-                    Lzeros_i = self.Lzeros_i_xlhvt(x, i, pecmy.m)
+                    Lzeros_i = self.Lzeros_i_xlhvt(x, i, self.m)
                     h_diffs_i = self.h_diffs_xlhvt(x, i)
                     lbda_i = self.rewrap_lbda_i(lbda[i, ])
                     h_i = h[i, ]
