@@ -84,7 +84,6 @@ imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
 # np.seterr(all='raise')
 
-np.reshape(np.repeat(np.max(pecmy.ecmy.tau, axis=1), pecmy.N), (pecmy.N, pecmy.N)) / pecmy.ecmy.tau * pecmy.ecmy.tau
 
 # ccodes
 # pecmy.ft_sv(6, np.ones(pecmy.x_len))
@@ -93,7 +92,7 @@ theta_dict = dict()
 # theta_dict["c_hat"] = .25
 theta_dict["eta"] = 1
 theta_dict["c_hat"] = .5
-theta_dict["alpha1"] = .01
+theta_dict["alpha1"] = .15
 theta_dict["gamma"] = .5
 theta_dict["C"] = np.repeat(.5, pecmy.N)
 theta_x = pecmy.unwrap_theta(theta_dict)
@@ -105,8 +104,8 @@ v = (pecmy.v_max() - 1) / 2 + 1
 
 pecmy.estimator_bounds(theta_x, v, "upper")
 
-fname = "out/mid_frechet2.csv"
-x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
+fname = "out/mid_frechet_eq.csv"
+x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=True)
 
 
 x_dict = pecmy.rewrap_xlhvt(x)
