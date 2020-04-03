@@ -467,8 +467,8 @@ class policies:
         #     print(i)
         #     print(theta_dict[i])
 
-        # Cinv = theta_dict["C"] ** -1
-        Cinv = theta_dict["c_hat"] ** -1
+        Cinv = theta_dict["C"] ** -1
+        # Cinv = theta_dict["c_hat"] ** -1
         eta = theta_dict["eta"]
         gamma = theta_dict["gamma"]
         alpha = theta_dict["alpha1"]
@@ -1044,8 +1044,8 @@ class policies:
     def geq_lb(self):
 
         lb_dict = dict()
-        # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
-        lb_dict["tau_hat"] = 1 / self.ecmy.tau
+        lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
+        # lb_dict["tau_hat"] = 1 / self.ecmy.tau
         # lb_dict["tau_hat"] = 1.01 / self.ecmy.tau
         np.fill_diagonal(lb_dict["tau_hat"], 1)
         lb_dict["D_hat"] = np.repeat(1, self.N)
@@ -1063,8 +1063,8 @@ class policies:
     def geq_ub(self):
 
         ub_dict = dict()
-        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
-        ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
+        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         np.fill_diagonal(ub_dict["tau_hat"], 1)
         ub_dict["D_hat"] = np.repeat(1, self.N)
         ub_dict["X_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
@@ -1139,10 +1139,10 @@ class policies:
             # x_L[b:b+self.N] = v #
             # x_U[b:b+self.N] = v # fixed vs
             b += self.N
-            # x_L[b] = .5 # eta lower
-            # x_U[b] = 5  # eta upper
-            x_L[b] = 1 # eta lower
-            x_U[b] = 1  # eta upper
+            x_L[b] = .5 # eta lower
+            x_U[b] = 5  # eta upper
+            # x_L[b] = 1 # eta lower
+            # x_U[b] = 1  # eta upper
             b += 1
             x_L[b] = .01  # gamma lower
             # x_U[b] = 2  # gamma upper
@@ -1154,7 +1154,7 @@ class policies:
             b += 1
             # x_L[b] = -self.alpha1_ub  # alpha1 lower
             x_L[b] = .0001  # alpha1 lower
-            x_U[b] = opt.root(self.pp_wrap_alpha, .5, args=(.8, ))['x']  # alpha1 upper
+            x_U[b] = opt.root(self.pp_wrap_alpha, .5, args=(.9, ))['x']  # alpha1 upper
             b += 1
             # x_L[b:b+self.N] = .01  # cs
             x_L[b:b+self.N] = opt.root(self.pp_wrap_C, .5, args=(.005, ))['x']  # cs
