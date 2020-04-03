@@ -1157,7 +1157,7 @@ class policies:
             x_U[b] = opt.root(self.pp_wrap_alpha, .5, args=(.9, ))['x']  # alpha1 upper
             b += 1
             # x_L[b:b+self.N] = .01  # cs
-            x_L[b:b+self.N] = opt.root(self.pp_wrap_C, .5, args=(.005, ))['x']  # cs
+            x_L[b:b+self.N] = opt.root(self.pp_wrap_C, .5, args=(.001, ))['x']  # cs
             x_U[b:b+self.N] = 10
             # x_U[b] = self.alpha1_ub  # alpha1 upper
             # x_L[b] = -np.inf  # alpha1 lower
@@ -1178,8 +1178,10 @@ class policies:
             x_L[b] = theta_dict["gamma"]  # gamma
             x_U[b] = theta_dict["gamma"]
             b += 1
-            x_L[b] = theta_dict["alpha0"]
-            x_U[b] = theta_dict["alpha0"]
+            # x_L[b] = theta_dict["alpha0"]
+            # x_U[b] = theta_dict["alpha0"]
+            x_L[b] = theta_dict["c_hat"]
+            x_U[b] = theta_dict["c_hat"]
             b += 1
             x_L[b] = theta_dict["alpha1"]
             x_U[b] = theta_dict["alpha1"]
