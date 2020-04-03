@@ -1629,7 +1629,7 @@ class policies:
         """
         self.tick += 1
         if len(x) == self.xlhvt_len:
-            if self.tick % 10 == 0:
+            if self.tick % 25 == 0:
                 x_dict = self.rewrap_xlhvt(x)
                 ge_dict = self.ecmy.rewrap_ge_dict(x_dict["ge_x"])
                 lbda = np.reshape(x_dict["lbda"], (self.N, self.lambda_i_len))
@@ -1639,8 +1639,16 @@ class policies:
                 print(ge_dict["tau_hat"]*self.ecmy.tau)
                 print("-----")
                 for i in range(self.N):
+                    Lzeros_i = self.Lzeros_i_xlhvt(x, i, pecmy.m)
+                    h_diffs_i = self.h_diffs_xlhvt(x, i)
                     lbda_i = self.rewrap_lbda_i(lbda[i, ])
                     h_i = h[i, ]
+                    print("h " + str(i) + ":")
+                    print(h_i)
+                    print("h_diffs" + str(i) + ":")
+                    print(h_diffs_i)
+                    print("Lzeros:" + str(i) + ":")
+                    print(Lzeros_i)
                     print("peace probs " + str(i) + ":")
                     peace_probs_i = self.peace_probs(x_dict["ge_x"], h_i, i, self.m, x_dict["v"], self.rewrap_theta(x_dict["theta"]))
                     print(peace_probs_i)
