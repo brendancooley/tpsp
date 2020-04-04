@@ -475,6 +475,7 @@ class policies:
 
         # Cinv = theta_dict["C"] ** -1
         Cinv = theta_dict["c_hat"] ** -1
+        # Cinv = np.delete(Cinv, id)
         eta = theta_dict["eta"]
         gamma = theta_dict["gamma"]
         alpha = theta_dict["alpha1"]
@@ -483,6 +484,9 @@ class policies:
         m_frac = m / m_diag
         np.fill_diagonal(m_frac, 0)
 
+        m_frac_i = np.array([m_frac[:,id][i] for i in range(self.N) if i != id])
+        W_i = np.array([self.W[:,id][i] for i in range(self.N) if i != id])
+
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
         rcx = self.rcx(ge_dict["tau_hat"], h, id)
         G = self.G_hat(ge_x, v, id, all=True)
@@ -490,13 +494,14 @@ class policies:
         DeltaG = rcv - G
         # print(DeltaG)
         DeltaG = np.clip(DeltaG, 1e-10, np.inf)
+        DeltaG = np.array([DeltaG[i] for i in range(self.N) if i != id])
         # DeltaG[id] = 0
         # print(Cinv)
         # print(m_frac[:,id]**gamma)
         # print(self.W[:,id]**(-1*alpha))
         # print(DeltaG**eta)
 
-        chi_ji = -Cinv * m_frac[:,id]**gamma * self.W[:,id]**(-1*alpha) * DeltaG**eta
+        chi_ji = -Cinv * m_frac_i**gamma * W_i**(-1*alpha) * DeltaG**eta
         # chi_ji = - m_frac[:,id]**gamma * self.W[:,id]**(-1*alpha) * DeltaG**eta
         # print(chi_ji)
 
@@ -1157,7 +1162,7 @@ class policies:
             x_L[b] = 1 # eta lower
             x_U[b] = 1  # eta upper
             b += 1
-            x_L[b] = .01  # gamma lower
+            x_L[b] = -1.  # gamma lower
             x_U[b] = 1.  # gamma upper
             # x_L[b] = 1
             # x_U[b] = 1  # fix gamma at 1
