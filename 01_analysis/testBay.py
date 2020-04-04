@@ -20,7 +20,7 @@ basePath = os.path.expanduser('~')
 projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
-size = "mid/"
+size = "mini/"
 
 helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
@@ -102,9 +102,9 @@ theta_x = pecmy.unwrap_theta(theta_dict)
 
 # pecmy.W ** - .75
 
-# v = np.mean(pecmy.ecmy.tau, axis=1)
+v = np.mean(pecmy.ecmy.tau, axis=1)
 # v = np.repeat(2, pecmy.N)
-v = pecmy.v_max()
+# v = pecmy.v_max()
 # v = (pecmy.v_max() - 1) / 2 + 1
 # v = np.repeat(.9, pecmy.N)
 # v = np.ones(pecmy.N)
@@ -117,7 +117,7 @@ pecmy.peace_probs(np.ones(pecmy.x_len), ft_id[-pecmy.hhat_len:], id, pecmy.m, v,
 # pecmy.v_max()
 # pecmy.estimator_sv(pecmy.mzeros, v, theta_x)
 
-fname = "out/results_mid_sv1.csv"
+fname = "out/results_mini_sv1.csv"
 x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
 
 
