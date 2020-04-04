@@ -21,9 +21,9 @@ projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
 
-size = "mid/"
+size = "mini/"
 sv_fname = "out/mini_sv.csv"
-out_fname = "out/mid_est1.csv"
+out_fname = "out/mini_eq_test.csv"
 # sv = np.genfromtxt(sv_fname, delimiter=',')
 
 helpersPath = os.path.expanduser(projectPath + "source/")
@@ -125,7 +125,7 @@ pecmy.peace_probs(np.ones(pecmy.x_len), ft_id[-pecmy.hhat_len:], id, pecmy.m, v,
 
 # print(sv)
 # x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, sv=sv, nash_eq=False)
-x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, sv=None, nash_eq=False)
+x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, sv=None, nash_eq=True)
 
 x_dict = pecmy.rewrap_xlhvt(x)
 ge_dict = pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])
