@@ -672,7 +672,7 @@ class policies:
 
         # optimizer tracker
         self.tick += 1
-        if self.tick % 25 == 0:  # print output every 25 calls
+        if self.tick % 50 == 0:  # print output every 25 calls
 
             # s = np.reshape(xlshvt_dict["s"], (self.N, self.N))
             # print("s:")
@@ -1694,7 +1694,7 @@ class policies:
                 #     print("-----")
         if len(x) == self.xlh_len:
 
-            if self.tick % 10 == 0:
+            if self.tick % 25 == 0:
 
                 id = 2
                 v = (self.v_max() - 1) / 2 + 1
