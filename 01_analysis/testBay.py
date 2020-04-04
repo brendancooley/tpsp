@@ -20,7 +20,7 @@ basePath = os.path.expanduser('~')
 projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
-size = "mini/"
+size = "mid/"
 
 helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
@@ -117,7 +117,7 @@ pecmy.peace_probs(np.ones(pecmy.x_len), ft_id[-pecmy.hhat_len:], id, pecmy.m, v,
 # pecmy.v_max()
 # pecmy.estimator_sv(pecmy.mzeros, v, theta_x)
 
-fname = "out/results_mini_sv1.csv"
+fname = "out/results_mid_sv1_v2.csv"
 x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
 
 
