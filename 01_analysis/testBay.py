@@ -96,7 +96,7 @@ theta_dict["eta"] = 1.
 theta_dict["c_hat"] = .5
 theta_dict["alpha1"] = .05
 theta_dict["gamma"] = .5
-theta_dict["C"] = np.repeat(.5, pecmy.N)
+theta_dict["C"] = np.repeat(1., pecmy.N)
 theta_x = pecmy.unwrap_theta(theta_dict)
 
 
@@ -117,7 +117,7 @@ pecmy.peace_probs(np.ones(pecmy.x_len), ft_id[-pecmy.hhat_len:], id, pecmy.m, v,
 # pecmy.v_max()
 # pecmy.estimator_sv(pecmy.mzeros, v, theta_x)
 
-fname = "out/est_mid2.csv"
+fname = "out/results_mid.csv"
 x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
 
 
