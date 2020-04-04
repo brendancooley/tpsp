@@ -1055,8 +1055,8 @@ class policies:
     def geq_lb(self):
 
         lb_dict = dict()
-        # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
-        lb_dict["tau_hat"] = 1 / self.ecmy.tau
+        lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
+        # lb_dict["tau_hat"] = 1 / self.ecmy.tau
         # lb_dict["tau_hat"] = 1.01 / self.ecmy.tau
         np.fill_diagonal(lb_dict["tau_hat"], 1)
         lb_dict["D_hat"] = np.repeat(1, self.N)
@@ -1152,10 +1152,10 @@ class policies:
             # x_L[b:b+self.N] = v #
             # x_U[b:b+self.N] = v # fixed vs
             b += self.N
-            x_L[b] = .5 # eta lower
-            x_U[b] = 5  # eta upper
-            # x_L[b] = 1 # eta lower
-            # x_U[b] = 1  # eta upper
+            # x_L[b] = .5 # eta lower
+            # x_U[b] = 5  # eta upper
+            x_L[b] = 1 # eta lower
+            x_U[b] = 1  # eta upper
             b += 1
             x_L[b] = .01  # gamma lower
             x_U[b] = 1.  # gamma upper
@@ -1166,7 +1166,7 @@ class policies:
             x_U[b] = 2
             b += 1
             # x_L[b] = -self.alpha1_ub  # alpha1 lower
-            x_L[b] = .0001  # alpha1 lower
+            # x_L[b] = .0001  # alpha1 lower
             x_U[b] = opt.root(self.pp_wrap_alpha, .5, args=(.8, ))['x']  # alpha1 upper
             b += 1
             # x_L[b:b+self.N] = .6  # cs
