@@ -54,9 +54,9 @@ class policies:
         # construct equal distribution m matrix, enforce zeros on ROW row and columns
         self.m = self.M / np.ones((self.N, self.N))
         self.m = self.m.T
-        self.m[self.ROW_id,:] = 0
-        self.m[:,self.ROW_id] = 0
-        self.m[self.ROW_id,self.ROW_id] = 1
+        # self.m[self.ROW_id,:] = 0
+        # self.m[:,self.ROW_id] = 0
+        # self.m[self.ROW_id,self.ROW_id] = 1
 
         # counterfactual m, no threats
         self.mzeros = np.diag(self.M)
