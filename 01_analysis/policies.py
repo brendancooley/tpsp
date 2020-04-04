@@ -1055,8 +1055,8 @@ class policies:
     def geq_lb(self):
 
         lb_dict = dict()
-        lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
-        # lb_dict["tau_hat"] = 1 / self.ecmy.tau
+        # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
+        lb_dict["tau_hat"] = 1 / self.ecmy.tau
         # lb_dict["tau_hat"] = 1.01 / self.ecmy.tau
         np.fill_diagonal(lb_dict["tau_hat"], 1)
         lb_dict["D_hat"] = np.repeat(1, self.N)
