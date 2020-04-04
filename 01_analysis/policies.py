@@ -90,7 +90,7 @@ class policies:
         self.wv_min = -1.0e2  # minimum war value
         self.alpha1_ub = self.alpha1_min(.01)  # restrict alpha search (returns alpha such that rho(alpha)=.01)
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
-        self.v_min = 1.
+        self.v_min = .9
         self.v_buffer = .025
 
         self.tick = 0  # tracker for optimization calls to loss function
@@ -1168,11 +1168,12 @@ class policies:
             # x_U[b] = 1  # fix gamma at 1
             b += 1
             x_L[b] = opt.root(self.pp_wrap_C, .5, args=(.25, ))['x'] # c_hat
-            x_U[b] = 2
+            x_U[b] = 3
             b += 1
             # x_L[b] = -self.alpha1_ub  # alpha1 lower
-            # x_L[b] = .0001  # alpha1 lower
-            x_U[b] = opt.root(self.pp_wrap_alpha, .5, args=(.8, ))['x']  # alpha1 upper
+            a_ub = opt.root(self.pp_wrap_alpha, .5, args=(.8, ))['x']
+            x_L[b] = -a_ub  # alpha1 lower
+            x_U[b] = a_ub # alpha1 upper
             b += 1
             # x_L[b:b+self.N] = .6  # cs
             x_L[b:b+self.N] = opt.root(self.pp_wrap_C, .5, args=(.25, ))['x']  # cs
