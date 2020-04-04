@@ -104,7 +104,8 @@ theta_x = pecmy.unwrap_theta(theta_dict)
 
 # v = np.mean(pecmy.ecmy.tau, axis=1)
 # v = np.repeat(2, pecmy.N)
-v = (pecmy.v_max() - 1) / 2 + 1
+v = pecmy.v_max()
+# v = (pecmy.v_max() - 1) / 2 + 1
 # v = np.repeat(.9, pecmy.N)
 # v = np.ones(pecmy.N)
 id = 0
