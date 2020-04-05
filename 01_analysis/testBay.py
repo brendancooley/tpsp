@@ -88,7 +88,7 @@ imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)
 # generate pecmy and rcv vals
 # np.seterr(all='raise')
-
+# opt.root(pecmy.pp_wrap_alpha, .5, args=(.7, ))['x']
 
 # np.max(pecmy.ecmy.tau, axis=1)
 
