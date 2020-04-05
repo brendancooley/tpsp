@@ -90,7 +90,7 @@ pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)
 # np.seterr(all='raise')
 # opt.root(pecmy.pp_wrap_alpha, .5, args=(.7, ))['x']
 
-# np.max(pecmy.ecmy.tau, axis=1)
+np.max(pecmy.ecmy.tau, axis=1)
 
 # ccodes
 # pecmy.ft_sv(6, np.ones(pecmy.x_len))

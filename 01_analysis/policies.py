@@ -1086,8 +1086,8 @@ class policies:
     def geq_ub(self):
 
         ub_dict = dict()
-        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
-        ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau + .25, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
+        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau + .25, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         np.fill_diagonal(ub_dict["tau_hat"], 1)
         ub_dict["D_hat"] = np.repeat(1, self.N)
         ub_dict["X_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
@@ -1175,7 +1175,7 @@ class policies:
             # x_U[b] = 1  # fix gamma at 1
             b += 1
             x_L[b] = opt.root(self.pp_wrap_C, .5, args=(.25, ))['x'] # c_hat
-            x_U[b] = 5
+            x_U[b] = 10
             b += 1
             # x_L[b] = -self.alpha1_ub  # alpha1 lower
             a_ub = opt.root(self.pp_wrap_alpha, .5, args=(.7, ))['x']
@@ -1275,7 +1275,7 @@ class policies:
         # else:
         #     ge_x_sv = np.ones(self.x_len)
         # ge_x_sv = self.v_sv_all(v)
-        ge_x_sv = np.ones(self.x_len)
+        # ge_x_sv = np.ones(self.x_len)
 
         lambda_sv = np.zeros(self.lambda_i_len*self.N)
         # lambda_sv = np.ones(self.lambda_i_len*self.N)
