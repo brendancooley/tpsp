@@ -1157,10 +1157,10 @@ class policies:
             # x_L[b:b+self.N] = v #
             # x_U[b:b+self.N] = v # fixed vs
             b += self.N
-            # x_L[b] = .5 # eta lower
-            # x_U[b] = 5  # eta upper
-            x_L[b] = 1 # eta lower
-            x_U[b] = 1  # eta upper
+            x_L[b] = .5 # eta lower
+            x_U[b] = 5  # eta upper
+            # x_L[b] = 1 # eta lower
+            # x_U[b] = 1  # eta upper
             b += 1
             x_L[b] = -1.  # gamma lower
             x_U[b] = 1.  # gamma upper
@@ -1359,8 +1359,8 @@ class policies:
 
         if nash_eq == False:
             problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
-            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", mu_strategy="adaptive", mu_oracle="loqo", fixed_mu_oracle="loqo", adaptive_mu_restore_previous_iterate="yes")
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso")
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", mu_strategy="adaptive", mu_oracle="loqo", fixed_mu_oracle="loqo", adaptive_mu_restore_previous_iterate="yes")
+            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso")
             # for derivative test, make sure we don't travel too far from initial point with point_perturbation_radius (leads to evaluation errors)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
         else:

@@ -98,7 +98,7 @@ pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)
 theta_dict = dict()
 # theta_dict["c_hat"] = .25
 theta_dict["eta"] = 1.
-theta_dict["c_hat"] = 1.
+theta_dict["c_hat"] = 1.5
 theta_dict["alpha1"] = 0.
 theta_dict["gamma"] = 0.
 theta_dict["C"] = np.repeat(1., pecmy.N)
@@ -113,11 +113,11 @@ v = np.mean(pecmy.ecmy.tau, axis=1)
 # v = (pecmy.v_max() - 1) / 2 + 1
 # v = np.repeat(.9, pecmy.N)
 # v = np.ones(pecmy.N)
-id = 0
-ft_id = pecmy.ft_sv(id, np.ones(pecmy.x_len), v)
-ft_id_dict = pecmy.ecmy.rewrap_ge_dict(ft_id)
-pecmy.ecmy.U_hat(ft_id_dict, v)
-pecmy.peace_probs(np.ones(pecmy.x_len), ft_id[-pecmy.hhat_len:], id, pecmy.m, v, theta_dict)
+# id = 0
+# ft_id = pecmy.ft_sv(id, np.ones(pecmy.x_len), v)
+# ft_id_dict = pecmy.ecmy.rewrap_ge_dict(ft_id)
+# pecmy.ecmy.U_hat(ft_id_dict, v)
+# pecmy.peace_probs(np.ones(pecmy.x_len), ft_id[-pecmy.hhat_len:], id, pecmy.m, v, theta_dict)
 
 # pecmy.v_max()
 # pecmy.estimator_sv(pecmy.mzeros, v, theta_x)
