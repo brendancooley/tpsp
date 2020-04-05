@@ -473,8 +473,9 @@ class policies:
         #     print(i)
         #     print(theta_dict[i])
 
-        # Cinv = theta_dict["C"] ** -1
-        Cinv = theta_dict["c_hat"] ** -1
+        Cinv = theta_dict["C"] ** -1
+        Cinv_i = np.array([Cinv[i] for i in range(self.N) if i != id])
+        # Cinv_i = theta_dict["c_hat"] ** -1
         # Cinv = np.delete(Cinv, id)
         eta = theta_dict["eta"]
         gamma = theta_dict["gamma"]
@@ -501,7 +502,7 @@ class policies:
         # print(self.W[:,id]**(-1*alpha))
         # print(DeltaG**eta)
 
-        chi_ji = -Cinv * m_frac_i**gamma * W_i**(-1*alpha) * DeltaG**eta
+        chi_ji = -Cinv_i * m_frac_i**gamma * W_i**(-1*alpha) * DeltaG**eta
         # chi_ji = - m_frac[:,id]**gamma * self.W[:,id]**(-1*alpha) * DeltaG**eta
         # print(chi_ji)
 
@@ -684,6 +685,12 @@ class policies:
             # print(s)
             h = np.reshape(xlhvt_dict["h"], (self.N, self.hhat_len))
             ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
+
+            cons = self.estimator_cons(xlhvt, self.m)
+
+            print("max constraint violation:")
+            print(np.argmax(np.abs(cons)))
+            print(np.max(np.abs(cons)))
 
             print("tau:")
             print(ge_dict["tau_hat"]*self.ecmy.tau)
@@ -1061,7 +1068,7 @@ class policies:
 
         lb_dict = dict()
         # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
-        lb_dict["tau_hat"] = .95 / self.ecmy.tau
+        lb_dict["tau_hat"] = .9 / self.ecmy.tau
         # lb_dict["tau_hat"] = 1.01 / self.ecmy.tau
         np.fill_diagonal(lb_dict["tau_hat"], 1)
         lb_dict["D_hat"] = np.repeat(1, self.N)
@@ -1153,7 +1160,7 @@ class policies:
             x_L[b:b+self.N] = self.v_min # vs
             # x_U[b:b+self.N] = self.v_max() - self.v_buffer # vs
             # x_U[b:b+self.N] = self.v_max() # vs
-            x_U[b:b+self.N] = 5 # vs
+            # x_U[b:b+self.N] = 5 # vs
             # x_L[b:b+self.N] = v #
             # x_U[b:b+self.N] = v # fixed vs
             b += self.N
@@ -1168,16 +1175,16 @@ class policies:
             # x_U[b] = 1  # fix gamma at 1
             b += 1
             x_L[b] = opt.root(self.pp_wrap_C, .5, args=(.25, ))['x'] # c_hat
-            x_U[b] = 3
+            x_U[b] = 5
             b += 1
             # x_L[b] = -self.alpha1_ub  # alpha1 lower
-            a_ub = opt.root(self.pp_wrap_alpha, .5, args=(.8, ))['x']
+            a_ub = opt.root(self.pp_wrap_alpha, .5, args=(.7, ))['x']
             x_L[b] = -a_ub  # alpha1 lower
             x_U[b] = a_ub # alpha1 upper
             b += 1
             # x_L[b:b+self.N] = .6  # cs
-            x_L[b:b+self.N] = opt.root(self.pp_wrap_C, .5, args=(.25, ))['x']  # cs
-            x_U[b:b+self.N] = 5
+            x_L[b:b+self.N] = opt.root(self.pp_wrap_C, .5, args=(.15, ))['x']  # cs
+            x_U[b:b+self.N] = 10
             # x_U[b] = self.alpha1_ub  # alpha1 upper
             # x_L[b] = -np.inf  # alpha1 lower
             # x_U[b] = np.inf  # alpha1 upper
@@ -1359,7 +1366,7 @@ class policies:
 
         if nash_eq == False:
             problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", mu_strategy="adaptive", mu_oracle="loqo", fixed_mu_oracle="loqo", adaptive_mu_restore_previous_iterate="yes")
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes")
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso")
             # for derivative test, make sure we don't travel too far from initial point with point_perturbation_radius (leads to evaluation errors)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
@@ -1686,6 +1693,9 @@ class policies:
                 # print(np.argmax(diffs))
                 print("ge_dict:")
                 print(ge_dict)
+                print("-----")
+                print("G_hat:")
+                print(self.G_hat(x_dict["ge_x"], x_dict["v"], 0, all=True))
                 print("-----")
                 print("R_hat:")
                 print(self.R_hat(ge_dict, x_dict["v"]))
