@@ -1274,8 +1274,8 @@ class policies:
         #     ge_x_sv = self.v_sv_all(v)
         # else:
         #     ge_x_sv = np.ones(self.x_len)
-        ge_x_sv = self.v_sv_all(v)
-        # ge_x_sv = np.ones(self.x_len)
+        # ge_x_sv = self.v_sv_all(v)
+        ge_x_sv = np.ones(self.x_len)
 
         lambda_sv = np.zeros(self.lambda_i_len*self.N)
         # lambda_sv = np.ones(self.lambda_i_len*self.N)
