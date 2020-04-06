@@ -23,7 +23,7 @@ projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
 size = "mid/"
 sv_fname = "out/mini_sv.csv"
-out_fname = "out/mid_est_test.csv"
+out_fname = "out/mid_est_test4.csv"
 # sv = np.genfromtxt(sv_fname, delimiter=',')
 
 helpersPath = os.path.expanduser(projectPath + "source/")
@@ -98,7 +98,7 @@ pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)
 theta_dict = dict()
 # theta_dict["c_hat"] = .25
 theta_dict["eta"] = 1.
-theta_dict["c_hat"] = 2.
+theta_dict["c_hat"] = 6.
 theta_dict["alpha1"] = 0.
 theta_dict["gamma"] = 0.
 theta_dict["C"] = np.repeat(1., pecmy.N)
