@@ -23,7 +23,7 @@ projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
 size = "mid/"
 sv_fname = "out/mini_sv.csv"
-out_fname = "out/mid_est_test4.csv"
+out_fname = "out/mid_est_test5.csv"
 # sv = np.genfromtxt(sv_fname, delimiter=',')
 
 helpersPath = os.path.expanduser(projectPath + "source/")
@@ -109,6 +109,7 @@ opt.root(pecmy.pp_wrap_alpha, .5, args=(.98, ))['x']
 # pecmy.W ** - .75
 
 v = np.mean(pecmy.ecmy.tau, axis=1)
+
 # v = np.repeat(2, pecmy.N)
 # v = pecmy.v_max()
 # v = (pecmy.v_max() - 1) / 2 + 1
