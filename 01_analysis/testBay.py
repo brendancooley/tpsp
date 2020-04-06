@@ -23,7 +23,7 @@ projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
 size = "mid/"
 sv_fname = "out/mini_sv.csv"
-out_fname = "out/mid_est9.csv"
+out_fname = "out/mid_noRUS_FE2.csv"
 # sv = np.genfromtxt(sv_fname, delimiter=',')
 
 helpersPath = os.path.expanduser(projectPath + "source/")
@@ -90,7 +90,7 @@ pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)
 # np.seterr(all='raise')
 # opt.root(pecmy.pp_wrap_alpha, .5, args=(.7, ))['x']
 
-np.max(pecmy.ecmy.tau, axis=1)
+# np.max(pecmy.ecmy.tau, axis=1)
 
 # ccodes
 # pecmy.ft_sv(6, np.ones(pecmy.x_len))
