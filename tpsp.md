@@ -42,9 +42,9 @@ Assessing the effect of military power on trade policy requires imagining what p
 
 I proceed in three steps to untangle power and preferences as determinants of trade policies. First, I model a coercive international political economy in which governments propose trade policies, observe others proposals, and choose whether or not to fight wars in bids to modify these. The model's equilibrium depends on a vector of parameters governing governments' preferences for protectionism and the effectiveness of military coercion. I then estimate these parameters by minimizing the distance between the model's predictions and observed policies. Finally, I answer the question posed here: how does military coercion affect trade policy? With estimates for the model's parameters in hand, this question can be answered by a simple counterfactual experiment — eliminate governments' military capacity, and recalculate the model's equilibrium. The difference between counterfactual equilibrium policies and the factual policies represents the net effect of military coercion on trade policy.
 
-Within the coercive international political economy, governments choose trade policies to maximize a combination of consumer welfare and trade policy rents. Each government's trade policy is a set of taxes, one for each importing country, imposed on imports. Notably, trade policies can be discriminatory, affecting certain source countries disproportionately. A model of the international economy connects trade policy choices to consumer welfare and trade flows, which determine the magnitude of rents available to governments.^[The model of the international economy is a variant of the workhorse model of @Eaton2002. @Costinot2015 study a broader class of structural gravity models that connect trade frictions (such as trade policy) to trade and welfare outcomes.] Each government is endowed with military capacity which can be employed in wars against other governments. Winning a war allows the victor to choose the trade policy of the defeated government. Counterfactual wars constrain threatened governments and affect their trade policy choices. The effectiveness of coercion, or governments' ability to project power, depends on the geographic distance between potential adversaries.
+Within the coercive international political economy, governments choose trade policies to maximize a country-specific social welfare function. Each government's trade policy is a set of taxes, one for each importing country, imposed on imports. Notably, trade policies can be discriminatory, affecting certain source countries disproportionately. A model of the international economy connects trade policy choices to consumer welfare and trade flows, which determine the magnitude of rents available to governments.^[The model of the international economy is a variant of the workhorse model of @Eaton2002. @Costinot2015 study a broader class of structural gravity models that connect trade frictions (such as trade policy) to trade and welfare outcomes.] Each government is endowed with military capacity which can be employed in wars against other governments. Winning a war allows the victor to choose the trade policy of the defeated government. Counterfactual wars constrain threatened governments and affect their trade policy choices. The effectiveness of coercion, or governments' ability to project power, depends on the geographic distance between potential adversaries.
 
-Governments' ideal policies depend on their relative preference for consumer welfare versus rents. Governments' ability to influence the choices of others depends on the effectiveness of power projection over geographic space and the returns to military power preponderance. Preferences and the shadow of power are difficult to measure. However, researchers do observe proxies of governments' total military strength (military spending) and their trade policy choices.^[I use data on aggregate directed trade policy distoritions from @Cooley2019b, a companion paper to this study. These data are discussed in more detail below.] The model maps military strength and power and preference parameters to policy choices. With information about total military strength, I show that the model can be inverted to recover parameters that best explain governments' policy choices. 
+Governments' ideal policies depend on a country-specific parameter governing the ease with which policy distortions are converted into revenues. Governments' ability to influence the choices of others depends on the effectiveness of power projection over geographic space and the returns to military power preponderance. Preferences and the shadow of power are difficult to measure. However, researchers do observe proxies of governments' total military strength (military spending) and their trade policy choices.^[I use data on aggregate directed trade policy distoritions from @Cooley2019b, a companion paper to this study. These data are discussed in more detail below.] The model maps military strength and power and preference parameters to policy choices. With information about total military strength, I show that the model can be inverted to recover parameters that best explain governments' policy choices. 
 
 Within-country variation in trade policy identifies the model. Consider the ideal set of trade policies of a government whose preferences are known. The policies that achieve this objective can be readily calculated given knowledge of parameters governing international economic relations. Policies adopted toward imports from countries that pose no military threat will reflect this objective. Conversely, the imports of threatening countries will encounter lower barriers to trade, in order to satisfy the threatener's war constraint. This favoritism is informative about the effectiveness of military threats. The level of barriers toward non-threatening countries is informative about the government's preferences. Differential responses to the same level of threat from different geographic locations identifies parameters governing the effectiveness of power projection across space.
 
@@ -54,15 +54,15 @@ The model also allows me to examine how domestic political economic changes (cha
 
 Estimating the model and conducting the subsequent counterfactual exercises require knowledge of governments' trade policies, disaggregated at the trade partner level. While detailed data on a particular policy instrument (tariffs) are available to researchers, these are but one barrier governments can use to influence the flow of trade. In a companion paper [@Cooley2019b], I show that cross-national prices, trade flows, and freight costs are jointly sufficient statistics for the magnitude of aggregate policy barriers trade, given a structural model of the international economy [@Head2014; @Costinot2015]. I employ these measures of trade policy in this paper and use an identical model of the international economy to connect trade policy changes to international economic outputs.
 
-The method produces a matrix of trade barriers, in which the $i$, $j$th entry is the magnitude of policy barriers to trade an importing country $i$ imposes on goods from an exporting country $j$. In 2011, the estimated barriers were large, equivalent to a 67 percent import tariff on average.^[These results and the calibration choices that produce this value are discussed in more detail in Appendix B.] They also reveal substantial trade policy discrimination, providing necessary variation to identify the model considered here.
+The method produces a matrix of trade barriers, in which the $i$, $j$th entry is the magnitude of policy barriers to trade an importing country $i$ imposes on goods from an exporting country $j$. In 2011, the estimated barriers were large, equivalent to a 56 percent import tariff on average.^[These results and the calibration choices that produce this value are discussed in more detail in Appendix B.] They also reveal substantial trade policy discrimination, providing necessary variation to identify the model considered here.
 
 
 ## Literature
 
 
-Conflicts of interest and the specter of coercive diplomacy emerge in the model due to governments' protectionist preferences. Trade theory reserves a role for small trade policy distortions for governments that seek to maximize aggregate societal wealth [@Johnson1953; @Broda2008]. Empirically, governments implement larger trade distortions than predicted in theory, however. This regularity motivated the study of the political economics of trade policy. While nearly free trade may be good for a society as a whole, owners of specific factors of production may prefer protectionism. If these groups have better access to the policymaking process, trade policy may be more protectionist than is optimal for society [@Mayer1984; @Rogoswki1987; @Grossman1994]. A family of studies uses these theoretical insights to estimate governments' sensitivity to narrow versus diffuse interests [@Goldberg1999; @Mitra2006; @Gawande2009; @Gawande2012; @Ossa2014; @Gawande2015]. Because these models incorporate no theory of international coercion, these estimates reflect the assumption that policy choices directly reflect preferences.
+Conflicts of interest and the specter of coercive diplomacy emerge in the model due to governments' protectionist preferences. Trade theory reserves a role for small trade policy distortions for governments that seek to maximize aggregate societal wealth [@Johnson1953; @Broda2008]. Empirically, governments implement larger trade distortions than predicted in theory, however. This regularity motivated the study of the political economics of trade policy. While nearly free trade may be good for a society as a whole, owners of specific factors of production may prefer protectionism. If these groups have better access to the policymaking process, trade policy may be more protectionist than is optimal for society [@Mayer1984; @Rogoswki1987; @Grossman1994]. A family of studies uses these theoretical insights to estimate governments' sensitivity to narrow versus diffuse interests [@Goldberg1999; @Mitra2006; @Gawande2009; @Gawande2012; @Ossa2014; @Gawande2015]. Because these models incorporate no theory of international coercion, these estimates reflect the assumption that policy choices directly reflect preferences. Fiscal pressures might also drive protectionism. Some governments are constrained in their ability to raise revenue through taxes on domestic economic activities. Tariffs and other trade distortions may substitute as a revenue-raising strategy in these cases [@Rodrik2008; @Queralt2015]. 
 
-Fiscal pressures might also drive protectionism. Some governments are constrained in their ability to raise revenue through taxes on domestic economic activities. Tariffs and other trade distortions may substitute as a revenue-raising strategy in these cases [@Rodrik2008; @Queralt2015]. I take no stance on the domestic political origins of protectionist preferences. I induce these by incorporating concern for revenue into the government's objective function (independent of its welfare effects). This leads to a preference for trade barriers higher than what would be optimal for governments that cared only about the welfare of a representative consumer. What is important here is that efforts to achieve this objective impose externalities on foreign governments. 
+I take no stance on the domestic political origins of protectionist preferences. I induce these by varying the ease with which governments can collect revenues from trade distortions. Each government is characterized by a revenue threshold parameter. Trade distoritions above the level of this threshold generate revenue while distortions below this level require subsidies. Governments with higher threshold parameters therefore prefer higher barriers to trade, all else equal. This simple formulation induces heterogeneity in the governments' ideal levels of protectionism and the magnitude of the externalities they would impose on other governments if left to their own devices.
 
 These externalities motivate the lobbying efforts of domestic special interests and structure international negotiations over trade policy. In contemporary political economic accounts, large and productive firms pressure their own governments to secure market access abroad in order to increase profit opportunities [@Ossa2012; @Osgood2016; @Kim2017]. By contrast, in my model, lower barriers to trade abroad increase wages at home (helping consumers) and stimulate trade (increasing revenue). Therefore, regardless of their relative preference for consumer welfare versus rents, governments prefer to reduce barriers confronting their exports. Modeling government preferences in this manner captures market access incentives tractably while avoiding ascribing a particular domestic political process to their origin.
 
@@ -83,69 +83,42 @@ There are $N$ governments, indexed $i \in \left\{ 1, ..., N \right\}$. Governmen
 
 Throughout, I will use $\bm{\theta}_m$ to denote the vector of all parameters to be estimated and $\bm{Z}$ to denote the vector of all data observed by the researcher. $\bm{\theta}_h$ denotes parameters associated with the economy, $h$, which will be calibrated. I will explicate the elements of these vectors in the proceeding sections and the Appendix.
 
-Government welfare depends on these general equilibrium responses to trade policy choices. Governments value the welfare of a representative consumer that resides within each country and rents accrued through trade policy distortions (tariff revenues). These can be computed given knowledge of the general equilibrium function $h(\bm{\tau})$. I assume these elements are complements in the production of government utility, formally,
-\begin{equation} \label{eq:G}
-G_i(\bm{\tau}; b_i) = V_i \left( h(\bm{\tau}) \right) r_i \left( h(\bm{\tau}; v_i) \right)
-\end{equation}
-where $V_i(h(\bm{\tau}))$ is consumer welfare, $r_i(h(\bm{\tau}), v_i)$ are tariff revenues, and $v_i \in [1, \infty)$ is a structural parameter that modulates the government's ability to extract trade policy rents from society. Revenues are given by
+Government welfare depends on these general equilibrium responses to trade policy choices. Governments value the welfare of a representative consumer that resides within each country. The consumer's welfare in turn depends on net revenues accrued through the government's trade policy distortions, which are redistributed to the consumer. Revenues and induced can be computed given knowledge of the general equilibrium function $h(\bm{\tau})$. Each government's welfare, is equivalent to the consumer's indirect utility, $V_i \left( h(\bm{\tau}); v_i \right)$ where $v_i$ is the revenue threshold parameter. This value of this function depends on the consumer's net income and is characterized fully in the Appendix. The consumer's net income can be written as a function of the governments' policy choices
+$$
+\tilde{Y}_i(h_i(\bm{\tau}))  = h_i(\bm{\tau}) * L_i + r_i(h(\bm{\tau}); v_i) . 
+$$
+$L_i$ is the country's labor endowment, $r_i(h(\bm{\tau}); v_i)$ is trade policy revenues, and $h_i(\bm{\tau})$ are equilibrium wages in $i$. $v_i \in [1, \infty)$ is a structural parameter that modulates the government's ability to extract trade policy rents from society. 
+
+Adjusted revenues are given by
 \begin{equation} \label{eq:r}
 r_i(h(\bm{\tau}), v_i) = \sum_j (\tau_{ij} - v_i) X_{ij}(h(\bm{\tau}))
 \end{equation}
-and $X_{ij}(h(\bm{\tau}))$ are country $i$'s imports from country $j$.^[This object does not correspond empirically to governments' factual tariff revenues, as $\tau_{ij}$ incorporates a larger set of trade policy distortions than tariffs alone. Yet, non-tariff barriers to trade also generate rents that do not accrue directly to the government's accounts (see, for example, @Anderson1992 for the case of quotas). This revenue function is designed to capture this broader set of rents.] When $v_i$ is close to one, small policy distortions are sufficient to generate revenue for the government. Conversely when $v_i$ is high, the government must erect large barriers to trade before revenues begin entering government coffers. Because some revenue is necessary in order to produce government welfare, increasing $v_i$ induces governments' to become more protectionist. This formulation provides substantial flexibility in rationalizing various levels of protectionism, while avoiding assuming specific political economic motivations for its genesis. From the perspective of the governments, rents extracted imports are valued equally, regardless of their source. Ex ante, governments are not discriminatory in their preferences.
-
-Characterizing the theoretical properties of this objective function is challenging due to the network effects inherent in general equilibrium trade models. Suppose $i$ increases barriers to trade with $j$. This affects wages and prices in $j$ and its competitiveness in the world economy. These changes affect its trade with all other countries $k$, which affects their welfare, and so on [@Allen2019]. In order to make progress, I assume that $G_i$ is quasiconcave in $i$'s own policies, which ensures the existence of an unconstrained optimal policy vector and a pure-strategy Nash equilibrium to the simultaneous policy-setting game.^[This property holds in my numerical simulations, but may not hold more generally. The existence of a Nash equilibrium follows from the fixed point theorem of Debreu, Glicksberg, and Fan [@Fudenberg1992 p. 34].]
-
-
-
-**Assumption 1**: 
-$G_i(\bm{\tau}; b_i)$ is quasiconcave in its own policies, $\tau_{ij} \in [1, \bar{\tau}]$, $j \neq i$.
+and $X_{ij}(h(\bm{\tau}))$ are country $i$'s imports from country $j$.^[This object does not correspond empirically to governments' factual tariff revenues, as $\tau_{ij}$ incorporates a larger set of trade policy distortions than tariffs alone. Yet, non-tariff barriers to trade also generate rents that do not accrue directly to the government's accounts (see, for example, @Anderson1992 for the case of quotas). This revenue function is designed to capture this broader set of rents.] When $v_i$ is close to one, small policy distortions are sufficient to generate revenue for the government. Conversely when $v_i$ is high, the government must erect large barriers to trade before revenues begin entering government coffers and returning to the pockets of the consumer. Because consumers' consumption possibilities depend on revenue generation, increasing $v_i$ induces governments' to become more protectionist. This formulation provides substantial flexibility in rationalizing various levels of protectionism, while avoiding assuming specific political economic motivations for its genesis. From the perspective of the consumers, rents extracted from imports are valued equally, regardless of their source. Ex ante, governments are not discriminatory in their trade policy preferences preferences. Optimal policies for government $i$ maximize $V_i \left( h(\bm{\tau}); v_i \right)$.
 
 These optimal policies impose externalities on other governments. By controlling the degree of market access afforded to foreign producers, trade policies affect the wages of foreign workers and the welfare of the governments that represent them. They also partially determine trade flows, which affect other governments' ability to collect rents. In this sense, protectionism is "beggar they neighbor." Governments' joint policy proposals are denoted $\tilde{\bm{\tau}}$.
 
-After trade policies announcements are made, governments decide whether or not they would like to wage war against other governments. Wars are fought in order to impose more favorable trade policies abroad. Each government is endowed with military capacity $M_i$ which can be used in wars with other governments. Wars are offensive and *directed*. Formally, let $\bm{a}_i = \left( a_{i1}, ..., a_{iN} \right)$ denote $i$'s war entry choices, where $a_{ij} \in \left\{ 0 , 1 \right\}$ denotes whether or not $i$ choose to attack $j$.^[Note that this formulation leaves open the possibility that two governments launch directed wars against one another, $a_{ij} = a_{ji} = 1$.] $a_{ii} = 1$ for all $i$ by assumption -- governments always choose to defend themselves.
+Wars are fought in order to impose more favorable trade policies abroad. After observing policy proposals, governments decide whether or not to launch wars against one another. Wars are offensive and *directed*. If a government decides to launch a war it pays a dyad-specific cost and imposes more favorable trade policies on the target. These war costs are modeled as realizations of a random variable from a known family of distributions and are held as private information to the prospective attacker. The shape of these distributions is affected by the governments' relative power resources, denoted $\frac{M_j}{M_i}$, as well as the geographic distance between them, $Z_{ij}$. These costs are distributed with c.d.f. $F_{ji}$ which is described in more detail below. I normalize the cost of defending against aggression to zero.
 
-If $i$ is successful in defending itself against all attackers, its announced policies are implemented. Government $i$ suffers a cost $c_i$ for each war it must fight, accruing total war costs $\sum_{j \neq i} a_{ij} c_i$. Each attacker $j$ also pays $c_j$. When a government $i$ wins a war against $j$, it earns the right to impose free trade on the losing government, setting $\bm{\tau}_j = \left\{ 1, \dots, 1 \right\} = \bm{1}_j$. Substituting these policies into $i$'s utility function gives $G_i(\bm{1}_j; \tilde{\bm{\tau}}_{-j})$ as $i$'s *conquest value* vis-à-vis $j$. Note that I prohibit governments from imposing discriminatory policies on conquered states. Substantively, this assumption reflects the difficulty in enforcing sub-optimal policies on prospective client states, relative to reorienting their political institutions to favor free trade.^[It also substantially eases computational burdens by avoiding re-calculating optimal imposed policies for different values of preference parameters.] This also ensures that the benefits of regime change wars are public. However, it does not guarantee non-discrimination in times of peace. Governments that pose most credible threat of conquest can extract larger policy concessions from their targets in the form of directed trade liberalization. 
+If $i$ is not attacked by any other government its announced policies are implemented. Otherwise, free trade is imposed, setting $\bm{\tau}_i = \left\{ 1, \dots, 1 \right\} = \bm{1}_i$. Substituting these policies into $j$'s utility function gives $G_j(\bm{1}_i; \tilde{\bm{\tau}}_{-i})$ as $j$'s *conquest value* vis-à-vis $i$. Note that I prohibit governments from imposing discriminatory policies on conquered states. Substantively, this assumption reflects the difficulty in enforcing sub-optimal policies on prospective client states, relative to reorienting their political institutions to favor free trade. This also ensures that the benefits of regime change wars are public. However, it does not guarantee non-discrimination in times of peace. Governments that pose most credible threat of conquest can extract larger policy concessions from their targets in the form of directed trade liberalization. 
 
-Governments' ability to prosecute wars against one another depend on dyadic geographic factors $\bm{W}$, such as geographic distance. For every unit of force $i$ dedicates toward attacking $j$, $\rho_{ji}(\bm{W}_{ji}; \bm{\alpha}) > 0$ units arrive. I normalize $\rho_{jj} = 1$ -- defensive operations do not result in any loss of strength. $\bm{\alpha}$ is a vector of structural parameters governing this relationship to be estimated. I adopt a simple exponential functional form for this function where
-\begin{equation} \label{eq:rho}
-\rho_{ji}(\bm{W}_{ji}; \bm{\alpha}) = e^{ -\bm{\alpha}^T \bm{W}_{ji} } .
-\end{equation}
-$\bm{W}_{ji}$ is a vector of dyadic geographic features such as centroid-centroid distance, and $\bm{\alpha}$ parameterizes the effect of these features on power projection capacity.
-
-War outcomes are determined by a contest function
-\begin{equation} \label{eq:chi}
-\chi_{ij}(\bm{a}) = \frac{ a_{ij} \rho_{ij}(\bm{W}; \bm{\alpha}) M_i }{ \sum_k a_{kj} \rho_{kj}(\bm{W}; \bm{\alpha}) M_k } .
-\end{equation}
-$\chi_{ij} \in [0, 1]$ is the probability that $i$ is successful in an offensive war against $j$. Note that wars are multilateral and winner-take-all. Many countries can choose to attack $j$, but only one government can win. 
-
-For the moment, fix $a_{jk} = 0$ for all $k \neq i$, $j \neq k$. $i$ is the only government that faces the possibility of attack. Then, all other policy proposal vectors $\tilde{\bm{\tau}}_{-i}$ are implemented with certainty and $i$'s utility as a function of war entry decisions is 
+Government $j$ therefore prefers not to attack $i$ so long as
+\begin{align*}
+V_j \left( \bm{1}_i; \tilde{\bm{\tau}}_{-i} \right) - c_{ji} &\leq V_j \left( \tilde{\bm{\tau}} \right) \\
+c_{ji}^{-1} &\leq \left( V_j \left( \bm{1}_i; \tilde{\bm{\tau}}_{-i} \right) - V_j \left( \tilde{\bm{\tau}} \right) \right)^{-1}
+\end{align*}
+or if the benefits from imposing free trade on $i$ are outweighed by the costs, holding other governments policies fixed. The probability that no government finds it profitable to attack $i$ can then be calculated as
 $$
-\tilde{G}_i^{\bm{a}}(\bm{a}) = \chi_{ii}(\bm{a}) G_i(\tilde{\bm{\tau}}) + \sum_{j \neq i} \left( \chi_{ji}(\bm{a}) G_i(\bm{1}_i; \tilde{\bm{\tau}}_{-i}) - a_{ji} c_i \right)
+H_i \left( \tilde{\bm{\tau}}; \bm{Z}, \bm{\theta}_m \right) = \prod_{j \neq i} F_{ji} \left( \left( V_j \left( \bm{1}_i; \tilde{\bm{\tau}}_{-i} \right) - V_j \left( \tilde{\bm{\tau}} \right) \right)^{-1} \right)
 $$
+I am agnostic as to the process by which the coordination problem is resolved in the case in which multiple prospective attackers find it profitable to attack $i$. I assume simply that $i$ is attacked with certainty when it is profitable for any government to do so. This event occurs with probability $H_i(\tilde{\bm{\tau}}; \bm{Z}, \bm{\theta}_m)$. 
 
-Attackers consider the effect of their war entry on the anticipated policy outcome. Now consider an attacker $j$'s war entry decision vis-à-vis a defender $i$, assuming no other country launches a war. Let 
-$$
-\tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) = \frac{ \rho_{ji}(\bm{W}; \bm{\alpha}) M_j }{ \rho_{ji}(\bm{W}; \bm{\alpha}) M_j + M_i }
-$$
-denote the probability that $j$ is successful in this contingency.
-
-Government $j$ prefers not to attack $i$ so long as
-\begin{equation} \label{eq:AwarConstraint}
-G_j(\tilde{\bm{\tau}}) \geq \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) G_j(\bm{1}_i; \tilde{\bm{\tau}}_{-j}) + \left( 1 - \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m) \right) G_j(\tilde{\bm{\tau}}) - c_j .
+Because of strategic interdependencies between trade policies, optimal policy proposals are difficult to formulate. Governments face a complex problem of forming beliefs over the probabilities that they and each of their counterparts will face attack and the joint policies that will result in each contingency. For simplicity, I assume governments solve the simpler problem of maximizing their own utility, assuming no other government faces attack. I denote this objective function with $G_i(\tilde{\bm{\tau}})$ which can be written
+\begin{equation} \label{eq:G}
+G_i(\tilde{\bm{\tau}}) = H_i(\tilde{\bm{\tau}}; \bm{Z}, \bm{\theta}_m) V_i(\tilde{\bm{\tau}}) + \left( 1 - H_i(\tilde{\bm{\tau}}; \bm{Z}, \bm{\theta}_m) \right) V_i(\bm{1}_i; \tilde{\bm{\tau}}_{-i})
 \end{equation}
+where $V_i(\bm{1}_i; \tilde{\bm{\tau}}_{-i})$ denotes $i$'s utility when free trade is imposed upon it. This objective function makes clear the tradeoff $i$ faces when making policy proposals. Policies closer to $i$'s ideal point deliver higher utility conditional on peace, but raise the risk of war. Lowering barriers to trade on threatening countries increases $H_i(\tilde{\bm{\tau}}; \bm{Z}, \bm{\theta}_m)$, the probability $i$ avoids war, at the cost of larger deviations from policy optimality. 
 
-Let $\bm{a}^\star : \tilde{\bm{\tau}} \rightarrow \left\{ 0, 1 \right\}_{N - 1 \times N - 1}$ denote equilibrium war entry decisions as a function of announced policies and $a_{ij}^\star(\tilde{\bm{\tau}})$ denote $i$'s equilibrium decision of whether or not to attack $j$. Governments choose whether or not to enter wars simultaneously. When peace prevails, $a_{ij}^\star(\tilde{\bm{\tau}}) = 0$ for all $i \neq j$. 
-
-To recap, governments make policy announcements, $\tilde{\bm{\tau}}$, and then launch wars $\bm{a}$.  At each stage, actions are taken simultaneously. The solution concept is subgame perfect equilibrium. In Appendix C, I show that there exist peaceful equilibria to the game as long as war costs are large enough (Proposition C1).^[This result mirrors @Fearon1995's proof of the existence of a bargaining range in a unidimensional model. Here, because the governments' objective functions are not necessarily concave, war costs may need to be larger than zero in order to guarantee peace.] I assume the values of $\left\{ c_i \right\}_{ i \in \left\{ 1, \dots, N \right\} }$ are large enough to deliver peace and restrict attention to these equilibria. I can then analyze the subgame consisting policy announcements only, while ensuring that inequality \ref{eq:AwarConstraint} holds for every attacker $k$ and potential target $i$.
-
-Optimal trade policies proposals for $i$ in this case solve
-\begin{equation} \label{eq:tauTildeStar}
-\begin{split}
-\max_{ \tilde{\bm{\tau}}_i } & \quad G_i(\tilde{\bm{\tau}}_i; \tilde{\bm{\tau}}_{-i}) \\
-\text{subject to} & \quad G_j(\tilde{\bm{\tau}}) - G_j(\bm{1}_i; \tilde{\bm{\tau}}_{-i}); \tilde{\bm{\tau}}_{-i}) + c \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \geq 0 \quad \text{for all } j \neq i
-\end{split}
-\end{equation}
-where the constraints can be derived by rearranging \ref{eq:AwarConstraint}. Formulated in this manner, it becomes clear that military allocations affect trade policy through their effect on the $i$'s war constraints. As $M_j$ increases, $\tilde{\chi}_{ji}$ increases as well, tightening the constraint on $i$'s policy choice. Let $\tilde{\bm{\tau}}_i^\star(\tilde{\bm{\tau}}_{-i})$ denote a solution to this problem and $\tilde{\bm{\tau}}^\star$ a Nash equilibrium of the constrained policy announcement game. I refer to this game as $\Gamma^{\bm{\tau}}$.
+Policy proposals are made simultaneously. Let $\tilde{\bm{\tau}}_i^\star(\tilde{\bm{\tau}}_{-i})$ denote a solution to this problem and $\tilde{\bm{\tau}}^\star$ a Nash equilibrium of this policy announcement game. 
 
 ## Policy Equilibrium in Changes
 
@@ -155,37 +128,41 @@ The estimation problem can be therefore partially ameliorated by computing the e
 
 This method is detailed in Appendix A. Because structural parameters and unobserved constants do not change across equilibria, parameters that enter multiplicatively drop out of the equations that define this "hat" equilibrium. This allows me to avoid estimating these parameters, while enforcing that the estimated equilibrium is consistent with their values. The methodology, introduced by @Dekle2007, is explicated further in @Costinot2015 and used to study trade policy changes in @Ossa2014 and @Ossa2016.
 
-It is straightforward to extend this methodology to the game studied here. Consider a modification to the policy-setting subgame in which governments propose changes to factual trade policies $\hat{\tilde{\bm{\tau}}}$ and call this game $\Gamma^{\hat{\bm{\tau}}}$. Note that this modification is entirely cosmetic -- the corresponding equilibrium of $\Gamma^{\hat{\bm{\tau}}}$ in levels can be computed by multiplying factual policies by the "hat" equilibrium values ($\tau_{ij}^\prime = \hat{\tau}_{ij} \tau_{ij}$). I can then replace the equilibrium conditions of $\Gamma^{\bm{\tau}}$ with their analogues in changes. Each government's welfare (\ref{eq:G}) in changes is
-\begin{equation} \label{eq:Ghat}
-\hat{G}_i(\hat{\bm{\tau}}) = \hat{V}_i \left( \hat{h}(\hat{\bm{\tau}}) \right) \hat{r}_i \left( \hat{h}(\hat{\bm{\tau}}), v_i \right) .
-\end{equation}
+It is straightforward to extend this methodology to the game studied here. Consider a modification to the policy-setting game described above in which governments propose changes to factual trade policies, denoted $\hat{\tilde{\bm{\tau}}}$. Note that this modification is entirely cosmetic -- the corresponding equilibrium in levels can be computed by multiplying factual policies by the "hat" equilibrium values ($\tau_{ij}^\prime = \hat{\tau}_{ij} \tau_{ij}$). I can then replace the equilibrium conditions above with their analogues in changes. 
 
-If $i$ loses a war, free trade is imposed, equivalent to $\hat{\bm{\tau}} = bm{\tau}_i^{-1}$ where $\bm{\tau}_i$ are observed policies. By dividing the governments' war constraints (\ref{eq:AwarConstraint}) by their factual welfare $G_j(\bm{\tau})$, their constrained policy announcement problem can be rewritten as the solution to
-\begin{equation} \label{eq:tauTildeStarHat}
-\begin{split}
-\max_{ \hat{\tilde{\bm{\tau}}}_i } & \quad \hat{G}_i(\hat{\tilde{\bm{\tau}}}_i; \hat{\tilde{\bm{\tau}}}_{-i}) \\
-\text{subject to} & \quad \hat{G}_j(\hat{\tilde{\bm{\tau}}}) - \hat{G}_j(\bm{\tau}_i^{-1}) + \hat{c} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \geq 0 \quad \text{for all } j \neq i
-\end{split}
+Let $\hat{V}_j(\hat{\tilde{\bm{\tau}}})$ denote changes in $j$'s consumer welfare under proposed policy changes. Prospective attackers' peace conditions can be written in changes as
+$$
+\hat{c}_{ji}^{-1} \leq \left( \hat{V}_j \left( \bm{1}_i; \hat{\tilde{\bm{\tau}}}_{-i} \right) - \hat{V}_j \left( \hat{\tilde{\bm{\tau}}} \right) \right)^{-1}
+$$
+where
+$$
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau} \right)}
+$$
+measures the share of $j$'s utility lost to wage a war with $i$. I assume the inverse relative cost of war $j$ incurs when attacking $i$ is distributed Frechét with 
+$$
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} Z_{ji}^{-\alpha} \hat{c}^{\eta} \right) .
+$$
+The parameters $\alpha$ and $\gamma$ govern the extent to which military advantage and geograpic proximity are converted into cost advantages. If $\gamma$ is greater than zero, then military advantage reduces the costs of war. Similarly, if $\alpha$ is greater than zero, then war costs increase with geographic distance, consistent with a loss of strength gradient. $\hat{C}$ and $eta$ are global shape parameters that shift the cost distribution for all potential attackers.
+
+Each government's objective function (\ref{eq:G}) in changes is
+\begin{equation} \label{eq:Ghat}
+\hat{G}_i(\hat{\tilde{\bm{\tau}}}) = \hat{H}_i(\hat{\tilde{\bm{\tau}}}; \bm{Z}, \bm{\theta}_m) \hat{V}_i(\hat{\tilde{\bm{\tau}}}) + \left( 1 - \hat{H}_i(\hat{\tilde{\bm{\tau}}}; \bm{Z}, \bm{\theta}_m) \right) \hat{V}_i(\bm{1}_i; \hat{\tilde{\bm{\tau}}}_{-i})
 \end{equation}
 where
 $$
-\hat{c} = \frac{c_i}{G_j(\bm{\tau}; b_j)}
+\hat{H}_i \left( \hat{\tilde{\bm{\tau}}}; \bm{Z}, \bm{\theta}_m \right) = \prod_{j \neq i} \hat{F}_{ji} \left( \left( \hat{V}_j \left( \bm{1}_i; \tilde{\bm{\tau}}_{-i} \right) - \hat{V}_j \left( \hat{\tilde{\bm{\tau}}} \right) \right)^{-1} \right) .
 $$
-is the *share* of factual utility each government pays if a war occurs. Assumption 2 requires that governments pay the same share of their factual utility in any war.^[While not innocuous, this assumption is more tenable than assumption constant absolute costs. It formalizes the idea that larger countries (that collect more rents and have high real incomes than their smaller counterparts) also pay more in military operations. It avoids the complications inherent in the more realistic but less tractable assumption that war costs depend on power ($\tilde{\chi}$).]
-
-
-
-**Assumption 2 (Constant Relative War Costs):** 
-$\hat{c}_i = \hat{c}$ for all $i$.
-
-$\hat{\tilde{\bm{\tau}}}_i^\star(\hat{\tilde{\bm{\tau}}}_{-i})$ denotes $i$'s best response function and $\hat{\tilde{\bm{\tau}}}^\star$ denotes an equilibrium in changes. 
+With Frechét-distributed relative costs this equation has a closed functional form, with 
+$$
+\hat{H}_i \left( \hat{\tilde{\bm{\tau}}}; \bm{Z}, \bm{\theta}_m \right) = \exp \left( - \sum_{j \neq i} - \frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} Z_{ji}^{-\alpha} \left( \hat{V}_j \left( \bm{1}_i; \tilde{\bm{\tau}}_{-i} \right) - \hat{V}_j \left( \hat{\tilde{\bm{\tau}}} \right) \right)^{\eta} \right) .
+$$
 
 # Data and Calibration of Economy
 
 
 
 
-I estimate the model on a set of 6 governments in the year 2011.^[Focusing on a small set of governments is necessary for computational tractability. However, the largest countries (by GDP) are the most attractive targets for coercion, as changes to their trade policies return the largest welfare gains, regardless of whether the coercer is a rent-maximizer or welfare-maximizer. The estimated model is therefore more useful in understanding "great power politics," rather than smaller political-economic conflicts of interest.] These governments are listed in Table \ref{tab:v_estsT}. I aggregate all European Union governments into a single entity and collapse all countries not included in the analysis into a "Rest of World" (ROW) aggregate.^[Such an aggregation is necessary in order to calculate fully general equilibrium effects of counterfactual trade policies. However, I prohibit other countries from invading ROW and likewise prohibit ROW from invading others. This ensures that estimates of military parameters depend almost entirely on interactions between countries within my sample.] Non-ROW countries make up  percent of world GDP.
+I estimate the model on a set of 5 governments in the year 2011.^[Focusing on a small set of governments is necessary for computational tractability. However, the largest countries (by GDP) are the most attractive targets for coercion, as changes to their trade policies return the largest welfare gains, regardless of whether the coercer is a rent-maximizer or welfare-maximizer. The estimated model is therefore more useful in understanding "great power politics," rather than smaller political-economic conflicts of interest.] These governments are listed in Table \ref{tab:v_estsT}. I aggregate all European Union governments into a single entity and collapse all countries not included in the analysis into a "Rest of World" (ROW) aggregate.^[Such an aggregation is necessary in order to calculate fully general equilibrium effects of counterfactual trade policies. However, I prohibit other countries from invading ROW and likewise prohibit ROW from invading others. This ensures that estimates of military parameters depend almost entirely on interactions between countries within my sample.] Non-ROW countries make up  percent of world GDP.
 
 
 
@@ -249,6 +226,11 @@ This procedure produces point estimates $\tilde{\bm{\theta}}_m$. I then construc
 Estimates of preference weights are reported in Table \ref{tab:v_estsT}. In @Cooley2019b, I show that developed countries tend to adopt higher trade barriers than their developing peers. Consistent with this finding, the European Union and Japan are assessed to have high values of $v_i$.
 
 
+
+```
+## Error in data.frame(..., check.names = FALSE): arguments imply differing number of rows: 5, 6
+```
+
 \begin{table}
 
 \caption{\label{tab:v_estsT}Preference Parameter ($\tilde{\bm{v}}$) Estimates \label{tab:v_estsT}}
@@ -272,7 +254,14 @@ With estimates of $v_i$ in hand, I can calculate each government's conquest valu
 
 Governments that face poor market access conditions gain the most from successful wars, relative to the status quo. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These conquest values assist in the identification of the power projection and war cost parameters in $\bm{\theta}_m$.
 
-![Conquest values evaluated at $\tilde{\bm{v}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \label{fig:rcv}](figure/rcv-1.png)
+
+```
+## Error: Argument 2 must be length 6, not 5
+```
+
+```
+## Error: Argument 2 must be length 6, not 5
+```
 
 Governments also do not face obstacles to projecting power over space. I estimate $\alpha$ to be -0.00026. At this value, if the United States wished to invade China, its effective strength would *increase* due to the distance between the countries.
 
@@ -281,6 +270,11 @@ Figure \ref{fig:chi} combines these estimates to produce estimates of the contes
 ![Estimated probability of successful conquest for each attacking country (row) in war against every defending country (column). Each probability is reported in the appropriate cell of the heatmap. \label{fig:chi}](figure/chi-1.png)
 
 While governments do not face a geographic loss of strength gradient, wars are still costly. I estimate $\hat{c}$ to be 0.53. Dividing this value by governments' conquest values, shown in Figure \ref{fig:rcv}, I compute war's cost-benefit ratio to be 0.5 on average. Figure \ref{fig:cb_ratio} shows inverse cost-benefit ratios for each potential war. While these are low on average, there is substantial heterogeneity. Russia in particular benefits substantially from wars with other governments, which stems from the high factual trade barriers others impose on Russian exports. 
+
+
+```
+## Error in data.frame(..., check.names = FALSE): arguments imply differing number of rows: 5, 6
+```
 
 ![Estimated inverse cost-benefit ratio for attacking country against each defending country in offensive wars. \label{fig:cb_ratio}](figure/cb_ratio-1.png)
 
@@ -498,7 +492,7 @@ Trade flows valued pre-shipment (free on board) are available from [COMTRADE](ht
 
 ### Structural Parameters
 
-I set $\theta =$ 6, in line with estimates reported in @Head2014 and @Simonovska2014. A natural empirical analogue for $\beta$ is intermediate imports $(E_i - w_i L_i)$ divided by total tradable production. This varies country to country, however, and equilibrium existence requires a common $\beta$. I therefore take the average of this quantity as the value for $\beta$, which is 0.8 in my data. This means that small changes around the factual equilibrium result in discrete jumps in counterfactual predictions. I therefore first generate counterfactual predictions with this common $\beta$, and use these as a baseline for analysis.
+I set $\theta =$ 6, in line with estimates reported in @Head2014 and @Simonovska2014. A natural empirical analogue for $\beta$ is intermediate imports $(E_i - w_i L_i)$ divided by total tradable production. This varies country to country, however, and equilibrium existence requires a common $\beta$. I therefore take the average of this quantity as the value for $\beta$, which is 0.82 in my data. This means that small changes around the factual equilibrium result in discrete jumps in counterfactual predictions. I therefore first generate counterfactual predictions with this common $\beta$, and use these as a baseline for analysis.
 
 ### Trade Imbalances
 
