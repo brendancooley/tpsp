@@ -98,13 +98,14 @@ pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)
 theta_dict = dict()
 # theta_dict["c_hat"] = .25
 theta_dict["eta"] = 1.
-theta_dict["c_hat"] = 6.
+theta_dict["c_hat"] = 10.
 theta_dict["alpha1"] = 0.
 theta_dict["gamma"] = 0.
 theta_dict["C"] = np.repeat(1., pecmy.N)
 # theta_dict["C"] = np.array([1, 2, 3, 4, 5])
 theta_x = pecmy.unwrap_theta(theta_dict)
 
+opt.root(pecmy.pp_wrap_alpha, .5, args=(.98, ))['x']
 # pecmy.W ** - .75
 
 v = np.mean(pecmy.ecmy.tau, axis=1)
