@@ -473,9 +473,9 @@ class policies:
         #     print(i)
         #     print(theta_dict[i])
 
-        Cinv = theta_dict["C"] ** -1
-        Cinv_i = np.array([Cinv[i] for i in range(self.N) if i != id])
-        # Cinv_i = theta_dict["c_hat"] ** -1
+        # Cinv = theta_dict["C"] ** -1
+        # Cinv_i = np.array([Cinv[i] for i in range(self.N) if i != id])
+        Cinv_i = theta_dict["c_hat"] ** -1
         # Cinv = np.delete(Cinv, id)
         eta = theta_dict["eta"]
         gamma = theta_dict["gamma"]
@@ -1165,18 +1165,18 @@ class policies:
             # x_L[b:b+self.N] = v #
             # x_U[b:b+self.N] = v # fixed vs
             b += self.N
-            # x_L[b] = .5 # eta lower
-            # x_U[b] = 5  # eta upper
-            x_L[b] = 1 # eta lower
-            x_U[b] = 1  # eta upper
+            x_L[b] = .25 # eta lower
+            x_U[b] = 5  # eta upper
+            # x_L[b] = 1 # eta lower
+            # x_U[b] = 1  # eta upper
             b += 1
             x_L[b] = -1.  # gamma lower
             x_U[b] = 1.  # gamma upper
             # x_L[b] = 1
             # x_U[b] = 1  # fix gamma at 1
             b += 1
-            x_L[b] = opt.root(self.pp_wrap_C, .5, args=(.25, ))['x'] # c_hat
-            x_U[b] = 2.5
+            x_L[b] = opt.root(self.pp_wrap_C, .5, args=(.1, ))['x'] # c_hat
+            x_U[b] = 5
             b += 1
             # x_L[b] = -self.alpha1_ub  # alpha1 lower
             a_ub = opt.root(self.pp_wrap_alpha, .5, args=(.75, ))['x']
@@ -1185,7 +1185,7 @@ class policies:
             b += 1
             # x_L[b:b+self.N] = .6  # cs
             x_L[b:b+self.N] = opt.root(self.pp_wrap_C, .5, args=(.1, ))['x']  # cs
-            x_U[b:b+self.N] = 10
+            x_U[b:b+self.N] = 15
             # x_U[b] = self.alpha1_ub  # alpha1 upper
             # x_L[b] = -np.inf  # alpha1 lower
             # x_U[b] = np.inf  # alpha1 upper
