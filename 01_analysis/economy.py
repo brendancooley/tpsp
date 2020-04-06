@@ -107,7 +107,7 @@ class economy:
 
         return(ge_dict)
 
-    def geq_f(self, x0, ge_dict):
+    def geq_f(self, x0, ge_dict, v):
         """Returns between equilibrium values and input values. Fixed point of this function is GE solution
 
         Parameters
@@ -128,11 +128,11 @@ class economy:
         # print(ge_dict)
         ge_x = self.unwrap_ge_dict(ge_dict)
 
-        out = self.geq_diffs(ge_x)
+        out = self.geq_diffs(ge_x, v)
 
         return(out)
 
-    def geq_diffs(self, ge_x, bound="lower"):
+    def geq_diffs(self, ge_x, v, bound="lower"):
         """Short summary.
 
         Parameters
@@ -164,7 +164,7 @@ class economy:
         rdiff = self.r_hat(ge_dict) - ge_dict["r_hat"]
         out.extend(rdiff)
 
-        Ediff = self.E_hat(ge_dict) - ge_dict["E_hat"]
+        Ediff = self.E_hat(ge_dict, v, R=True) - ge_dict["E_hat"]
         out.extend(Ediff)
 
         out = np.array(out)
@@ -177,7 +177,7 @@ class economy:
         geq_diffs_grad_f = ag.jacobian(self.geq_diffs)
         return(geq_diffs_grad_f(ge_x, bound))
 
-    def geq_solve(self, tau_hat, D_hat, fct=1, mtd="hybr"):
+    def geq_solve(self, tau_hat, D_hat, v, fct=1, mtd="hybr"):
         """Short summary.
 
         Parameters
@@ -201,7 +201,7 @@ class economy:
         ge_dict["D_hat"] = D_hat
 
         # geq_sol = opt.fsolve(self.geq_f, x0=self.x0_sv, full_output=True, args=(ge_dict.copy(),), factor=fct)
-        geq_sol = opt.root(self.geq_f, x0=self.x0_sv, args=(ge_dict.copy(),), method=mtd, options={"factor":fct})  # opt.root version, hybr seems to work faster than lm, but lm can solve problems hybr can't
+        geq_sol = opt.root(self.geq_f, x0=self.x0_sv, args=(ge_dict.copy(), v, ), method=mtd, options={"factor":fct})  # opt.root version, hybr seems to work faster than lm, but lm can solve problems hybr can't
 
         # x_out = geq_sol[0]
         x_out = geq_sol['x']  # opt.root version
@@ -214,17 +214,17 @@ class economy:
         else:
             # print("recursing...")
             # print("fct: " + str(fct))
-            if fct / 2 > .05: # recurse with smaller steps
-                return(self.geq_solve(tau_hat, D_hat, fct=fct/2, mtd=mtd))
+            if fct / 2 > .01: # recurse with smaller steps
+                return(self.geq_solve(tau_hat, D_hat, v, fct=fct/2, mtd=mtd))
             else:
                 if mtd == "lm":
                     print("solution not found.")
-                    return("Solution not found.", geq_sol) # return 0
+                    return(0) # return 0
                 else:
                     print("attempting lm...")
-                    return(self.geq_solve(tau_hat, D_hat, fct=fct, mtd="lm"))
+                    return(self.geq_solve(tau_hat, D_hat, v, fct=fct, mtd="lm"))
 
-    def U_hat(self, ge_dict):
+    def U_hat(self, ge_dict, v):
         """Short summary.
 
         Parameters
@@ -239,7 +239,7 @@ class economy:
 
         """
 
-        eu_hat = self.Eu_hat(ge_dict)
+        eu_hat = self.Eu_hat(ge_dict, v, R=True)
         Pcd_hat = self.Pcd_hat(ge_dict)
         # print(eu_hat)
         # print(Pcd_hat)
@@ -247,9 +247,9 @@ class economy:
 
         return(U_hat)
 
-    def update_ecmy(self, tau_hat, D_hat):
+    def update_ecmy(self, tau_hat, D_hat, v):
 
-        ge_dict_out = self.geq_solve(tau_hat, D_hat)
+        ge_dict_out = self.geq_solve(tau_hat, D_hat, v)
 
         self.tau = self.tau * ge_dict_out["tau_hat"]
         self.D = self.D * D_hat
@@ -268,7 +268,7 @@ class economy:
         D_hat_zeros = np.zeros(self.N)
         tau_hat_ones = np.ones_like(self.tau)
 
-        self.update_ecmy(tau_hat_ones, D_hat_zeros)
+        self.update_ecmy(tau_hat_ones, D_hat_zeros, np.ones(self.N))
 
 
 
@@ -414,7 +414,7 @@ class economy:
 
         return(rhat)
 
-    def E_hat(self, ge_dict):
+    def E_hat(self, ge_dict, v, R=False):
         """
 
         Parameters
@@ -429,12 +429,23 @@ class economy:
 
         """
 
-        X_hat, r_hat, w_hat, tau_hat, D_hat = ge_dict["X_hat"], ge_dict["r_hat"], ge_dict["w_hat"], ge_dict["tau_hat"], ge_dict["D_hat"]
+        # X_hat, r_hat, w_hat, tau_hat, D_hat = ge_dict["X_hat"], ge_dict["r_hat"], ge_dict["w_hat"], ge_dict["tau_hat"], ge_dict["D_hat"]
+        X_hat, w_hat, tau_hat, D_hat = ge_dict["X_hat"], ge_dict["w_hat"], ge_dict["tau_hat"], ge_dict["D_hat"]
+
+        if R == False:
+            r = self.r
+            r_hat = ge_dict["r_hat"]
+        else:
+            r = self.r_v(v)
+            # r_hat = self.R_hat(ge_dict, v)
+            r_prime = self.R_prime(ge_dict, v)
 
         XcifPrime = X_hat * self.Xcif
         XcifmuPrime = self.tau * tau_hat * XcifPrime - self.mu * XcifPrime * (self.tau * tau_hat - 1)
 
-        Eq_prime = self.nu * (self.Y * w_hat + self.r * r_hat)  # consumer income spent on tradables
+        # Eq_prime = self.nu * (self.Y * w_hat + self.r * r_hat)  # consumer income spent on tradables
+        # Eq_prime = self.nu * (self.Y * w_hat + r * r_hat)  # consumer income spent on tradables
+        Eq_prime = self.nu * (self.Y * w_hat + r_prime)  # consumer income spent on tradables
         Ex_prime = self.beta * np.sum(XcifmuPrime, axis=0)  # intermediates share in sum over exports
 
         E_prime = Eq_prime + Ex_prime + self.D * D_hat
@@ -443,7 +454,7 @@ class economy:
 
         return(Ehat)
 
-    def Eu_hat(self, ge_dict):
+    def Eu_hat(self, ge_dict, v, R=False):
         """
 
         Parameters
@@ -458,11 +469,24 @@ class economy:
 
         """
 
-        w_hat, r_hat, D_hat = ge_dict["w_hat"], ge_dict["r_hat"], ge_dict["D_hat"]
+        # w_hat, r_hat, D_hat = ge_dict["w_hat"], ge_dict["r_hat"], ge_dict["D_hat"]
+        w_hat, D_hat = ge_dict["w_hat"], ge_dict["D_hat"]
 
-        Eu = self.Y + self.r + self.D  # total consumer expenditure
+        if R == False:
+            r = self.r
+            r_hat = ge_dict["r_hat"]
+        else:
+            r = self.r_v(v)
+            # r_hat = self.R_hat(ge_dict, v)
+            r_prime = self.R_prime(ge_dict, v)
 
-        a = (self.Y * w_hat + self.r * r_hat)
+        # Eu = self.Y + self.r + self.D  # total consumer expenditure
+        Eu = self.Y + r + self.D  # total consumer expenditure
+
+        # a = (self.Y * w_hat + self.r * r_hat)
+        # a = (self.Y * w_hat + r * r_hat)
+        a = (self.Y * w_hat + r_prime)
+        b = self.D * D_hat
         b = self.D * D_hat
         c = 1 / Eu
 
@@ -494,3 +518,69 @@ class economy:
         pcdhat = np.power(P_hat, self.nu) * np.power(w_hat, 1 - self.nu)
 
         return(pcdhat)
+
+    def r_v(self, v):
+        """Calculate factual government revenue for given values of v
+
+        Parameters
+        ----------
+        v : vector
+            len N array of preference values for each government
+
+        Returns
+        -------
+        vector
+            len N array of v-adjusted government revenues evaluated at self.ecmy.tau
+
+        """
+
+        v_mat = np.array([v])
+        tau_mv = self.tau - np.tile(v_mat.transpose(), (1, self.N))
+        tau_mv = tau_mv - np.diag(np.diag(tau_mv))
+        r = np.sum(tau_mv * self.Xcif, axis=1)
+
+        return(r)
+
+    def R_hat(self, ge_dict, v):
+        """Calculate change in government revenue given ge values and v
+
+        Parameters
+        ----------
+        ge_dict : dict
+            Dictionary storing ge inputs and outputs
+        v : vector
+            len N array of preference values for each government
+
+        Returns
+        -------
+        vector
+            len N array of v-adjusted changes in government revenues
+
+        """
+
+        v_mat = np.array([v])
+        r = self.r_v(v)
+
+        tau_prime = ge_dict["tau_hat"] * self.tau
+        tau_prime_mv = tau_prime - np.tile(v_mat.transpose(), (1, self.N))
+        tau_prime_mv = tau_prime_mv - np.diag(np.diag(tau_prime_mv))
+        X_prime = ge_dict["X_hat"] * self.Xcif
+        r_prime = np.sum(tau_prime_mv * X_prime, axis=1)
+
+        r_hat = r_prime / r
+        # r_hat = np.clip(r_hat, 0, np.inf)
+
+        return(r_hat)
+
+    def R_prime(self, ge_dict, v):
+
+        v_mat = np.array([v])
+        # r = self.r_v(v)
+
+        tau_prime = ge_dict["tau_hat"] * self.tau
+        tau_prime_mv = tau_prime - np.tile(v_mat.transpose(), (1, self.N))
+        tau_prime_mv = tau_prime_mv - np.diag(np.diag(tau_prime_mv))
+        X_prime = ge_dict["X_hat"] * self.Xcif
+        r_prime = np.sum(tau_prime_mv * X_prime, axis=1)
+
+        return(r_prime)

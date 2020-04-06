@@ -8,6 +8,7 @@ import csv
 import sys
 import matplotlib.pyplot as plt
 import scipy.stats as stats
+import scipy.optimize as opt
 import statsmodels.api as sm
 
 import economy
@@ -19,7 +20,11 @@ basePath = os.path.expanduser('~')
 projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
+
 size = "mid/"
+sv_fname = "out/mini_sv.csv"
+out_fname = "out/mid_noRUS_chateta.csv"
+# sv = np.genfromtxt(sv_fname, delimiter=',')
 
 helpersPath = os.path.expanduser(projectPath + "source/")
 sys.path.insert(1, helpersPath)
@@ -72,12 +77,6 @@ E = Eq + Ex
 
 data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccodes}  # Note: log distance
 
-theta_dict = dict()
-theta_dict["c_hat"] = .25
-theta_dict["alpha0"] = 0
-theta_dict["alpha1"] = .0001
-theta_dict["gamma"] = .5
-
 # v = np.ones(N)
 # v = np.array([1.08, 1.65, 1.61, 1.05, 1.05, 1.30])
 # v = np.repeat(1.4, N)
@@ -86,12 +85,105 @@ theta_dict["gamma"] = .5
 
 imp.reload(policies)
 imp.reload(economy)
-pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)  # generate pecmy and rcv vals
+pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)
+# generate pecmy and rcv vals
+# np.seterr(all='raise')
+# opt.root(pecmy.pp_wrap_alpha, .5, args=(.7, ))['x']
+
+# np.max(pecmy.ecmy.tau, axis=1)
+
+# ccodes
+# pecmy.ft_sv(6, np.ones(pecmy.x_len))
+
+theta_dict = dict()
+# theta_dict["c_hat"] = .25
+theta_dict["eta"] = 1.
+theta_dict["c_hat"] = 1.
+theta_dict["alpha1"] = 0.
+theta_dict["gamma"] = 0.
+theta_dict["C"] = np.repeat(1.5, pecmy.N)
 theta_x = pecmy.unwrap_theta(theta_dict)
+
+
+# pecmy.W ** - .75
+
+v = np.mean(pecmy.ecmy.tau, axis=1)
+# v = np.repeat(2, pecmy.N)
+# v = pecmy.v_max()
+# v = (pecmy.v_max() - 1) / 2 + 1
+# v = np.repeat(.9, pecmy.N)
+# v = np.ones(pecmy.N)
+# id = 0
+# ft_id = pecmy.ft_sv(id, np.ones(pecmy.x_len), v)
+# ft_id_dict = pecmy.ecmy.rewrap_ge_dict(ft_id)
+# pecmy.ecmy.U_hat(ft_id_dict, v)
+# pecmy.peace_probs(np.ones(pecmy.x_len), ft_id[-pecmy.hhat_len:], id, pecmy.m, v, theta_dict)
+
+# pecmy.v_max()
+# pecmy.estimator_sv(pecmy.mzeros, v, theta_x)
+
+# print(sv)
+# x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, sv=sv, nash_eq=False)
+x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, sv=None, nash_eq=False)
+
+x_dict = pecmy.rewrap_xlhvt(x)
+ge_dict = pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])
+theta_dict = pecmy.rewrap_theta(x_dict["theta"])
+
+print(ge_dict["tau_hat"]*pecmy.ecmy.tau)
+print("-----")
+for i in theta_dict.keys():
+    print(i)
+    print(theta_dict[i])
+
+
+np.savetxt(out_fname, x, delimiter=",")
+
+
+# x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
+# # x, obj, status = pecmy.estimator(v, theta_x, np.zeros((pecmy.N, pecmy.N)), nash_eq=False)
+# np.savetxt(fname, x, delimiter=",")
+# x = np.genfromtxt(fname, delimiter=",")
+
+# pecmy.H(ge_x_test, ft_h, id, pecmy.m, v, theta_dict)
+# pecmy.G_hat_tilde(ge_x_test, ft_h, id, pecmy.m, v, theta_dict)
+#
+# xlh_test = np.concatenate((ge_x_test, np.zeros(pecmy.lambda_i_len), ft_h))
+# pecmy.Lzeros_i_cons(xlh_test, id, pecmy.m, v, theta_dict)
+#
+# pecmy.Lzeros_i_bounds(ge_x_test, id, "lower")
+# pecmy.Lzeros_i_bounds(ge_x_test, id, "upper")
+# np.reshape(pecmy.v_sv(id, ge_x_test, v)[0:pecmy.N**2], (pecmy.N, pecmy.N))*pecmy.ecmy.tau
+#
+# x, obj, status = pecmy.Lsolve_i_ipopt(id, pecmy.m, v, theta_dict)
+# x_dict = pecmy.rewrap_xlh(x)
+# ge_dict = pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])
+# print("tau:")
+# print(ge_dict["tau_hat"]*pecmy.ecmy.tau)
+# print("h:")
+# print(x_dict["h"])
+# print("peace probs:")
+# peace_probs = pecmy.peace_probs(x_dict["ge_x"], x_dict["h"], id, pecmy.m, v, theta_dict)
+# print(peace_probs)
+
+# tau_hat_prime = [ge_dict["tau_hat"][j, ] if j != id else 1 / pecmy.ecmy.tau[j, ] for j in range(pecmy.N)]
+# pecmy.ecmy.geq_solve(np.array(tau_hat_prime), np.ones(pecmy.N))
+# rcx = pecmy.rcx(ge_dict["tau_hat"], x_dict["h"], id)
+# pecmy.G_hat(rcx, v, id, all=True)
+# pecmy.R_hat(pecmy.ecmy.rewrap_ge_dict(rcx), v)
+# pecmy.G_hat(x_dict["ge_x"], v, id, all=True)
+# pecmy.R_hat(ge_dict, v)
+
+
+
 # np.reshape(np.repeat(np.max(pecmy.ecmy.tau, axis=1), pecmy.N), (pecmy.N, pecmy.N))
 # pecmy.xlshvt_len
+# chi_test = pecmy.chi(pecmy.m, theta_dict)
+# chi_test[:,0]
 
-v = (pecmy.v_max() - 1) / 2 + 1
+
+
+
 # v = np.ones(pecmy.N)
 # ft_x = pecmy.ft_sv(0, np.ones(pecmy.x_len))
 # pecmy.r_v(np.repeat(.9, pecmy.N))
@@ -148,49 +240,49 @@ v = (pecmy.v_max() - 1) / 2 + 1
 # x_dict = pecmy.rewrap_lbda_i_x(x)
 # print(pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])["tau_hat"]*pecmy.ecmy.tau)
 
-fname = "out/est_mid_loqo_vmids.csv"
-x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
-# x, obj, status = pecmy.estimator(v, theta_x, np.zeros((pecmy.N, pecmy.N)), nash_eq=False)
-np.savetxt(fname, x, delimiter=",")
-x = np.genfromtxt(fname, delimiter=",")
-
-x_dict = pecmy.rewrap_xlshvt(x)
-ge_dict = pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])
-s = np.reshape(x_dict["s"], (pecmy.N, pecmy.N))
-lbda = np.reshape(x_dict["lbda"], (pecmy.N, pecmy.lambda_i_len))
-
-print(ge_dict["tau_hat"]*pecmy.ecmy.tau)
-print("-----")
-print("v:")
-print(x_dict["v"])
-print("-----")
-theta_dict = pecmy.rewrap_theta(x_dict["theta"])
-print("theta:")
-print(theta_dict)
-
-print("G_hat:")
-print(pecmy.G_hat(x_dict["ge_x"], v, 0, all=True))
-
-print("R_hat:")
-print(pecmy.R_hat(ge_dict, v))
-
-for i in range(pecmy.N):
-
-    print("s_i")
-    print(s[i, ])
-
-    lbda_chi_i = pecmy.rewrap_lbda_i(lbda[i, ])["chi_i"]
-    print("lbda_chi_i:")
-    print(lbda_chi_i)
-
-    h_i = np.reshape(x_dict["h"], (pecmy.N, pecmy.hhat_len))[i, ]
-    print("h_i:")
-    print(h_i)
-
-    ft_i = pecmy.ft_sv(i, x_dict["ge_x"])
-    print("ft_i")
-    print(ft_i)
-    print("-----")
+# fname = "out/est_mid_loqo_vmids.csv"
+# x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, nash_eq=False)
+# # x, obj, status = pecmy.estimator(v, theta_x, np.zeros((pecmy.N, pecmy.N)), nash_eq=False)
+# np.savetxt(fname, x, delimiter=",")
+# x = np.genfromtxt(fname, delimiter=",")
+#
+# x_dict = pecmy.rewrap_xlshvt(x)
+# ge_dict = pecmy.ecmy.rewrap_ge_dict(x_dict["ge_x"])
+# s = np.reshape(x_dict["s"], (pecmy.N, pecmy.N))
+# lbda = np.reshape(x_dict["lbda"], (pecmy.N, pecmy.lambda_i_len))
+#
+# print(ge_dict["tau_hat"]*pecmy.ecmy.tau)
+# print("-----")
+# print("v:")
+# print(x_dict["v"])
+# print("-----")
+# theta_dict = pecmy.rewrap_theta(x_dict["theta"])
+# print("theta:")
+# print(theta_dict)
+#
+# print("G_hat:")
+# print(pecmy.G_hat(x_dict["ge_x"], v, 0, all=True))
+#
+# print("R_hat:")
+# print(pecmy.R_hat(ge_dict, v))
+#
+# for i in range(pecmy.N):
+#
+#     print("s_i")
+#     print(s[i, ])
+#
+#     lbda_chi_i = pecmy.rewrap_lbda_i(lbda[i, ])["chi_i"]
+#     print("lbda_chi_i:")
+#     print(lbda_chi_i)
+#
+#     h_i = np.reshape(x_dict["h"], (pecmy.N, pecmy.hhat_len))[i, ]
+#     print("h_i:")
+#     print(h_i)
+#
+#     ft_i = pecmy.ft_sv(i, x_dict["ge_x"])
+#     print("ft_i")
+#     print(ft_i)
+#     print("-----")
 
 # ge_dict["tau_hat"] * pecmy.ecmy.tau
 # id = 0
