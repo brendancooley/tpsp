@@ -23,7 +23,7 @@ projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
 size = "mid/"
 sv_fname = "out/mini_sv.csv"
-out_fname = "out/mid_noRUS_chateta.csv"
+out_fname = "out/mid_est_test8.csv"
 # sv = np.genfromtxt(sv_fname, delimiter=',')
 
 helpersPath = os.path.expanduser(projectPath + "source/")
@@ -88,7 +88,7 @@ imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)
 # generate pecmy and rcv vals
 # np.seterr(all='raise')
-opt.root(pecmy.pp_wrap_alpha, .5, args=(.99, ))['x']
+# opt.root(pecmy.pp_wrap_alpha, .5, args=(.999, ))['x']
 
 # np.max(pecmy.ecmy.tau, axis=1)
 
@@ -98,26 +98,29 @@ opt.root(pecmy.pp_wrap_alpha, .5, args=(.99, ))['x']
 theta_dict = dict()
 # theta_dict["c_hat"] = .25
 theta_dict["eta"] = 1.
-theta_dict["c_hat"] = 1.
+theta_dict["c_hat"] = 10.
 theta_dict["alpha1"] = 0.
 theta_dict["gamma"] = 0.
-theta_dict["C"] = np.repeat(1.5, pecmy.N)
+theta_dict["C"] = np.repeat(1., pecmy.N)
+# theta_dict["C"] = np.array([1, 2, 3, 4, 5])
 theta_x = pecmy.unwrap_theta(theta_dict)
 
-
+opt.root(pecmy.pp_wrap_alpha, .5, args=(.99, ))['x']
 # pecmy.W ** - .75
 
 v = np.mean(pecmy.ecmy.tau, axis=1)
+
 # v = np.repeat(2, pecmy.N)
 # v = pecmy.v_max()
 # v = (pecmy.v_max() - 1) / 2 + 1
 # v = np.repeat(.9, pecmy.N)
 # v = np.ones(pecmy.N)
-# id = 0
-# ft_id = pecmy.ft_sv(id, np.ones(pecmy.x_len), v)
-# ft_id_dict = pecmy.ecmy.rewrap_ge_dict(ft_id)
-# pecmy.ecmy.U_hat(ft_id_dict, v)
-# pecmy.peace_probs(np.ones(pecmy.x_len), ft_id[-pecmy.hhat_len:], id, pecmy.m, v, theta_dict)
+id = 0
+ft_id = pecmy.ft_sv(id, np.ones(pecmy.x_len), v)
+ft_id_dict = pecmy.ecmy.rewrap_ge_dict(ft_id)
+pecmy.ecmy.U_hat(ft_id_dict, v)
+pecmy.peace_probs(np.ones(pecmy.x_len), ft_id[-pecmy.hhat_len:], id, pecmy.m, v, theta_dict)
+pecmy.N
 
 # pecmy.v_max()
 # pecmy.estimator_sv(pecmy.mzeros, v, theta_x)

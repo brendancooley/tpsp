@@ -181,10 +181,16 @@ class policies:
 
         H_i = self.H(ge_x, h, id, m, v, theta_dict)
         G_i = self.G_hat(ge_x, v, id)
+        # C_i = self.C(ge_x, h, id, m, v, theta_dict)
+        # print(C_i)
         rcx = self.rcx(self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"], h, id)
         G_i_ft = self.G_hat(rcx, v, id)
 
-        out = H_i * G_i + (1 - H_i) * G_i_ft
+        # out = G_i - C_i
+        if id != self.ROW_id:
+            out = H_i * G_i + (1 - H_i) * G_i_ft
+        else:
+            out = G_i
         # out = np.log(H_i) + np.log(G_i)
         # out = np.log(H_i) + G_i
 
@@ -434,6 +440,38 @@ class policies:
 
         return(rho)
 
+    def C(self, ge_x, h, id, m, v, theta_dict):
+
+        # Cinv = theta_dict["C"] ** -1
+        # Cinv_i = np.array([Cinv[i] for i in range(self.N) if i != id])
+        # Cinv_i = theta_dict["c_hat"] ** -1
+        # Cinv = np.delete(Cinv, id)
+        eta = theta_dict["eta"]
+        gamma = theta_dict["gamma"]
+        alpha = theta_dict["alpha1"]
+
+        m_diag = np.diagonal(m)
+        m_frac = m / m_diag
+        np.fill_diagonal(m_frac, 0)
+
+        m_frac_i = np.array([m_frac[:,id][i] for i in range(self.N) if i != id])
+        W_i = np.array([self.W[:,id][i] for i in range(self.N) if i != id])
+
+        ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
+        rcx = self.rcx(ge_dict["tau_hat"], h, id)
+        G = self.G_hat(ge_x, v, id, all=True)
+        rcv = self.G_hat(rcx, v, id, all=True)
+        DeltaG = rcv - G
+        # print(DeltaG)
+        DeltaG = np.clip(DeltaG, 1e-10, np.inf)
+        DeltaG = np.array([DeltaG[i] for i in range(self.N) if i != id])
+        print(id)
+        print(DeltaG)
+
+        out = np.sum(theta_dict["c_hat"] * m_frac_i**gamma * W_i**(-alpha) * DeltaG**eta)
+
+        return(out)
+
     def H(self, ge_x, h, id, m, v, theta_dict):
         """Compute probability nobody attacks government id
 
@@ -475,6 +513,9 @@ class policies:
 
         # Cinv = theta_dict["C"] ** -1
         # Cinv_i = np.array([Cinv[i] for i in range(self.N) if i != id])
+
+        # C_mat = np.outer(1 / theta_dict["C"], theta_dict["C"])
+        # C_mat_i = np.array([C_mat[id,:][i] for i in range(self.N) if i != id])
         Cinv_i = theta_dict["c_hat"] ** -1
         # Cinv = np.delete(Cinv, id)
         eta = theta_dict["eta"]
@@ -485,8 +526,9 @@ class policies:
         m_frac = m / m_diag
         np.fill_diagonal(m_frac, 0)
 
-        m_frac_i = np.array([m_frac[:,id][i] for i in range(self.N) if i != id])
-        W_i = np.array([self.W[:,id][i] for i in range(self.N) if i != id])
+        m_frac_i = np.array([m_frac[:,id][i] for i in range(self.N) if i not in [id, self.ROW_id]])
+        # print(m_frac_i)
+        W_i = np.array([self.W[:,id][i] for i in range(self.N) if i not in [id, self.ROW_id]])
 
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
         rcx = self.rcx(ge_dict["tau_hat"], h, id)
@@ -495,7 +537,7 @@ class policies:
         DeltaG = rcv - G
         # print(DeltaG)
         DeltaG = np.clip(DeltaG, 1e-10, np.inf)
-        DeltaG = np.array([DeltaG[i] for i in range(self.N) if i != id])
+        DeltaG = np.array([DeltaG[i] for i in range(self.N) if i not in [id, self.ROW_id]])
         # DeltaG[id] = 0
         # print(Cinv)
         # print(m_frac[:,id]**gamma)
@@ -1067,9 +1109,9 @@ class policies:
     def geq_lb(self):
 
         lb_dict = dict()
-        # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
-        lb_dict["tau_hat"] = .9 / self.ecmy.tau
-        # lb_dict["tau_hat"] = 1.01 / self.ecmy.tau
+        lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
+        # lb_dict["tau_hat"] = .9 / self.ecmy.tau
+        # lb_dict["tau_hat"] = 1. / self.ecmy.tau
         np.fill_diagonal(lb_dict["tau_hat"], 1)
         lb_dict["D_hat"] = np.repeat(1, self.N)
         lb_dict["X_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
@@ -1165,27 +1207,31 @@ class policies:
             # x_L[b:b+self.N] = v #
             # x_U[b:b+self.N] = v # fixed vs
             b += self.N
-            x_L[b] = .25 # eta lower
-            x_U[b] = 5  # eta upper
-            # x_L[b] = 1 # eta lower
-            # x_U[b] = 1  # eta upper
+            # x_L[b] = .5 # eta lower
+            # x_U[b] = 5  # eta upper
+            x_L[b] = 1 # eta lower
+            x_U[b] = 1  # eta upper
             b += 1
-            x_L[b] = -1.  # gamma lower
-            x_U[b] = 1.  # gamma upper
+            # x_L[b] = -2.  # gamma lower
+            # x_U[b] = 2.  # gamma upper
             # x_L[b] = 1
             # x_U[b] = 1  # fix gamma at 1
             b += 1
-            x_L[b] = opt.root(self.pp_wrap_C, .5, args=(.1, ))['x'] # c_hat
-            x_U[b] = 5
+            # x_L[b] = 1
+            # x_U[b] = 1
+            x_L[b] = 5
+            # x_L[b] = opt.root(self.pp_wrap_C, .5, args=(.4, ))['x'] # c_hat
+            # x_U[b] = 10000
             b += 1
             # x_L[b] = -self.alpha1_ub  # alpha1 lower
-            a_ub = opt.root(self.pp_wrap_alpha, .5, args=(.75, ))['x']
-            x_L[b] = -a_ub  # alpha1 lower
-            x_U[b] = a_ub # alpha1 upper
+            a_ub = opt.root(self.pp_wrap_alpha, .5, args=(.999, ))['x']
+            # x_L[b] = -a_ub  # alpha1 lower
+            # x_U[b] = a_ub # alpha1 upper
             b += 1
-            # x_L[b:b+self.N] = .6  # cs
-            x_L[b:b+self.N] = opt.root(self.pp_wrap_C, .5, args=(.1, ))['x']  # cs
-            x_U[b:b+self.N] = 15
+            x_L[b:b+self.N] = .1  # cs
+            x_U[b:b+self.N] = 10  # cs
+            # x_L[b:b+self.N] = opt.root(self.pp_wrap_C, .5, args=(.1, ))['x']  # cs
+            # x_U[b:b+self.N] = 15
             # x_U[b] = self.alpha1_ub  # alpha1 upper
             # x_L[b] = -np.inf  # alpha1 lower
             # x_U[b] = np.inf  # alpha1 upper
