@@ -8,7 +8,7 @@ author:
       affiliation: Ph.D. Candidate, Department of Politics, Princeton University
 date: \today
 abstract: In international relations, how does latent military coercion affect governments’ policy choices? Because militarily powerful governments can credibly threaten to impose their policy preferences by force, weaker governments may adjust their policy choices to avoid costly conflict. This setting raises an inference problem -- do observed policies reflect the preferences of the governments that adopted them or the military constraints of the anarchic international system? Here, I investigate the role of this “shadow of power” in determining trade policy. Specifically, I build a model of trade policy choice under threat that allows me to measure empirically governments’ underlying trade policy preferences, the returns to military advantage, and the extent to which power projection capacity degrades across space. I then estimate the parameters of the model using data on governments' observed trade policies in 2011. I find that geographic distance is not an impediment to the projection of force but that there are increasing returns to military advantage in the technology of coercion. Through counterfactual experiments, I can quantify the effect of military constraints on the international economy and governments' welfare. These and other exercises shed light on how military power affects international economic exchange, and how expectations about exchange affect governments’ military strategies.
-thanks: Thanks to Geneveive Bates, Allison Carnegie, Jim Fearon, Haosen Ge, Mike Gibilisco, Kyle Haynes, Helen Milner, Sayumi Miyano, Steve Monroe, In Young Park, Kris Ramsay, Joe Ruggiero for comments and discussions on many earlier versions of this project. Thanks also to audiences at the American Political Science Association's 2019 annual meeting and the 2020 Conference on Formal Models of International Relations.
+thanks: Thanks to Geneveive Bates, Allison Carnegie, Jim Fearon, Haosen Ge, Mike Gibilisco, Kyle Haynes, Helen Milner, Sayumi Miyano, Steve Monroe, In Young Park, Kris Ramsay, Joe Ruggiero for comments and discussions on many earlier versions of this project. Thanks also to audiences at the American Political Science Association's 2019 annual meeting and the 2020 conference on Formal Models of International Relations.
 # jelcodes: JEL codes go here
 
 bibliography: /Users/brendancooley/Dropbox (Princeton)/References/library.bib
@@ -83,11 +83,11 @@ There are $N$ governments, indexed $i \in \left\{ 1, ..., N \right\}$. Governmen
 
 Throughout, I will use $\bm{\theta}_m$ to denote the vector of all parameters to be estimated and $\bm{Z}$ to denote the vector of all data observed by the researcher. $\bm{\theta}_h$ denotes parameters associated with the economy, $h$, which will be calibrated. I will explicate the elements of these vectors in the proceeding sections and the Appendix.
 
-Government welfare depends on these general equilibrium responses to trade policy choices. Governments value the welfare of a representative consumer that resides within each country. The consumer's welfare in turn depends on net revenues accrued through the government's trade policy distortions, which are redistributed to the consumer. Revenues and induced can be computed given knowledge of the general equilibrium function $h(\bm{\tau})$. Each government's welfare, is equivalent to the consumer's indirect utility, $V_i \left( h(\bm{\tau}); v_i \right)$ where $v_i$ is the revenue threshold parameter. This value of this function depends on the consumer's net income and is characterized fully in the Appendix. The consumer's net income can be written as a function of the governments' policy choices
+Government welfare depends on these general equilibrium responses to trade policy choices. Governments value the welfare of a representative consumer that resides within each country. The consumer's welfare in turn depends on net revenues accrued through the government's trade policy distortions, which are redistributed to the consumer. Revenues and induced welfare can be computed given knowledge of the general equilibrium function $h(\bm{\tau})$. Each government's welfare, is equivalent to the consumer's indirect utility, $V_i \left( h(\bm{\tau}); v_i \right)$ where $v_i$ is the revenue threshold parameter. This value of this function depends on the consumer's net income and is characterized fully in the Appendix. The consumer's net income can be written as a function of the governments' policy choices
 $$
 \tilde{Y}_i(h_i(\bm{\tau}))  = h_i(\bm{\tau}) * L_i + r_i(h(\bm{\tau}); v_i) . 
 $$
-$L_i$ is the country's labor endowment, $r_i(h(\bm{\tau}); v_i)$ is trade policy revenues, and $h_i(\bm{\tau})$ are equilibrium wages in $i$. $v_i \in [1, \infty)$ is a structural parameter that modulates the government's ability to extract trade policy rents from society. 
+$L_i$ is the country's labor endowment, $r_i(h(\bm{\tau}); v_i)$ is trade policy revenues, and $h_i(\bm{\tau})$ are equilibrium wages in $i$. $v_i \in [1, \infty)$ is a structural parameter that modulates the government's ability to extract trade policy rents. 
 
 Adjusted revenues are given by
 \begin{equation} \label{eq:r}
@@ -238,16 +238,16 @@ Recall that $v_i$ governs the ease with which governments can extract revenues f
 \toprule
 iso3 & Country Name & $\tilde{v}_i$\\
 \midrule
-AUS & Australia & 3.08\\
-BRA & Brazil & 3.14\\
-CAN & Canada & 4.15\\
-CHN & China & 1.45\\
-EU & European Union & 2.06\\
+AUS & Australia & 4.55\\
+BRA & Brazil & 3.83\\
+CAN & Canada & 4.02\\
+CHN & China & 1.38\\
+EU & European Union & 2.01\\
 \addlinespace
-JPN & Japan & 2.46\\
-KOR & South Korea & 1.60\\
-RoW & Rest of World & 1.60\\
-USA & United States & 1.51\\
+JPN & Japan & 2.51\\
+KOR & South Korea & 2.23\\
+RoW & Rest of World & 1.56\\
+USA & United States & 1.58\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -258,15 +258,19 @@ In the model, peace requires that the probabilistic benefits of war do not excee
 
 ![Conquest values evaluated at $\tilde{\bm{v}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \label{fig:rcv}](figure/rcv-1.png)
 
-Recall that $\alpha$ governs how war costs respond to the distance between prospective adversaries and that $\gamma$ governs the effectiveness of military advantage in reducing war costs. When these parameters take the value of zero then geography and military advantage have no effect on the war cost distributions. I estimate $\alpha$ to be 0.02, consistent with an inverse effect of distance on power projection capacity. In other words, I find no evidence of a loss of strength gradient. There are, however, substantial returns to military advantage. I estimate $\gamma$ to be 0.94, consistent with increasing returns to military advantage. In general, however, war is estimated to be quite costly. The scale parameter, $\hat{C}$ is estimated to be 2.8, which renders war prohibitively costly for those that do not enjoy other advantages, such as military strength. In general, governments run very small risks of invasion from other governments. The exception to this rule is threats from the United States, which are estimated to play a significant role in many governments' calculations of optimal policy. This is the result of the United States' substantial military advantages over potential adversaries and the returns these are estimated to bring in the realm of trade policy.
+Recall that $\alpha$ governs how war costs respond to the distance between prospective adversaries and that $\gamma$ governs the effectiveness of military advantage in reducing war costs. When these parameters take the value of zero then geography and military advantage have no effect on the war cost distributions. I estimate $\alpha$ to be -0.55, consistent with an inverse effect of distance on power projection capacity. In other words, I find no evidence of a loss of strength gradient. There are, however, substantial returns to military advantage. I estimate $\gamma$ to be 1.54, consistent with increasing returns to military advantage. In general, however, war is estimated to be quite costly. The scale parameter, $\hat{C}$ is estimated to be 552.4, which renders war prohibitively costly for those that do not enjoy other advantages, such as military strength. In general, governments run very small risks of invasion from other governments. The exception to this rule is threats from the United States, which are estimated to play a significant role in many governments' calculations of optimal policy. This is the result of the United States' substantial military advantages over potential adversaries and the returns these are estimated to bring in the realm of trade policy.
 
+
+# Counterfactual: Coercion-Free World
+
+*coming soon*
 
 # Conclusion
 
 
 The shadow of power plays a central role in international relations theory, but measuring its effects has proved challenging. It is axiomatic that if governments forgo war, then they must at least weakly prefer the policy status quo to the expected policy outcomes that would result from potential wars. In this paper, I have shown that a flexible model of government preferences over trade outcomes can serve to quantify government welfare under this policy counterfactual. I then leverage the difference between factual government welfare and its conquest values to identify parameters governing the technology of coercion in international relations. 
 
-The preliminary estimates of these parameters suggest that military constraints indeed constrain governments' policy choice in international relations. Military spending advantage translates into battlefield advantage, discounted by a significant loss of strength gradient. These military constraints serve to contort trade policy toward the interests of the powerful as well as the resolved — those whose benefits from conquest are the largest. Military threats structure interactions in the international economy.
+The preliminary estimates of these parameters suggest that military constraints indeed constrain governments' policy choice in international relations. Military spending advantage translates into battlefield advantage. These military constraints serve to contort trade policy toward the interests of the powerful as well as the resolved — those whose benefits from conquest are the largest. Military threats structure interactions in the international economy.
 
 Drawing these conclusions requires taking extant theoretical models of international conflict and international political economy seriously. On the one hand, this limits the credibility and generalizability of the conclusions reached here — if the models are flawed, so too will our inferences about the world. On the other hand, this provides a foundation upon which empirical and theoretical research in these subfields can progress in tandem. Otherwise intractable empirical questions can be answered, leveraging the identifying assumptions embedded in these theories. And theories can be revised to account for anomalous or unreasonable empirical results that rest on these assumptions. Taking the models seriously provides answers to hard empirical questions, along with a transparent edifice upon which those answers rest.
 

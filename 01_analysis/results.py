@@ -105,14 +105,16 @@ if runEstimates == True:
     xlvt_star_path = estimatesPath + "x.csv"
     # np.savetxt(xlvt_star_path, xlvt_star, delimiter=",")
 
-xlhvt_star_path = "out/mid_noRUS.csv"
+xlhvt_star_path = "out/est_test8.csv"
 
 ### Save Estimates ###
 
 xlhvt_star = np.genfromtxt(xlhvt_star_path, delimiter=",")
 ge_x_star = pecmy.rewrap_xlhvt(xlhvt_star)["ge_x"]
-v_star = pecmy.rewrap_xlhvt(xlhvt_star)["v"]
+# v_star = pecmy.rewrap_xlhvt(xlhvt_star)["v"]
+# v_star = np.array([4.5459368, 3.83445996, 4.02442793, 1.38272169, 2.00824194, 2.51455669, 2.23473652, 1.55973765, 1.57666025])
 theta_x_star = pecmy.rewrap_xlhvt(xlhvt_star)["theta"]
+# theta_x_star = np.array([1, 1.54, 552.37, -.55, 1., 1., 1., 1., 1., 1., 1., 1., 1.])
 theta_dict_star = pecmy.rewrap_theta(theta_x_star)
 for i in theta_dict_star.keys():
     np.savetxt(estimatesPath + i + ".csv", np.array([theta_dict_star[i]]), delimiter=",")
