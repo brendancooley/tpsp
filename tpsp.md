@@ -238,8 +238,8 @@ Recall that $v_i$ governs the ease with which governments can extract revenues f
 \toprule
 iso3 & Country Name & $\tilde{v}_i$\\
 \midrule
-AUS & Australia & 4.55\\
-BRA & Brazil & 3.83\\
+AUS & Australia & 4.52\\
+BRA & Brazil & 3.82\\
 CAN & Canada & 4.02\\
 CHN & China & 1.38\\
 EU & European Union & 2.01\\
@@ -258,7 +258,7 @@ In the model, peace requires that the probabilistic benefits of war do not excee
 
 ![Conquest values evaluated at $\tilde{\bm{v}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \label{fig:rcv}](figure/rcv-1.png)
 
-Recall that $\alpha$ governs how war costs respond to the distance between prospective adversaries and that $\gamma$ governs the effectiveness of military advantage in reducing war costs. When these parameters take the value of zero then geography and military advantage have no effect on the war cost distributions. I estimate $\alpha$ to be -0.55, consistent with an inverse effect of distance on power projection capacity. In other words, I find no evidence of a loss of strength gradient. There are, however, substantial returns to military advantage. I estimate $\gamma$ to be 1.54, consistent with increasing returns to military advantage. In general, however, war is estimated to be quite costly. The scale parameter, $\hat{C}$ is estimated to be 552.4, which renders war prohibitively costly for those that do not enjoy other advantages, such as military strength. In general, governments run very small risks of invasion from other governments. The exception to this rule is threats from the United States, which are estimated to play a significant role in many governments' calculations of optimal policy. This is the result of the United States' substantial military advantages over potential adversaries and the returns these are estimated to bring in the realm of trade policy.
+Recall that $\alpha$ governs how war costs respond to the distance between prospective adversaries and that $\gamma$ governs the effectiveness of military advantage in reducing war costs. When these parameters take the value of zero then geography and military advantage have no effect on the war cost distributions. I estimate $\alpha$ to be -0.55, consistent with an inverse effect of distance on power projection capacity. In other words, I find no evidence of a loss of strength gradient. There are, however, substantial returns to military advantage. I estimate $\gamma$ to be 1.54, consistent with increasing returns to military advantage. In general, however, war is estimated to be quite costly. The scale parameter, $\hat{C}$ is estimated to be 523.1, which renders war prohibitively costly for those that do not enjoy other advantages, such as military strength. In general, governments run very small risks of invasion from other governments. The exception to this rule is threats from the United States, which are estimated to play a significant role in many governments' calculations of optimal policy. This is the result of the United States' substantial military advantages over potential adversaries and the returns these are estimated to bring in the realm of trade policy.
 
 
 # Counterfactual: Coercion-Free World

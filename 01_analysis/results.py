@@ -105,7 +105,7 @@ if runEstimates == True:
     xlvt_star_path = estimatesPath + "x.csv"
     # np.savetxt(xlvt_star_path, xlvt_star, delimiter=",")
 
-xlhvt_star_path = "out/est_test8.csv"
+xlhvt_star_path = "out/mid_est_test8.csv"
 
 ### Save Estimates ###
 
