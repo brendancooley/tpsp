@@ -58,7 +58,7 @@ Atick <- 1
 Ptick <- 1
 Ltick <- 1
 
-size <- "mini/"
+size <- "mid/"
 
 tpspPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 dataPath <- paste0(tpspPath, "data/", size)

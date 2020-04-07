@@ -54,7 +54,7 @@ The model also allows me to examine how domestic political economic changes (cha
 
 Estimating the model and conducting the subsequent counterfactual exercises require knowledge of governments' trade policies, disaggregated at the trade partner level. While detailed data on a particular policy instrument (tariffs) are available to researchers, these are but one barrier governments can use to influence the flow of trade. In a companion paper [@Cooley2019b], I show that cross-national prices, trade flows, and freight costs are jointly sufficient statistics for the magnitude of aggregate policy barriers trade, given a structural model of the international economy [@Head2014; @Costinot2015]. I employ these measures of trade policy in this paper and use an identical model of the international economy to connect trade policy changes to international economic outputs.
 
-The method produces a matrix of trade barriers, in which the $i$, $j$th entry is the magnitude of policy barriers to trade an importing country $i$ imposes on goods from an exporting country $j$. In 2011, the estimated barriers were large, equivalent to a 56 percent import tariff on average.^[These results and the calibration choices that produce this value are discussed in more detail in Appendix B.] They also reveal substantial trade policy discrimination, providing necessary variation to identify the model considered here.
+The method produces a matrix of trade barriers, in which the $i$, $j$th entry is the magnitude of policy barriers to trade an importing country $i$ imposes on goods from an exporting country $j$. In 2011, the estimated barriers were large, equivalent to a 78 percent import tariff on average.^[These results and the calibration choices that produce this value are discussed in more detail in Appendix B.] They also reveal substantial trade policy discrimination, providing necessary variation to identify the model considered here.
 
 
 ## Literature
@@ -122,7 +122,7 @@ Policy proposals are made simultaneously. Let $\tilde{\bm{\tau}}_i^\star(\tilde{
 
 ## Policy Equilibrium in Changes
 
-The equilibrium of the international economy depends on a vector of structural parameters and constants $\bm{\theta}_h$ defined in Appendix A. Computing the equilibrium $h(\bm{\tau}; \bm{\theta}_h)$ requires knowing these values. Researchers have the advantage of observing data related to the equilibrium mapping for one particular $\bm{\tau}$, the factual trade policies. 
+The equilibrium of the international economy depends on a vector of structural parameters and constants $\bm{\theta}_h$ defined in Appendix A. Computing the economic equilibrium $h(\bm{\tau}; \bm{\theta}_h)$ requires knowing these values. Researchers have the advantage of observing data related to the equilibrium mapping for one particular $\bm{\tau}$, the factual trade policies. 
 
 The estimation problem can be therefore partially ameliorated by computing the equilibrium in *changes*, relative to a factual baseline. Consider a counterfactual trade policy $\tau_{ij}^\prime$ and its factual analogue $\tau_{ij}$. The counterfactual policy can be written in terms of a proportionate change from the factual policy with $\tau_{ij}^\prime = \hat{\tau}_{ij} \tau_{ij}$ where $\hat{\tau}_{ij} = 1$ when $\tau_{ij}^\prime = \tau_{ij}$. By rearranging the equilibrium conditions, I can solve the economy in changes, replacing $h(\bm{\tau}; \bm{\theta}_h) = \bm{w}$ with $\hat{h}(\hat{\bm{\tau}}; \bm{\theta}_h) = \hat{\bm{w}}$. Counterfactual wages can the be computed as $\bm{w}^\prime = \bm{w} \odot \hat{\bm{w}}$.
 
@@ -142,7 +142,7 @@ measures the share of $j$'s utility lost to wage a war with $i$. I assume the in
 $$
 \text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} Z_{ji}^{-\alpha} \hat{c}^{\eta} \right) .
 $$
-The parameters $\alpha$ and $\gamma$ govern the extent to which military advantage and geograpic proximity are converted into cost advantages. If $\gamma$ is greater than zero, then military advantage reduces the costs of war. Similarly, if $\alpha$ is greater than zero, then war costs increase with geographic distance, consistent with a loss of strength gradient. $\hat{C}$ and $eta$ are global shape parameters that shift the cost distribution for all potential attackers.
+The parameters $\alpha$ and $\gamma$ govern the extent to which military advantage and geographic proximity are converted into cost advantages. If $\gamma$ is greater than zero, then military advantage reduces the costs of war. Similarly, if $\alpha$ is greater than zero, then war costs increase with geographic distance, consistent with a loss of strength gradient. $\hat{C}$ and $\eta$ are global shape parameters that shift the cost distribution for all potential attackers.
 
 Each government's objective function (\ref{eq:G}) in changes is
 \begin{equation} \label{eq:Ghat}
@@ -157,27 +157,29 @@ $$
 \hat{H}_i \left( \hat{\tilde{\bm{\tau}}}; \bm{Z}, \bm{\theta}_m \right) = \exp \left( - \sum_{j \neq i} - \frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} Z_{ji}^{-\alpha} \left( \hat{V}_j \left( \bm{1}_i; \tilde{\bm{\tau}}_{-i} \right) - \hat{V}_j \left( \hat{\tilde{\bm{\tau}}} \right) \right)^{\eta} \right) .
 $$
 
+Let $\hat{\tilde{\bm{\tau}}}_i^\star(\hat{\tilde{\bm{\tau}}}_{-i})$ denote a solution to policy change proposal problem and $\hat{\tilde{\bm{\tau}}}^\star$ a Nash equilibrium of this policy change announcement game. 
+
 # Data and Calibration of Economy
 
 
 
 
-I estimate the model on a set of 5 governments in the year 2011.^[Focusing on a small set of governments is necessary for computational tractability. However, the largest countries (by GDP) are the most attractive targets for coercion, as changes to their trade policies return the largest welfare gains, regardless of whether the coercer is a rent-maximizer or welfare-maximizer. The estimated model is therefore more useful in understanding "great power politics," rather than smaller political-economic conflicts of interest.] These governments are listed in Table \ref{tab:v_estsT}. I aggregate all European Union governments into a single entity and collapse all countries not included in the analysis into a "Rest of World" (ROW) aggregate.^[Such an aggregation is necessary in order to calculate fully general equilibrium effects of counterfactual trade policies. However, I prohibit other countries from invading ROW and likewise prohibit ROW from invading others. This ensures that estimates of military parameters depend almost entirely on interactions between countries within my sample.] Non-ROW countries make up  percent of world GDP.
+I estimate the model on a set of 9 governments in the year 2011.^[Focusing on a small set of governments is necessary for computational tractability. However, the largest countries (by GDP) are the most attractive targets for coercion, as changes to their trade policies return the largest welfare gains, regardless of whether the coercer is a rent-maximizer or welfare-maximizer. The estimated model is therefore more useful in understanding "great power politics," rather than smaller political-economic conflicts of interest.] These governments are listed in Table \ref{tab:v_estsT}. I aggregate all European Union governments into a single entity and collapse all countries not included in the analysis into a "Rest of World" (ROW) aggregate.^[Such an aggregation is necessary in order to calculate fully general equilibrium effects of counterfactual trade policies. However, I prohibit other countries from invading ROW and likewise prohibit ROW from invading others. This ensures that estimates of military parameters depend almost entirely on interactions between countries within my sample.] Non-ROW countries make up 72 percent of world GDP.
 
 
 
-Solving the economy in changes for a set of $\hat{\bm{\tau}}$ requires values for a vector of economic parameters $\bm{\theta}_h$ and data on trade flows, policy barriers, and and national accounts. I discuss how I calibrate the economy and the data sources used to do so in Appendix B. There, I also report the magnitude of policy barrier estimates $\tilde{\bm{\tau}}$ from @Cooley2019b. With $\hat{h}(\hat{\bm{\tau}}; \bm{\theta}_h)$ calibrated, $\hat{G}_i(\hat{\bm{\tau}})$ can be calculated for any set of trade policies and the conquest values can be computed.
+Solving the economy in changes for a set of $\hat{\bm{\tau}}$ requires values for a vector of economic parameters $\bm{\theta}_h$ and data on trade flows, policy barriers, and and national accounts. I discuss how I calibrate the economy and the data sources used to do so in Appendix B. There, I also report the magnitude of policy barrier estimates $\tilde{\bm{\tau}}$ from @Cooley2019b. With $\hat{h}(\hat{\bm{\tau}}; \bm{\theta}_h)$ calibrated, $\hat{V}_i(\hat{\bm{\tau}})$ can be calculated for any set of trade policies and the conquest values can be computed.
 
 With the economy calibrated and policy barrier estimates in hand, I require only a measure of each government's military endowment ($M_i$) and data on dyadic geography ($\bm{W}$). I use [SIPRI](https://www.sipri.org/)'s data on military expenditure to measure governments' military capacity. These values are displayed in Figure \ref{fig:milex}.
 
 ![Military expenditure for in-sample governments. Values for ROW and EU are obtained by summing expenditure of all member countries. \label{fig:milex}](figure/milex-1.png)
 
-Finally, I use data from @Weidmann2010 to calculate centroid-centroid geographic distance between all countries in my sample. I take the natural log of this value to be the only variable affecting power projection capacity in $\bm{W}$. 
+Finally, I use data from @Weidmann2010 to calculate centroid-centroid geographic distance between all countries in my sample, providing data for $W_{ij}$
 
 # Estimation
 
 
-The model's equilibrium, $\hat{\tilde{\bm{\tau}}}^\star$ depends on a vector of parameters $\bm{\theta}_m = \left( \bm{b}, \bm{\alpha}, \gamma, \hat{c}, \right)$, as well as the values of the shocks $\left\{ \xi_{ij} \right\}_{i,j \in \left\{ 1, \dots, N \right\}}$ and $\left\{ \epsilon_{ij} \right\}_{i,j \in \left\{ 1, \dots, N \right\}}$. Because I work with an equilibrium in changes, a prediction $\hat{\tilde{\tau}}_{ij}^\star = 1$ is consistent with the data -- the model predicts that in equilibrium, government $i$ would make no changes to its factual trade policy toward $j$. I assume observed $\tilde{\bm{\tau}}^\star$ are measured with error
+The model's equilibrium, $\hat{\tilde{\bm{\tau}}}^\star$ depends on a vector of parameters $\bm{\theta}_m = \left( \bm{v}, \alpha, \gamma, \hat{C}, \eta \right)$. I assume observed $\tilde{\bm{\tau}}^\star$ are measured with error
 $$
 \tilde{\bm{\tau}}^\star(\bm{\theta}_m) = \tilde{\bm{\tau}} + \bm{\epsilon}
 $$
@@ -188,28 +190,30 @@ Following the assumption that measurement error is mean-zero, I seek an estimato
 \min_{\bm{\theta}_m} \sum_i \sum_j \left( \epsilon_{ij}(\bm{\theta}_m) \right)^2 .
 \end{equation}
 
-Solving this problem presents two computational challenges. First, computing government welfare changes for any given $\hat{\bm{\tau}}$ requires solving system of equations characterizing the equilibrium of the international economy, $\hat{h}(\hat{\bm{\tau}})$. Second, computing $\tilde{\bm{\tau}}^\star(\bm{\theta}_m)$ requires iteratively solving each government's best response problem (\ref{eq:tauTildeStarHat}) until covergence at a Nash equilibrium. I sidestep both of these by recasting the best response problem and estimation problem as mathematical programs with equilibrium constraints (MPECs) [@Su2012; @Ossa2014; @Ossa2016].
+Solving this problem presents two computational challenges. First, computing government welfare changes for any given $\hat{\bm{\tau}}$ requires solving system of equations characterizing the equilibrium of the international economy, $\hat{h}(\hat{\bm{\tau}})$. These changes must be computed for both the proposed policies and policies imposed under war counterfactuals. Second, computing $\tilde{\bm{\tau}}^\star(\bm{\theta}_m)$ requires iteratively solving each government's best response problem until covergence at a Nash equilibrium. I sidestep both of these by recasting the best response problem and estimation problem as mathematical programs with equilibrium constraints (MPECs) [@Su2012; @Ossa2014; @Ossa2016].
 
 To reformulate the best response problem, I consider an equivalent reformulation in which each government chooses trade policies and wages, subject to the additional constraint that chosen wages are consistent with the general equilibrium of the international economy ($\hat{h}(\hat{\tilde{\bm{\tau}}}) = \hat{w}$). Let $\hat{\bm{x}}_i = \left( \hat{\tilde{\bm{\tau}}}_i, \hat{\bm{w}} \right)$ store $i$'s choice variables in this problem. Then, this problem can be rewritten as follows, noting explicitly dependencies on $\bm{\theta}_m$
 \begin{equation} \label{eq:tauTildeHatMPEC}
 \begin{split}
 \max_{\hat{\bm{x}}_i} & \quad \hat{G}_i(\hat{\bm{w}}; \bm{\theta}_m) \\
-\text{subject to} & \quad \hat{G}_j(\hat{\bm{w}}; \bm{\theta}_m) - \hat{G}_j \left( \bm{1}_i; \bm{\theta}_m \right) + \hat{c} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \geq 0 \quad \text{for all } j \neq i \\
-& \quad \hat{\bm{w}} = \hat{h}(\hat{\tilde{\bm{\tau}}}) .
+\text{subject to} & \quad \hat{\bm{w}} = \hat{h}(\hat{\tilde{\bm{\tau}}}) .
 \end{split}
 \end{equation}
 Let $\mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i)$ denote the associated Lagrangian. This formulation allows me to quickly compute best responses $\hat{\tilde{\bm{\tau}}}_i(\hat{\tilde{\bm{\tau}}}_{-i})$ without iteratively solving $h(\hat{\tilde{\bm{\tau}}})$.
 
-I reformulate the estimation problem (\ref{eq:estimator}) in a similar manner. By Assumption 1, at any Nash equilibrium, we must have
+I then reformulate the estimation problem (\ref{eq:estimator}) in a similar manner. At an interior Nash equilibrium, the gradient of the Lagrangian is null
 $$
 \nabla_{\hat{\tilde{\bm{\tau}}}_i} \mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i; \bm{\theta}_m) = 0 
 $$
-for each government $i$. In the reformulated estimation problem, seek to choose parameters, trade policies, and general equilibrium response variables in order to minimize measurement error while enforcing these equilibrium constraints, in addition to general equilibrium constraints. Formally, I solve
+for each government $i$. In the reformulated estimation problem, seek to choose parameters, trade policies, multipliers, and general equilibrium response variables for the proposed policies and imposed policies in order to minimize measurement error while enforcing these equilibrium constraints, in addition to general equilibrium constraints. Let $\hat{\bm{x}}_i^\prime = \left( \bm{1}_i, \hat{\tilde{\bm{\tau}}}_{-i}, \hat{\bm{w}}_i^\prime \right)$ store general equilibrium equilibrium wages when free trade is imposed on $i$, holding others' policies at their proposed values.
+
+Formally, I solve
 \begin{equation} \label{eq:estimatorMPEC}
 \begin{split}
-\min_{ \bm{\theta}_m, \hat{\tilde{\bm{\tau}}}, \hat{\bm{w}} } & \quad \sum_i \sum_j \left( \epsilon_{ij} \right)^2 \\
+\min_{ \bm{\theta}_m, \hat{\tilde{\bm{\tau}}}, \hat{\bm{w}}, \hat{\bm{w}}^\prime, \bm{\lambda} } & \quad \sum_i \sum_j \left( \epsilon_{ij} \right)^2 \\
 \text{subject to} & \quad \nabla_{\hat{\tilde{\bm{\tau}}}_i} \mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i; \bm{\theta}_m) = 0  \text{ for all } i \\
-& \quad \hat{\bm{w}} = \hat{h}(\hat{\tilde{\bm{\tau}}}) .
+& \quad \hat{\bm{w}} = \hat{h} \left( \hat{\tilde{\bm{\tau}}} \right) \\
+& \quad \hat{\bm{w}}_i^\prime = \hat{h} \left( \bm{1}_i, \hat{\tilde{\bm{\tau}}}_{-i} \right)
 \end{split}
 \end{equation}
 The constraints collectively ensure $\hat{\tilde{\bm{\tau}}} = \tilde{\bm{\tau}}^\star(\bm{\theta}_m)$ -- or that the policies are consistent with Nash equilibrium in policies, given estimated parameters.
@@ -228,7 +232,7 @@ Estimates of preference weights are reported in Table \ref{tab:v_estsT}. In @Coo
 
 
 ```
-## Error in data.frame(..., check.names = FALSE): arguments imply differing number of rows: 5, 6
+## Error in data.frame(..., check.names = FALSE): arguments imply differing number of rows: 9, 6
 ```
 
 \begin{table}
@@ -254,14 +258,7 @@ With estimates of $v_i$ in hand, I can calculate each government's conquest valu
 
 Governments that face poor market access conditions gain the most from successful wars, relative to the status quo. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These conquest values assist in the identification of the power projection and war cost parameters in $\bm{\theta}_m$.
 
-
-```
-## Error: Argument 2 must be length 6, not 5
-```
-
-```
-## Error: Argument 2 must be length 6, not 5
-```
+![Conquest values evaluated at $\tilde{\bm{v}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \label{fig:rcv}](figure/rcv-1.png)
 
 Governments also do not face obstacles to projecting power over space. I estimate $\alpha$ to be -0.00026. At this value, if the United States wished to invade China, its effective strength would *increase* due to the distance between the countries.
 
@@ -270,11 +267,6 @@ Figure \ref{fig:chi} combines these estimates to produce estimates of the contes
 ![Estimated probability of successful conquest for each attacking country (row) in war against every defending country (column). Each probability is reported in the appropriate cell of the heatmap. \label{fig:chi}](figure/chi-1.png)
 
 While governments do not face a geographic loss of strength gradient, wars are still costly. I estimate $\hat{c}$ to be 0.53. Dividing this value by governments' conquest values, shown in Figure \ref{fig:rcv}, I compute war's cost-benefit ratio to be 0.5 on average. Figure \ref{fig:cb_ratio} shows inverse cost-benefit ratios for each potential war. While these are low on average, there is substantial heterogeneity. Russia in particular benefits substantially from wars with other governments, which stems from the high factual trade barriers others impose on Russian exports. 
-
-
-```
-## Error in data.frame(..., check.names = FALSE): arguments imply differing number of rows: 5, 6
-```
 
 ![Estimated inverse cost-benefit ratio for attacking country against each defending country in offensive wars. \label{fig:cb_ratio}](figure/cb_ratio-1.png)
 
@@ -492,7 +484,7 @@ Trade flows valued pre-shipment (free on board) are available from [COMTRADE](ht
 
 ### Structural Parameters
 
-I set $\theta =$ 6, in line with estimates reported in @Head2014 and @Simonovska2014. A natural empirical analogue for $\beta$ is intermediate imports $(E_i - w_i L_i)$ divided by total tradable production. This varies country to country, however, and equilibrium existence requires a common $\beta$. I therefore take the average of this quantity as the value for $\beta$, which is 0.82 in my data. This means that small changes around the factual equilibrium result in discrete jumps in counterfactual predictions. I therefore first generate counterfactual predictions with this common $\beta$, and use these as a baseline for analysis.
+I set $\theta =$ 6, in line with estimates reported in @Head2014 and @Simonovska2014. A natural empirical analogue for $\beta$ is intermediate imports $(E_i - w_i L_i)$ divided by total tradable production. This varies country to country, however, and equilibrium existence requires a common $\beta$. I therefore take the average of this quantity as the value for $\beta$, which is 0.86 in my data. This means that small changes around the factual equilibrium result in discrete jumps in counterfactual predictions. I therefore first generate counterfactual predictions with this common $\beta$, and use these as a baseline for analysis.
 
 ### Trade Imbalances
 

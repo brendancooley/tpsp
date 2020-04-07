@@ -4,7 +4,7 @@ yDF <- bind_cols(ccodes, y)
 colnames(yDF) <- c("iso3", "y")
 
 yAll <- sum(yDF$y)
-yROW <- yDF %>% filter(iso3=="ROW") %>% pull(y)
+yROW <- yDF %>% filter(iso3=="RoW") %>% pull(y)
 
 ```
 
@@ -18,7 +18,7 @@ I estimate the model on a set of `r N` governments in the year `r Y`.^[Focusing 
 
 ```
 
-Solving the economy in changes for a set of $\hat{\bm{\tau}}$ requires values for a vector of economic parameters $\bm{\theta}_h$ and data on trade flows, policy barriers, and and national accounts. I discuss how I calibrate the economy and the data sources used to do so in Appendix `r AeconomyC`. There, I also report the magnitude of policy barrier estimates $\tilde{\bm{\tau}}$ from @Cooley2019b. With $\hat{h}(\hat{\bm{\tau}}; \bm{\theta}_h)$ calibrated, $\hat{G}_i(\hat{\bm{\tau}})$ can be calculated for any set of trade policies and the conquest values can be computed.
+Solving the economy in changes for a set of $\hat{\bm{\tau}}$ requires values for a vector of economic parameters $\bm{\theta}_h$ and data on trade flows, policy barriers, and and national accounts. I discuss how I calibrate the economy and the data sources used to do so in Appendix `r AeconomyC`. There, I also report the magnitude of policy barrier estimates $\tilde{\bm{\tau}}$ from @Cooley2019b. With $\hat{h}(\hat{\bm{\tau}}; \bm{\theta}_h)$ calibrated, $\hat{V}_i(\hat{\bm{\tau}})$ can be calculated for any set of trade policies and the conquest values can be computed.
 
 With the economy calibrated and policy barrier estimates in hand, I require only a measure of each government's military endowment ($M_i$) and data on dyadic geography ($\bm{W}$). I use [SIPRI](https://www.sipri.org/)'s data on military expenditure to measure governments' military capacity. These values are displayed in Figure \ref{fig:milex}.
 
@@ -29,4 +29,4 @@ milexFig + theme(aspect.ratio=1)
 
 ```
 
-Finally, I use data from @Weidmann2010 to calculate centroid-centroid geographic distance between all countries in my sample. I take the natural log of this value to be the only variable affecting power projection capacity in $\bm{W}$. 
+Finally, I use data from @Weidmann2010 to calculate centroid-centroid geographic distance between all countries in my sample, providing data for $W_{ij}$

@@ -12,8 +12,8 @@ import helpers_tpsp as hp
 
 location = sys.argv[1]  # local, hpc
 size = sys.argv[2] # mini/, mid/, large/
-# location = "local"
-# size = "mini/"
+location = "local"
+size = "mid/"
 
 basePath = os.path.expanduser('~')
 
@@ -32,8 +32,8 @@ sys.path.insert(1, helpersPath)
 
 import helpers
 
-runEstimates = True
-computeCounterfactuals = True
+runEstimates = False
+computeCounterfactuals = False
 
 data_dir_base = projectFiles + "data/"
 results_dir_base = projectFiles + "results/"
@@ -105,25 +105,27 @@ if runEstimates == True:
     xlvt_star_path = estimatesPath + "x.csv"
     # np.savetxt(xlvt_star_path, xlvt_star, delimiter=",")
 
+xlhvt_star_path = "out/mid_noRUS.csv"
+
 ### Save Estimates ###
 
-xlvt_star = np.genfromtxt(xlvt_star_path, delimiter=",")
-ge_x_star = pecmy.rewrap_xlvt(xlvt_star)["ge_x"]
-v_star = pecmy.rewrap_xlvt(xlvt_star)["v"]
-theta_x_star = pecmy.rewrap_xlvt(xlvt_star)["theta"]
+xlhvt_star = np.genfromtxt(xlhvt_star_path, delimiter=",")
+ge_x_star = pecmy.rewrap_xlhvt(xlhvt_star)["ge_x"]
+v_star = pecmy.rewrap_xlhvt(xlhvt_star)["v"]
+theta_x_star = pecmy.rewrap_xlhvt(xlhvt_star)["theta"]
 theta_dict_star = pecmy.rewrap_theta(theta_x_star)
 for i in theta_dict_star.keys():
     np.savetxt(estimatesPath + i + ".csv", np.array([theta_dict_star[i]]), delimiter=",")
 np.savetxt(estimatesPath + "v.csv", v_star, delimiter=",")
 
-rcv_eq = pecmy.rcv_ft(v_star)
-np.fill_diagonal(rcv_eq, 0)
-np.savetxt(estimatesPath + "rcv_eq.csv", rcv_eq, delimiter=",")
+# rcv_eq = pecmy.rcv_ft(v_star)
+# np.fill_diagonal(rcv_eq, 0)
+# np.savetxt(estimatesPath + "rcv_eq.csv", rcv_eq, delimiter=",")
 
-cb_ratio = theta_dict_star["c_hat"] / rcv_eq
-np.fill_diagonal(cb_ratio, 0)
-cb_ratio_mean = np.sum(cb_ratio) / (pecmy.N - 1) ** 2
-np.savetxt(estimatesPath + "cb_ratio_mean.csv", np.array([cb_ratio_mean]), delimiter=",")
+# cb_ratio = theta_dict_star["c_hat"] / rcv_eq
+# np.fill_diagonal(cb_ratio, 0)
+# cb_ratio_mean = np.sum(cb_ratio) / (pecmy.N - 1) ** 2
+# np.savetxt(estimatesPath + "cb_ratio_mean.csv", np.array([cb_ratio_mean]), delimiter=",")
 
 ### Compute Counterfactuals ###
 

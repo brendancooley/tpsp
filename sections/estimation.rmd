@@ -1,4 +1,4 @@
-The model's equilibrium, $\hat{\tilde{\bm{\tau}}}^\star$ depends on a vector of parameters $\bm{\theta}_m = \left( \bm{b}, \bm{\alpha}, \gamma, \hat{c}, \right)$, as well as the values of the shocks $\left\{ \xi_{ij} \right\}_{i,j \in \left\{ 1, \dots, N \right\}}$ and $\left\{ \epsilon_{ij} \right\}_{i,j \in \left\{ 1, \dots, N \right\}}$. Because I work with an equilibrium in changes, a prediction $\hat{\tilde{\tau}}_{ij}^\star = 1$ is consistent with the data -- the model predicts that in equilibrium, government $i$ would make no changes to its factual trade policy toward $j$. I assume observed $\tilde{\bm{\tau}}^\star$ are measured with error
+The model's equilibrium, $\hat{\tilde{\bm{\tau}}}^\star$ depends on a vector of parameters $\bm{\theta}_m = \left( \bm{v}, \alpha, \gamma, \hat{C}, \eta \right)$. I assume observed $\tilde{\bm{\tau}}^\star$ are measured with error
 $$
 \tilde{\bm{\tau}}^\star(\bm{\theta}_m) = \tilde{\bm{\tau}} + \bm{\epsilon}
 $$
@@ -9,28 +9,30 @@ Following the assumption that measurement error is mean-zero, I seek an estimato
 \min_{\bm{\theta}_m} \sum_i \sum_j \left( \epsilon_{ij}(\bm{\theta}_m) \right)^2 .
 \end{equation}
 
-Solving this problem presents two computational challenges. First, computing government welfare changes for any given $\hat{\bm{\tau}}$ requires solving system of equations characterizing the equilibrium of the international economy, $\hat{h}(\hat{\bm{\tau}})$. Second, computing $\tilde{\bm{\tau}}^\star(\bm{\theta}_m)$ requires iteratively solving each government's best response problem (\ref{eq:tauTildeStarHat}) until covergence at a Nash equilibrium. I sidestep both of these by recasting the best response problem and estimation problem as mathematical programs with equilibrium constraints (MPECs) [@Su2012; @Ossa2014; @Ossa2016].
+Solving this problem presents two computational challenges. First, computing government welfare changes for any given $\hat{\bm{\tau}}$ requires solving system of equations characterizing the equilibrium of the international economy, $\hat{h}(\hat{\bm{\tau}})$. These changes must be computed for both the proposed policies and policies imposed under war counterfactuals. Second, computing $\tilde{\bm{\tau}}^\star(\bm{\theta}_m)$ requires iteratively solving each government's best response problem until covergence at a Nash equilibrium. I sidestep both of these by recasting the best response problem and estimation problem as mathematical programs with equilibrium constraints (MPECs) [@Su2012; @Ossa2014; @Ossa2016].
 
 To reformulate the best response problem, I consider an equivalent reformulation in which each government chooses trade policies and wages, subject to the additional constraint that chosen wages are consistent with the general equilibrium of the international economy ($\hat{h}(\hat{\tilde{\bm{\tau}}}) = \hat{w}$). Let $\hat{\bm{x}}_i = \left( \hat{\tilde{\bm{\tau}}}_i, \hat{\bm{w}} \right)$ store $i$'s choice variables in this problem. Then, this problem can be rewritten as follows, noting explicitly dependencies on $\bm{\theta}_m$
 \begin{equation} \label{eq:tauTildeHatMPEC}
 \begin{split}
 \max_{\hat{\bm{x}}_i} & \quad \hat{G}_i(\hat{\bm{w}}; \bm{\theta}_m) \\
-\text{subject to} & \quad \hat{G}_j(\hat{\bm{w}}; \bm{\theta}_m) - \hat{G}_j \left( \bm{1}_i; \bm{\theta}_m \right) + \hat{c} \tilde{\chi}_{ji}(\bm{Z}; \bm{\theta}_m)^{-1} \geq 0 \quad \text{for all } j \neq i \\
-& \quad \hat{\bm{w}} = \hat{h}(\hat{\tilde{\bm{\tau}}}) .
+\text{subject to} & \quad \hat{\bm{w}} = \hat{h}(\hat{\tilde{\bm{\tau}}}) .
 \end{split}
 \end{equation}
 Let $\mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i)$ denote the associated Lagrangian. This formulation allows me to quickly compute best responses $\hat{\tilde{\bm{\tau}}}_i(\hat{\tilde{\bm{\tau}}}_{-i})$ without iteratively solving $h(\hat{\tilde{\bm{\tau}}})$.
 
-I reformulate the estimation problem (\ref{eq:estimator}) in a similar manner. By Assumption `r AG`, at any Nash equilibrium, we must have
+I then reformulate the estimation problem (\ref{eq:estimator}) in a similar manner. At an interior Nash equilibrium, the gradient of the Lagrangian is null
 $$
-\nabla_{\hat{\tilde{\bm{\tau}}}_i} \mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i; \bm{\theta}_m) = 0 
+\nabla_{\hat{\tilde{\bm{\tau}}}_i} \mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i; \bm{\theta}_m) = \bm{0}
 $$
-for each government $i$. In the reformulated estimation problem, seek to choose parameters, trade policies, and general equilibrium response variables in order to minimize measurement error while enforcing these equilibrium constraints, in addition to general equilibrium constraints. Formally, I solve
+for each government $i$. In the reformulated estimation problem, seek to choose parameters, trade policies, multipliers, and general equilibrium response variables for the proposed policies and imposed policies in order to minimize measurement error while enforcing these equilibrium constraints, in addition to general equilibrium constraints. Let $\hat{\bm{x}}_i^\prime = \left( \bm{1}_i, \hat{\tilde{\bm{\tau}}}_{-i}, \hat{\bm{w}}_i^\prime \right)$ store general equilibrium equilibrium policies and wages when free trade is imposed on $i$.
+
+Formally, I solve
 \begin{equation} \label{eq:estimatorMPEC}
 \begin{split}
-\min_{ \bm{\theta}_m, \hat{\tilde{\bm{\tau}}}, \hat{\bm{w}} } & \quad \sum_i \sum_j \left( \epsilon_{ij} \right)^2 \\
+\min_{ \bm{\theta}_m, \hat{\tilde{\bm{\tau}}}, \hat{\bm{w}}, \hat{\bm{w}}^\prime, \bm{\lambda} } & \quad \sum_i \sum_j \left( \epsilon_{ij} \right)^2 \\
 \text{subject to} & \quad \nabla_{\hat{\tilde{\bm{\tau}}}_i} \mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i; \bm{\theta}_m) = 0  \text{ for all } i \\
-& \quad \hat{\bm{w}} = \hat{h}(\hat{\tilde{\bm{\tau}}}) .
+& \quad \hat{\bm{w}} = \hat{h} \left( \hat{\tilde{\bm{\tau}}} \right) \\
+& \quad \hat{\bm{w}}_i^\prime = \hat{h} \left( \bm{1}_i, \hat{\tilde{\bm{\tau}}}_{-i} \right)
 \end{split}
 \end{equation}
 The constraints collectively ensure $\hat{\tilde{\bm{\tau}}} = \tilde{\bm{\tau}}^\star(\bm{\theta}_m)$ -- or that the policies are consistent with Nash equilibrium in policies, given estimated parameters.
