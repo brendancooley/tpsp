@@ -105,7 +105,7 @@ theta_dict["C"] = np.repeat(1., pecmy.N)
 # theta_dict["C"] = np.array([1, 2, 3, 4, 5])
 theta_x = pecmy.unwrap_theta(theta_dict)
 
-opt.root(pecmy.pp_wrap_alpha, .5, args=(.98, ))['x']
+opt.root(pecmy.pp_wrap_alpha, .5, args=(.99, ))['x']
 # pecmy.W ** - .75
 
 v = np.mean(pecmy.ecmy.tau, axis=1)

@@ -1224,7 +1224,7 @@ class policies:
             x_U[b] = 1000
             b += 1
             # x_L[b] = -self.alpha1_ub  # alpha1 lower
-            a_ub = opt.root(self.pp_wrap_alpha, .5, args=(.98, ))['x']
+            a_ub = opt.root(self.pp_wrap_alpha, .5, args=(.99, ))['x']
             x_L[b] = -a_ub  # alpha1 lower
             x_U[b] = a_ub # alpha1 upper
             b += 1
