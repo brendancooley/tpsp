@@ -8,24 +8,21 @@
 # ipak(libs)
 # 
 # tpspPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
-# dataPath <- paste0(tpspPath, "tpsp_data_mini/")
-# resultsPath <- paste0(tpspPath, "results_mini/")
+# dataPath <- paste0(tpspPath, "data/mid/")
+# resultsPath <- paste0(tpspPath, "results/mid/")
+# estimatesPath <- paste0(resultsPath, "estimates/")
 # 
 # ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
-# ccodes_vec <- ccodes %>% pull(.)
 # N <- nrow(ccodes)
-# Y <- read_csv(paste0(dataPath, "year.csv"), col_names=FALSE) %>% pull(.)
-# # rcv0 <- read_csv(paste0("~/Dropbox (Princeton)/1_Papers/tpsp/working/analysis/results/rcv0.csv"), col_names=FALSE)
-# # rcv1 <- read_csv(paste0(resultsPath, "rcv1.csv"), col_names=FALSE)
-# rcv <- read_csv(paste0(resultsPath, "rcv.csv"), col_names=FALSE)
-# b_vals <- read_csv(paste0(resultsPath, "b_vals.csv"), col_names=FALSE) %>% pull(.)
-# b_tilde <- read_csv(paste0(resultsPath, "b_tilde.csv"), col_names=FALSE)
-# tau <- read_csv(paste0(dataPath, "tau.csv"), col_names=FALSE)
-# 
-# ccodes <- read_csv("~/Dropbox (Princeton)/1_Papers/tpsp/01_data/data/mini/ccodes.csv", col_names=FALSE)
-# N <- nrow(ccodes)
-# rcv_eq <- read_csv("~/Dropbox (Princeton)/1_Papers/tpsp/01_data/results/mini/estimates/rcv_eq.csv", col_names=FALSE)
+# rcv_eq <- read_csv(paste0(estimatesPath, "rcv_eq.csv"), col_names=FALSE)
 
+for (i in 1:N) {
+  for (j in 1:N) {
+    if (rcv_eq[i, j] < 1) {
+      rcv_eq[i, j] <- 1
+    }
+  }
+}
 for (i in 1:N) {
   rcv_eq[i, i] <- NA
 }
@@ -50,7 +47,7 @@ rcvhm <- function(rcv, minTau, maxTau) {
     scale_fill_gradient(low=hmColors[1], high=hmColors[length(hmColors)], 
                         breaks=c(minTau, maxTau), limits=c(minTau, maxTau), labels=c("Low", "High"), 
                         guide="colorbar", na.value=naColor) +
-    labs(x='Defender', y='Attacker', title=paste0("Conquest Values")) +
+    labs(x='Attacker', y='Defender', title=paste0("Conquest Values")) +
     labs(fill="Value") +
     theme_classic() +
     coord_fixed() +
@@ -62,7 +59,7 @@ rcvhm <- function(rcv, minTau, maxTau) {
           legend.position="none")
 }
 
-rcvhm(rcv_eq, mint, maxt)
+# rcvhm(rcv_eq, mint, maxt)
 # rcvhm(rcv0, 0, mint, maxt) + rcvhm(rcv1, 1, mint, maxt)
 # coords = which(rcv0 == max(rcv0), arr.ind = TRUE)
 # coords[2]

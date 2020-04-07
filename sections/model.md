@@ -2,11 +2,11 @@ There are $N$ governments, indexed $i \in \left\{ 1, ..., N \right\}$. Governmen
 
 Throughout, I will use $\bm{\theta}_m$ to denote the vector of all parameters to be estimated and $\bm{Z}$ to denote the vector of all data observed by the researcher. $\bm{\theta}_h$ denotes parameters associated with the economy, $h$, which will be calibrated. I will explicate the elements of these vectors in the proceeding sections and the Appendix.
 
-Government welfare depends on these general equilibrium responses to trade policy choices. Governments value the welfare of a representative consumer that resides within each country. The consumer's welfare in turn depends on net revenues accrued through the government's trade policy distortions, which are redistributed to the consumer. Revenues and induced can be computed given knowledge of the general equilibrium function $h(\bm{\tau})$. Each government's welfare, is equivalent to the consumer's indirect utility, $V_i \left( h(\bm{\tau}); v_i \right)$ where $v_i$ is the revenue threshold parameter. This value of this function depends on the consumer's net income and is characterized fully in the Appendix. The consumer's net income can be written as a function of the governments' policy choices
+Government welfare depends on these general equilibrium responses to trade policy choices. Governments value the welfare of a representative consumer that resides within each country. The consumer's welfare in turn depends on net revenues accrued through the government's trade policy distortions, which are redistributed to the consumer. Revenues and induced welfare can be computed given knowledge of the general equilibrium function $h(\bm{\tau})$. Each government's welfare, is equivalent to the consumer's indirect utility, $V_i \left( h(\bm{\tau}); v_i \right)$ where $v_i$ is the revenue threshold parameter. This value of this function depends on the consumer's net income and is characterized fully in the Appendix. The consumer's net income can be written as a function of the governments' policy choices
 $$
 \tilde{Y}_i(h_i(\bm{\tau}))  = h_i(\bm{\tau}) * L_i + r_i(h(\bm{\tau}); v_i) . 
 $$
-$L_i$ is the country's labor endowment, $r_i(h(\bm{\tau}); v_i)$ is trade policy revenues, and $h_i(\bm{\tau})$ are equilibrium wages in $i$. $v_i \in [1, \infty)$ is a structural parameter that modulates the government's ability to extract trade policy rents from society. 
+$L_i$ is the country's labor endowment, $r_i(h(\bm{\tau}); v_i)$ is trade policy revenues, and $h_i(\bm{\tau})$ are equilibrium wages in $i$. $v_i \in [1, \infty)$ is a structural parameter that modulates the government's ability to extract trade policy rents. 
 
 Adjusted revenues are given by
 \begin{equation} \label{eq:r}

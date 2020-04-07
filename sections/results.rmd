@@ -14,13 +14,13 @@ USA_id <- which(ccodes=="USA")
 CHN_id <- which(ccodes=="CHN")
 
 # chi_gamma_ex <- 2^gamma_tilde / (2^gamma_tilde + 1)
-rho_ex = exp(-1*alpha1* W[USA_id, CHN_id] %>% pull(.))
+# rho_ex = exp(-1*alpha1* W[USA_id, CHN_id] %>% pull(.))
 
 ```
 
 *NOTE: Computing uncertainty intervals is computationally expensive and in-progress. I report and discuss point estimates here, with the necessary caution such preliminary discussion requires.*
 
-Estimates of preference weights are reported in Table \ref{tab:v_estsT}. In @Cooley2019b, I show that developed countries tend to adopt higher trade barriers than their developing peers. Consistent with this finding, the European Union and Japan are assessed to have high values of $v_i$.
+Recall that $v_i$ governs the ease with which governments can extract revenues from trade policy distortions. When $v_i$ is higher government $i$ prefers higher barriers to trade, all else equal. Estimates of these parameters are reported in Table \ref{tab:v_estsT}.
 
 
 ```{r v_estsT, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
@@ -31,9 +31,9 @@ kable(v_estsT, "latex", booktabs = T, caption = "Preference Parameter ($\\tilde{
 
 ```
 
-With estimates of $v_i$ in hand, I can calculate each government's conquest value vis-à-vis all other governments. Recall that governments impose free trade on other governments when they defeat them in wars. Then, $j$'s counterfactual utility in this scenario can be readily calculated given knowledge of its objective function (\ref{eq:Ghat}). These values are shown in Figure \ref{fig:rcv}. Each cell measures the utility change each row government experiences when successfully conquering each column government. Darker colors correspond to larger changes in utility.
+With estimates of $v_i$ in hand, I can calculate each government's conquest value vis-à-vis all other governments. Recall that governments impose free trade on other governments when they defeat them in wars. Then, $j$'s counterfactual utility in this scenario can be readily calculated given knowledge of its objective function (\ref{eq:Ghat}). These values are shown in Figure \ref{fig:rcv}. Each cell measures the utility change each row government experiences when successfully conquering each column government, evaluated at estimated $v_i$. Darker colors correspond to larger changes in utility.
 
-Governments that face poor market access conditions gain the most from successful wars, relative to the status quo. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These conquest values assist in the identification of the power projection and war cost parameters in $\bm{\theta}_m$.
+In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These conquest values assist in the identification of the power projection and war cost parameters in $\bm{\theta}_m$.
 
 ```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Conquest values evaluated at $\\tilde{\\bm{v}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \\label{fig:rcv}"), fig.height=4, dpi=300, fig.pos="t"}
 
@@ -42,22 +42,5 @@ rcvhm(rcv_eq, mint, maxt)
 
 ```
 
-Governments also do not face obstacles to projecting power over space. I estimate $\alpha$ to be `r round(alpha1, 5)`. At this value, if the United States wished to invade China, its effective strength would *increase* due to the distance between the countries.
+Recall that $\alpha$ governs how war costs respond to the distance between prospective adversaries and that $\gamma$ governs the effectiveness of military advantage in reducing war costs. When these parameters take the value of zero then geography and military advantage have no effect on the war cost distributions. I estimate $\alpha$ to be `r round(alpha1, 2)`, consistent with an inverse effect of distance on power projection capacity. In other words, I find no evidence of a loss of strength gradient. There are, however, substantial returns to military advantage. I estimate $\gamma$ to be `r round(gamma, 2)`, consistent with increasing returns to military advantage. In general, however, war is estimated to be quite costly. The scale parameter, $\hat{C}$ is estimated to be `r round(c_hat, 1)`, which renders war prohibitively costly for those that do not enjoy other advantages, such as military strength. In general, governments run very small risks of invasion from other governments. The exception to this rule is threats from the United States, which are estimated to play a significant role in many governments' calculations of optimal policy. This is the result of the United States' substantial military advantages over potential adversaries and the returns these are estimated to bring in the realm of trade policy.
 
-Figure \ref{fig:chi} combines these estimates to produce estimates of the contest function $\tilde{\chi}_{ji}$ for each pair of countries. The United States' military advantage is reflected in its higher probability of success in conquest.
-
-```{r chi, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Estimated probability of successful conquest for each attacking country (row) in war against every defending country (column). Each probability is reported in the appropriate cell of the heatmap. \\label{fig:chi}"), fig.height=4, dpi=300, fig.pos="t"}
-
-source("../02_figs/chi.R")
-chihm(chi, minchi, maxchi)
-
-```
-
-While governments do not face a geographic loss of strength gradient, wars are still costly. I estimate $\hat{c}$ to be `r round(c_hat, 2)`. Dividing this value by governments' conquest values, shown in Figure \ref{fig:rcv}, I compute war's cost-benefit ratio to be `r round(cb_ratio_mean, 2)` on average. Figure \ref{fig:cb_ratio} shows inverse cost-benefit ratios for each potential war. While these are low on average, there is substantial heterogeneity. Russia in particular benefits substantially from wars with other governments, which stems from the high factual trade barriers others impose on Russian exports. 
-
-```{r cb_ratio, echo=FALSE, warning=FALSE, message=FALSE, fig.cap=paste0("Estimated inverse cost-benefit ratio for attacking country against each defending country in offensive wars. \\label{fig:cb_ratio}"), fig.height=4, dpi=300, fig.pos="t"}
-
-source("../02_figs/cbratio.R")
-cb_ratio_plot + theme(aspect.ratio=1)
-
-```

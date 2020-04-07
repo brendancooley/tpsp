@@ -7,8 +7,8 @@ author:
 	- name: Brendan Cooley
       affiliation: Ph.D. Candidate, Department of Politics, Princeton University
 date: \today
-abstract: In international relations, how does latent military coercion affect governments’ policy choices? Because militarily powerful governments can credibly threaten to impose their policy preferences by force, weaker governments may adjust their policy choices to avoid costly conflict. This setting raises an inference problem -- do observed policies reflect the preferences of the governments that adopted them or the military constraints of the anarchic international system? Here, I investigate the role of this “shadow of power” in determining trade policy. Specifically, I build a model of trade policy choice under threat that allows me to measure empirically governments’ underlying trade policy preferences, the returns to military advantage, and the extent to which power projection capacity degrades across space. I then estimate the parameters of the model using data on governments' observed trade policies in 2011. I find that geographic distance is not an impediment to the projection of force and that counterfactual wars destroy half of their value to the aggressor on average. Through counterfactual experiments, I can quantify the effect of military constraints on the international economy and governments' welfare. These and other exercises shed light on how military power affects international economic exchange, and how expectations about exchange affect governments’ military strategies.
-# thanks: Allison Carnegie, APSA 2019.
+abstract: In international relations, how does latent military coercion affect governments’ policy choices? Because militarily powerful governments can credibly threaten to impose their policy preferences by force, weaker governments may adjust their policy choices to avoid costly conflict. This setting raises an inference problem -- do observed policies reflect the preferences of the governments that adopted them or the military constraints of the anarchic international system? Here, I investigate the role of this “shadow of power” in determining trade policy. Specifically, I build a model of trade policy choice under threat that allows me to measure empirically governments’ underlying trade policy preferences, the returns to military advantage, and the extent to which power projection capacity degrades across space. I then estimate the parameters of the model using data on governments' observed trade policies in 2011. I find that geographic distance is not an impediment to the projection of force but that there are increasing returns to military advantage in the technology of coercion. Through counterfactual experiments, I can quantify the effect of military constraints on the international economy and governments' welfare. These and other exercises shed light on how military power affects international economic exchange, and how expectations about exchange affect governments’ military strategies.
+thanks: Thanks to Geneveive Bates, Allison Carnegie, Jim Fearon, Haosen Ge, Mike Gibilisco, Kyle Haynes, Helen Milner, Sayumi Miyano, Steve Monroe, In Young Park, Kris Ramsay, Joe Ruggiero for comments and discussions on many earlier versions of this project. Thanks also to audiences at the American Political Science Association's 2019 annual meeting and the 2020 Conference on Formal Models of International Relations.
 # jelcodes: JEL codes go here
 
 bibliography: /Users/brendancooley/Dropbox (Princeton)/References/library.bib
@@ -179,7 +179,7 @@ Finally, I use data from @Weidmann2010 to calculate centroid-centroid geographic
 # Estimation
 
 
-The model's equilibrium, $\hat{\tilde{\bm{\tau}}}^\star$ depends on a vector of parameters $\bm{\theta}_m = \left( \bm{v}, \alpha, \gamma, \hat{C}, \eta \right)$. I assume observed $\tilde{\bm{\tau}}^\star$ are measured with error
+The model's equilibrium, $\hat{\tilde{\bm{\tau}}}^\star$ depends on a vector of parameters $\bm{\theta}_m = \left( \bm{v}, \alpha, \gamma, \hat{C}, \eta \right)$. I calibrate the shape parameter, $\eta$ to be 1. I assume observed $\tilde{\bm{\tau}}^\star$ are measured with error
 $$
 \tilde{\bm{\tau}}^\star(\bm{\theta}_m) = \tilde{\bm{\tau}} + \bm{\epsilon}
 $$
@@ -203,9 +203,9 @@ Let $\mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i)$ denote the associated Lagran
 
 I then reformulate the estimation problem (\ref{eq:estimator}) in a similar manner. At an interior Nash equilibrium, the gradient of the Lagrangian is null
 $$
-\nabla_{\hat{\tilde{\bm{\tau}}}_i} \mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i; \bm{\theta}_m) = 0 
+\nabla_{\hat{\tilde{\bm{\tau}}}_i} \mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i; \bm{\theta}_m) = \bm{0}
 $$
-for each government $i$. In the reformulated estimation problem, seek to choose parameters, trade policies, multipliers, and general equilibrium response variables for the proposed policies and imposed policies in order to minimize measurement error while enforcing these equilibrium constraints, in addition to general equilibrium constraints. Let $\hat{\bm{x}}_i^\prime = \left( \bm{1}_i, \hat{\tilde{\bm{\tau}}}_{-i}, \hat{\bm{w}}_i^\prime \right)$ store general equilibrium equilibrium wages when free trade is imposed on $i$, holding others' policies at their proposed values.
+for each government $i$. In the reformulated estimation problem, seek to choose parameters, trade policies, multipliers, and general equilibrium response variables for the proposed policies and imposed policies in order to minimize measurement error while enforcing these equilibrium constraints, in addition to general equilibrium constraints. Let $\hat{\bm{x}}_i^\prime = \left( \bm{1}_i, \hat{\tilde{\bm{\tau}}}_{-i}, \hat{\bm{w}}_i^\prime \right)$ store general equilibrium equilibrium policies and wages when free trade is imposed on $i$.
 
 Formally, I solve
 \begin{equation} \label{eq:estimatorMPEC}
@@ -227,13 +227,8 @@ This procedure produces point estimates $\tilde{\bm{\theta}}_m$. I then construc
 
 *NOTE: Computing uncertainty intervals is computationally expensive and in-progress. I report and discuss point estimates here, with the necessary caution such preliminary discussion requires.*
 
-Estimates of preference weights are reported in Table \ref{tab:v_estsT}. In @Cooley2019b, I show that developed countries tend to adopt higher trade barriers than their developing peers. Consistent with this finding, the European Union and Japan are assessed to have high values of $v_i$.
+Recall that $v_i$ governs the ease with which governments can extract revenues from trade policy distortions. When $v_i$ is higher government $i$ prefers higher barriers to trade, all else equal. Estimates of these parameters are reported in Table \ref{tab:v_estsT}.
 
-
-
-```
-## Error in data.frame(..., check.names = FALSE): arguments imply differing number of rows: 9, 6
-```
 
 \begin{table}
 
@@ -243,32 +238,28 @@ Estimates of preference weights are reported in Table \ref{tab:v_estsT}. In @Coo
 \toprule
 iso3 & Country Name & $\tilde{v}_i$\\
 \midrule
-CHN & China & 1.106036\\
-EU & European Union & 1.354114\\
-JPN & Japan & 1.996520\\
-RoW & Rest of World & 1.125184\\
-RUS & Russia & 1.000000\\
+AUS & Australia & 3.08\\
+BRA & Brazil & 3.14\\
+CAN & Canada & 4.15\\
+CHN & China & 1.45\\
+EU & European Union & 2.06\\
 \addlinespace
-USA & United States & 1.292219\\
+JPN & Japan & 2.46\\
+KOR & South Korea & 1.60\\
+RoW & Rest of World & 1.60\\
+USA & United States & 1.51\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-With estimates of $v_i$ in hand, I can calculate each government's conquest value vis-à-vis all other governments. Recall that governments impose free trade on other governments when they defeat them in wars. Then, $j$'s counterfactual utility in this scenario can be readily calculated given knowledge of its objective function (\ref{eq:Ghat}). These values are shown in Figure \ref{fig:rcv}. Each cell measures the utility change each row government experiences when successfully conquering each column government. Darker colors correspond to larger changes in utility.
+With estimates of $v_i$ in hand, I can calculate each government's conquest value vis-à-vis all other governments. Recall that governments impose free trade on other governments when they defeat them in wars. Then, $j$'s counterfactual utility in this scenario can be readily calculated given knowledge of its objective function (\ref{eq:Ghat}). These values are shown in Figure \ref{fig:rcv}. Each cell measures the utility change each row government experiences when successfully conquering each column government, evaluated at estimated $v_i$. Darker colors correspond to larger changes in utility.
 
-Governments that face poor market access conditions gain the most from successful wars, relative to the status quo. In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These conquest values assist in the identification of the power projection and war cost parameters in $\bm{\theta}_m$.
+In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These conquest values assist in the identification of the power projection and war cost parameters in $\bm{\theta}_m$.
 
 ![Conquest values evaluated at $\tilde{\bm{v}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \label{fig:rcv}](figure/rcv-1.png)
 
-Governments also do not face obstacles to projecting power over space. I estimate $\alpha$ to be -0.00026. At this value, if the United States wished to invade China, its effective strength would *increase* due to the distance between the countries.
+Recall that $\alpha$ governs how war costs respond to the distance between prospective adversaries and that $\gamma$ governs the effectiveness of military advantage in reducing war costs. When these parameters take the value of zero then geography and military advantage have no effect on the war cost distributions. I estimate $\alpha$ to be 0.02, consistent with an inverse effect of distance on power projection capacity. In other words, I find no evidence of a loss of strength gradient. There are, however, substantial returns to military advantage. I estimate $\gamma$ to be 0.94, consistent with increasing returns to military advantage. In general, however, war is estimated to be quite costly. The scale parameter, $\hat{C}$ is estimated to be 2.8, which renders war prohibitively costly for those that do not enjoy other advantages, such as military strength. In general, governments run very small risks of invasion from other governments. The exception to this rule is threats from the United States, which are estimated to play a significant role in many governments' calculations of optimal policy. This is the result of the United States' substantial military advantages over potential adversaries and the returns these are estimated to bring in the realm of trade policy.
 
-Figure \ref{fig:chi} combines these estimates to produce estimates of the contest function $\tilde{\chi}_{ji}$ for each pair of countries. The United States' military advantage is reflected in its higher probability of success in conquest.
-
-![Estimated probability of successful conquest for each attacking country (row) in war against every defending country (column). Each probability is reported in the appropriate cell of the heatmap. \label{fig:chi}](figure/chi-1.png)
-
-While governments do not face a geographic loss of strength gradient, wars are still costly. I estimate $\hat{c}$ to be 0.53. Dividing this value by governments' conquest values, shown in Figure \ref{fig:rcv}, I compute war's cost-benefit ratio to be 0.5 on average. Figure \ref{fig:cb_ratio} shows inverse cost-benefit ratios for each potential war. While these are low on average, there is substantial heterogeneity. Russia in particular benefits substantially from wars with other governments, which stems from the high factual trade barriers others impose on Russian exports. 
-
-![Estimated inverse cost-benefit ratio for attacking country against each defending country in offensive wars. \label{fig:cb_ratio}](figure/cb_ratio-1.png)
 
 # Conclusion
 

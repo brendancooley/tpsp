@@ -118,9 +118,10 @@ for i in theta_dict_star.keys():
     np.savetxt(estimatesPath + i + ".csv", np.array([theta_dict_star[i]]), delimiter=",")
 np.savetxt(estimatesPath + "v.csv", v_star, delimiter=",")
 
-# rcv_eq = pecmy.rcv_ft(v_star)
-# np.fill_diagonal(rcv_eq, 0)
-# np.savetxt(estimatesPath + "rcv_eq.csv", rcv_eq, delimiter=",")
+pecmy.G_hat(ge_x_star, v_star, id, all=True)
+rcv_eq = pecmy.rcv_ft(ge_x_star, v_star)
+np.fill_diagonal(rcv_eq, 0)
+np.savetxt(estimatesPath + "rcv_eq.csv", rcv_eq, delimiter=",")
 
 # cb_ratio = theta_dict_star["c_hat"] / rcv_eq
 # np.fill_diagonal(cb_ratio, 0)

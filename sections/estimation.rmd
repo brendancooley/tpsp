@@ -1,4 +1,4 @@
-The model's equilibrium, $\hat{\tilde{\bm{\tau}}}^\star$ depends on a vector of parameters $\bm{\theta}_m = \left( \bm{v}, \alpha, \gamma, \hat{C}, \eta \right)$. I assume observed $\tilde{\bm{\tau}}^\star$ are measured with error
+The model's equilibrium, $\hat{\tilde{\bm{\tau}}}^\star$ depends on a vector of parameters $\bm{\theta}_m = \left( \bm{v}, \alpha, \gamma, \hat{C}, \eta \right)$. I calibrate the shape parameter, $\eta$ to be 1. I assume observed $\tilde{\bm{\tau}}^\star$ are measured with error
 $$
 \tilde{\bm{\tau}}^\star(\bm{\theta}_m) = \tilde{\bm{\tau}} + \bm{\epsilon}
 $$

@@ -2136,6 +2136,7 @@ class policies:
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x_copy)
         tau_hat_sv = ge_dict["tau_hat"]
         tau_hat_sv[id, ] = tau_hat_ft[id, ]
+        # print(tau_hat_sv*self.ecmy.tau)
         ge_dict_sv = self.ecmy.geq_solve(tau_hat_sv, np.ones(self.N), v)
         if ge_dict_sv == 0:
             return(0)
@@ -2225,3 +2226,14 @@ class policies:
         ge_x_sv = self.ecmy.unwrap_ge_dict(ge_dict_sv)
 
         return(ge_x_sv)
+
+    def rcv_ft(self, x, v):
+
+        out = np.zeros((self.N, self.N))
+        G_hat = self.G_hat(x, v, 0, all=True)
+        for i in range(self.N):
+            ge_x_ft = self.ft_sv(i, x, v)
+            G_prime = self.G_hat(ge_x_ft, v, i, all=True)
+            out[i, ] = G_prime / G_hat
+
+        return(out)

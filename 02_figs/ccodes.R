@@ -8,11 +8,12 @@
 # ipak(libs)
 # 
 # tpspPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
-# dataPath <- paste0(tpspPath, "tpsp_data_mini/")
-# resultsPath <- paste0(tpspPath, "results_mini/")
+# dataPath <- paste0(tpspPath, "data/mid/")
+# resultsPath <- paste0(tpspPath, "results/mid/")
+# estimatesPath <- paste0(resultsPath, "estimates/")
 # 
 # ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
-# b_tilde <- as_tibble(sample(seq(0, 1, .1), N))
+# v_star <- read_csv(paste0(estimatesPath, "v.csv"), col_names=FALSE)
 
 ccodesT <- ccodes
 N <- nrow(ccodes)
@@ -21,6 +22,5 @@ ccodesT$`Country Name` <- countrycode(ccodesT$iso3, "iso3c", "country.name")
 ccodesT$`Country Name` <- ifelse(ccodesT$iso3=="EU", "European Union", ccodesT$`Country Name`)
 ccodesT$`Country Name` <- ifelse(ccodesT$iso3=="RoW", "Rest of World", ccodesT$`Country Name`)
 
-
-v_estsT <- cbind(ccodesT, v_star)
+v_estsT <- cbind(ccodesT, round(v_star, 2))
 colnames(v_estsT) <- c("iso3", "Country Name", "$\\tilde{v}_i$")
