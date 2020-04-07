@@ -1212,8 +1212,8 @@ class policies:
             x_L[b] = 1 # eta lower
             x_U[b] = 1  # eta upper
             b += 1
-            x_L[b] = -2.  # gamma lower
-            x_U[b] = 2.  # gamma upper
+            # x_L[b] = -2.  # gamma lower
+            # x_U[b] = 2.  # gamma upper
             # x_L[b] = 1
             # x_U[b] = 1  # fix gamma at 1
             b += 1
@@ -1221,12 +1221,12 @@ class policies:
             # x_U[b] = 1
             x_L[b] = 5
             # x_L[b] = opt.root(self.pp_wrap_C, .5, args=(.4, ))['x'] # c_hat
-            x_U[b] = 10000
+            # x_U[b] = 10000
             b += 1
             # x_L[b] = -self.alpha1_ub  # alpha1 lower
             a_ub = opt.root(self.pp_wrap_alpha, .5, args=(.999, ))['x']
-            x_L[b] = -a_ub  # alpha1 lower
-            x_U[b] = a_ub # alpha1 upper
+            # x_L[b] = -a_ub  # alpha1 lower
+            # x_U[b] = a_ub # alpha1 upper
             b += 1
             x_L[b:b+self.N] = .1  # cs
             x_U[b:b+self.N] = 10  # cs

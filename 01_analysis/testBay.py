@@ -23,7 +23,7 @@ projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
 size = "mid/"
 sv_fname = "out/mini_sv.csv"
-out_fname = "out/mid_est_test7.csv"
+out_fname = "out/mid_est_test8.csv"
 # sv = np.genfromtxt(sv_fname, delimiter=',')
 
 helpersPath = os.path.expanduser(projectPath + "source/")
@@ -88,7 +88,7 @@ imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)
 # generate pecmy and rcv vals
 # np.seterr(all='raise')
-# opt.root(pecmy.pp_wrap_alpha, .5, args=(.7, ))['x']
+# opt.root(pecmy.pp_wrap_alpha, .5, args=(.999, ))['x']
 
 # np.max(pecmy.ecmy.tau, axis=1)
 
