@@ -2,19 +2,27 @@
 
 <div class="fragment">
 
-**Anarchy and Inference**
-
-- Anarchy $\implies$ powerful governments can impose policies on others by force
-- Bargaining critique: policies reflect shadow of power
-  + @Brito1985, @Fearon1995, @Art1996
-- **Question:** Do observed policies reflect **preferences** of the governments that adopted them or **constraints of anarchy?**
+> "A has **power** over B to the extent that he can get B to do something that B **would not otherwise do.**"
+> 
+> - @Dahl1957
 
 </div>
 <div class="fragment">
 
-> "$A$ has **power** over B to the extent that he can get $B$ to do something that $B$ **would not otherwise do.**"
-> 
-> - @Dahl1957
+**Power in Anarchy**
+
+- Anarchy: no higher authority to compel states to resolve disputes peacefully
+- Anarchy $\implies$ powerful governments can impose policies on others by force
+- Bargaining critique: policies adjust to reflect **shadow of power**
+  + @Brito1985, @Fearon1995, @Art1996; @Powell1999
+
+</div>
+<div class="fragment">
+
+**Inference Problem**
+
+- Dahl: What would B do in the absence of A's power?
+- Do observed policies reflect **preferences** of the governments that adopted them or **constraints of anarchy?**
 
 </div>
 
