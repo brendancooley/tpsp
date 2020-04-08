@@ -1,5 +1,7 @@
 # Power and Preferences {id="introduction"}
 
+<div class="fragment">
+
 **Anarchy and Inference**
 
 - Anarchy $\implies$ powerful governments can impose policies on others by force
@@ -7,11 +9,14 @@
   + @Brito1985, @Fearon1995, @Art1996
 - **Question:** Do observed policies reflect **preferences** of the governments that adopted them or **constraints of anarchy?**
 
-. . . 
+</div>
+<div class="fragment">
 
 > "$A$ has **power** over B to the extent that he can get $B$ to do something that $B$ **would not otherwise do.**"
 > 
 > - @Dahl1957
+
+</div>
 
 ## Trade Policy and Gunboat Diplomacy {id="gunboats"}
 
@@ -32,8 +37,6 @@
   + @Autor2013, @Costinot2015, @Goldberg2016
 
 ## Anarchy and Inference: Approach {id="approach"}
-
-
 
 **Ideal Experiment**
 

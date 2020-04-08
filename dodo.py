@@ -15,6 +15,9 @@ github = "~/GitHub/tpsp"
 website_docs = "~/Dropbox\ \(Princeton\)/5_CV/website/static/docs"
 website_docs_github = "~/Github/brendancooley.github.io/docs"
 templatePath = "~/Dropbox\ \(Princeton\)/8_Templates/"
+verticatorPath = "~/Dropbox\ \(Princeton\)/8_Templates/plugin/verticator"
+pluginDest = "index_files/reveal.js-3.8.0/plugin"
+revealPath = "~/Dropbox\ \(Princeton\)/8_Templates/reveal.js-3.8.0"
 
 csv_dir_base = "~/Dropbox\ \(Princeton\)/1_Papers/tpsp/01_data/"
 results_dir_base = csv_dir_base + "results/"
@@ -89,10 +92,15 @@ def task_prep_slides():
 	}
 
 def task_slides():
-	"""build slides"""
+	"""
+
+	"""
 	yield {
-		'name': "writing slides...",
-		'actions': ["R --slave -e \"rmarkdown::render('tpsp_slides.Rmd', output_file='index.html')\""],
+		'name': 'draft slides',
+		'actions': ["R --slave -e \"rmarkdown::render('tpsp_slides.Rmd', output_file='index.html')\"",
+            "perl -pi -w -e 's{reveal.js-3.3.0.1}{reveal.js-3.8.0}g' index.html",
+            "cp -r " + revealPath + " index_files/",
+            "cp -a " + verticatorPath + " " + pluginDest],
 		'verbosity': 2,
 	}
 
