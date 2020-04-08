@@ -111,6 +111,7 @@ xlhvt_star_path = "out/mid_est_test8.csv"
 
 xlhvt_star = np.genfromtxt(xlhvt_star_path, delimiter=",")
 ge_x_star = pecmy.rewrap_xlhvt(xlhvt_star)["ge_x"]
+pecmy.ecmy.rewrap_ge_dict(ge_x_star)["tau_hat"] * pecmy.ecmy.tau
 v_star = pecmy.rewrap_xlhvt(xlhvt_star)["v"]
 theta_x_star = pecmy.rewrap_xlhvt(xlhvt_star)["theta"]
 theta_dict_star = pecmy.rewrap_theta(theta_x_star)
@@ -118,7 +119,7 @@ for i in theta_dict_star.keys():
     np.savetxt(estimatesPath + i + ".csv", np.array([theta_dict_star[i]]), delimiter=",")
 np.savetxt(estimatesPath + "v.csv", v_star, delimiter=",")
 
-pecmy.G_hat(ge_x_star, v_star, id, all=True)
+pecmy.G_hat(ge_x_star, v_star, 0, all=True)
 rcv_eq = pecmy.rcv_ft(ge_x_star, v_star)
 np.fill_diagonal(rcv_eq, 0)
 np.savetxt(estimatesPath + "rcv_eq.csv", rcv_eq, delimiter=",")
@@ -132,14 +133,14 @@ np.savetxt(estimatesPath + "rcv_eq.csv", rcv_eq, delimiter=",")
 
 if computeCounterfactuals == True:
 
-    xlhvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
+    # xlhvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
     xlhvt_dict = pecmy.rewrap_xlhvt(xlhvt_star)
     theta_x_star = xlhvt_dict["theta"]
     v_star = xlhvt_dict["v"]
 
     xlhvt_prime, obj, status = pecmy.estimator(v_star, theta_x_star, pecmy.mzeros, nash_eq=True)
 
-    print(xlvt_prime)
+    print(xlhvt_prime)
     print(obj)
     print(status)
 
