@@ -19,7 +19,7 @@
 </div>
 <div class="fragment">
 
-**Inference Problem**
+**Detecting the Exercise of Power: An Inference Problem**
 
 - Dahl: What would B do in the absence of A's power?
 - Do observed policies reflect **preferences** of the governments that adopted them or **constraints of anarchy?**
@@ -30,14 +30,27 @@
 
 **What Do Governments Want?**
 
-- **Heterogeneity** in desired protectionism
-  + @Grossman1994, @Gawande2009
-- Mercantilism induces **conflicts of interest** between governments
-  + Gunboat diplomacy: powerful impose openness abroad [@Findlay2007]
+- **Protectionism** at home [@Grossman1994; @Gawande2009]
+  + Domestic distributional conflict: @Mayer1984, @Rogowski1987; @Grossman1994
+  + Fiscal capacity: @Rodrik2008, @Queralt2015
+- **Openness** abroad [@Grossman2016]
+	+ Market access externalities: @Ossa2011, @Ossa2012
+	+ Lobbying and Trade Policy: Firms pressure governments to negotiate reductions in trade barriers abroad [@Osgood2016; @Kim2017] 
+- Induces **conflicts of interest** between governments
 
 . . . 
 
-**Does It Matter?**
+**Gunboat Diplomacy**
+
+- Powerful governments impose openness on weaker counterparts
+	+ @Findlay2007
+- Peacetime regimes: empire, hegemony, and hierarchy  	
+	+ @Gallagher1953, @Krasner1976, @Gilpin1981, @Kindleberger1986, @Lake2013
+	+ Economic effects: @Berger2013
+
+. . . 
+
+**Does Trade Policy Matter?**
 
 - Tariffs small, aggregate policy-induced trade frictions large
   + ~order of magnitude larger than tariffs [@Cooley2019b] (<a href="#/barriers">barriers</a>)
@@ -46,22 +59,18 @@
 
 ## Anarchy and Inference: Approach {id="approach"}
 
-**Ideal Experiment**
-
-- Exogenously manipulate governments' military capacity
-- Attribute changes in trade policy to latent effect of military coercion
-
-. . . 
-
 **A Coercive International Political Economy**
 
 $$
 \left\{ \bm{\theta}, \bm{M} \right\} \rightarrow \bm{\tau}
 $$
 
-- $\bm{\theta}$ -- structural parameters (preferences and power projection)
-- $\bm{M}$ -- governments' military endowment (expenditure)
-- $\bm{\tau}$ -- governments' trade policies
+- Observables
+	+ $\bm{M}$ -- governments' military endowment (expenditure)
+	+ $\bm{\tau}$ -- governments' trade policies
+- Unobservables
+	+ $\bm{\theta}$ -- structural parameters (preferences and power projection capacity)
+
 
 . . . 
 
@@ -74,4 +83,4 @@ $$
 - Shadow of power
   + Effect of changing military endowments on trade policy
 - Liberal/commercial peace
-  + Effect of changing preferences for openness on military strategies
+  + Effect of changing preferences for openness on probability of war
