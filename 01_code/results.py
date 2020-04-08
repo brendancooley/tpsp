@@ -10,8 +10,8 @@ import economy
 import policies
 import helpers_tpsp as hp
 
-location = sys.argv[1]  # local, hpc
-size = sys.argv[2] # mini/, mid/, large/
+# location = sys.argv[1]  # local, hpc
+# size = sys.argv[2] # mini/, mid/, large/
 location = "local"
 size = "mid/"
 
@@ -33,7 +33,7 @@ sys.path.insert(1, helpersPath)
 import helpers
 
 runEstimates = False
-computeCounterfactuals = True
+computeCounterfactuals = False
 
 data_dir_base = projectFiles + "data/"
 results_dir_base = projectFiles + "results/"
@@ -111,16 +111,15 @@ xlhvt_star_path = "out/mid_est_test8.csv"
 
 xlhvt_star = np.genfromtxt(xlhvt_star_path, delimiter=",")
 ge_x_star = pecmy.rewrap_xlhvt(xlhvt_star)["ge_x"]
+tau_star = pecmy.ecmy.rewrap_ge_dict(ge_x_star)["tau_hat"] * pecmy.ecmy.tau
 v_star = pecmy.rewrap_xlhvt(xlhvt_star)["v"]
-# v_star = np.array([4.5459368, 3.83445996, 4.02442793, 1.38272169, 2.00824194, 2.51455669, 2.23473652, 1.55973765, 1.57666025])
 theta_x_star = pecmy.rewrap_xlhvt(xlhvt_star)["theta"]
-# theta_x_star = np.array([1, 1.54, 552.37, -.55, 1., 1., 1., 1., 1., 1., 1., 1., 1.])
 theta_dict_star = pecmy.rewrap_theta(theta_x_star)
 for i in theta_dict_star.keys():
     np.savetxt(estimatesPath + i + ".csv", np.array([theta_dict_star[i]]), delimiter=",")
 np.savetxt(estimatesPath + "v.csv", v_star, delimiter=",")
 
-pecmy.G_hat(ge_x_star, v_star, id, all=True)
+G_star = pecmy.G_hat(ge_x_star, v_star, 0, all=True)
 rcv_eq = pecmy.rcv_ft(ge_x_star, v_star)
 np.fill_diagonal(rcv_eq, 0)
 np.savetxt(estimatesPath + "rcv_eq.csv", rcv_eq, delimiter=",")
@@ -134,18 +133,36 @@ np.savetxt(estimatesPath + "rcv_eq.csv", rcv_eq, delimiter=",")
 
 if computeCounterfactuals == True:
 
-    xlvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
-    xlvt_dict = pecmy.rewrap_xlvt(xlvt_star)
-    theta_x_star = xlvt_dict["theta"]
-    v_star = xlvt_dict["v"]
+    # xlhvt_star = np.genfromtxt(estimatesPath + 'x.csv', delimiter=',')
+    xlhvt_dict = pecmy.rewrap_xlhvt(xlhvt_star)
+    theta_x_star = xlhvt_dict["theta"]
+    v_star = xlhvt_dict["v"]
 
-    xlvt_prime, obj, status = pecmy.estimator(v_star, theta_x_star, pecmy.mzeros, nash_eq=True)
+    xlhvt_prime, obj, status = pecmy.estimator(v_star, theta_x_star, pecmy.mzeros, nash_eq=True)
 
-    print(xlvt_prime)
+    print(xlhvt_prime)
     print(obj)
     print(status)
 
-    xlvt_prime_path = counterfactualsPath + "x.csv"
-    np.savetxt(xlvt_prime_path, xlvt_prime, delimiter=",")
+    xlhvt_prime_path = counterfactualsPath + "x.csv"
+    np.savetxt(xlhvt_prime_path, xlhvt_prime, delimiter=",")
 
 print("done.")
+
+xlhvt_prime_path = counterfactualsPath + "x.csv"
+xlhvt_prime = np.genfromtxt(xlhvt_prime_path, delimiter=",")
+ge_x_prime = pecmy.rewrap_xlhvt(xlhvt_prime)["ge_x"]
+v_star
+G_prime = pecmy.G_hat(ge_x_prime, v_star, 0, all=True)
+tau_prime = pecmy.ecmy.rewrap_ge_dict(ge_x_prime)["tau_hat"] * pecmy.ecmy.tau
+tau_star
+G_star / G_prime
+
+pecmy.ecmy.rewrap_ge_dict(ge_x_star)["tau_hat"] * pecmy.ecmy.tau
+
+ge_x_ft = pecmy.ecmy.unwrap_ge_dict(pecmy.ecmy.geq_solve(1 / pecmy.ecmy.tau, np.ones(pecmy.N), v_star))
+G_ft = pecmy.G_hat(ge_x_ft, v_star, 0, all=True)
+id = 8
+ge_x_ft_id = pecmy.ft_sv(id, ge_x_prime, v_star)
+G_ft_id = pecmy.G_hat(ge_x_ft_id, v_star, 0, all=True)
+G_ft_id
