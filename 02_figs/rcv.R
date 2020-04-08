@@ -1,20 +1,20 @@
-# helperPath <- "~/Dropbox (Princeton)/14_Software/R/"
-# helperFiles <- list.files(helperPath)
-# for (i in helperFiles) {
-#   source(paste0(helperPath, i))
-# }
-# 
-# libs <- c("tidyverse", "patchwork")
-# ipak(libs)
-# 
-# tpspPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
-# dataPath <- paste0(tpspPath, "data/mid/")
-# resultsPath <- paste0(tpspPath, "results/mid/")
-# estimatesPath <- paste0(resultsPath, "estimates/")
-# 
-# ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
-# N <- nrow(ccodes)
-# rcv_eq <- read_csv(paste0(estimatesPath, "rcv_eq.csv"), col_names=FALSE)
+helperPath <- "~/Dropbox (Princeton)/14_Software/R/"
+helperFiles <- list.files(helperPath)
+for (i in helperFiles) {
+  source(paste0(helperPath, i))
+}
+
+libs <- c("tidyverse", "patchwork")
+ipak(libs)
+
+tpspPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
+dataPath <- paste0(tpspPath, "data/mid/")
+resultsPath <- paste0(tpspPath, "results/mid/")
+estimatesPath <- paste0(resultsPath, "estimates/")
+
+ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
+N <- nrow(ccodes)
+rcv_eq <- read_csv(paste0(estimatesPath, "rcv_eq.csv"), col_names=FALSE)
 
 for (i in 1:N) {
   for (j in 1:N) {
@@ -41,6 +41,7 @@ rcvhm <- function(rcv, minTau, maxTau) {
   rcvDF <- rcvDF %>% filter(i_iso3 != "RoW", j_iso3 != "RoW")
   rcvDF$rcv_ji <- ifelse(rcvDF$rcv_ji==0, NA, rcvDF$rcv_ji)
   rcvDF$rcv_ji <- as.numeric(rcvDF$rcv_ji)
+  # print(rcvDF)
 
   ggplot(rcvDF, aes(x=i_iso3, y=j_iso3, fill=rcv_ji)) +
     geom_tile(colour="white", width=.9, height=.9) +
@@ -59,7 +60,7 @@ rcvhm <- function(rcv, minTau, maxTau) {
           legend.position="none")
 }
 
-# rcvhm(rcv_eq, mint, maxt)
+rcvhm(rcv_eq, mint, maxt)
 # rcvhm(rcv0, 0, mint, maxt) + rcvhm(rcv1, 1, mint, maxt)
 # coords = which(rcv0 == max(rcv0), arr.ind = TRUE)
 # coords[2]

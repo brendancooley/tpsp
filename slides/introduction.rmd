@@ -1,3 +1,10 @@
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+source(paste0("../", figs_dir, "cfctl_X.R"))
+fig_height_intro <- 5.5
+
+```
+
 # Power and Preferences {id="introduction"}
 
 <div class="fragment">
@@ -36,11 +43,10 @@
 - **Openness** abroad [@Grossman2016]
 	+ Market access externalities: @Ossa2011, @Ossa2012
 	+ Lobbying and Trade Policy: Firms pressure governments to negotiate reductions in trade barriers abroad [@Osgood2016; @Kim2017] 
-- Induces **conflicts of interest** between governments
 
 . . . 
 
-**Gunboat Diplomacy**
+**Conflicts of Interest and Gunboat Diplomacy**
 
 - Powerful governments impose openness on weaker counterparts
 	+ @Findlay2007
@@ -84,3 +90,29 @@ $$
   + Effect of changing military endowments on trade policy
 - Liberal/commercial peace
   + Effect of changing preferences for openness on probability of war
+
+## Results: Preview
+
+- Positive military capability ratio reduces costs of war, lends coercive advantage
+
+. . .
+
+**Economic Consequences: Trade flows contract `r round(cftcl_trade_diff_frac*100, 1)` percent in absence of coercion**
+
+```{r X_diff_pp1, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=fig_height_intro}
+
+X_diff_pp1
+
+```
+
+## Results: Preview
+
+- Positive military capability ratio reduces costs of war, lends coercive advantage
+
+**Economic Consequences: Trade flows contract `r round(cftcl_trade_diff_frac*100, 1)` percent in absence of coercion**
+
+```{r X_diff_pp2, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=fig_height_intro}
+
+X_diff_pp2
+
+```

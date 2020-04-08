@@ -112,6 +112,9 @@ xlhvt_star_path = "out/mid_est_test8.csv"
 xlhvt_star = np.genfromtxt(xlhvt_star_path, delimiter=",")
 ge_x_star = pecmy.rewrap_xlhvt(xlhvt_star)["ge_x"]
 tau_star = pecmy.ecmy.rewrap_ge_dict(ge_x_star)["tau_hat"] * pecmy.ecmy.tau
+X_star = pecmy.ecmy.rewrap_ge_dict(ge_x_star)["X_hat"] * pecmy.ecmy.Xcif
+np.savetxt(estimatesPath + "X_star.csv", X_star, delimiter=",")
+
 v_star = pecmy.rewrap_xlhvt(xlhvt_star)["v"]
 theta_x_star = pecmy.rewrap_xlhvt(xlhvt_star)["theta"]
 theta_dict_star = pecmy.rewrap_theta(theta_x_star)
@@ -152,7 +155,10 @@ print("done.")
 xlhvt_prime_path = counterfactualsPath + "x.csv"
 xlhvt_prime = np.genfromtxt(xlhvt_prime_path, delimiter=",")
 ge_x_prime = pecmy.rewrap_xlhvt(xlhvt_prime)["ge_x"]
-v_star
+X_prime = pecmy.ecmy.rewrap_ge_dict(ge_x_prime)["X_hat"] * pecmy.ecmy.Xcif
+np.savetxt(estimatesPath + "X_prime.csv", X_prime, delimiter=",")
+
+
 G_prime = pecmy.G_hat(ge_x_prime, v_star, 0, all=True)
 tau_prime = pecmy.ecmy.rewrap_ge_dict(ge_x_prime)["tau_hat"] * pecmy.ecmy.tau
 tau_star
