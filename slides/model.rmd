@@ -1,0 +1,161 @@
+# Model (Overview) {id="model"}
+
+<div class="fragment">
+
+- Governments indexed $i \in \left\{ 1, ..., N \right\}$
+
+</div>
+<div class="fragment">
+
+**Sequence**
+
+1. Governments make trade policy announcements
+2. Wars
+    + Winners impose free trade on vanquished governments
+3. ($h(\bm{\tau})$) Economic (general equilibrium, @Eaton2002) consequences of announced/imposed trade policies
+
+</div>
+<div class="fragment">
+
+**Payoffs**
+
+$$
+V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
+$$
+
+- $\color{bcOrange} v_i$ - latent preference for protectionist policies
+
+</div>
+
+## ($h(\bm{\tau})$) Economy {id="economy"}
+
+$$
+\bm{\tau} = \begin{pmatrix}
+\tau_{11} & \cdots & \cdots & \cdots & \tau_{1N} \\
+\vdots & \ddots & \vdots & \iddots & \vdots \\
+\vdots & \cdots & \tau_{ij} & \cdots & \vdots \\
+\vdots & \iddots & \vdots & \ddots & \vdots \\
+\tau_{N1} & \cdots & \cdots & \cdots & \tau_{NN}
+\end{pmatrix}
+$$
+
+## ($h(\bm{\tau})$) Economy
+
+$$
+\bm{\tau} = \begin{pmatrix}
+\tau_{11} & \cdots & \cdots & \cdots & \tau_{1N} \\
+\vdots & \ddots & \vdots & \iddots & \vdots \\
+\vdots & \cdots & \color{bcOrange} \tau_{ij} & \cdots & \vdots \\
+\vdots & \iddots & \vdots & \ddots & \vdots \\
+\tau_{N1} & \cdots & \cdots & \cdots & \tau_{NN}
+\end{pmatrix}
+$$
+
+<hr style="height:2em; visibility:hidden;" />
+
+- $\color{bcOrange} \tau_{ij}$: trade barrier government $i$ imposes on imports from $j$
+
+## ($h(\bm{\tau})$) Economy
+
+$$
+\bm{\tau} = \begin{pmatrix}
+\color{bcOrange} \tau_{11} & \color{bcOrange} \cdots & \color{bcOrange} \cdots & \color{bcOrange} \cdots & \color{bcOrange} \tau_{1N} \\
+\vdots & \ddots & \vdots & \iddots & \vdots \\
+\vdots & \cdots & \tau_{ij} & \cdots & \vdots \\
+\vdots & \iddots & \vdots & \ddots & \vdots \\
+\tau_{N1} & \cdots & \cdots & \cdots & \tau_{NN}
+\end{pmatrix}
+$$
+
+<hr style="height:2em; visibility:hidden;" />
+
+$$
+\color{bcOrange} \bm{\tau}_1 = \begin{pmatrix} \tau_{11} & \cdots & \cdots & \cdots & \tau_{1N}
+\end{pmatrix}
+$$
+
+<hr style="height:2em; visibility:hidden;" />
+
+- Government 1's trade policy
+
+## ($h(\bm{\tau})$) Economy {id="economyEnd"}
+
+$$
+\color{bcOrange} \bm{\tau} \color{black} = \begin{pmatrix}
+\tau_{11} & \cdots & \cdots & \cdots & \tau_{1N} \\
+\vdots & \ddots & \vdots & \iddots & \vdots \\
+\vdots & \cdots & \tau_{ij} & \cdots & \vdots \\
+\vdots & \iddots & \vdots & \ddots & \vdots \\
+\tau_{N1} & \cdots & \cdots & \cdots & \tau_{NN}
+\end{pmatrix}
+$$
+
+<hr style="height:2em; visibility:hidden;" />
+
+$$
+\color{bcOrange} h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \bm{w}
+$$
+
+<a href="#/economyA">Economy Details</a>
+
+## Government Objective
+
+$$
+h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \color{bcOrange} \bm{w}
+$$
+
+<hr style="height:1em; visibility:hidden;" />
+
+- $X_{ij}(\color{bcOrange} \bm{w} \color{black})$: $i$'s imports of goods from $j$
+
+. . . 
+
+**Revenues from Policy Distortions**
+
+$$
+r_i(\color{bcOrange} \bm{w} \color{black}; v_i) = \sum_j (\tau_{ij} - v_i) X_{ij}(\color{bcOrange} \bm{w} \color{black})
+$$
+
+## Government Objective
+
+$$
+h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \bm{w}
+$$
+
+<hr style="height:1em; visibility:hidden;" />
+
+- $X_{ij}(\bm{w})$: $i$'s imports of goods from $j$
+
+**Revenues from Policy Distortions**
+
+$$
+r_i(\bm{w}; \color{bcOrange} v_i \color{black}) = \sum_{j \neq i} (\tau_{ij} - \color{bcOrange} v_i \color{black}) X_{ij}(\bm{w})
+$$
+
+- $\color{bcOrange} v_i \color{black} \in [1, \infty)$ controls $i$'s preferences over the level of protection
+
+. . . 
+
+**Adjusted Consumer Income**
+
+$$
+\tilde{Y}_i(h_i(\bm{\tau}))  = w_i L_i + r_i(h(\bm{\tau}); \color{bcOrange} v_i \color{black})
+$$
+
+**Indirect Utility**
+
+$$
+V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
+$$

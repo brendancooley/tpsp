@@ -611,33 +611,238 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <p><strong>Economic Consequences: Trade flows contract 12.4 percent in absence of coercion</strong></p>
 <p><img src="index_files/figure-revealjs/X_diff_pp2-1.png" width="768" style="display: block; margin: auto;" /></p>
 </section></section>
+<section><section id="model" class="title-slide slide level1"><h1>Model (Overview)</h1><div class="fragment">
+<ul>
+<li>Governments indexed <span class="math inline">\(i \in \left\{ 1, ..., N \right\}\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<p><strong>Sequence</strong></p>
+<ol type="1">
+<li>Governments make trade policy announcements</li>
+<li>Wars
+<ul>
+<li>Winners impose free trade on vanquished governments</li>
+</ul></li>
+<li>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economic (general equilibrium, <span class="citation" data-cites="Eaton2002">Eaton and Kortum (2002)</span>) consequences of announced/imposed trade policies</li>
+</ol>
+</div>
+<div class="fragment">
+<p><strong>Payoffs</strong></p>
+<p><span class="math display">\[
+V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\color{bcOrange} v_i\)</span> - latent preference for protectionist policies</li>
+</ul>
+</div></section><section id="economy" class="slide level2">
+<h2>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economy</h2>
+<p><span class="math display">\[
+\bm{\tau} = \begin{pmatrix}
+\tau_{11} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{1N} \\
+\vdots &amp; \ddots &amp; \vdots &amp; \iddots &amp; \vdots \\
+\vdots &amp; \cdots &amp; \tau_{ij} &amp; \cdots &amp; \vdots \\
+\vdots &amp; \iddots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\tau_{N1} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{NN}
+\end{pmatrix}
+\]</span></p>
+</section><section id="hbmtau-economy" class="slide level2">
+<h2>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economy</h2>
+<p><span class="math display">\[
+\bm{\tau} = \begin{pmatrix}
+\tau_{11} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{1N} \\
+\vdots &amp; \ddots &amp; \vdots &amp; \iddots &amp; \vdots \\
+\vdots &amp; \cdots &amp; \color{bcOrange} \tau_{ij} &amp; \cdots &amp; \vdots \\
+\vdots &amp; \iddots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\tau_{N1} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{NN}
+\end{pmatrix}
+\]</span></p>
+<hr style="height:2em; visibility:hidden;" />
+<ul>
+<li><span class="math inline">\(\color{bcOrange} \tau_{ij}\)</span>: trade barrier government <span class="math inline">\(i\)</span> imposes on imports from <span class="math inline">\(j\)</span></li>
+</ul>
+</section><section id="hbmtau-economy-1" class="slide level2">
+<h2>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economy</h2>
+<p><span class="math display">\[
+\bm{\tau} = \begin{pmatrix}
+\color{bcOrange} \tau_{11} &amp; \color{bcOrange} \cdots &amp; \color{bcOrange} \cdots &amp; \color{bcOrange} \cdots &amp; \color{bcOrange} \tau_{1N} \\
+\vdots &amp; \ddots &amp; \vdots &amp; \iddots &amp; \vdots \\
+\vdots &amp; \cdots &amp; \tau_{ij} &amp; \cdots &amp; \vdots \\
+\vdots &amp; \iddots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\tau_{N1} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{NN}
+\end{pmatrix}
+\]</span></p>
+<hr style="height:2em; visibility:hidden;" />
+<p><span class="math display">\[
+\color{bcOrange} \bm{\tau}_1 = \begin{pmatrix} \tau_{11} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{1N}
+\end{pmatrix}
+\]</span></p>
+<hr style="height:2em; visibility:hidden;" />
+<ul>
+<li>Government 1’s trade policy</li>
+</ul>
+</section><section id="economyEnd" class="slide level2">
+<h2>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economy</h2>
+<p><span class="math display">\[
+\color{bcOrange} \bm{\tau} \color{black} = \begin{pmatrix}
+\tau_{11} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{1N} \\
+\vdots &amp; \ddots &amp; \vdots &amp; \iddots &amp; \vdots \\
+\vdots &amp; \cdots &amp; \tau_{ij} &amp; \cdots &amp; \vdots \\
+\vdots &amp; \iddots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\tau_{N1} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{NN}
+\end{pmatrix}
+\]</span></p>
+<hr style="height:2em; visibility:hidden;" />
+<p><span class="math display">\[
+\color{bcOrange} h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \bm{w}
+\]</span></p>
+<p><a href="#/economyA">Economy Details</a></p>
+</section><section id="government-objective" class="slide level2">
+<h2>Government Objective</h2>
+<p><span class="math display">\[
+h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \color{bcOrange} \bm{w}
+\]</span></p>
+<hr style="height:1em; visibility:hidden;" />
+<ul>
+<li><span class="math inline">\(X_{ij}(\color{bcOrange} \bm{w} \color{black})\)</span>: <span class="math inline">\(i\)</span>’s imports of goods from <span class="math inline">\(j\)</span></li>
+</ul>
+<div class="fragment">
+<p><strong>Revenues from Policy Distortions</strong></p>
+<p><span class="math display">\[
+r_i(\color{bcOrange} \bm{w} \color{black}; v_i) = \sum_j (\tau_{ij} - v_i) X_{ij}(\color{bcOrange} \bm{w} \color{black})
+\]</span></p>
+</div>
+</section><section id="government-objective-1" class="slide level2">
+<h2>Government Objective</h2>
+<p><span class="math display">\[
+h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \bm{w}
+\]</span></p>
+<hr style="height:1em; visibility:hidden;" />
+<ul>
+<li><span class="math inline">\(X_{ij}(\bm{w})\)</span>: <span class="math inline">\(i\)</span>’s imports of goods from <span class="math inline">\(j\)</span></li>
+</ul>
+<p><strong>Revenues from Policy Distortions</strong></p>
+<p><span class="math display">\[
+r_i(\bm{w}; \color{bcOrange} v_i \color{black}) = \sum_j (\tau_{ij} - \color{bcOrange} v_i \color{black}) X_{ij}(\bm{w})
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\color{bcOrange} v_i \color{black} \in [1, \infty)\)</span> controls <span class="math inline">\(i\)</span>’s preferences over the level of protection</li>
+</ul>
+<div class="fragment">
+<p><strong>Adjusted Consumer Income</strong></p>
+<p><span class="math display">\[
+\tilde{Y}_i(h_i(\bm{\tau}))  = h_i(\bm{\tau}) * L_i + r_i(h(\bm{\tau}); \color{bcOrange} v_i \color{black}) . 
+\]</span></p>
+<p><strong>Indirect Utility</strong></p>
+<p><span class="math display">\[
+V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
+\]</span></p>
+</div>
+</section></section>
 <section id="toc" class="title-slide slide level1"><h1>Table of Contents</h1><div id="left">
+<p><strong>Sections</strong></p>
 <ol type="1">
 <li><a href="#/introduction">Introduction</a></li>
-<li><a href="#/approach">Approach</a></li>
-<li><a href="#/cipe">Model</a></li>
-<li><a href="#/br">Equilibrium</a></li>
-<li><a href="#/estimation">Estimation</a></li>
-<li><a href="#/results">Results</a></li>
+<li><a href="#/model">Model</a></li>
 </ol>
 </div>
 <div id="right">
+<p><strong>Appendix</strong></p>
 <ol type="1">
-<li><a href="#/economy">Economy (Overview)</a></li>
 <li><a href="#/barriers">Estimated Dyadic Policy Barriers</a></li>
-<li><a href="#/Gobj">Government Objective</a></li>
-<li><a href="#/economyA">Economy (GE)</a></li>
-<li><a href="#/economyHats">Economy in Changes</a></li>
-<li><a href="#/policyHats">Policy Problem in Changes</a></li>
-<li><a href="#/multilateralcontest">Multilateral Contest Function</a></li>
-<li><a href="#/milex">Military Expenditure</a></li>
-<li><a href="#/v_est">Protectionism Estimates</a></li>
-<li><a href="#/rcv">Conquest Values</a></li>
-<li><a href="#/chi_est">Estimated Contest Success Probabilities</a></li>
+<li><a href="#/economyA">Economy (Overview)</a></li>
 </ol>
 </div></section>
 <section id="barriers" class="title-slide slide level1"><h1>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economy</h1><p><img src="index_files/figure-revealjs/tauhm1-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p><a href="#/gunboats">Back (Gunboats)</a></p>
+<p><a href="#/toc">Back (TOC)</a></p></section>
+<section><section id="economyA" class="title-slide slide level1"><h1>Economy (Consumption)</h1><p><strong>Consumer’s Problem</strong></p>
+<p><span class="math display">\[\begin{equation*}
+\begin{split}
+\max &amp; \quad U_i = Q_i^{\nu_i} S_i^{1 - \nu_i} \\
+\text{subject to} &amp; \quad P_i Q_i + P_i^s S_i \leq w_i L_i
+\end{split}
+\end{equation*}\]</span></p>
+<p><strong>CES Preferences over Tradable Varieties</strong></p>
+<p><span class="math display">\[
+Q_i = \left( \int_{[0,1]} \alpha_{h(\omega)}^{\frac{1}{\sigma}} q_i(\omega)^{\frac{\sigma - 1}{\sigma}} d \omega \right)^{\frac{\sigma}{\sigma - 1}}
+\]</span></p>
+<p><strong>Tradable Price Index</strong></p>
+<p><span class="math display">\[
+P_i = \left( \int_{[0,1]} \alpha_{h(\omega)} p_i(\omega)^{1 - \sigma} d \omega \right)^{\frac{1}{1 - \sigma}}
+\]</span></p>
+<p><strong>Expenditure on Tradables</strong></p>
+<p><span class="math display">\[
+E_i^q = \nu_i I_i + D_i = P_i Q_i^\star
+\]</span></p></section><section id="economy-production" class="slide level2">
+<h2>Economy (Production)</h2>
+<p><strong>Costs</strong></p>
+<p><span class="math display">\[\begin{equation} \label{eq:c}
+c_i = w_i^{1 - \beta} P_i^{\beta}
+\end{equation}\]</span></p>
+<ul>
+<li><span class="math inline">\(w_i\)</span> - cost of labor</li>
+<li><span class="math inline">\(P_i\)</span> - cost of composite intermediate good
+<ul>
+<li>equivalent to composite consumption good</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+E_i^x = \beta X_i
+\]</span></p>
+<p><strong>Local Prices</strong></p>
+<p><span class="math display">\[
+p_{ii}(\omega) = \frac{c_i}{z_i(\omega)}
+\]</span></p>
+<p><strong>Technology (Fréchet)</strong></p>
+<p><span class="math display">\[
+F_i(z) = \text{Pr} \left\{ z_i(\omega) \leq z \right\} = \exp \left\{ - T_i z^{-\theta} \right\}
+\]</span></p>
+</section><section id="economy-equilibrium" class="slide level2">
+<h2>Economy (Equilibrium)</h2>
+<p><strong>Total Expenditure on Tradables</strong></p>
+<p><span class="math display">\[
+X_i = \underbrace{E_i^q + E_i^x}_{E_i} - D_i
+\]</span></p>
+<p><strong>Trade Shares</strong></p>
+<p><span class="math display">\[
+\Omega_{ij}^\star = \left\{ \omega \in [0,1] \left. \right\vert p_{ij}(\omega) \leq \min_{k \neq j} \left\{ p_{ik} \right\} \right\}
+\]</span></p>
+<p><span class="math display">\[
+\lambda_{ij}(\boldsymbol{w}) = \frac{1}{E_i} \int_{\Omega_{ij}^\star} p_{ij}(\omega) q_i \left( p_{ij} (\omega) \right) d \omega
+\]</span></p>
+<p><strong>Market Clearing</strong></p>
+<p><span class="math display">\[
+X_i = \sum_{j=1}^N \lambda_{ji}(\boldsymbol{w}) E_j
+\]</span></p>
+</section><section id="economy-equilibrium-in-changes" class="slide level2">
+<h2>Economy (Equilibrium in Changes)</h2>
+<p><span class="math display">\[
+\hat{r}_i = \frac{1}{r_i} \left( E_i \hat{E}_i(\hat{\bm{w}}) - \sum_j X_{ij}^{\text{cif}} \hat{X}_{ij}^{\text{cif}}(\hat{\bm{w}}) \right)
+\]</span> <span class="math display">\[
+\hat{w}_i = \frac{1}{\nu_i w_i L_i} \left( \sum_j \left( (1 - \beta) X_{ji}^{\text{cif}} \hat{X}_{ji}^{\text{cif}}(\hat{\bm{w}}) \right) + (1 - \nu_i) r_i \hat{r}_i(\hat{\bm{w}}) \right)
+\]</span> <span class="math display">\[
+\hat{E}_i(\hat{\bm{w}}) = \frac{1}{E_i} \left( E_i^q \hat{E}_i^q(\hat{\bm{w}}) + E_i^x \hat{E}_i^x(\hat{\bm{w}}) \right)
+\]</span> <span class="math display">\[
+\hat{x}_{ij}(\hat{\bm{w}}) = \left( \hat{\tau}_{ij} \hat{w}_j^{1 - \beta} \hat{P}_j(\hat{\bm{w}})^\beta \right)^{-\theta} \hat{P}_i(\hat{\bm{w}})^{\theta}
+\]</span> <span class="math display">\[
+\hat{P}_i(\hat{\bm{w}}) = \left( \sum_j x_{ij} \left( \hat{\tau}_{ij} \hat{w}_j^{1 - \beta} \hat{P}_j(\hat{\bm{w}})^\beta \right)^{-\theta} \right)^{-\frac{1}{\theta}}
+\]</span> <span class="math display">\[
+1 = \sum_i y_i \hat{w}_i
+\]</span></p>
+<p><a href="#/economyEnd">Back (Economy)</a></p>
 <p><a href="#/toc">Back (TOC)</a></p>
 <!-- hide references -->
 <hr style="height:30em; visibility:hidden;" />
@@ -662,6 +867,9 @@ document.getElementsByTagName('head')[0].appendChild(style);
 </div>
 <div id="ref-Dahl1957">
 <p>Dahl, Robert A. 1957. “The Concept of Power.” <em>Behavioral Science</em> 2 (3): 201–15.</p>
+</div>
+<div id="ref-Eaton2002">
+<p>Eaton, Jonathan, and Samuel Kortum. 2002. “Technology, geography, and trade.” <em>Econometrica</em> 70 (5): 1741–79.</p>
 </div>
 <div id="ref-Fearon1995">
 <p>Fearon, James D. 1995. “Rationalist explanations for war.” <em>International Organization</em> 49 (03): 379–414.</p>
@@ -723,7 +931,8 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <div id="ref-Rogowski1987">
 <p>Rogowski, Ronald. 1987. “Political Cleavages and Changing Exposure to Trade.” <em>The American Political Science Review</em> 81 (4): 1121.</p>
 </div>
-</div></section>
+</div>
+</section></section>
     </div>
   </div>
 

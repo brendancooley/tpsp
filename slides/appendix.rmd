@@ -10,3 +10,110 @@ tauhm(tau)
 <a href="#/gunboats">Back (Gunboats)</a>
 
 <a href="#/toc">Back (TOC)</a>
+
+# Economy (Consumption) {id="economyA"}
+
+**Consumer's Problem**
+
+\begin{equation*}
+\begin{split}
+\max & \quad U_i = Q_i^{\nu_i} S_i^{1 - \nu_i} \\
+\text{subject to} & \quad P_i Q_i + P_i^s S_i \leq w_i L_i
+\end{split}
+\end{equation*}
+
+**CES Preferences over Tradable Varieties**
+
+$$
+Q_i = \left( \int_{[0,1]} \alpha_{h(\omega)}^{\frac{1}{\sigma}} q_i(\omega)^{\frac{\sigma - 1}{\sigma}} d \omega \right)^{\frac{\sigma}{\sigma - 1}}
+$$
+
+**Tradable Price Index**
+
+$$
+P_i = \left( \int_{[0,1]} \alpha_{h(\omega)} p_i(\omega)^{1 - \sigma} d \omega \right)^{\frac{1}{1 - \sigma}}
+$$
+
+**Expenditure on Tradables**
+
+$$
+E_i^q = \nu_i I_i + D_i = P_i Q_i^\star
+$$
+
+
+## Economy (Production)
+
+**Costs**
+
+\begin{equation} \label{eq:c}
+c_i = w_i^{1 - \beta} P_i^{\beta}
+\end{equation}
+
+- $w_i$ - cost of labor
+- $P_i$ - cost of composite intermediate good
+  + equivalent to composite consumption good
+
+$$
+E_i^x = \beta X_i
+$$
+
+**Local Prices**
+
+$$
+p_{ii}(\omega) = \frac{c_i}{z_i(\omega)}
+$$
+
+**Technology (Fréchet)**
+
+$$
+F_i(z) = \text{Pr} \left\{ z_i(\omega) \leq z \right\} = \exp \left\{ - T_i z^{-\theta} \right\}
+$$
+
+## Economy (Equilibrium)
+
+**Total Expenditure on Tradables**
+
+$$
+X_i = \underbrace{E_i^q + E_i^x}_{E_i} - D_i
+$$
+
+**Trade Shares**
+
+$$
+\Omega_{ij}^\star = \left\{ \omega \in [0,1] \left. \right\vert p_{ij}(\omega) \leq \min_{k \neq j} \left\{ p_{ik} \right\} \right\}
+$$
+
+$$
+\lambda_{ij}(\boldsymbol{w}) = \frac{1}{E_i} \int_{\Omega_{ij}^\star} p_{ij}(\omega) q_i \left( p_{ij} (\omega) \right) d \omega
+$$
+
+**Market Clearing**
+
+$$
+X_i = \sum_{j=1}^N \lambda_{ji}(\boldsymbol{w}) E_j
+$$
+
+## Economy (Equilibrium in Changes)
+
+$$
+\hat{r}_i = \frac{1}{r_i} \left( E_i \hat{E}_i(\hat{\bm{w}}) - \sum_j X_{ij}^{\text{cif}} \hat{X}_{ij}^{\text{cif}}(\hat{\bm{w}}) \right)
+$$
+$$
+\hat{w}_i = \frac{1}{\nu_i w_i L_i} \left( \sum_j \left( (1 - \beta) X_{ji}^{\text{cif}} \hat{X}_{ji}^{\text{cif}}(\hat{\bm{w}}) \right) + (1 - \nu_i) r_i \hat{r}_i(\hat{\bm{w}}) \right)
+$$
+$$
+\hat{E}_i(\hat{\bm{w}}) = \frac{1}{E_i} \left( E_i^q \hat{E}_i^q(\hat{\bm{w}}) + E_i^x \hat{E}_i^x(\hat{\bm{w}}) \right)
+$$
+$$
+\hat{x}_{ij}(\hat{\bm{w}}) = \left( \hat{\tau}_{ij} \hat{w}_j^{1 - \beta} \hat{P}_j(\hat{\bm{w}})^\beta \right)^{-\theta} \hat{P}_i(\hat{\bm{w}})^{\theta}
+$$
+$$
+\hat{P}_i(\hat{\bm{w}}) = \left( \sum_j x_{ij} \left( \hat{\tau}_{ij} \hat{w}_j^{1 - \beta} \hat{P}_j(\hat{\bm{w}})^\beta \right)^{-\theta} \right)^{-\frac{1}{\theta}}
+$$
+$$
+1 = \sum_i y_i \hat{w}_i
+$$
+
+<a href="#/economyEnd">Back (Economy)</a>
+
+<a href="#/toc">Back (TOC)</a>

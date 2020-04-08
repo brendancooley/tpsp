@@ -46,29 +46,27 @@ if (file.exists('references.RData')) load('references.RData')
 ```{r, child="slides/introduction.rmd"}
 ```
 
+```{r, child="slides/model.rmd"}
+```
+
 # Table of Contents {id="toc"}
 
 <div id="left">
+
+**Sections**
+
 1. <a href="#/introduction">Introduction</a>
-2. <a href="#/approach">Approach</a>
-3. <a href="#/cipe">Model</a>
-4. <a href="#/br">Equilibrium</a>
-5. <a href="#/estimation">Estimation</a>
-6. <a href="#/results">Results</a>
+2. <a href="#/model">Model</a>
+
 </div>
 
 <div id="right">
-1. <a href="#/economy">Economy (Overview)</a>
-2. <a href="#/barriers">Estimated Dyadic Policy Barriers</a>
-3. <a href="#/Gobj">Government Objective</a>
-4. <a href="#/economyA">Economy (GE)</a>
-5. <a href="#/economyHats">Economy in Changes</a>
-6. <a href="#/policyHats">Policy Problem in Changes</a>
-7. <a href="#/multilateralcontest">Multilateral Contest Function</a>
-8. <a href="#/milex">Military Expenditure</a>
-9. <a href="#/v_est">Protectionism Estimates</a>
-10. <a href="#/rcv">Conquest Values</a>
-11. <a href="#/chi_est">Estimated Contest Success Probabilities</a>
+
+**Appendix**
+
+1. <a href="#/barriers">Estimated Dyadic Policy Barriers</a>
+2. <a href="#/economyA">Economy (Overview)</a>
+
 </div>
 
 
