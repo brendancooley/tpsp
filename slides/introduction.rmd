@@ -1,0 +1,66 @@
+# Power and Preferences {id="introduction"}
+
+**Anarchy and Inference**
+
+- Anarchy $\implies$ powerful governments can impose policies on others by force
+- Bargaining critique: policies reflect shadow of power
+  + @Brito1985, @Fearon1995, @Art1996
+- **Question:** Do observed policies reflect **preferences** of the governments that adopted them or **constraints of anarchy?**
+
+. . . 
+
+> "$A$ has **power** over B to the extent that he can get $B$ to do something that $B$ **would not otherwise do.**"
+> 
+> - @Dahl1957
+
+## Trade Policy and Gunboat Diplomacy {id="gunboats"}
+
+**What Do Governments Want?**
+
+- **Heterogeneity** in desired protectionism
+  + @Grossman1994, @Gawande2009
+- Mercantilism induces **conflicts of interest** between governments
+  + Gunboat diplomacy: powerful impose openness abroad [@Findlay2007]
+
+. . . 
+
+**Does It Matter?**
+
+- Tariffs small, aggregate policy-induced trade frictions large
+  + ~order of magnitude larger than tariffs [@Cooley2019b] (<a href="#/barriers">barriers</a>)
+- Welfare effects of trade frictions
+  + @Autor2013, @Costinot2015, @Goldberg2016
+
+## Anarchy and Inference: Approach {id="approach"}
+
+
+
+**Ideal Experiment**
+
+- Exogenously manipulate governments' military capacity
+- Attribute changes in trade policy to latent effect of military coercion
+
+. . . 
+
+**A Coercive International Political Economy**
+
+$$
+\left\{ \bm{\theta}, \bm{M} \right\} \rightarrow \bm{\tau}
+$$
+
+- $\bm{\theta}$ -- structural parameters (preferences and power projection)
+- $\bm{M}$ -- governments' military endowment (expenditure)
+- $\bm{\tau}$ -- governments' trade policies
+
+. . . 
+
+**Estimation:** $\left\{ \bm{\tau}, \bm{M} \right\} \rightarrow \bm{\theta}$
+
+. . . 
+
+**Counterfactuals:** $\left\{ \bm{\theta}^\prime, \bm{M}^\prime \right\} \rightarrow \bm{\tau}^\prime$
+
+- Shadow of power
+  + Effect of changing military endowments on trade policy
+- Liberal/commercial peace
+  + Effect of changing preferences for openness on military strategies

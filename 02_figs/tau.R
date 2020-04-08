@@ -1,19 +1,20 @@
-# helperPath <- "~/Dropbox (Princeton)/14_Software/R/"
-# helperFiles <- list.files(helperPath)
-# for (i in helperFiles) {
-#   source(paste0(helperPath, i))
-# }
-# 
-# libs <- c("tidyverse")
-# ipak(libs)
-# 
-# analysisPath <- "../working/analysis/"
-# dataPath <- paste0(analysisPath, "tpsp_data/")
-# resultsPath <- paste0(analysisPath, "results/")
-# 
-# ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
-# Y <- read_csv(paste0(dataPath, "year.csv"), col_names=FALSE) %>% pull(.)
-# tau <- read_csv(paste0(dataPath, "tau.csv"), col_names=FALSE)
+helperPath <- "~/Dropbox (Princeton)/14_Software/R/"
+helperFiles <- list.files(helperPath)
+for (i in helperFiles) {
+  source(paste0(helperPath, i))
+}
+
+libs <- c("tidyverse")
+ipak(libs)
+
+tpspPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
+dataPath <- paste0(tpspPath, "data/", size)
+resultsPath <- paste0(tpspPath, "results/", size)
+estimatesPath <- paste0(resultsPath, "estimates/")
+
+ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
+Y <- read_csv(paste0(dataPath, "year.csv"), col_names=FALSE) %>% pull(.)
+tau <- read_csv(paste0(dataPath, "tau.csv"), col_names=FALSE)
 
 hmColors <- colorRampPalette(c("white", bcOrange))(20)
 naColor <- "#D3D3D3"

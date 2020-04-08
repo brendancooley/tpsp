@@ -1,0 +1,12 @@
+# ($h(\bm{\tau})$) Economy {id="barriers"}
+
+```{r tauhm1, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
+
+source(paste0("../", figs_dir, "tau.R"))
+tauhm(tau)
+
+```
+
+<a href="#/gunboats">Back (Gunboats)</a>
+
+<a href="#/toc">Back (TOC)</a>

@@ -1,11 +1,12 @@
 ---
 title: "Trade Policy in the Shadow of Power"
 subtitle: "Quantifying Military Coercion in the International System"
-date: "20 February 2020"
+date: "9 April 2020"
 author: Brendan Cooley
 position: Ph.D. Candidate
 institution: Princeton University
 email: "bcooley (at) princeton.edu"
+note: These slides available at brendancooley.com/tpsp
 
 bibliography: /Users/brendancooley/Dropbox (Princeton)/References/library.bib
 biblio-style: apsr
@@ -31,94 +32,54 @@ output:
 
 ```{r libs, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 
-helperPath <- "~/Dropbox (Princeton)/14_Software/R/"
-helperFiles <- list.files(helperPath)
-for (i in helperFiles) {
-  source(paste0(helperPath, i))
-}
+code_dir <- "01_code/"
+figs_dir <- "02_figs/"
+slides_dir <- "slides/"
 
-libs <- c("tidyverse", "patchwork", "countrycode", "knitr", "kableExtra", "ggpubr")
-ipak(libs)
-
-analysisPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
-dataPath <- paste0(analysisPath, "data/mini/")
-resultsPath <- paste0(analysisPath, "results/archive_fmir/")
-estimatesPath <- paste0(resultsPath, "estimates/")
-
-# data
-ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
-Y <- read_csv(paste0(dataPath, "year.csv"), col_names=FALSE) %>% pull(.)
-tau <- read_csv(paste0(dataPath, "tau.csv"), col_names=FALSE)
-
-# results
-rcv_eq <- read_csv(paste0(estimatesPath, "rcv_eq.csv"), col_names=FALSE)
-# Ghatft <- read_csv(paste0(resultsPath, "Ghatft.csv"), col_names=FALSE)
-# rcv0 <- read_csv(paste0(resultsPath, "rcv0.csv"), col_names=FALSE)
-# rcv1 <- read_csv(paste0(resultsPath, "rcv1.csv"), col_names=FALSE)
+size = "mid/"
 
 # references from paper
 if (file.exists('references.RData')) load('references.RData')
 
 ```
 
-## Power and Preferences {id="introduction"}
+```{r, child="slides/introduction.rmd"}
+```
 
-**Anarchy and Inference**
+# Table of Contents {id="toc"}
 
-- Anarchy $\implies$ powerful governments can impose policies on others by force
-- Bargaining critique: policies reflect shadow of power
-  + @Brito1985, @Fearon1995, @Art1996
-- **Question:** Do observed policies reflect **preferences** of the governments that adopted them or **constraints of anarchy?**
+<div id="left">
+1. <a href="#/introduction">Introduction</a>
+2. <a href="#/approach">Approach</a>
+3. <a href="#/cipe">Model</a>
+4. <a href="#/br">Equilibrium</a>
+5. <a href="#/estimation">Estimation</a>
+6. <a href="#/results">Results</a>
+</div>
 
-. . . 
+<div id="right">
+1. <a href="#/economy">Economy (Overview)</a>
+2. <a href="#/barriers">Estimated Dyadic Policy Barriers</a>
+3. <a href="#/Gobj">Government Objective</a>
+4. <a href="#/economyA">Economy (GE)</a>
+5. <a href="#/economyHats">Economy in Changes</a>
+6. <a href="#/policyHats">Policy Problem in Changes</a>
+7. <a href="#/multilateralcontest">Multilateral Contest Function</a>
+8. <a href="#/milex">Military Expenditure</a>
+9. <a href="#/v_est">Protectionism Estimates</a>
+10. <a href="#/rcv">Conquest Values</a>
+11. <a href="#/chi_est">Estimated Contest Success Probabilities</a>
+</div>
 
-**Trade Policy: What Do Governments Want?**
 
-- **Heterogeneity** in desired protectionism
-  + @Grossman1994, @Gawande2009
-- Mercantilism induces **conflicts of interest** between governments
-  + Gunboat diplomacy: powerful impose openness abroad [@Findlay2007]
+```{r, child="slides/appendix.rmd"}
+```
 
-. . . 
 
-**Trade Policy: Does It Matter?**
 
-- Tariffs small, aggregate policy-induced trade frictions large
-  + ~order of magnitude larger than tariffs [@Cooley2019b] (<a href="#/barriers">barriers</a>)
-- Welfare effects of trade frictions
-  + @Autor2013, @Costinot2015, @Goldberg2016
 
-## Anarchy and Inference: Approach {id="approach"}
 
-**Ideal Experiment**
-
-- Exogenously manipulate governments' military capacity
-- Attribute changes in trade policy to latent effect of military coercion
-
-. . . 
-
-**A Coercive International Political Economy**
-
-$$
-\left\{ \bm{\theta}, \bm{M} \right\} \rightarrow \bm{\tau}
-$$
-
-- $\bm{\theta}$ -- structural parameters (preferences and power projection)
-- $\bm{M}$ -- governments' military endowment (expenditure)
-- $\bm{\tau}$ -- governments' trade policies
-
-. . . 
-
-**Estimation:** $\left\{ \bm{\tau}, \bm{M} \right\} \rightarrow \bm{\theta}$
-
-. . . 
-
-**Counterfactuals:** $\left\{ \bm{\theta}^\prime, \bm{M}^\prime \right\} \rightarrow \bm{\tau}^\prime$
-
-- Shadow of power
-  + Effect of changing military endowments on trade policy
-- Liberal/commercial peace
-  + Effect of changing preferences for openness on military strategies
+# Old
 
 ## Coercive International Political Economy {id="cipe"}
 
@@ -268,8 +229,8 @@ $$
 
 ```{r cb_ratio, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
 
-source("02_figs/cbratio.R")
-cb_ratio_plot + theme(aspect.ratio=1)
+# source("02_figs/cbratio.R")
+# cb_ratio_plot + theme(aspect.ratio=1)
 
 ```
 
@@ -289,30 +250,6 @@ cb_ratio_plot + theme(aspect.ratio=1)
 
 [bcooley@princeton.edu](mailto:bcooley@princeton.edu)
 
-## Table of Contents {id="toc"}
-
-<div id="left">
-1. <a href="#/introduction">Introduction</a>
-2. <a href="#/approach">Approach</a>
-3. <a href="#/cipe">Model</a>
-4. <a href="#/br">Equilibrium</a>
-5. <a href="#/estimation">Estimation</a>
-6. <a href="#/results">Results</a>
-</div>
-
-<div id="right">
-1. <a href="#/economy">Economy (Overview)</a>
-2. <a href="#/barriers">Estimated Dyadic Policy Barriers</a>
-3. <a href="#/Gobj">Government Objective</a>
-4. <a href="#/economyA">Economy (GE)</a>
-5. <a href="#/economyHats">Economy in Changes</a>
-6. <a href="#/policyHats">Policy Problem in Changes</a>
-7. <a href="#/multilateralcontest">Multilateral Contest Function</a>
-8. <a href="#/milex">Military Expenditure</a>
-9. <a href="#/v_est">Protectionism Estimates</a>
-10. <a href="#/rcv">Conquest Values</a>
-11. <a href="#/chi_est">Estimated Contest Success Probabilities</a>
-</div>
 
 
 
@@ -377,15 +314,6 @@ $$
 <hr style="height:2em; visibility:hidden;" />
 
 - Government 1's trade policy
-
-## ($h(\bm{\tau})$) Economy {id="barriers"}
-
-```{r tauhm1, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
-
-source("02_figs/tau.R")
-tauhm(tau)
-
-```
 
 ## ($h(\bm{\tau})$) Economy
 
@@ -590,8 +518,8 @@ $$
 
 ```{r milex, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5}
 
-source("02_figs/milex.R")
-milexFig + theme(aspect.ratio=1)
+# source("02_figs/milex.R")
+# milexFig + theme(aspect.ratio=1)
 
 ```
 
@@ -602,9 +530,9 @@ milexFig + theme(aspect.ratio=1)
 
 ```{r v_estsT, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
-source("02_figs/ccodes.R")
+# source("02_figs/ccodes.R")
 
-kable(v_estsT, booktabs = T, caption = "Preference Parameter ($\\tilde{\\bm{v}}$) Estimates", escape = FALSE) %>% kable_styling(position = "center")
+# kable(v_estsT, booktabs = T, caption = "Preference Parameter ($\\tilde{\\bm{v}}$) Estimates", escape = FALSE) %>% kable_styling(position = "center")
 
 ```
 
@@ -620,8 +548,8 @@ $$
 
 ```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
 
-source("02_figs/rcv.R")
-rcvhm(rcv_eq, mint, maxt)
+# source("02_figs/rcv.R")
+# rcvhm(rcv_eq, mint, maxt)
 
 ```
 
@@ -631,8 +559,8 @@ rcvhm(rcv_eq, mint, maxt)
 
 ```{r chi, echo=FALSE, warning=FALSE, message=FALSE,  fig.align="center"}
 
-source("02_figs/chi.R")
-chihm(chi, minchi, maxchi)
+# source("02_figs/chi.R")
+# chihm(chi, minchi, maxchi)
 
 ```
 <a href="#/toc" style="float: right;">Back</a>
