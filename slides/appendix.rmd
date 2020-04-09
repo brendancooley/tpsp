@@ -1,6 +1,6 @@
-# ($h(\bm{\tau})$) Economy {id="barriers"}
+# Estimated Policy Barriers to Trade {id="barriers"}
 
-```{r tauhm1, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
+```{r tauhm1, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5}
 
 source(paste0("../", figs_dir, "tau.R"))
 tauhm(tau)
@@ -115,5 +115,68 @@ $$
 $$
 
 <a href="#/economyEnd">Back (Economy)</a>
+
+<a href="#/toc">Back (TOC)</a>
+
+# Cost Distribution {id="frechet"}
+
+![Fréchet distribution. [Source](https://en.wikipedia.org/wiki/Fr%C3%A9chet_distribution#/media/File:Frechet_pdf.svg) ](02_figs/Frechet.png){ width=75% }
+<a href="#/wars">Back (Wars)</a>
+
+<a href="#/toc">Back (TOC)</a>
+
+# Military Expenditure {id="milex"}
+
+```{r milex, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5}
+
+source(paste0("../", figs_dir, "milex.R"))
+milexFig + theme(aspect.ratio=1)
+
+```
+
+<a href="#/data">Back (Data)</a>
+
+<a href="#/toc">Back (TOC)</a>
+
+# Economy (Calibration I) {id="calibration"}
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+theta <- read_csv(paste0(dataPath, "theta.csv"), col_names=FALSE) %>% pull(.)
+beta <- read_csv(paste0(dataPath, "beta.csv"), col_names=FALSE) %>% pull(.)
+
+```
+
+- Trade Flows: BACI
+- National Accounts: OECD and WIOD
+
+**Parameters**
+
+$$
+\bm{\theta}_h = \left( \bm{\nu}, \beta, \theta \right)
+$$
+
+- $\nu_i$ -- share of consumer expenditure spent on tradables (World Bank ICP)
+- $\beta$ -- share of intermediate goods in imports (WIOD)
+	+ Average across countries in sample (`r round(beta, 2)`)
+- $\theta$ -- trade elasticity
+	+ Set to `r theta` [@Head2014]
+
+# Economy (Calibration II)
+
+**Deficits [@Dekle2007]**
+
+- $\bm{D}$ -- trade deficits
+- Equilibrium in changes
+$$
+\hat{h}(\hat{\bm{\tau}}, \hat{\bm{D}}; \bm{\theta}_h)
+$$
+- Purge deficits before analysis
+$$
+\hat{h}(\hat{\bm{\tau}}, \bm{0}; \bm{\theta}_h) \rightarrow \hat{\bm{w}}_{-D}
+$$
+- Recompute associated trade flows, price levels, etc
+
+<a href="#/data">Back (Data)</a>
 
 <a href="#/toc">Back (TOC)</a>

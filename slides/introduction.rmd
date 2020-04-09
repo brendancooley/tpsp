@@ -38,8 +38,8 @@ fig_height_intro <- 5.5
 **What Do Governments Want?**
 
 - **Protectionism** at home [@Grossman1994; @Gawande2009]
-  + Domestic distributional conflict: @Mayer1984, @Rogowski1987; @Grossman1994
-  + Fiscal capacity: @Rodrik2008, @Queralt2015
+  	+ Domestic distributional conflict: @Mayer1984, @Rogowski1987; @Grossman1994
+  	+ Fiscal capacity: @Rodrik2008, @Queralt2015
 - **Openness** abroad [@Grossman2016]
 	+ Market access externalities: @Ossa2011, @Ossa2012
 	+ Lobbying and Trade Policy: Firms pressure governments to negotiate reductions in trade barriers abroad [@Osgood2016; @Kim2017] 
@@ -74,9 +74,10 @@ $$
 - Observables
 	+ $\bm{M}$ -- governments' military endowment (expenditure)
 	+ $\bm{\tau}$ -- governments' trade policies
-- Unobservables
-	+ $\bm{\theta}$ -- structural parameters (preferences and power projection capacity)
-
+- Unobservables ($\bm{\theta}$)
+	+ $\bm{v}$ -- governments' preferences for protectionism
+	+ $\gamma$ -- returns to military force in coercive capacity
+	+ $\alpha$ -- geographic loss of strength gradient [@Boulding1962; @BuenodeMesquita1980; @Diehl1985; @Lemke1995; @Gartzke2011]
 
 . . . 
 

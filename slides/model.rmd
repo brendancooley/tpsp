@@ -9,7 +9,7 @@
 
 **Sequence**
 
-1. Governments make trade policy announcements
+1. ($\tilde{\bm{\tau}}$) Governments make trade policy announcements
 2. Wars
     + Winners impose free trade on vanquished governments
 3. ($h(\bm{\tau})$) Economic (general equilibrium, @Eaton2002) consequences of announced/imposed trade policies
@@ -151,7 +151,7 @@ $$
 **Adjusted Consumer Income**
 
 $$
-\tilde{Y}_i(h_i(\bm{\tau}))  = w_i L_i + r_i(h(\bm{\tau}); \color{bcOrange} v_i \color{black})
+\tilde{Y}_i(\bm{w})  = w_i L_i + r_i(\bm{w}; \color{bcOrange} v_i \color{black})
 $$
 
 **Indirect Utility**
@@ -159,3 +159,143 @@ $$
 $$
 V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
 $$
+
+## Wars I {id="wars"}
+
+- Directed dyad-specific war costs held as **private information** to prospective attacker
+	+ $c_{ji}$ -- cost $j$ incurs to invade $i$
+- Wars fought to impose free trade on target
+
+$$
+\bm{\tau}_i^\prime = \left( 1, \dots, 1 \right) = \bm{1}_i
+$$
+
+. . .
+
+**Conquest Values**
+
+- $V_j(\bm{1}_i; \tilde{\bm{\tau}}_{-i})$ -- $j$'s value for imposing free trade on $i$
+
+. . .
+
+**Peace Condition**
+
+$$
+V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right) - c_{ji} \leq V_j \left( \tilde{\bm{\tau}}, v_j \right)
+$$
+
+## Wars II
+
+**Cost Distribution**
+
+$$
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+$$
+
+$$
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}_j} \left( \frac{M_j}{M_i} \right)^{\gamma} (W_{ji})^{-\alpha} \hat{c}^{\eta} \right) .
+$$
+
+## Wars II
+
+**Cost Distribution**
+
+$$
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+$$
+
+$$
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\color{bcOrange}  \hat{C}_j \color{black}} \left( \frac{M_j}{M_i} \right)^{\gamma} (W_{ji})^{-\alpha} \hat{c}^{\eta} \right) .
+$$
+
+- $\color{bcOrange} \hat{C}_j$ -- attacker-specific cost-shifter
+
+## Wars II
+
+**Cost Distribution**
+
+$$
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+$$
+
+$$
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}_j} \left( \frac{ \color{bcOrange} M_j \color{black} }{ \color{bcOrange} M_i \color{black} } \right)^{\gamma} (Z_{ji})^{-\alpha} \hat{c}^{\eta} \right) .
+$$
+
+- $\hat{C}_j$ -- attacker-specific cost-shifter
+- $\color{bcOrange} \frac{M_j}{M_i}$ -- military capability ratio ($\gamma = 0 \implies$ no cost advantage for military superiority)
+
+## Wars II
+
+**Cost Distribution**
+
+$$
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+$$
+
+$$
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}_j} \left( \frac{M_j}{M_i} \right)^{\gamma} ( \color{bcOrange} W_{ji} \color{black} )^{-\alpha} \hat{c}^{\eta} \right) .
+$$
+
+- $\hat{C}_j$ -- attacker-specific cost-shifter
+- $\frac{M_j}{M_i}$ -- military capability ratio ($\gamma = 0 \implies$ no cost advantage for military superiority)
+- $\color{bcOrange} W_{ji}$ -- geographic distance between $j$ and $i$ ($\alpha=0 \implies$ no loss of strength gradient)
+
+. . . 
+
+**Probability of Peace**
+
+\begin{align*}
+\hat{H}_i \left( \hat{\tilde{\bm{\tau}}}; \bm{Z}, \bm{\theta}_m \right) &= \prod_{j \neq i} \hat{F}_{ji} \left( \left( \hat{V}_j \left( \bm{1}_i; \tilde{\bm{\tau}}_{-i} \right) - \hat{V}_j \left( \hat{\tilde{\bm{\tau}}} \right) \right)^{-1} \right) \\
+&= \exp \left( - \sum_{j \neq i} - \frac{1}{\hat{C}_j} \left( \frac{M_j}{M_i} \right)^{\gamma} Z_{ji}^{-\alpha} \left( \hat{V}_j \left( \bm{1}_i; \tilde{\bm{\tau}}_{-i} \right) - \hat{V}_j \left( \hat{\tilde{\bm{\tau}}} \right) \right)^{\eta} \right)
+\end{align*}
+
+. . . 
+
+<a href="#/cost_dist">Cost Distribution Details</a>
+
+## Optimal Policies
+
+- Risk-return tradeoff: ideal policies balance policy optimality against threat of war
+- Lower tariffs on goods from countries that pose military threats
+
+. . .
+
+**Best Response**
+
+$$
+\max_{\bm{\tau}_i} \quad \underbrace{\hat{H}_i(\hat{\tilde{\bm{\tau}}}; \bm{Z}, \bm{\theta}_m) \hat{V}_i(\hat{\tilde{\bm{\tau}}})}_{\text{peace}} + \underbrace{\left( 1 - \hat{H}_i(\hat{\tilde{\bm{\tau}}}; \bm{Z}, \bm{\theta}_m) \right) \hat{V}_i(\bm{1}_i; \hat{\tilde{\bm{\tau}}}_{-i})}_{\text{war}}
+$$
+
+. . .
+
+**Equilibrium**
+
+$$
+\bm{\tau}^\star(\bm{\theta}_m, \bm{Z})
+$$
+
+. . .
+
+- $\bm{\theta}_m = \left( \bm{v}, \gamma, \alpha, \hat{\bm{C}} \right)$ -- estimand
+	+ $\bm{v}$ -- revenue thresholds (preference for protectionism)
+	+ $\alpha$ -- loss of strength gradient (if $\alpha > 0$)
+	+ $\gamma$ -- returns to military advantage (if $\gamma > 0$) 
+	+ $\hat{\bm{C}}$ -- country-specific cost-shifters
+- $\bm{Z}$ -- data
+
+## Identification (Intuition)
+
+**Preferences ($\bm{v}$)**
+
+- Holding military technology fixed, $i$'s overall level of protectionism informs about $v_i$
+- Governments with higher trade policies (more protectionist) have higher $v_i$
+
+. . .
+
+**Military Technology**
+
+- Holding preferences fixed, heterogeneity in observed policies informs about military parameters
+- $\alpha$ -- does policy favoritism covary with distance from trade partner?
+- $\gamma$ -- does policy favoritism covary with military capability ratio?
+- $\hat{C}_i$ -- does $i$ tend to secure favorable policies everywhere?

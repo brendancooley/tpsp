@@ -1,0 +1,44 @@
+# Results (Preferences) {id="results"}
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+source(paste0("../", figs_dir, "ccodes.R"))
+
+gamma <- read_csv(paste0(estimatesPath, "gamma.csv"), col_names=FALSE) %>% pull(.)
+alpha <- read_csv(paste0(estimatesPath, "alpha1.csv"), col_names=FALSE) %>% pull(.)
+
+```
+
+![](`r paste0(figs_dir, v_est_table_path)`)
+
+## Results (Power)
+
+- $\gamma =$ `r round(gamma, 2)`: increasing returns to military advantage
+
+. . . 
+
+- $\alpha =$ `r round(alpha1, 2)`: inverse loss of strength gradient
+
+. . . 
+
+**Likelihood of War**
+
+```{r war_probs, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5.5}
+
+source(paste0("../", figs_dir, "est_prPeace.R"))
+war_probs_hm
+
+```
+
+## Conquest Values
+
+$$
+V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right)
+$$
+
+```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5.5}
+
+source("../02_figs/rcv.R")
+rcvhm(rcv_eq, mint, maxt)
+
+```

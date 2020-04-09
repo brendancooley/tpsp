@@ -1,0 +1,32 @@
+
+
+## Conquest Values {id="rcv"}
+
+**Conquest Values**
+
+$$
+G_j \left( h(\bm{1}_i ; \tilde{\bm{\tau}}_{-i});v_j \right)
+$$
+
+```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center"}
+
+# source("02_figs/rcv.R")
+# rcvhm(rcv_eq, mint, maxt)
+
+```
+
+<a href="#/toc" style="float: right;">Back</a>
+
+## Probability of Successful Conquest {id="chi_est"}
+
+```{r chi, echo=FALSE, warning=FALSE, message=FALSE,  fig.align="center"}
+
+# source("02_figs/chi.R")
+# chihm(chi, minchi, maxchi)
+
+```
+<a href="#/toc" style="float: right;">Back</a>
+
+
+<!-- hide references -->
+<hr style="height:30em; visibility:hidden;" />
