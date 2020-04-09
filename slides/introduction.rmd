@@ -87,7 +87,7 @@ $$
 
 **Counterfactuals:** $\left\{ \bm{\theta}^\prime, \bm{M}^\prime \right\} \rightarrow \bm{\tau}^\prime$
 
-- Shadow of power
+- **Shadow of power**
   + Effect of changing military endowments on trade policy
 - Liberal/commercial peace
   + Effect of changing preferences for openness on probability of war

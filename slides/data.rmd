@@ -42,6 +42,6 @@ source(paste0("../", figs_dir, "ccodes.R"))
 ![](`r paste0(figs_dir, ccodes_table_path)`)
 
 - RoW: Aggregate outside economy (cannot coerce or be coerced)
-	+ Non-ROW countriies: `r round( (yAll - yROW) / yAll * 100 )` percent of world GDP.
+	+ Non-ROW countriies: `r round( (yAll - yROW) / yAll * 100 )` percent of world GDP
 - EU: Aggregate trade policy and military capacity
 	+ Country-level estimation coming soon
