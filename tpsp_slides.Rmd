@@ -111,6 +111,7 @@ if (file.exists('references.RData')) load('references.RData')
 3. <a href="#/frechet">Cost Distribution</a>
 4. <a href="#/milex">Military Expenditure</a>
 5. <a href="#/calibration">Economy (Calibration)</a>
+5. <a href="#/rcv">Conquest Values</a>
 
 </div>
 

@@ -29,16 +29,3 @@ source(paste0("../", figs_dir, "est_prPeace.R"))
 war_probs_hm
 
 ```
-
-## Conquest Values
-
-$$
-V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right)
-$$
-
-```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5.5}
-
-source("../02_figs/rcv.R")
-rcvhm(rcv_eq, mint, maxt)
-
-```

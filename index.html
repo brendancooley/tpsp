@@ -907,7 +907,10 @@ V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right) - c_{ji} \leq V_j \left
 <h2>In-Sample Countries</h2>
 <p><img data-src="02_figs/ccodes_table.png" /></p>
 <ul>
-<li>RoW: Aggregate outside economy (cannot coerce or be coerced)</li>
+<li>RoW: Aggregate outside economy (cannot coerce or be coerced)
+<ul>
+<li>Non-ROW countriies: 72 percent of world GDP.</li>
+</ul></li>
 <li>EU: Aggregate trade policy and military capacity
 <ul>
 <li>Country-level estimation coming soon</li>
@@ -957,12 +960,6 @@ V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right) - c_{ji} \leq V_j \left
 <p><strong>Likelihood of War</strong></p>
 <p><img src="index_files/figure-revealjs/war_probs-1.png" width="768" style="display: block; margin: auto;" /></p>
 </div>
-</section><section id="conquest-values" class="slide level2">
-<h2>Conquest Values</h2>
-<p><span class="math display">\[
-V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right)
-\]</span></p>
-<p><img src="index_files/figure-revealjs/rcv-1.png" width="768" style="display: block; margin: auto;" /></p>
 </section></section>
 <section id="counterfactuals" class="title-slide slide level1"><h1>Counterfactual: A Coercion-Free World</h1><ul>
 <li>Impose <span class="math inline">\(c_{ji} = \infty\)</span> for all <span class="math inline">\(i, j\)</span>, recompute <span class="math inline">\(\bm{\tau}^\star(\bm{\theta}_m, \bm{Z})\)</span>,
@@ -1032,6 +1029,7 @@ Loss of strength gradient</li>
 <li><a href="#/frechet">Cost Distribution</a></li>
 <li><a href="#/milex">Military Expenditure</a></li>
 <li><a href="#/calibration">Economy (Calibration)</a></li>
+<li><a href="#/rcv">Conquest Values</a></li>
 </ol>
 </div></section>
 <section id="barriers" class="title-slide slide level1"><h1>Estimated Policy Barriers to Trade</h1><p><img src="index_files/figure-revealjs/tauhm1-1.png" width="768" style="display: block; margin: auto;" /></p>
@@ -1138,7 +1136,7 @@ X_i = \sum_{j=1}^N \lambda_{ji}(\boldsymbol{w}) E_j
 <li>Set to 6 <span class="citation" data-cites="Head2014">(Head and Mayer 2014)</span></li>
 </ul></li>
 </ul></section>
-<section id="economy-calibration-ii" class="title-slide slide level1"><h1>Economy (Calibration II)</h1><p><strong>Deficits <span class="citation" data-cites="Dekle2007">(Dekle, Eaton, and Kortum 2007)</span></strong></p>
+<section><section id="economy-calibration-ii" class="title-slide slide level1"><h1>Economy (Calibration II)</h1><p><strong>Deficits <span class="citation" data-cites="Dekle2007">(Dekle, Eaton, and Kortum 2007)</span></strong></p>
 <ul>
 <li><span class="math inline">\(\bm{D}\)</span> – trade deficits</li>
 <li>Equilibrium in changes <span class="math display">\[
@@ -1150,6 +1148,12 @@ X_i = \sum_{j=1}^N \lambda_{ji}(\boldsymbol{w}) E_j
 <li>Recompute associated trade flows, price levels, etc</li>
 </ul>
 <p><a href="#/data">Back (Data)</a></p>
+<p><a href="#/toc">Back (TOC)</a></p></section><section id="rcv" class="slide level2">
+<h2>Conquest Values</h2>
+<p><span class="math display">\[
+V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right)
+\]</span></p>
+<p><img src="index_files/figure-revealjs/rcv-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p><a href="#/toc">Back (TOC)</a></p>
 <!-- hide references -->
 <hr style="height:30em; visibility:hidden;" />
@@ -1265,7 +1269,8 @@ X_i = \sum_{j=1}^N \lambda_{ji}(\boldsymbol{w}) E_j
 <div id="ref-Weidmann2010">
 <p>Weidmann, Nils B, Doreen Kuse, and Kristian Skrede Gleditsch. 2010. “The geography of the international system: The CShapes dataset.” <em>International Interactions</em> 36 (1): 86–106.</p>
 </div>
-</div></section>
+</div>
+</section></section>
     </div>
   </div>
 

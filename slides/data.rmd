@@ -1,6 +1,14 @@
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 
 year <- read_csv(paste0(dataPath, "year.csv"), col_names=FALSE) %>% pull(.)
+ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
+y <- read_csv(paste0(dataPath, "y.csv"), col_names=FALSE)
+
+yDF <- bind_cols(ccodes, y)
+colnames(yDF) <- c("iso3", "y")
+
+yAll <- sum(yDF$y)
+yROW <- yDF %>% filter(iso3=="RoW") %>% pull(y)
 
 ```
 
@@ -34,5 +42,6 @@ source(paste0("../", figs_dir, "ccodes.R"))
 ![](`r paste0(figs_dir, ccodes_table_path)`)
 
 - RoW: Aggregate outside economy (cannot coerce or be coerced)
+	+ Non-ROW countriies: `r round( (yAll - yROW) / yAll * 100 )` percent of world GDP.
 - EU: Aggregate trade policy and military capacity
 	+ Country-level estimation coming soon
