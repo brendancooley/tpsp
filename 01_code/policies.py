@@ -511,12 +511,12 @@ class policies:
         #     print(i)
         #     print(theta_dict[i])
 
-        # Cinv = theta_dict["C"] ** -1
-        # Cinv_i = np.array([Cinv[i] for i in range(self.N) if i != id])
+        Cinv = theta_dict["C"] ** -1
+        Cinv_i = np.array([Cinv[i] for i in range(self.N) if i not in [id, self.ROW_id]])
 
         # C_mat = np.outer(1 / theta_dict["C"], theta_dict["C"])
         # C_mat_i = np.array([C_mat[id,:][i] for i in range(self.N) if i != id])
-        Cinv_i = theta_dict["c_hat"] ** -1
+        # Cinv_i = theta_dict["c_hat"] ** -1
         # Cinv = np.delete(Cinv, id)
         eta = theta_dict["eta"]
         gamma = theta_dict["gamma"]
@@ -1228,8 +1228,8 @@ class policies:
             # x_L[b] = -a_ub  # alpha1 lower
             # x_U[b] = a_ub # alpha1 upper
             b += 1
-            x_L[b:b+self.N] = .1  # cs
-            x_U[b:b+self.N] = 10  # cs
+            x_L[b:b+self.N] = 5  # cs  # NOTE: looks like .25 is too low for this
+            # x_U[b:b+self.N] = 10  # cs
             # x_L[b:b+self.N] = opt.root(self.pp_wrap_C, .5, args=(.1, ))['x']  # cs
             # x_U[b:b+self.N] = 15
             # x_U[b] = self.alpha1_ub  # alpha1 upper

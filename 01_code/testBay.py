@@ -23,7 +23,7 @@ projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
 size = "mid/"
 sv_fname = "out/mini_sv.csv"
-out_fname = "out/mid_est_test8.csv"
+out_fname = "out/mid_est_test14.csv"
 # sv = np.genfromtxt(sv_fname, delimiter=',')
 
 helpersPath = os.path.expanduser(projectPath + "source/")
@@ -101,11 +101,11 @@ theta_dict["eta"] = 1.
 theta_dict["c_hat"] = 10.
 theta_dict["alpha1"] = 0.
 theta_dict["gamma"] = 0.
-theta_dict["C"] = np.repeat(1., pecmy.N)
+theta_dict["C"] = np.repeat(10., pecmy.N)
 # theta_dict["C"] = np.array([1, 2, 3, 4, 5])
 theta_x = pecmy.unwrap_theta(theta_dict)
 
-opt.root(pecmy.pp_wrap_alpha, .5, args=(.99, ))['x']
+# opt.root(pecmy.pp_wrap_alpha, .5, args=(.99, ))['x']
 # pecmy.W ** - .75
 
 v = np.mean(pecmy.ecmy.tau, axis=1)
