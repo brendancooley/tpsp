@@ -1228,7 +1228,7 @@ class policies:
             # x_L[b] = -a_ub  # alpha1 lower
             # x_U[b] = a_ub # alpha1 upper
             b += 1
-            x_L[b:b+self.N] = 2.5  # cs  # NOTE: looks like .25 is too low for this
+            x_L[b:b+self.N] = 5  # cs  # NOTE: looks like .25 is too low for this
             # x_U[b:b+self.N] = 10  # cs
             # x_L[b:b+self.N] = opt.root(self.pp_wrap_C, .5, args=(.1, ))['x']  # cs
             # x_U[b:b+self.N] = 15
