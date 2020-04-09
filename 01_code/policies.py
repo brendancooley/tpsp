@@ -1207,7 +1207,7 @@ class policies:
             # x_L[b:b+self.N] = v #
             # x_U[b:b+self.N] = v # fixed vs
             b += self.N
-            # x_L[b] = .5 # eta lower
+            # x_L[b] = 0 # eta lower
             # x_U[b] = 5  # eta upper
             x_L[b] = 1 # eta lower
             x_U[b] = 1  # eta upper

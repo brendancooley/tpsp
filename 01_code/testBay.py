@@ -101,7 +101,7 @@ theta_dict["eta"] = 1.
 theta_dict["c_hat"] = 10.
 theta_dict["alpha1"] = 0.
 theta_dict["gamma"] = 0.
-theta_dict["C"] = np.repeat(10., pecmy.N)
+theta_dict["C"] = np.repeat(2.5, pecmy.N)
 # theta_dict["C"] = np.array([1, 2, 3, 4, 5])
 theta_x = pecmy.unwrap_theta(theta_dict)
 
