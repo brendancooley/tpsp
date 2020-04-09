@@ -1,0 +1,38 @@
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+year <- read_csv(paste0(dataPath, "year.csv"), col_names=FALSE) %>% pull(.)
+
+```
+
+# Data {id="data"}
+
+Year: `r year`
+
+- $\tau_{ij}$ -- aggregate policy barrier to trade imposed by country $i$ on goods from country $j$
+  	+ Measurement: @Cooley2019b (<a href="#/barriers">Barriers</a>)
+- $M_i$ -- military expenditure 
+	+ SIPRI (<a href="#/milex">Milex</a>)
+- $W_{ji}$ -- centroid-centroid distances [@Weidmann2010]
+
+<a href="#/calibration">Economy Calibration ($h(\bm{\tau})$)</a>
+
+- Trade flows
+- National accounts (gdp, gross consumption)
+- Parameters
+	+ share of intermediates in traded goods
+	+ share of consumer expenditure spend on traded goods
+	+ trade elasticity
+
+## In-Sample Countries
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+source(paste0("../", figs_dir, "ccodes.R"))
+
+```
+
+![](`r paste0(figs_dir, ccodes_table_path)`)
+
+- RoW: Aggregate outside economy (cannot coerce or be coerced)
+- EU: Aggregate trade policy and military capacity
+	+ Country-level estimation coming soon

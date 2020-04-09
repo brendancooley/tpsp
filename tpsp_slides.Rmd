@@ -30,13 +30,29 @@ output:
       after_body: "css/plugins.html"
 ---
 
-```{r libs, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 
 code_dir <- "01_code/"
 figs_dir <- "02_figs/"
 slides_dir <- "slides/"
 
 size = "mid/"
+
+tpspPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
+dataPath <- paste0(tpspPath, "data/", size)
+resultsPath <- paste0(tpspPath, "results/", size)
+estimatesPath <- paste0(resultsPath, "estimates/")
+
+helperPath <- "~/Dropbox (Princeton)/14_Software/R/"
+helperFiles <- list.files(helperPath)
+for (i in helperFiles) {
+  source(paste0(helperPath, i))
+}
+
+libs <- c("tidyverse")
+ipak(libs)
+
+year <- read_csv(paste0(dataPath, "year.csv"), col_names=FALSE) %>% pull(.)
 
 # references from paper
 if (file.exists('references.RData')) load('references.RData')
@@ -49,6 +65,27 @@ if (file.exists('references.RData')) load('references.RData')
 ```{r, child="slides/model.rmd"}
 ```
 
+```{r, child="slides/data.rmd"}
+```
+
+```{r, child="slides/estimation.rmd"}
+```
+
+```{r, child="slides/results.rmd"}
+```
+
+```{r, child="slides/counterfactuals.rmd"}
+```
+
+```{r, child="slides/conclusion.rmd"}
+```
+
+# Thank You {.aligncenter}
+
+[brendancooley.com](http://brendancooley.com)
+
+[bcooley@princeton.edu](mailto:bcooley@princeton.edu)
+
 # Table of Contents {id="toc"}
 
 <div id="left">
@@ -57,6 +94,11 @@ if (file.exists('references.RData')) load('references.RData')
 
 1. <a href="#/introduction">Introduction</a>
 2. <a href="#/model">Model</a>
+3. <a href="#/data">Data</a>
+4. <a href="#/estimation">Estimation</a>
+5. <a href="#/results">Results</a>
+6. <a href="#/counterfactuals">Conterfactuals</a>
+7. <a href="#/conclusion">Conclusion</a>
 
 </div>
 
@@ -66,6 +108,9 @@ if (file.exists('references.RData')) load('references.RData')
 
 1. <a href="#/barriers">Estimated Dyadic Policy Barriers</a>
 2. <a href="#/economyA">Economy (Overview)</a>
+3. <a href="#/frechet">Cost Distribution</a>
+4. <a href="#/milex">Military Expenditure</a>
+5. <a href="#/calibration">Economy (Calibration)</a>
 
 </div>
 

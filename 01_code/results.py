@@ -127,6 +127,22 @@ rcv_eq = pecmy.rcv_ft(ge_x_star, v_star)
 np.fill_diagonal(rcv_eq, 0)
 np.savetxt(estimatesPath + "rcv_eq.csv", rcv_eq, delimiter=",")
 
+# probabilities of peace
+h = np.reshape(pecmy.rewrap_xlhvt(xlhvt_star)["h"], (pecmy.N, pecmy.hhat_len))
+peace_prob_mat = np.zeros((pecmy.N, pecmy.N))
+for i in range(pecmy.N):
+    peace_probs_i = pecmy.peace_probs(ge_x_star, h[i, ], i, pecmy.m, v_star, theta_dict_star)[1]
+    tick = 0
+    for j in range(pecmy.N):
+        if j not in [i, pecmy.ROW_id]:
+            peace_prob_mat[i, j] = peace_probs_i[tick]
+            tick += 1
+        else:
+            peace_prob_mat[i, j] = 1
+
+np.savetxt(estimatesPath + "peace_probs.csv", peace_prob_mat, delimiter=",")
+
+
 # cb_ratio = theta_dict_star["c_hat"] / rcv_eq
 # np.fill_diagonal(cb_ratio, 0)
 # cb_ratio_mean = np.sum(cb_ratio) / (pecmy.N - 1) ** 2
