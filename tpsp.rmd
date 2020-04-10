@@ -8,7 +8,7 @@ author:
       affiliation: Ph.D. Candidate, Department of Politics, Princeton University
 date: \today
 abstract: In international relations, how does latent military coercion affect governments’ policy choices? Because militarily powerful governments can credibly threaten to impose their policy preferences by force, weaker governments may adjust their policy choices to avoid costly conflict. This setting raises an inference problem -- do observed policies reflect the preferences of the governments that adopted them or the military constraints of the anarchic international system? Here, I investigate the role of this “shadow of power” in determining trade policy. Specifically, I build a model of trade policy choice under threat that allows me to measure empirically governments’ underlying trade policy preferences, the returns to military advantage, and the extent to which power projection capacity degrades across space. I then estimate the parameters of the model using data on governments' observed trade policies in 2011. I find that geographic distance is not an impediment to the projection of force but that there are increasing returns to military advantage in the technology of coercion. Through counterfactual experiments, I quantify the effect of military constraints on the international economy and governments' welfare. These and other exercises shed light on how military power affects international economic exchange, and how expectations about exchange affect governments’ military strategies.
-thanks: Thanks to Geneveive Bates, Allison Carnegie, Jim Fearon, Haosen Ge, Mike Gibilisco, Kyle Haynes, Helen Milner, Sayumi Miyano, Steve Monroe, In Young Park, Kris Ramsay, Joe Ruggiero for comments and discussions on many earlier versions of this project. Thanks also to audiences at the American Political Science Association's 2019 annual meeting and the 2020 conference on Formal Models of International Relations.
+thanks: Thanks to Geneveive Bates, Allison Carnegie, Jim Fearon, Haosen Ge, Mike Gibilisco, Kyle Haynes, Helen Milner, Sayumi Miyano, Steve Monroe, In Young Park, Jim Qian, Kris Ramsay, and Joe Ruggiero for comments and discussions on many earlier versions of this project. Thanks also to audiences at the American Political Science Association's 2019 annual meeting and the 2020 conference on Formal Models of International Relations.
 # jelcodes: JEL codes go here
 
 bibliography: /Users/brendancooley/Dropbox (Princeton)/References/library.bib
@@ -180,34 +180,6 @@ AeconomyC <- LETTERS[a]
 
 ```{r, child = "sections/AeconomyC.rmd"}
 ```
-
-```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
-
-a <- a + 1
-
-# reset definition, assumption, proposition, lemma tickers
-Dtick <- 1
-Atick <- 1
-Ptick <- 1
-Ltick <- 1
-
-AwarEntry <- LETTERS[a]
-
-```
-
-## `r AwarEntry`: War Entry
-
-```{r, child = "sections/AwarEntry.md"}
-```
-
-```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
-
-a <- a + 1
-
-Ampec <- LETTERS[a]
-
-```
-
 \clearpage
 
 # References
