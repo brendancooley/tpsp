@@ -11,6 +11,7 @@ import os
 import copy
 import multiprocessing as mp
 import ipyopt
+import sys
 
 class policies:
 
@@ -511,12 +512,12 @@ class policies:
         #     print(i)
         #     print(theta_dict[i])
 
-        Cinv = theta_dict["C"] ** -1
-        Cinv_i = np.array([Cinv[i] for i in range(self.N) if i not in [id, self.ROW_id]])
+        # Cinv = theta_dict["C"] ** -1
+        # Cinv_i = np.array([Cinv[i] for i in range(self.N) if i not in [id, self.ROW_id]])
 
         # C_mat = np.outer(1 / theta_dict["C"], theta_dict["C"])
         # C_mat_i = np.array([C_mat[id,:][i] for i in range(self.N) if i != id])
-        # Cinv_i = theta_dict["c_hat"] ** -1
+        Cinv_i = theta_dict["c_hat"] ** -1
         # Cinv = np.delete(Cinv, id)
         eta = theta_dict["eta"]
         gamma = theta_dict["gamma"]
@@ -771,6 +772,8 @@ class policies:
                 print("peace probs " + str(i) + ":")
                 peace_probs_i = self.peace_probs(ge_x, h_i, i, self.m, v, self.rewrap_theta(theta_x))[1]
                 print(peace_probs_i)
+
+            sys.stdout.flush()
 
         tau_hat = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
         tau_star = tau_hat * self.ecmy.tau  # calculate equilibrium tau

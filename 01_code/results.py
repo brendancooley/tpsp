@@ -10,10 +10,10 @@ import economy
 import policies
 import helpers_tpsp as hp
 
-# location = sys.argv[1]  # local, hpc
-# size = sys.argv[2] # mini/, mid/, large/
-location = "local"
-size = "mid/"
+location = sys.argv[1]  # local, hpc
+size = sys.argv[2] # mini/, mid/, large/
+# location = "local"
+# size = "mid/"
 
 basePath = os.path.expanduser('~')
 
@@ -32,8 +32,8 @@ sys.path.insert(1, helpersPath)
 
 import helpers
 
-runEstimates = False
-computeCounterfactuals = False
+runEstimates = True
+computeCounterfactuals = True
 
 data_dir_base = projectFiles + "data/"
 results_dir_base = projectFiles + "results/"
@@ -86,16 +86,18 @@ pecmy = policies.policies(data, params, ROWname, resultsPath)
 
 if runEstimates == True:
 
-    theta_dict_init = dict()
-    theta_dict_init["c_hat"] = .2
-    theta_dict_init["alpha0"] = 0
-    theta_dict_init["alpha1"] = 0
-    theta_dict_init["gamma"] = 1.
+    theta_dict = dict()
+    theta_dict["eta"] = 1.
+    theta_dict["c_hat"] = 10.
+    theta_dict["alpha1"] = 0.
+    theta_dict["gamma"] = 0.
+    theta_dict["C"] = np.repeat(10., pecmy.N)
 
-    theta_x_sv = pecmy.unwrap_theta(theta_dict_init)
+    v = np.mean(pecmy.ecmy.tau, axis=1)
+    theta_x_sv = pecmy.unwrap_theta(theta_dict)
 
     start_time = time.time()
-    xlvt_star, obj, status = pecmy.estimator(np.repeat(1., pecmy.N), theta_x_sv, pecmy.m, nash_eq=False)
+    xlvt_star, obj, status = pecmy.estimator(v, theta_x_sv, pecmy.m, nash_eq=False)
     print("--- Estimator converged in %s seconds ---" % (time.time() - start_time))
 
     print(xlvt_star)
@@ -103,9 +105,9 @@ if runEstimates == True:
     print(status)
 
     xlvt_star_path = estimatesPath + "x.csv"
-    # np.savetxt(xlvt_star_path, xlvt_star, delimiter=",")
+    np.savetxt(xlvt_star_path, xlvt_star, delimiter=",")
 
-xlhvt_star_path = "out/mid_est_test8.csv"
+# xlhvt_star_path = "out/mid_est_test8.csv"
 
 ### Save Estimates ###
 

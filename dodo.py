@@ -25,7 +25,7 @@ data_dir_base = csv_dir_base + "data/"
 
 sizes = ["mini/", "mid/", "large/"]
 
-code_dir = "01_analysis/"
+code_dir = "01_code/"
 
 hpc_base_dir = "~/tpsp/"
 hpc_data_dir = hpc_base_dir + "data/"
