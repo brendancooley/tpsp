@@ -59,6 +59,8 @@ class policies:
         # self.m[:,self.ROW_id] = 0
         # self.m[self.ROW_id,self.ROW_id] = 1
 
+        self.Y_norm = self.ecmy.Y / np.min(self.ecmy.Y)
+
         # counterfactual m, no threats
         self.mzeros = np.diag(self.M)
 
@@ -531,7 +533,7 @@ class policies:
         m_frac_i = np.array([m_frac[:,id][i] for i in range(self.N) if i not in [id, self.ROW_id]])
         # print(m_frac_i)
         W_i = np.array([self.W[:,id][i] for i in range(self.N) if i not in [id, self.ROW_id]])
-        Y_i = np.array([self.ecmy.Y[i] for i in range(self.N) if i not in [id, self.ROW_id]])
+        Y_i = np.array([self.Y_norm[i] for i in range(self.N) if i not in [id, self.ROW_id]])
 
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
         rcx = self.rcx(ge_dict["tau_hat"], h, id)
@@ -726,7 +728,7 @@ class policies:
 
         # optimizer tracker
         self.tick += 1
-        if self.tick % 50 == 0:  # print output every 25 calls
+        if self.tick % 10 == 0:  # print output every 25 calls
 
             # s = np.reshape(xlshvt_dict["s"], (self.N, self.N))
             # print("s:")
