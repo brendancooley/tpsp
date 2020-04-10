@@ -48,6 +48,7 @@ class policies:
         self.ecmy.update_ecmy(tau_hat_pos, np.ones(self.N), np.ones(self.N))
 
         self.W = data["W"]  # distances
+        self.W = self.W / np.min(self.W[self.W>1])  # normalize
         np.fill_diagonal(self.W, 1)
         # np.fill_diagonal(self.W, 0)  # EU has positive own distance by averaging over members, zero this out
         self.M = data["M"]  # milex
@@ -78,7 +79,7 @@ class policies:
         self.x_len = self.ecmy.ge_x_len  # len of ge vars
         # self.xlshvt_len = self.x_len + self.lambda_i_len * self.N + self.N**2 + self.N + 4  # ge vars, all lambdas (flattened), slack variables, v, theta (except v)
         # self.xlshvt_len = self.x_len + self.lambda_i_len * self.N + self.N**2 + self.hhat_len*self.N + self.N + 4
-        self.xlhvt_len = self.x_len + self.lambda_i_len * self.N + self.hhat_len*self.N + self.N + 4 + self.N
+        self.xlhvt_len = self.x_len + self.lambda_i_len * self.N + self.hhat_len*self.N + self.N + 5 + self.N
         # self.xlsh_len = self.x_len + self.lambda_i_len + self.N + self.hhat_len
         self.xlh_len = self.x_len + self.lambda_i_len + self.hhat_len
 
@@ -729,7 +730,7 @@ class policies:
 
         # optimizer tracker
         self.tick += 1
-        if self.tick % 100 == 0:  # print output every 25 calls
+        if self.tick % 10 == 0:  # print output every 25 calls
 
             # s = np.reshape(xlshvt_dict["s"], (self.N, self.N))
             # print("s:")
@@ -1154,6 +1155,33 @@ class policies:
 
         return(out)
 
+    def theta_bounds(self, bound="lower"):
+
+        c_lb = 1.
+
+        theta_dict_lb = dict()
+        theta_dict_lb["eta"] = 1
+        theta_dict_lb["gamma"] = -np.inf
+        theta_dict_lb["c_hat"] = c_lb
+        theta_dict_lb["alpha1"] = -np.inf  # distance coefficient
+        theta_dict_lb["alpha2"] = -np.inf  # gdp coefficient
+        theta_dict_lb["C"] = np.repeat(c_lb, self.N)
+        lb = self.unwrap_theta(theta_dict_lb)
+
+        theta_dict_ub = dict()
+        theta_dict_ub["eta"] = 1
+        theta_dict_ub["gamma"] = np.inf
+        theta_dict_ub["c_hat"] = np.inf
+        theta_dict_ub["alpha1"] = np.inf  # distance coefficient
+        theta_dict_ub["alpha2"] = np.inf  # gdp coefficient
+        theta_dict_ub["C"] = np.repeat(np.inf, self.N)
+        ub = self.unwrap_theta(theta_dict_ub)
+
+        if bound=="lower":
+            return(lb)
+        else:
+            return(ub)
+
     def estimator_bounds(self, theta_x, v, bound="lower", nash_eq=False):
         """return bounds on input variables for estimator
 
@@ -1212,44 +1240,12 @@ class policies:
 
         if nash_eq == False:  # set lower bounds on parameters, of fix some values for testing estimator
             x_L[b:b+self.N] = self.v_min # vs
-            # x_U[b:b+self.N] = self.v_max() - self.v_buffer # vs
-            # x_U[b:b+self.N] = self.v_max() # vs
-            # x_U[b:b+self.N] = 5 # vs
-            # x_L[b:b+self.N] = v #
-            # x_U[b:b+self.N] = v # fixed vs
             b += self.N
-            # x_L[b] = 0 # eta lower
-            # x_U[b] = 5  # eta upper
-            x_L[b] = 1 # eta lower
-            x_U[b] = 1  # eta upper
-            b += 1
-            # x_L[b] = -2.  # gamma lower
-            # x_U[b] = 2.  # gamma upper
-            # x_L[b] = 1
-            # x_U[b] = 1  # fix gamma at 1
-            b += 1
-            # x_L[b] = 1
-            # x_U[b] = 1
-            x_L[b] = 5
-            # x_L[b] = opt.root(self.pp_wrap_C, .5, args=(.4, ))['x'] # c_hat
-            # x_U[b] = 10000
-            b += 1
-            # x_L[b] = -self.alpha1_ub  # alpha1 lower
-            a_ub = opt.root(self.pp_wrap_alpha, .5, args=(.999, ))['x']
-            # x_L[b] = -a_ub  # alpha1 lower
-            # x_U[b] = a_ub # alpha1 upper
-            b += 1
-            x_L[b:b+self.N] = 1  # cs  # NOTE: looks like .25 is too low for this
-            # x_U[b:b+self.N] = 10  # cs
-            # x_L[b:b+self.N] = opt.root(self.pp_wrap_C, .5, args=(.1, ))['x']  # cs
-            # x_U[b:b+self.N] = 15
-            # x_U[b] = self.alpha1_ub  # alpha1 upper
-            # x_L[b] = -np.inf  # alpha1 lower
-            # x_U[b] = np.inf  # alpha1 upper
-            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # alpha lower
-            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0
-            # x_U[self.x_len+self.lambda_i_len*self.N+self.N+1] = 0  # fix alpha
-            # x_L[self.x_len+self.lambda_i_len*self.N+self.N+2] = 0  # gamma lower
+            theta_lb = self.theta_bounds("lower")
+            theta_ub = self.theta_bounds("upper")
+            theta_len = len(theta_lb)
+            x_L[b:b+theta_len] = theta_lb
+            x_U[b:b+theta_len] = theta_ub
         else:  # fix all parameters at initial values
             x_L[b:b+self.N] = v
             x_U[b:b+self.N] = v
