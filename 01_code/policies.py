@@ -60,6 +60,7 @@ class policies:
         # self.m[self.ROW_id,self.ROW_id] = 1
 
         self.Y_norm = self.ecmy.Y / np.min(self.ecmy.Y)
+        # NOTE: may want to do this with W as well
 
         # counterfactual m, no threats
         self.mzeros = np.diag(self.M)
@@ -728,7 +729,7 @@ class policies:
 
         # optimizer tracker
         self.tick += 1
-        if self.tick % 10 == 0:  # print output every 25 calls
+        if self.tick % 100 == 0:  # print output every 25 calls
 
             # s = np.reshape(xlshvt_dict["s"], (self.N, self.N))
             # print("s:")
