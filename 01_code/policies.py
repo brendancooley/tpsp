@@ -522,6 +522,7 @@ class policies:
         eta = theta_dict["eta"]
         gamma = theta_dict["gamma"]
         alpha = theta_dict["alpha1"]
+        alpha2 = theta_dict["alpha2"]
 
         m_diag = np.diagonal(m)
         m_frac = m / m_diag
@@ -530,6 +531,7 @@ class policies:
         m_frac_i = np.array([m_frac[:,id][i] for i in range(self.N) if i not in [id, self.ROW_id]])
         # print(m_frac_i)
         W_i = np.array([self.W[:,id][i] for i in range(self.N) if i not in [id, self.ROW_id]])
+        Y_i = np.array([self.ecmy.Y[i] for i in range(self.N) if i not in [id, self.ROW_id]])
 
         ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
         rcx = self.rcx(ge_dict["tau_hat"], h, id)
@@ -545,7 +547,8 @@ class policies:
         # print(self.W[:,id]**(-1*alpha))
         # print(DeltaG**eta)
 
-        chi_ji = -Cinv_i * m_frac_i**gamma * W_i**(-1*alpha) * DeltaG**eta
+        # chi_ji = -Cinv_i * m_frac_i**gamma * W_i**(-1*alpha) * DeltaG**eta
+        chi_ji = -Cinv_i * Y_i**alpha2 * m_frac_i**gamma * W_i**(-1*alpha) * DeltaG**eta
         # chi_ji = - m_frac[:,id]**gamma * self.W[:,id]**(-1*alpha) * DeltaG**eta
         # print(chi_ji)
 
@@ -623,7 +626,8 @@ class policies:
         # theta_dict["alpha0"] = theta_x[2]  # baseline power projection loss
         theta_dict["c_hat"] = theta_x[2]
         theta_dict["alpha1"] = theta_x[3]  # distance coefficient
-        theta_dict["C"] = theta_x[4:4+self.N]
+        theta_dict["alpha2"] = theta_x[4]  # gdp coefficient
+        theta_dict["C"] = theta_x[5:5+self.N]
 
         return(theta_dict)
 
@@ -649,6 +653,7 @@ class policies:
         # theta_x.extend(np.array([theta_dict["alpha0"]]))
         theta_x.extend(np.array([theta_dict["c_hat"]]))
         theta_x.extend(np.array([theta_dict["alpha1"]]))
+        theta_x.extend(np.array([theta_dict["alpha2"]]))
         theta_x.extend(np.array(theta_dict["C"]))
 
         return(np.array(theta_x))

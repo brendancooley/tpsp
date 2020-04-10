@@ -90,6 +90,7 @@ if runEstimates == True:
     theta_dict["eta"] = 1.
     theta_dict["c_hat"] = 10.
     theta_dict["alpha1"] = 0.
+    theta_dict["alpha2"] = 0.
     theta_dict["gamma"] = 0.
     theta_dict["C"] = np.repeat(10., pecmy.N)
 
