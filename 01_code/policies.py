@@ -1157,7 +1157,7 @@ class policies:
 
     def theta_bounds(self, bound="lower"):
 
-        c_lb = 1.
+        c_lb = 0.
 
         theta_dict_lb = dict()
         theta_dict_lb["eta"] = 1
@@ -1420,8 +1420,8 @@ class policies:
 
         if nash_eq == False:
             problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05)
-            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso")
+            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05)
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05)
             # for derivative test, make sure we don't travel too far from initial point with point_perturbation_radius (leads to evaluation errors)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
         else:

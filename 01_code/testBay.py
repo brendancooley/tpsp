@@ -89,7 +89,7 @@ pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)
 
 theta_dict = dict()
 theta_dict["eta"] = 1.
-theta_dict["c_hat"] = 5.
+theta_dict["c_hat"] = 10.
 theta_dict["alpha1"] = 0.
 theta_dict["alpha2"] = 0.
 theta_dict["gamma"] = 0.
@@ -101,8 +101,6 @@ theta_x = pecmy.unwrap_theta(theta_dict)
 # pecmy.W ** - .75
 
 v = np.mean(pecmy.ecmy.tau, axis=1)
-
-pecmy.estimator_bounds(theta_x, v, bound="upper")[-20:]
 
 # x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, sv=sv, nash_eq=False)
 x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, sv=None, nash_eq=False)
