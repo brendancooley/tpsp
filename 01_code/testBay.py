@@ -89,11 +89,11 @@ pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)
 
 theta_dict = dict()
 theta_dict["eta"] = 1.
-theta_dict["c_hat"] = 10.
+theta_dict["c_hat"] = 25.
 theta_dict["alpha1"] = 0.
 theta_dict["alpha2"] = 0.
 theta_dict["gamma"] = 0.
-theta_dict["C"] = np.repeat(10., pecmy.N)
+theta_dict["C"] = np.repeat(25., pecmy.N)
 theta_x = pecmy.unwrap_theta(theta_dict)
 
 
