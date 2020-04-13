@@ -21,9 +21,9 @@ projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
 
-size = "mid/"
+size = "large/"
 sv_fname = "out/mini_sv.csv"
-out_fname = "out/mid_test_gdp.csv"
+out_fname = "out/large_test_gdp3.csv"
 # sv = np.genfromtxt(sv_fname, delimiter=',')
 
 helpersPath = os.path.expanduser(projectPath + "source/")
@@ -89,11 +89,11 @@ pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)
 
 theta_dict = dict()
 theta_dict["eta"] = 1.
-theta_dict["c_hat"] = 5.
+theta_dict["c_hat"] = 25.
 theta_dict["alpha1"] = 0.
 theta_dict["alpha2"] = 0.
 theta_dict["gamma"] = 0.
-theta_dict["C"] = np.repeat(10., pecmy.N)
+theta_dict["C"] = np.repeat(25., pecmy.N)
 theta_x = pecmy.unwrap_theta(theta_dict)
 
 
@@ -101,8 +101,6 @@ theta_x = pecmy.unwrap_theta(theta_dict)
 # pecmy.W ** - .75
 
 v = np.mean(pecmy.ecmy.tau, axis=1)
-
-pecmy.estimator_bounds(theta_x, v, bound="upper")[-20:]
 
 # x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, sv=sv, nash_eq=False)
 x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, sv=None, nash_eq=False)

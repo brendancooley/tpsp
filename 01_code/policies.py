@@ -1157,7 +1157,8 @@ class policies:
 
     def theta_bounds(self, bound="lower"):
 
-        c_lb = 1.
+        c_lb = 250.
+        c_ub = 250.
 
         theta_dict_lb = dict()
         theta_dict_lb["eta"] = 1
@@ -1171,10 +1172,10 @@ class policies:
         theta_dict_ub = dict()
         theta_dict_ub["eta"] = 1
         theta_dict_ub["gamma"] = np.inf
-        theta_dict_ub["c_hat"] = np.inf
+        theta_dict_ub["c_hat"] = c_ub
         theta_dict_ub["alpha1"] = np.inf  # distance coefficient
         theta_dict_ub["alpha2"] = np.inf  # gdp coefficient
-        theta_dict_ub["C"] = np.repeat(np.inf, self.N)
+        theta_dict_ub["C"] = np.repeat(c_ub, self.N)
         ub = self.unwrap_theta(theta_dict_ub)
 
         if bound=="lower":
