@@ -101,7 +101,7 @@ if runEstimates == True:
     xlhvt_star, obj, status = pecmy.estimator(v, theta_x_sv, pecmy.m, nash_eq=False)
     print("--- Estimator converged in %s seconds ---" % (time.time() - start_time))
 
-    print(xlvt_star)
+    print(xlhvt_star)
     print(obj)
     print(status)
 
@@ -171,23 +171,23 @@ if computeCounterfactuals == True:
 
 print("done.")
 
-xlhvt_prime_path = counterfactualsPath + "x.csv"
-xlhvt_prime = np.genfromtxt(xlhvt_prime_path, delimiter=",")
-ge_x_prime = pecmy.rewrap_xlhvt(xlhvt_prime)["ge_x"]
-X_prime = pecmy.ecmy.rewrap_ge_dict(ge_x_prime)["X_hat"] * pecmy.ecmy.Xcif
-np.savetxt(estimatesPath + "X_prime.csv", X_prime, delimiter=",")
-
-
-G_prime = pecmy.G_hat(ge_x_prime, v_star, 0, all=True)
-tau_prime = pecmy.ecmy.rewrap_ge_dict(ge_x_prime)["tau_hat"] * pecmy.ecmy.tau
-tau_star
-G_star / G_prime
-
-pecmy.ecmy.rewrap_ge_dict(ge_x_star)["tau_hat"] * pecmy.ecmy.tau
-
-ge_x_ft = pecmy.ecmy.unwrap_ge_dict(pecmy.ecmy.geq_solve(1 / pecmy.ecmy.tau, np.ones(pecmy.N), v_star))
-G_ft = pecmy.G_hat(ge_x_ft, v_star, 0, all=True)
-id = 8
-ge_x_ft_id = pecmy.ft_sv(id, ge_x_prime, v_star)
-G_ft_id = pecmy.G_hat(ge_x_ft_id, v_star, 0, all=True)
-G_ft_id
+# xlhvt_prime_path = counterfactualsPath + "x.csv"
+# xlhvt_prime = np.genfromtxt(xlhvt_prime_path, delimiter=",")
+# ge_x_prime = pecmy.rewrap_xlhvt(xlhvt_prime)["ge_x"]
+# X_prime = pecmy.ecmy.rewrap_ge_dict(ge_x_prime)["X_hat"] * pecmy.ecmy.Xcif
+# np.savetxt(estimatesPath + "X_prime.csv", X_prime, delimiter=",")
+#
+#
+# G_prime = pecmy.G_hat(ge_x_prime, v_star, 0, all=True)
+# tau_prime = pecmy.ecmy.rewrap_ge_dict(ge_x_prime)["tau_hat"] * pecmy.ecmy.tau
+# tau_star
+# G_star / G_prime
+#
+# pecmy.ecmy.rewrap_ge_dict(ge_x_star)["tau_hat"] * pecmy.ecmy.tau
+#
+# ge_x_ft = pecmy.ecmy.unwrap_ge_dict(pecmy.ecmy.geq_solve(1 / pecmy.ecmy.tau, np.ones(pecmy.N), v_star))
+# G_ft = pecmy.G_hat(ge_x_ft, v_star, 0, all=True)
+# id = 8
+# ge_x_ft_id = pecmy.ft_sv(id, ge_x_prime, v_star)
+# G_ft_id = pecmy.G_hat(ge_x_ft_id, v_star, 0, all=True)
+# G_ft_id
