@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=4G
+#SBATCH --mem-per-cpu=16G
 #SBATCH --time 48:00:00
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end

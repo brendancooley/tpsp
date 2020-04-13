@@ -33,7 +33,7 @@ sys.path.insert(1, helpersPath)
 import helpers
 
 runEstimates = True
-computeCounterfactuals = True
+computeCounterfactuals = False
 
 data_dir_base = projectFiles + "data/"
 results_dir_base = projectFiles + "results/"
@@ -98,15 +98,15 @@ if runEstimates == True:
     theta_x_sv = pecmy.unwrap_theta(theta_dict)
 
     start_time = time.time()
-    xlvt_star, obj, status = pecmy.estimator(v, theta_x_sv, pecmy.m, nash_eq=False)
+    xlhvt_star, obj, status = pecmy.estimator(v, theta_x_sv, pecmy.m, nash_eq=False)
     print("--- Estimator converged in %s seconds ---" % (time.time() - start_time))
 
     print(xlvt_star)
     print(obj)
     print(status)
 
-    xlvt_star_path = estimatesPath + "x.csv"
-    np.savetxt(xlvt_star_path, xlvt_star, delimiter=",")
+    xlhvt_star_path = estimatesPath + "x.csv"
+    np.savetxt(xlhvt_star_path, xlhvt_star, delimiter=",")
 
 # xlhvt_star_path = "out/mid_est_test8.csv"
 

@@ -7,6 +7,8 @@
     # conda install -c conda-forge autograd
     # conda install -c anaconda statsmodels
     # conda install -c conda-forge ipyopt
+
+# ssh bcooley@adroit.princeton.edu
 # cd tpsp
 # doit hpc_setup
 # transfer data using other dodo.py, transfer_hpc
