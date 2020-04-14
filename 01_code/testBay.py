@@ -23,7 +23,7 @@ projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
 size = "large/"
 sv_fname = "out/mini_sv.csv"
-out_fname = "out/large_test_gdp3.csv"
+out_fname = "out/mid_test_mumps.csv"
 # sv = np.genfromtxt(sv_fname, delimiter=',')
 
 helpersPath = os.path.expanduser(projectPath + "source/")
