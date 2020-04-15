@@ -7,6 +7,8 @@
     # conda install -c conda-forge autograd
     # conda install -c anaconda statsmodels
     # conda install -c conda-forge ipyopt
+    # conda install -c intel mkl
+
 
 # ssh bcooley@adroit.princeton.edu
 # cd tpsp
