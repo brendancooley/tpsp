@@ -1157,8 +1157,8 @@ class policies:
 
     def theta_bounds(self, bound="lower"):
 
-        c_lb = 10.
-        c_ub = 10.
+        c_lb = 100.
+        c_ub = 100.
 
         theta_dict_lb = dict()
         theta_dict_lb["eta"] = 1
@@ -1329,8 +1329,8 @@ class policies:
         #     ge_x_sv = self.v_sv_all(v)
         # else:
         #     ge_x_sv = np.ones(self.x_len)
-        # ge_x_sv = self.v_sv_all(v)
-        ge_x_sv = np.ones(self.x_len)
+        ge_x_sv = self.v_sv_all(v)
+        # ge_x_sv = np.ones(self.x_len)
 
         lambda_sv = np.zeros(self.lambda_i_len*self.N)
         # lambda_sv = np.ones(self.lambda_i_len*self.N)
