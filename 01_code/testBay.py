@@ -86,6 +86,7 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 imp.reload(policies)
 imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)
+pecmy.W
 
 theta_dict = dict()
 theta_dict["eta"] = 1.
