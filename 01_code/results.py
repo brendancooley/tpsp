@@ -10,11 +10,6 @@ import economy
 import policies
 import helpers_tpsp as hp
 
-helpersPath = os.path.expanduser(projectPath + "source/")
-sys.path.insert(1, helpersPath)
-
-import helpers
-
 class results:
 
     def __init__(self, location, size, bootstrap=False, bootstrap_id=1):
@@ -33,6 +28,11 @@ class results:
             projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
         if location == "hpc":
             projectFiles = projectPath
+
+        helpersPath = os.path.expanduser(projectPath + "source/")
+        sys.path.insert(1, helpersPath)
+
+        import helpers
 
         data_dir_base = projectFiles + "data/"
         results_dir_base = projectFiles + "results/"
