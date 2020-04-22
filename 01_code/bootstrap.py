@@ -6,10 +6,10 @@ import imp
 import results
 imp.reload(results)
 
-# location = sys.argv[1]  # local, hpc
-# size = sys.argv[2] # mini/, mid/, large/
-location = "local"
-size = "mid/"
+location = sys.argv[1]  # local, hpc
+size = sys.argv[2] # mini/, mid/, large/
+# location = "local"
+# size = "mid/"
 
 results_base = True
 M = 100 # number of bootstrap iterations
