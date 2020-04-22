@@ -11,7 +11,7 @@ size = sys.argv[2] # mini/, mid/, large/
 # location = "local"
 # size = "mid/"
 
-results_base = True
+results_base = False
 M = 100 # number of bootstrap iterations
 
 if results_base == True:
@@ -29,3 +29,15 @@ def bootstrap_i(id):
 if __name__ == '__main__':
 
     threads = list()
+
+    for id in range(M):
+        f = threading.Thread(target=bootstrap_i, args=(id, ))
+        threads.append(f)
+        f.start()
+
+    for index, thread in enumerate(threads):
+        logging.info("Main    : before joining thread %d.", index)
+        thread.join()
+        logging.info("Main    : thread %d done", index)
+
+    print("done.")
