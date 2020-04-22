@@ -51,28 +51,28 @@ class results:
 
         helpers.mkdir(resultsPath)
         helpers.mkdir(self.estimatesPath)
-        helpers.mkdir(counterfactualsPath)
+        helpers.mkdir(self.counterfactualsPath)
 
         # Economic Parameters
-        beta = np.genfromtxt(dataPath + 'beta.csv', delimiter=',')
-        theta = np.genfromtxt(dataPath + 'theta.csv', delimiter=',')
-        mu = np.genfromtxt(dataPath + 'mu.csv', delimiter=',')
-        nu = np.genfromtxt(dataPath + 'nu.csv', delimiter=',')
+        beta = np.genfromtxt(self.dataPath + 'beta.csv', delimiter=',')
+        theta = np.genfromtxt(self.dataPath + 'theta.csv', delimiter=',')
+        mu = np.genfromtxt(self.dataPath + 'mu.csv', delimiter=',')
+        nu = np.genfromtxt(self.dataPath + 'nu.csv', delimiter=',')
 
         self.params = {"beta":beta,"theta":theta,"mu":mu,"nu":nu}
 
         # Data
-        tau = np.genfromtxt(dataPath + 'tau.csv', delimiter=',')
-        Xcif = np.genfromtxt(dataPath + 'Xcif.csv', delimiter=',')
-        Y = np.genfromtxt(dataPath + 'y.csv', delimiter=',')
-        Eq = np.genfromtxt(dataPath + 'Eq.csv', delimiter=',')
-        Ex = np.genfromtxt(dataPath + 'Ex.csv', delimiter=',')
-        r = np.genfromtxt(dataPath + 'r.csv', delimiter=',')
-        D = np.genfromtxt(dataPath + 'd.csv', delimiter=',')
-        ccodes = np.genfromtxt(dataPath + 'ccodes.csv', delimiter=',', dtype="str")
-        dists = np.genfromtxt(dataPath + 'cDists.csv', delimiter=',')
-        M = np.genfromtxt(dataPath + "milex.csv", delimiter=",")
-        ROWname = np.genfromtxt(dataPath + 'ROWname.csv', delimiter=',', dtype="str")
+        tau = np.genfromtxt(self.dataPath + 'tau.csv', delimiter=',')
+        Xcif = np.genfromtxt(self.dataPath + 'Xcif.csv', delimiter=',')
+        Y = np.genfromtxt(self.dataPath + 'y.csv', delimiter=',')
+        Eq = np.genfromtxt(self.dataPath + 'Eq.csv', delimiter=',')
+        Ex = np.genfromtxt(self.dataPath + 'Ex.csv', delimiter=',')
+        r = np.genfromtxt(self.dataPath + 'r.csv', delimiter=',')
+        D = np.genfromtxt(self.dataPath + 'd.csv', delimiter=',')
+        ccodes = np.genfromtxt(self.dataPath + 'ccodes.csv', delimiter=',', dtype="str")
+        dists = np.genfromtxt(self.dataPath + 'cDists.csv', delimiter=',')
+        M = np.genfromtxt(self.dataPath + "milex.csv", delimiter=",")
+        ROWname = np.genfromtxt(self.dataPath + 'ROWname.csv', delimiter=',', dtype="str")
         self.ROWname = str(ROWname)
 
         M = M / np.min(M)  # normalize milex

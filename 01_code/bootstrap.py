@@ -1,8 +1,10 @@
 import sys
 import threading
 import logging
+import imp
 
 import results
+imp.reload(results)
 
 # location = sys.argv[1]  # local, hpc
 # size = sys.argv[2] # mini/, mid/, large/
