@@ -15,7 +15,7 @@ import sys
 
 class policies:
 
-    def __init__(self, data, params, ROWname, results_path):
+    def __init__(self, data, params, ROWname):
         """
 
         Parameters
@@ -26,8 +26,6 @@ class policies:
             dictionary storing economic primitive parameters
         ROWname : str
             name of rest of world aggregate ("RoW")
-        results_path : string
-            Path to results directory, where free trade xs will be stored
 
         """
 
