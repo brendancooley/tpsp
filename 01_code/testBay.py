@@ -21,7 +21,7 @@ projectPath = basePath + "/Github/tpsp/"
 projectFiles = basePath + "/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 
 
-size = "mid/"
+size = "mid_RUS/"
 sv_fname = "out/mini_sv.csv"
 out_fname = "out/mid_test_mumps.csv"
 # sv = np.genfromtxt(sv_fname, delimiter=',')
@@ -85,7 +85,8 @@ data = {"tau":tau,"Xcif":Xcif,"Y":Y,"E":E,"r":r,"D":D,"W":W,"M":M, "ccodes":ccod
 
 imp.reload(policies)
 imp.reload(economy)
-pecmy = policies.policies(data, params, ROWname, results_path=resultsPath)
+pecmy = policies.policies(data, params, ROWname)
+pecmy.W
 
 theta_dict = dict()
 theta_dict["eta"] = 1.
