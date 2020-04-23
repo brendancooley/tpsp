@@ -15,7 +15,8 @@ size = sys.argv[2] # mini/, mid/, large/
 
 # mp.cpu_count()
 
-results_base = False
+results_base = True
+results_bootstrap = False
 M = 100 # number of bootstrap iterations
 
 if results_base == True:
@@ -49,10 +50,11 @@ if __name__ == '__main__':
     # for p in processes:
     #     p.join()
 
-    pool = mp.Pool() #use all available cores, otherwise specify the number you want as an argument
-    for i in range(1, M+1):
-        pool.apply_async(bootstrap_i, args=(i,))
-    pool.close()
-    pool.join()
+    if results_bootstrap == True:
+        pool = mp.Pool() #use all available cores, otherwise specify the number you want as an argument
+        for i in range(1, M+1):
+            pool.apply_async(bootstrap_i, args=(i,))
+        pool.close()
+        pool.join()
 
     print("done.")

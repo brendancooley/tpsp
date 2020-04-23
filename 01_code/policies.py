@@ -1155,10 +1155,10 @@ class policies:
 
     def theta_bounds(self, bound="lower"):
 
-        c_lb = 25.
-        c_ub = 25.
-        alpha_lb = -2.
-        alpha_ub = 2.
+        c_lb = 50.
+        c_ub = 50.
+        alpha_lb = -np.inf
+        alpha_ub = np.inf
 
         theta_dict_lb = dict()
         theta_dict_lb["eta"] = 1
