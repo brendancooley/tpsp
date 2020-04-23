@@ -1,6 +1,7 @@
 import sys
 # import threading
 import multiprocessing as mp
+import logging
 import imp
 
 import results
@@ -9,8 +10,10 @@ imp.reload(results)
 
 location = sys.argv[1]  # local, hpc
 size = sys.argv[2] # mini/, mid/, large/
-location = "local"
-size = "mid_RUS/"
+# location = "local"
+# size = "mid_RUS/"
+
+# mp.cpu_count()
 
 results_base = False
 M = 100 # number of bootstrap iterations
@@ -33,14 +36,23 @@ def bootstrap_i(id):
 
 if __name__ == '__main__':
 
-    processes = list()
+    # processes = list()
 
-    for id in range(1, M+1):
-        t = mp.Process(target=bootstrap_i, args=(id,))
-        processes.append(t)
-        t.start()
+    mp.log_to_stderr()
+    logger = mp.get_logger()
+    logger.setLevel(logging.INFO)
+    # for id in range(1, M+1):
+    #     t = mp.Process(target=bootstrap_i, args=(id,))
+    #     processes.append(t)
+    #     t.start()
+    #
+    # for p in processes:
+    #     p.join()
 
-    for p in processes:
-        p.join()
+    pool = mp.Pool() #use all available cores, otherwise specify the number you want as an argument
+    for i in range(1, M+1):
+        pool.apply_async(bootstrap_i, args=(i,))
+    pool.close()
+    pool.join()
 
     print("done.")
