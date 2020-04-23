@@ -16,6 +16,10 @@ class results:
 
         location = location  # local, hpc
         size = size # mini/, mid/, large/
+        # location = "local"
+        # size = "mid_RUS/"
+        # bootstrap = True
+        # bootstrap_id = 1
 
         basePath = os.path.expanduser('~')
 
