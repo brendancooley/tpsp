@@ -60,7 +60,8 @@ data$W_log <- log(data$W)
 data$tau_adv <- data$tau - 1
 data$tau_adv_log <- log(data$tau_adv)
 
-data %>% filter(j_iso3=="USA")
+data %>% filter(j_iso3=="CHN")
+data %>% print(n=100)
 
 ### VIZ ###
 
@@ -70,6 +71,7 @@ data %>% ggplot(aes(x=Y_j_log, y=tau)) +
 
 data %>% ggplot(aes(x=m_frac_log, y=tau)) +
   geom_point() +
+  geom_smooth(method="lm") + 
   theme_classic() + 
   facet_wrap(~j_iso3)
 
@@ -90,8 +92,8 @@ summary(model_y)
 model_my <- lm(data=data, tau~m_frac_log+Y_i_log)
 summary(model_my)
 
-model_myw <- lm(data=data, tau~m_frac_log*Y_i_log)
+model_myw <- lm(data=data, tau~m_frac_log*W_log+j_iso3)
 summary(model_myw)
 
-model_mfe <- lm(data=data, tau~m_frac_log+j_iso3)
+model_mfe <- lm(data=data, tau~i_iso3+j_iso3)
 summary(model_mfe)
