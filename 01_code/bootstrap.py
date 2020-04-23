@@ -1,6 +1,6 @@
 import sys
-import threading
-import logging
+# import threading
+import multiprocessing as mp
 import imp
 
 import results
@@ -22,10 +22,8 @@ if results_base == True:
     r_base.unravel_estimates()
 
 def bootstrap_i(id):
-    logging.info("Thread starting " + str(id))
     r_id = results.results(location, size, True, id)
     r_id.compute_estimates()
-    logging.info("Thread finishing " + str(id))
 
 # testing
 # id = 1
@@ -35,16 +33,14 @@ def bootstrap_i(id):
 
 if __name__ == '__main__':
 
-    threads = list()
+    processes = list()
 
-    for id in range(M):
-        f = threading.Thread(target=bootstrap_i, args=(id, ))
-        threads.append(f)
-        f.start()
+    for id in range(1, M+1):
+        t = mp.Process(target=bootstrap_i, args=(id,))
+        processes.append(t)
+        t.start()
 
-    for index, thread in enumerate(threads):
-        logging.info("Main    : before joining thread %d.", index)
-        thread.join()
-        logging.info("Main    : thread %d done", index)
+    for p in processes:
+        p.join()
 
     print("done.")
