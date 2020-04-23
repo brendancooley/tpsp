@@ -15,8 +15,8 @@ size = sys.argv[2] # mini/, mid/, large/
 
 # mp.cpu_count()
 
-results_base = True
-results_bootstrap = False
+results_base = False
+results_bootstrap = True
 M = 100 # number of bootstrap iterations
 
 if results_base == True:
