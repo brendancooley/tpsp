@@ -87,6 +87,8 @@ imp.reload(policies)
 imp.reload(economy)
 pecmy = policies.policies(data, params, ROWname)
 pecmy.W
+m_diag = np.diagonal(pecmy.m)
+m_frac = pecmy.m / m_diag
 
 theta_dict = dict()
 theta_dict["eta"] = 1.
