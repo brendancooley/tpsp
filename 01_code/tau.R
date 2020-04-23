@@ -49,6 +49,7 @@ Y_i <- cbind(ccodes, Y)
 colnames(Y_i) <- c("i_iso3", "Y_i")
 
 data <- tau_long %>% left_join(m_frac_long) %>% left_join(W_long) %>% left_join(Y_j) %>% left_join(Y_i)
+data <- data %>% filter(j_iso3!=i_iso3)
 data$m_frac_log <- log(data$m_frac)
 data$Y_j_log <- log(data$Y_j)
 data$Y_i_log <- log(data$Y_i)
@@ -59,9 +60,14 @@ data %>% ggplot(aes(x=m_frac_log, y=tau, col=j_iso3)) +
   geom_point() +
   theme_classic()
 
+data %>% ggplot(aes(x=Y_j_log, y=tau, col=Y_i_log)) +
+  geom_point() +
+  theme_classic()
+
 ### REG ###
 
-model_base <- lm(data=data, tau~m_frac_log+Y_j_log+Y_i_log)
+model_my <- lm(data=data, tau~m_frac_log+Y_j_log+Y_i_log)
 summary(model_base)
 
-model_mw <- lm(data=data, tau~m_frac_log+j_iso3)
+model_mfe <- lm(data=data, tau~m_frac_log+j_iso3)
+summary(model_mfe)
