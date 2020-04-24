@@ -1158,7 +1158,7 @@ class policies:
         c_lb = 25.
         c_ub = 25.
         alpha_lb = -1.
-        alpha_ub = 1.
+        alpha_ub = 2.
 
         theta_dict_lb = dict()
         theta_dict_lb["eta"] = 1
