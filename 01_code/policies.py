@@ -1119,8 +1119,8 @@ class policies:
     def geq_lb(self):
 
         lb_dict = dict()
-        lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
-        # lb_dict["tau_hat"] = .9 / self.ecmy.tau
+        # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
+        lb_dict["tau_hat"] = .75 / self.ecmy.tau
         # lb_dict["tau_hat"] = 1. / self.ecmy.tau
         np.fill_diagonal(lb_dict["tau_hat"], 1)
         lb_dict["D_hat"] = np.repeat(1, self.N)
@@ -1138,8 +1138,8 @@ class policies:
     def geq_ub(self):
 
         ub_dict = dict()
-        ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
-        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau + .25, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
+        ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau + .25, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         np.fill_diagonal(ub_dict["tau_hat"], 1)
         ub_dict["D_hat"] = np.repeat(1, self.N)
@@ -1164,14 +1164,14 @@ class policies:
         theta_dict_lb["eta"] = 1
         theta_dict_lb["gamma"] = -.5
         theta_dict_lb["c_hat"] = c_lb
-        theta_dict_lb["alpha1"] = -.75  # distance coefficient
+        theta_dict_lb["alpha1"] = -1.  # distance coefficient
         theta_dict_lb["alpha2"] = -.5  # gdp coefficient
         theta_dict_lb["C"] = np.repeat(c_lb, self.N)
         lb = self.unwrap_theta(theta_dict_lb)
 
         theta_dict_ub = dict()
         theta_dict_ub["eta"] = 1
-        theta_dict_ub["gamma"] = 1.75
+        theta_dict_ub["gamma"] = 2.
         theta_dict_ub["c_hat"] = c_ub
         theta_dict_ub["alpha1"] = 1. # distance coefficient
         theta_dict_ub["alpha2"] = 1.  # gdp coefficient
