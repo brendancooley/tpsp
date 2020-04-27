@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import scipy.stats as stats
 import scipy.optimize as opt
 import statsmodels.api as sm
+import copy
 
 import economy
 import policies
@@ -91,7 +92,10 @@ m_diag = np.diagonal(pecmy.m)
 m_frac = pecmy.m / m_diag
 m_frac[:,N-1]
 
-np.reshape(np.repeat(np.max(pecmy.ecmy.tau + .25, axis=1), pecmy.N), (pecmy.N, pecmy.N)) / pecmy.ecmy.tau
+tau_min_mat = copy.deepcopy(pecmy.ecmy.tau)
+np.fill_diagonal(tau_min_mat, 5)
+
+np.reshape(np.repeat(np.min(tau_min_mat - .25, axis=1), pecmy.N), (pecmy.N, pecmy.N)) / pecmy.ecmy.tau
 
 theta_dict = dict()
 theta_dict["eta"] = 1.

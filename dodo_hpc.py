@@ -23,7 +23,7 @@ hpc_code_dir = "code/"
 hpc_source_dir = "source/"
 hpc_results_dir = "results/"
 
-sizes = ["mini/", "mid/", "large/"]
+sizes = ["mini/", "mid/", "large/", "mid_RUS/"]
 
 def task_hpc_setup():
     yield {
@@ -46,6 +46,6 @@ def task_results():
 		      'long':'size',
 		      'type':str,
 		      'default':'mini/'}],
-        'actions':["python " + hpc_code_dir + "results.py hpc %(size)s"],
+        'actions':["python " + hpc_code_dir + "bootstrap.py hpc %(size)s"],
         'verbosity': 2,
     }

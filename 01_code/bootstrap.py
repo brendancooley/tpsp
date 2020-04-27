@@ -3,6 +3,7 @@ import sys
 import multiprocessing as mp
 import logging
 import imp
+import os
 
 import results
 import policies
@@ -51,7 +52,11 @@ if __name__ == '__main__':
     #     p.join()
 
     if results_bootstrap == True:
-        pool = mp.Pool() #use all available cores, otherwise specify the number you want as an argument
+        if location == "hpc":
+            num_cores = int(os.getenv('SLURM_CPUS_PER_TASK'))
+            pool = mp.Pool(num_cores)
+        else:
+            pool = mp.Pool()
         for i in range(1, M+1):
             pool.apply_async(bootstrap_i, args=(i,))
         pool.close()

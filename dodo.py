@@ -23,7 +23,7 @@ csv_dir_base = "~/Dropbox\ \(Princeton\)/1_Papers/tpsp/01_data/"
 results_dir_base = csv_dir_base + "results/"
 data_dir_base = csv_dir_base + "data/"
 
-sizes = ["mini/", "mid/", "large/"]
+sizes = ["mini/", "mid/", "large/", "mid_RUS/"]
 
 code_dir = "01_code/"
 
@@ -128,6 +128,13 @@ def task_setup_dirs():
             'name': "setting up results directory " + i,
             'actions':["mkdir -p " + results_dir_base + i]
         }
+
+def task_transfer_dodo_hpc():
+    yield {
+        'name': "transfering dodo to hpc...",
+        'actions':["scp -r dodo_hpc.py " + "bcooley@adroit.princeton.edu:" + hpc_base_dir + "dodo.py"],
+        'verbosity':2
+    }
 
 def task_transfer_data_hpc():
     # code
