@@ -91,6 +91,8 @@ m_diag = np.diagonal(pecmy.m)
 m_frac = pecmy.m / m_diag
 m_frac[:,N-1]
 
+np.reshape(np.repeat(np.max(pecmy.ecmy.tau + .25, axis=1), pecmy.N), (pecmy.N, pecmy.N)) / pecmy.ecmy.tau
+
 theta_dict = dict()
 theta_dict["eta"] = 1.
 theta_dict["c_hat"] = 25.
