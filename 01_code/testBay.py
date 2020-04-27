@@ -95,7 +95,6 @@ m_frac[:,N-1]
 tau_min_mat = copy.deepcopy(pecmy.ecmy.tau)
 np.fill_diagonal(tau_min_mat, 5)
 
-np.reshape(np.repeat(np.min(tau_min_mat - .25, axis=1), pecmy.N), (pecmy.N, pecmy.N)) / pecmy.ecmy.tau
 
 theta_dict = dict()
 theta_dict["eta"] = 1.
@@ -107,10 +106,13 @@ theta_dict["C"] = np.repeat(25., pecmy.N)
 theta_x = pecmy.unwrap_theta(theta_dict)
 
 
+
 # opt.root(pecmy.pp_wrap_alpha, .5, args=(.99, ))['x']
 # pecmy.W ** - .75
 
 v = np.mean(pecmy.ecmy.tau, axis=1)
+
+pecmy.estimator_bounds(theta_x, v, "lower")
 
 # x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, sv=sv, nash_eq=False)
 x, obj, status = pecmy.estimator(v, theta_x, pecmy.m, sv=None, nash_eq=False)

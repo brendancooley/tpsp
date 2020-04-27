@@ -1118,12 +1118,11 @@ class policies:
 
     def geq_lb(self):
 
-        tau_min_mat = copy.deepcopy(pecmy.ecmy.tau)
+        tau_min_mat = copy.deepcopy(self.ecmy.tau)
         np.fill_diagonal(tau_min_mat, 5)
 
-        np.reshape(np.repeat(np.min(tau_min_mat - .25, axis=1), pecmy.N), (pecmy.N, pecmy.N)) / pecmy.ecmy.tau
         lb_dict = dict()
-        lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - .25, axis=1), pecmy.N), (pecmy.N, pecmy.N)) / pecmy.ecmy.tau
+        lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - .25, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
         # lb_dict["tau_hat"] = self.v_min / self.ecmy.tau
         # lb_dict["tau_hat"] = 1. / self.ecmy.tau
