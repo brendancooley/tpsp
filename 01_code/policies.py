@@ -1164,7 +1164,7 @@ class policies:
         theta_dict_lb["eta"] = 1
         theta_dict_lb["gamma"] = -.5
         theta_dict_lb["c_hat"] = c_lb
-        theta_dict_lb["alpha1"] = -1.  # distance coefficient
+        theta_dict_lb["alpha1"] = -1.0  # distance coefficient
         theta_dict_lb["alpha2"] = -.5  # gdp coefficient
         theta_dict_lb["C"] = np.repeat(c_lb, self.N)
         lb = self.unwrap_theta(theta_dict_lb)
@@ -1174,7 +1174,7 @@ class policies:
         theta_dict_ub["gamma"] = 2.
         theta_dict_ub["c_hat"] = c_ub
         theta_dict_ub["alpha1"] = 1. # distance coefficient
-        theta_dict_ub["alpha2"] = 1.  # gdp coefficient
+        theta_dict_ub["alpha2"] = 1.5  # gdp coefficient
         theta_dict_ub["C"] = np.repeat(c_ub, self.N)
         ub = self.unwrap_theta(theta_dict_ub)
 
