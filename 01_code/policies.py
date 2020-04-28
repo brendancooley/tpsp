@@ -1123,8 +1123,8 @@ class policies:
         np.fill_diagonal(tau_min_mat, 5)
 
         lb_dict = dict()
-        lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - .25, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
-        # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
+        # lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - .25, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
         # lb_dict["tau_hat"] = self.v_min / self.ecmy.tau
         # lb_dict["tau_hat"] = 1. / self.ecmy.tau
         np.fill_diagonal(lb_dict["tau_hat"], 1)
@@ -1143,8 +1143,8 @@ class policies:
     def geq_ub(self):
 
         ub_dict = dict()
-        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
-        ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau + .25, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
+        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau + .25, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         np.fill_diagonal(ub_dict["tau_hat"], 1)
         ub_dict["D_hat"] = np.repeat(1, self.N)
@@ -1427,7 +1427,7 @@ class policies:
         if nash_eq == False:
             problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05)
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="loqo", fixed_mu_oracle="loqo", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, mu_min=self.mu_min)
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, mu_min=self.mu_min)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso")
             # for derivative test, make sure we don't travel too far from initial point with point_perturbation_radius (leads to evaluation errors)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
