@@ -94,8 +94,8 @@ class policies:
         self.alpha1_ub = self.alpha1_min(.01)  # restrict alpha search (returns alpha such that rho(alpha)=.01)
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
         self.mu_min = 1.0e-20
-        self.v_min = .75
-        self.v_buffer = .025
+        self.v_min = .6
+        self.tau_buffer = .5
 
         self.tick = 0  # tracker for optimization calls to loss function
 
@@ -1123,8 +1123,8 @@ class policies:
         np.fill_diagonal(tau_min_mat, 5)
 
         lb_dict = dict()
-        # lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - .25, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
-        lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
+        lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
         # lb_dict["tau_hat"] = self.v_min / self.ecmy.tau
         # lb_dict["tau_hat"] = 1. / self.ecmy.tau
         np.fill_diagonal(lb_dict["tau_hat"], 1)
@@ -1144,7 +1144,7 @@ class policies:
 
         ub_dict = dict()
         ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
-        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau + .25, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau + self.tau_buffer, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         np.fill_diagonal(ub_dict["tau_hat"], 1)
         ub_dict["D_hat"] = np.repeat(1, self.N)
