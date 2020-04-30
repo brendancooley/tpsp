@@ -93,9 +93,9 @@ class policies:
         self.wv_min = -1.0e2  # minimum war value
         self.alpha1_ub = self.alpha1_min(.01)  # restrict alpha search (returns alpha such that rho(alpha)=.01)
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
-        self.mu_min = 1.0e-20
-        self.v_min = .6
-        self.tau_buffer = .5
+        self.mu_min = 1.0e-40
+        self.v_min = .5
+        self.tau_buffer = .75
 
         self.tick = 0  # tracker for optimization calls to loss function
 
@@ -1167,10 +1167,10 @@ class policies:
 
         theta_dict_lb = dict()
         theta_dict_lb["eta"] = 1
-        theta_dict_lb["gamma"] = -.5
+        theta_dict_lb["gamma"] = -0.
         theta_dict_lb["c_hat"] = c_lb
-        theta_dict_lb["alpha1"] = -1.0  # distance coefficient
-        theta_dict_lb["alpha2"] = -.5  # gdp coefficient
+        theta_dict_lb["alpha1"] = -1.5  # distance coefficient
+        theta_dict_lb["alpha2"] = -1.0  # gdp coefficient
         theta_dict_lb["C"] = np.repeat(c_lb, self.N)
         lb = self.unwrap_theta(theta_dict_lb)
 
@@ -1178,8 +1178,8 @@ class policies:
         theta_dict_ub["eta"] = 1
         theta_dict_ub["gamma"] = 2.
         theta_dict_ub["c_hat"] = c_ub
-        theta_dict_ub["alpha1"] = 1. # distance coefficient
-        theta_dict_ub["alpha2"] = 1.5  # gdp coefficient
+        theta_dict_ub["alpha1"] = .5 # distance coefficient
+        theta_dict_ub["alpha2"] = 1.  # gdp coefficient
         theta_dict_ub["C"] = np.repeat(c_ub, self.N)
         ub = self.unwrap_theta(theta_dict_ub)
 
