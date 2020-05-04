@@ -1160,8 +1160,8 @@ class policies:
 
     def theta_bounds(self, bound="lower"):
 
-        c_lb = 50.
-        c_ub = 50.
+        c_lb = 10.
+        c_ub = np.inf
         # alpha_lb = -1.
         # alpha_ub = 2.
 
