@@ -95,7 +95,7 @@ class policies:
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
         self.mu_min = 1.0e-200
         self.v_min = .5
-        self.tau_buffer = .6
+        self.tau_buffer = .4
 
         self.tick = 0  # tracker for optimization calls to loss function
 
