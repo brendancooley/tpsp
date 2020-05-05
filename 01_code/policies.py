@@ -95,7 +95,7 @@ class policies:
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
         self.mu_min = 1.0e-200
         self.v_min = .5
-        self.tau_buffer = .75
+        self.tau_buffer = .6
 
         self.tick = 0  # tracker for optimization calls to loss function
 
@@ -1179,7 +1179,7 @@ class policies:
         theta_dict_ub["gamma"] = 2.
         theta_dict_ub["c_hat"] = c_ub
         theta_dict_ub["alpha1"] = 1. # distance coefficient
-        theta_dict_ub["alpha2"] = 1.5  # gdp coefficient
+        theta_dict_ub["alpha2"] = 1.75  # gdp coefficient
         theta_dict_ub["C"] = np.repeat(c_ub, self.N)
         ub = self.unwrap_theta(theta_dict_ub)
 
