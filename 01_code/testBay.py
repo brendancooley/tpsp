@@ -109,6 +109,9 @@ theta_x = pecmy.unwrap_theta(theta_dict)
 
 # opt.root(pecmy.pp_wrap_alpha, .5, args=(.99, ))['x']
 # pecmy.W ** - .75
+np.reshape(np.repeat(np.max(pecmy.ecmy.tau + pecmy.tau_buffer, axis=1), pecmy.N), (pecmy.N, pecmy.N)) / pecmy.ecmy.tau
+
+np.reshape(np.repeat(np.min(tau_min_mat - pecmy.tau_buffer, axis=1), pecmy.N), (pecmy.N, pecmy.N)) / pecmy.ecmy.tau
 
 v = np.mean(pecmy.ecmy.tau, axis=1)
 

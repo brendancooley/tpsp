@@ -95,7 +95,7 @@ class policies:
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
         self.mu_min = 1.0e-200
         self.v_min = .5
-        self.tau_buffer = .5
+        self.tau_buffer = .75
 
         self.tick = 0  # tracker for optimization calls to loss function
 
@@ -1160,8 +1160,8 @@ class policies:
 
     def theta_bounds(self, bound="lower"):
 
-        c_lb = 10.
-        c_ub = np.inf
+        c_lb = 25.
+        c_ub = 25.
         # alpha_lb = -1.
         # alpha_ub = 2.
 
