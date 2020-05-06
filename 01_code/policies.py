@@ -1162,7 +1162,7 @@ class policies:
     def theta_bounds(self, bound="lower"):
 
         c_lb = 10
-        c_ub = np.inf
+        c_ub = 1000
         # alpha_lb = -1.
         # alpha_ub = 2.
 
@@ -1180,7 +1180,7 @@ class policies:
         theta_dict_ub["gamma"] = 2.
         theta_dict_ub["c_hat"] = c_ub
         theta_dict_ub["alpha1"] = 1. # distance coefficient
-        theta_dict_ub["alpha2"] = 1.6  # gdp coefficient
+        theta_dict_ub["alpha2"] = 1.5  # gdp coefficient
         theta_dict_ub["C"] = np.repeat(c_ub, self.N)
         ub = self.unwrap_theta(theta_dict_ub)
 
@@ -1428,7 +1428,7 @@ class policies:
         if nash_eq == False:
             problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, replace_bounds="yes")
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, nlp_scaling_method="none", mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, mu_min=self.mu_min)
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, mu_min=self.mu_min)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso")
             # for derivative test, make sure we don't travel too far from initial point with point_perturbation_radius (leads to evaluation errors)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
