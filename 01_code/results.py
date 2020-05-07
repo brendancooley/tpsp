@@ -53,6 +53,8 @@ class results:
         self.counterfactualsPath = resultsPath + "counterfactuals/"
         self.xlhvt_star_path = self.estimatesPath + "x.csv"
 
+        self.sv = sv
+
         helpers.mkdir(resultsPath)
         helpers.mkdir(self.estimatesPath)
         helpers.mkdir(self.counterfactualsPath)
@@ -105,7 +107,7 @@ class results:
         theta_x_sv = pecmy.unwrap_theta(theta_dict)
 
         start_time = time.time()
-        xlhvt_star, obj, status = pecmy.estimator(v, theta_x_sv, pecmy.m, sv=sv, nash_eq=False)            
+        xlhvt_star, obj, status = pecmy.estimator(v, theta_x_sv, pecmy.m, sv=self.sv, nash_eq=False)
         print("--- Estimator converged in %s seconds ---" % (time.time() - start_time))
 
         print(xlhvt_star)
