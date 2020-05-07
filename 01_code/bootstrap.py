@@ -33,7 +33,7 @@ x_base = np.genfromtxt(r_base.xlhvt_star_path)
 def bootstrap_i(id):
     r_id = results.results(location, size, sv=x_base, bootstrap=True, bootstrap_id=id)
     r_id.compute_estimates()
-bootstrap_i(1)
+# bootstrap_i(1)
 
 if __name__ == '__main__':
 
