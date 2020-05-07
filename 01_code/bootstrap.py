@@ -4,6 +4,7 @@ import multiprocessing as mp
 import logging
 import imp
 import os
+import numpy as np
 
 import results
 import policies
@@ -20,21 +21,18 @@ results_base = False
 results_bootstrap = True
 M = 100 # number of bootstrap iterations
 
+r_base = results.results(location, size)
+
 if results_base == True:
     print("results base...")
-    r_base = results.results(location, size)
     r_base.compute_estimates()
     r_base.unravel_estimates()
 
-def bootstrap_i(id):
-    r_id = results.results(location, size, True, id)
-    r_id.compute_estimates()
+x_base = np.genfromtxt(r_base.xlhvt_star_path)
 
-# testing
-# id = 1
-# r_test = results.results(location, size, True, id)
-# p_test = policies.policies(r_test.data, r_test.params, r_test.ROWname)
-# bootstrap_i(id)
+def bootstrap_i(id):
+    r_id = results.results(location, size, sv=x_base, bootstrap=True, bootstrap_id=id)
+    r_id.compute_estimates()
 
 if __name__ == '__main__':
 

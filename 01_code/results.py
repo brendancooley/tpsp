@@ -12,7 +12,7 @@ import helpers_tpsp as hp
 
 class results:
 
-    def __init__(self, location, size, bootstrap=False, bootstrap_id=1):
+    def __init__(self, location, size, sv=None, bootstrap=False, bootstrap_id=1):
 
         location = location  # local, hpc
         size = size # mini/, mid/, large/
@@ -105,7 +105,7 @@ class results:
         theta_x_sv = pecmy.unwrap_theta(theta_dict)
 
         start_time = time.time()
-        xlhvt_star, obj, status = pecmy.estimator(v, theta_x_sv, pecmy.m, nash_eq=False)
+        xlhvt_star, obj, status = pecmy.estimator(v, theta_x_sv, pecmy.m, sv=sv, nash_eq=False)            
         print("--- Estimator converged in %s seconds ---" % (time.time() - start_time))
 
         print(xlhvt_star)
