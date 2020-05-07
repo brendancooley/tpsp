@@ -96,6 +96,7 @@ class policies:
         self.mu_min = 1.0e-200
         self.v_min = .5
         self.tau_buffer_upper = .5
+        self.tau_buffer_lower = .25
         # self.tau_buffer_lower = .25
 
         self.tick = 0  # tracker for optimization calls to loss function
@@ -1124,10 +1125,10 @@ class policies:
         np.fill_diagonal(tau_min_mat, 5)
 
         lb_dict = dict()
-        # lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
         # lb_dict["tau_hat"] = self.v_min / self.ecmy.tau
-        lb_dict["tau_hat"] = 1. / self.ecmy.tau
+        # lb_dict["tau_hat"] = 1. / self.ecmy.tau
         np.fill_diagonal(lb_dict["tau_hat"], 1)
         lb_dict["D_hat"] = np.repeat(1, self.N)
         lb_dict["X_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
