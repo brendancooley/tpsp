@@ -5,6 +5,8 @@ import logging
 import imp
 import os
 import numpy as np
+from scipy import optimize as opt
+import copy
 
 import results
 import policies
@@ -30,19 +32,6 @@ if results_base == True:
     r_base.unravel_estimates()
 
 x_base = np.genfromtxt(r_base.xlhvt_star_path)
-# pecmy = policies.policies(r_base.data, r_base.params, r_base.ROWname)
-# x_star = pecmy.rewrap_xlhvt(x_base)["ge_x"]
-# pecmy.ecmy.rewrap_ge_dict(x_star)["tau_hat"] * pecmy.ecmy.tau
-# v_star = pecmy.rewrap_xlhvt(x_base)["v"]
-# theta_x_star = pecmy.rewrap_xlhvt(x_base)["theta"]
-# theta_dict_star = pecmy.rewrap_theta(theta_x_star)
-#
-# ub = pecmy.estimator_bounds(theta_x_star, v_star, bound="upper")
-# lb = pecmy.estimator_bounds(theta_x_star, v_star, bound="lower")
-#
-# x_ub = pecmy.rewrap_xlhvt(ub)["ge_x"]
-# pecmy.ecmy.rewrap_ge_dict(x_ub)["tau_hat"] * pecmy.ecmy.tau
-# np.sum(x_base < lb)
 
 def bootstrap_i(id):
     r_id = results.results(location, size, sv=x_base, bootstrap=True, bootstrap_id=id)

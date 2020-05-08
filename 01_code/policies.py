@@ -1190,6 +1190,9 @@ class policies:
         else:
             return(ub)
 
+    def v_upper(self, v):
+        return(self.ecmy.Y + self.ecmy.r_v(v))
+
     def estimator_bounds(self, theta_x, v, bound="lower", nash_eq=False):
         """return bounds on input variables for estimator
 
@@ -1210,6 +1213,9 @@ class policies:
             length self.xlhvt_len vector of lower or upper bounds for input values
 
         """
+
+        tau_min_mat = copy.deepcopy(self.ecmy.tau)
+        np.fill_diagonal(tau_min_mat, 5)
 
         theta_dict = self.rewrap_theta(theta_x)
 
@@ -1247,7 +1253,8 @@ class policies:
         b += self.N*self.hhat_len
 
         if nash_eq == False:  # set lower bounds on parameters, of fix some values for testing estimator
-            x_L[b:b+self.N] = self.v_min # vs
+            x_L[b:b+self.N] = np.min(tau_min_mat, axis=1) - .4
+            x_U[b:b+self.N] = opt.root(self.v_upper, x0=np.ones(self.N))['x']
             b += self.N
             theta_lb = self.theta_bounds("lower")
             theta_ub = self.theta_bounds("upper")
@@ -1281,13 +1288,6 @@ class policies:
             return(x_L)
         else:
             return(x_U)
-
-    def v_max(self):
-
-        sv = np.ones(self.N)
-        out = opt.root(self.r_v, sv)
-
-        return(out['x'])
 
     def alpha1_min(self, thres):
         """calculate minimum value for alpha1 (distance elasticity)
