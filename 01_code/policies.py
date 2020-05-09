@@ -1162,8 +1162,10 @@ class policies:
 
     def theta_bounds(self, bound="lower"):
 
-        c_lb = 25.
-        c_ub = 25.
+        # c_lb = 25.
+        # c_ub = 25.
+        c_lb = 10
+        c_ub = 1000
         # alpha_lb = -1.
         # alpha_ub = 2.
 
