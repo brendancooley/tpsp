@@ -97,11 +97,11 @@ class results:
         # starting values
         theta_dict = dict()
         theta_dict["eta"] = 1.
-        theta_dict["c_hat"] = 50.
+        theta_dict["c_hat"] = 25.
         theta_dict["alpha1"] = -.25
         theta_dict["alpha2"] = .5
         theta_dict["gamma"] = 1.
-        theta_dict["C"] = np.repeat(50., pecmy.N)
+        theta_dict["C"] = np.repeat(25., pecmy.N)
 
         v = np.mean(pecmy.ecmy.tau, axis=1)
         theta_x_sv = pecmy.unwrap_theta(theta_dict)
