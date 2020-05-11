@@ -1126,9 +1126,9 @@ class policies:
 
         lb_dict = dict()
         # lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
-        # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
+        lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
         # lb_dict["tau_hat"] = self.v_min / self.ecmy.tau
-        lb_dict["tau_hat"] = .9 / self.ecmy.tau
+        # lb_dict["tau_hat"] = .9 / self.ecmy.tau
         np.fill_diagonal(lb_dict["tau_hat"], 1)
         lb_dict["D_hat"] = np.repeat(1, self.N)
         lb_dict["X_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
@@ -1262,7 +1262,7 @@ class policies:
 
         if nash_eq == False:  # set lower bounds on parameters, of fix some values for testing estimator
             x_L[b:b+self.N] = np.min(tau_min_mat, axis=1) - .4
-            x_U[b:b+self.N] = opt.root(self.v_upper, x0=np.ones(self.N))['x']
+            x_U[b:b+self.N] = opt.root(self.v_upper, x0=np.ones(self.N))['x'] - .1
             b += self.N
             theta_lb = self.theta_bounds("lower")
             theta_ub = self.theta_bounds("upper")
