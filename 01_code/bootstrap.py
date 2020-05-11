@@ -32,6 +32,9 @@ if results_base == True:
     r_base.unravel_estimates()
 
 x_base = np.genfromtxt(r_base.xlhvt_star_path)
+# pecmy = policies.policies(r_base.data, r_base.params, r_base.ROWname)
+# x_base_ge_x = pecmy.rewrap_xlhvt(x_base)["ge_x"]
+# pecmy.ecmy.rewrap_ge_dict(x_base_ge_x)["tau_hat"] * pecmy.ecmy.tau
 
 def bootstrap_i(id):
     r_id = results.results(location, size, sv=x_base, bootstrap=True, bootstrap_id=id)
