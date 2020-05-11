@@ -1262,7 +1262,7 @@ class policies:
 
         if nash_eq == False:  # set lower bounds on parameters, of fix some values for testing estimator
             x_L[b:b+self.N] = np.min(tau_min_mat, axis=1) - .4
-            x_U[b:b+self.N] = opt.root(self.v_upper, x0=np.ones(self.N))['x'] - .1
+            x_U[b:b+self.N] = opt.root(self.v_upper, x0=np.ones(self.N))['x'] - .01
             b += self.N
             theta_lb = self.theta_bounds("lower")
             theta_ub = self.theta_bounds("upper")
@@ -1437,7 +1437,7 @@ class policies:
         if nash_eq == False:
             problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, replace_bounds="yes")
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, mu_min=self.mu_min)
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, mu_min=self.mu_min, bound_push=.2)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso")
             # for derivative test, make sure we don't travel too far from initial point with point_perturbation_radius (leads to evaluation errors)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
