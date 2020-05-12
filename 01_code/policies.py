@@ -96,7 +96,7 @@ class policies:
         self.mu_min = 1.0e-200
         self.v_min = .7
         self.tau_buffer_upper = .5
-        self.tau_buffer_lower = .25
+        self.tau_buffer_lower = .4
         # self.tau_buffer_lower = .25
 
         self.tick = 0  # tracker for optimization calls to loss function
@@ -1125,8 +1125,8 @@ class policies:
         np.fill_diagonal(tau_min_mat, 5)
 
         lb_dict = dict()
-        # lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
-        lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
+        lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
         # lb_dict["tau_hat"] = self.v_min / self.ecmy.tau
         # lb_dict["tau_hat"] = .9 / self.ecmy.tau
         np.fill_diagonal(lb_dict["tau_hat"], 1)
@@ -1174,22 +1174,22 @@ class policies:
         # theta_dict_lb["gamma"] = -.5
         theta_dict_lb["gamma"] = -np.inf
         theta_dict_lb["c_hat"] = c_lb
-        # theta_dict_lb["alpha1"] = -1.  # distance coefficient
-        theta_dict_lb["alpha1"] = -np.inf  # distance coefficient
-        # theta_dict_lb["alpha2"] = -.5  # gdp coefficient
-        theta_dict_lb["alpha2"] = -np.inf  # gdp coefficient
+        theta_dict_lb["alpha1"] = -1.  # distance coefficient
+        # theta_dict_lb["alpha1"] = -np.inf  # distance coefficient
+        theta_dict_lb["alpha2"] = -.5  # gdp coefficient
+        # theta_dict_lb["alpha2"] = -np.inf  # gdp coefficient
         theta_dict_lb["C"] = np.repeat(c_lb, self.N)
         lb = self.unwrap_theta(theta_dict_lb)
 
         theta_dict_ub = dict()
         theta_dict_ub["eta"] = 1
-        # theta_dict_ub["gamma"] = 2.
-        theta_dict_ub["gamma"] = np.inf
+        theta_dict_ub["gamma"] = 2.
+        # theta_dict_ub["gamma"] = np.inf
         theta_dict_ub["c_hat"] = c_ub
-        # theta_dict_ub["alpha1"] = 1. # distance coefficient
-        theta_dict_ub["alpha1"] = np.inf # distance coefficient
-        # theta_dict_ub["alpha2"] = 1.5  # gdp coefficient
-        theta_dict_ub["alpha2"] = np.inf  # gdp coefficient
+        theta_dict_ub["alpha1"] = 1. # distance coefficient
+        # theta_dict_ub["alpha1"] = np.inf # distance coefficient
+        theta_dict_ub["alpha2"] = 1.5  # gdp coefficient
+        # theta_dict_ub["alpha2"] = np.inf  # gdp coefficient
         theta_dict_ub["C"] = np.repeat(c_ub, self.N)
         ub = self.unwrap_theta(theta_dict_ub)
 
@@ -1437,7 +1437,7 @@ class policies:
         if nash_eq == False:
             problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, replace_bounds="yes")
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, mu_min=self.mu_min, bound_push=.5)
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, mu_min=self.mu_min, bound_push=.2)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso")
             # for derivative test, make sure we don't travel too far from initial point with point_perturbation_radius (leads to evaluation errors)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
