@@ -13,10 +13,10 @@ import policies
 imp.reload(policies)
 imp.reload(results)
 
-# location = sys.argv[1]  # local, hpc
-# size = sys.argv[2] # mini/, mid/, large/
-location = "local"
-size = "mid_RUS/"
+location = sys.argv[1]  # local, hpc
+size = sys.argv[2] # mini/, mid/, large/
+# location = "local"
+# size = "mid_RUS/"
 
 # mp.cpu_count()
 
@@ -32,13 +32,13 @@ if results_base == True:
     r_base.unravel_estimates()
 
 x_base = np.genfromtxt(r_base.xlhvt_star_path)
-pecmy = policies.policies(r_base.data, r_base.params, r_base.ROWname)
-x_base_ge_x = pecmy.rewrap_xlhvt(x_base)["ge_x"]
-pecmy.ecmy.tau
-pecmy.ecmy.rewrap_ge_dict(x_base_ge_x)["tau_hat"] * pecmy.ecmy.tau
-# v_base = pecmy.rewrap_xlhvt(x_base)["v"]
-# pecmy.ecmy.rewrap_ge_dict(pecmy.geq_lb(x_base))["tau_hat"] * pecmy.ecmy.tau
-pecmy.ecmy.rewrap_ge_dict(pecmy.rewrap_xlhvt(pecmy.estimator_bounds(pecmy.rewrap_xlhvt(x_base)["theta"], pecmy.rewrap_xlhvt(x_base)["v"], x_base, "lower"))["ge_x"])["tau_hat"] * pecmy.ecmy.tau
+# pecmy = policies.policies(r_base.data, r_base.params, r_base.ROWname)
+# x_base_ge_x = pecmy.rewrap_xlhvt(x_base)["ge_x"]
+# pecmy.ecmy.tau
+# pecmy.ecmy.rewrap_ge_dict(x_base_ge_x)["tau_hat"] * pecmy.ecmy.tau
+# # v_base = pecmy.rewrap_xlhvt(x_base)["v"]
+# # pecmy.ecmy.rewrap_ge_dict(pecmy.geq_lb(x_base))["tau_hat"] * pecmy.ecmy.tau
+# pecmy.ecmy.rewrap_ge_dict(pecmy.rewrap_xlhvt(pecmy.estimator_bounds(pecmy.rewrap_xlhvt(x_base)["theta"], pecmy.rewrap_xlhvt(x_base)["v"], x_base, "lower"))["ge_x"])["tau_hat"] * pecmy.ecmy.tau
 
 def bootstrap_i(id):
     r_id = results.results(location, size, sv=x_base, bootstrap=True, bootstrap_id=id)
