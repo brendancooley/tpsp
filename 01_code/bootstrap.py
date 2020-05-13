@@ -80,8 +80,8 @@ if __name__ == '__main__':
             pool = mp.Pool(num_cores)
         else:
             pool = mp.Pool()
-        # for i in range(2, 3):
-        for i in range(1, M+1):
+        for i in range(2, 3):
+        # for i in range(1, M+1):
             pool.apply_async(bootstrap_i, args=(i,))
         pool.close()
         pool.join()
