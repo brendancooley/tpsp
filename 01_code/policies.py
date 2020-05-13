@@ -93,7 +93,7 @@ class policies:
         self.wv_min = -1.0e2  # minimum war value
         self.alpha1_ub = self.alpha1_min(.01)  # restrict alpha search (returns alpha such that rho(alpha)=.01)
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
-        self.mu_min = 1.0e-3
+        self.mu_min = 1.0e-6
         self.v_min = .7
         self.tau_buffer_upper = .5
         self.tau_buffer_lower = .25
@@ -1130,8 +1130,8 @@ class policies:
         np.fill_diagonal(tau_sv_min_mat, 5)
 
         lb_dict = dict()
-        lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
-        # lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_sv_min_mat - .1, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        # lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_sv_min_mat - .1, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
         # lb_dict["tau_hat"] = self.v_min / self.ecmy.tau
         # lb_dict["tau_hat"] = .9 / self.ecmy.tau
@@ -1442,8 +1442,10 @@ class policies:
 
         if nash_eq == False:
             problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
-            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, replace_bounds="yes")
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, mu_min=self.mu_min, bound_push=.2)
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, mu_min=self.mu_min, bound_push=.2)
+            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, mu_min=self.mu_min, bound_push=.2)
+            # line_search_method="cg-penalty"
+            # gamma_theta=1.0e-1
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso")
             # for derivative test, make sure we don't travel too far from initial point with point_perturbation_radius (leads to evaluation errors)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
