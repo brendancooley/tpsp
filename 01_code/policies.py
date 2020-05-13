@@ -93,10 +93,10 @@ class policies:
         self.wv_min = -1.0e2  # minimum war value
         self.alpha1_ub = self.alpha1_min(.01)  # restrict alpha search (returns alpha such that rho(alpha)=.01)
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
-        self.mu_min = 1.0e-200
+        self.mu_min = 1.0e-6
         self.v_min = .7
         self.tau_buffer_upper = .5
-        self.tau_buffer_lower = .4
+        self.tau_buffer_lower = .25
         # self.tau_buffer_lower = .25
 
         self.tick = 0  # tracker for optimization calls to loss function
@@ -1119,13 +1119,19 @@ class policies:
 
         return(f)
 
-    def geq_lb(self):
+    def geq_lb(self, sv):
 
         tau_min_mat = copy.deepcopy(self.ecmy.tau)
         np.fill_diagonal(tau_min_mat, 5)
 
+        geq_sv = self.rewrap_xlhvt(sv)["ge_x"]
+        tau_sv = self.ecmy.rewrap_ge_dict(geq_sv)["tau_hat"]*self.ecmy.tau
+        tau_sv_min_mat = copy.deepcopy(tau_sv)
+        np.fill_diagonal(tau_sv_min_mat, 5)
+
         lb_dict = dict()
         lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        # lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_sv_min_mat - .1, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
         # lb_dict["tau_hat"] = self.v_min / self.ecmy.tau
         # lb_dict["tau_hat"] = .9 / self.ecmy.tau
@@ -1201,7 +1207,7 @@ class policies:
     def v_upper(self, v):
         return(self.ecmy.Y + self.ecmy.r_v(v))
 
-    def estimator_bounds(self, theta_x, v, bound="lower", nash_eq=False):
+    def estimator_bounds(self, theta_x, v, sv, bound="lower", nash_eq=False):
         """return bounds on input variables for estimator
 
         Parameters
@@ -1231,9 +1237,9 @@ class policies:
         x_L = np.repeat(-np.inf, self.xlhvt_len)
         x_U = np.repeat(np.inf, self.xlhvt_len)
 
-        # bound tau_hats below at zero
+        # bound tau_hats below to stay near interior optimum
         b = self.x_len
-        x_L[0:b] = self.geq_lb()
+        x_L[0:b] = self.geq_lb(sv)
         x_U[0:b] = self.geq_ub()
 
         # lbda_i_bound_dict = dict()
@@ -1252,8 +1258,8 @@ class policies:
         # x_L[b:b+self.N**2] = 0  # positive slack variables
         # b += self.N**2
 
-        # rcx
-        rch_L = np.tile(self.geq_lb()[-self.hhat_len:], self.N)
+        # rcx: bound these tau hats below at zero
+        rch_L = np.tile(self.geq_lb(sv)[-self.hhat_len:], self.N)
         rch_U = np.tile(self.geq_ub()[-self.hhat_len:], self.N)
 
         x_L[b:b+self.N*self.hhat_len] = rch_L
@@ -1428,11 +1434,11 @@ class policies:
         h_sparsity_indices = (h_sparsity_indices_a[:,0], h_sparsity_indices_a[:,1])
 
         if nash_eq == False:
-            b_L = self.estimator_bounds(theta_x_sv, v_sv, bound="lower")
-            b_U = self.estimator_bounds(theta_x_sv, v_sv, bound="upper")
+            b_L = self.estimator_bounds(theta_x_sv, v_sv, xlhvt_sv, bound="lower")
+            b_U = self.estimator_bounds(theta_x_sv, v_sv, xlhvt_sv, bound="upper")
         else:
-            b_L = self.estimator_bounds(theta_x_sv, v_sv, bound="lower", nash_eq=True)
-            b_U = self.estimator_bounds(theta_x_sv, v_sv, bound="upper", nash_eq=True)
+            b_L = self.estimator_bounds(theta_x_sv, v_sv, xlhvt_sv, bound="lower", nash_eq=True)
+            b_U = self.estimator_bounds(theta_x_sv, v_sv, xlhvt_sv, bound="upper", nash_eq=True)
 
         if nash_eq == False:
             problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
@@ -1658,61 +1664,61 @@ class policies:
             return(out)
         return(f)
 
-    def Lzeros_i_bounds(self, ge_x_sv, id, bound="lower"):
-        """bound input variables for best response Lagrangian calculation
-
-        Parameters
-        ----------
-        ge_x_sv : vector
-            vector length self.xlh_len of starting values for best response calculation
-        id : int
-            id of government for which to calculate best response
-        bound : str
-            "lower" or "upper", which bound to return
-
-        Returns
-        -------
-        vector
-            vector length self.x_len + self.lambda_i_len of bounds for Lagrange best response input
-
-        """
-
-        tau_hat = self.ecmy.rewrap_ge_dict(ge_x_sv)["tau_hat"]
-
-        x_L = np.concatenate((np.zeros(self.x_len), np.repeat(-np.inf, self.lambda_i_len), np.zeros(self.hhat_len)))
-        x_U = np.repeat(np.inf, self.L_i_len)
-
-        tau_L = np.zeros((self.N, self.N))
-        # tau_L = 1 / self.ecmy.tau
-        tau_U = np.reshape(np.repeat(np.inf, self.N ** 2), (self.N, self.N))
-        # tau_U = np.max(self.ecmy.tau, axis=1)
-        np.fill_diagonal(tau_L, 1.)
-        np.fill_diagonal(tau_U, 1.)
-        for i in range(self.N):
-            for j in range(self.N):
-                if i != j:
-                    if i != id:
-                        # constrain others policies at starting values
-                        tau_L[i, j] = tau_hat[i, j]
-                        tau_U[i, j] = tau_hat[i, j]
-                else:
-                    tau_L[i, j] = 1.
-                    tau_U[i, j] = 1.
-
-
-        x_L[0:self.N**2] = tau_L.ravel()
-        x_U[0:self.N**2] = tau_U.ravel()
-
-        x_L[self.N**2:self.x_len] = self.geq_lb()[self.N**2:]  # ge lower bounds
-        x_U[self.N**2:self.x_len] = self.geq_ub()[self.N**2:]  # ge upper bounds
-        x_L[-self.hhat_len:] = self.geq_lb()[-self.hhat_len:]  # rc-ge lower bounds
-
-        # x_L[self.x_len+self.lambda_i_len-self.N:self.x_len+self.lambda_i_len+self.N] = 0  # mil constraint multipliers and slack variables
-
-        if bound == "lower":
-            return(x_L)
-        else:
-            return(x_U)
+    # def Lzeros_i_bounds(self, ge_x_sv, id, bound="lower"):
+    #     """bound input variables for best response Lagrangian calculation
+    #
+    #     Parameters
+    #     ----------
+    #     ge_x_sv : vector
+    #         vector length self.xlh_len of starting values for best response calculation
+    #     id : int
+    #         id of government for which to calculate best response
+    #     bound : str
+    #         "lower" or "upper", which bound to return
+    #
+    #     Returns
+    #     -------
+    #     vector
+    #         vector length self.x_len + self.lambda_i_len of bounds for Lagrange best response input
+    #
+    #     """
+    #
+    #     tau_hat = self.ecmy.rewrap_ge_dict(ge_x_sv)["tau_hat"]
+    #
+    #     x_L = np.concatenate((np.zeros(self.x_len), np.repeat(-np.inf, self.lambda_i_len), np.zeros(self.hhat_len)))
+    #     x_U = np.repeat(np.inf, self.L_i_len)
+    #
+    #     tau_L = np.zeros((self.N, self.N))
+    #     # tau_L = 1 / self.ecmy.tau
+    #     tau_U = np.reshape(np.repeat(np.inf, self.N ** 2), (self.N, self.N))
+    #     # tau_U = np.max(self.ecmy.tau, axis=1)
+    #     np.fill_diagonal(tau_L, 1.)
+    #     np.fill_diagonal(tau_U, 1.)
+    #     for i in range(self.N):
+    #         for j in range(self.N):
+    #             if i != j:
+    #                 if i != id:
+    #                     # constrain others policies at starting values
+    #                     tau_L[i, j] = tau_hat[i, j]
+    #                     tau_U[i, j] = tau_hat[i, j]
+    #             else:
+    #                 tau_L[i, j] = 1.
+    #                 tau_U[i, j] = 1.
+    #
+    #
+    #     x_L[0:self.N**2] = tau_L.ravel()
+    #     x_U[0:self.N**2] = tau_U.ravel()
+    #
+    #     x_L[self.N**2:self.x_len] = self.geq_lb()[self.N**2:]  # ge lower bounds
+    #     x_U[self.N**2:self.x_len] = self.geq_ub()[self.N**2:]  # ge upper bounds
+    #     x_L[-self.hhat_len:] = self.geq_lb()[-self.hhat_len:]  # rc-ge lower bounds
+    #
+    #     # x_L[self.x_len+self.lambda_i_len-self.N:self.x_len+self.lambda_i_len+self.N] = 0  # mil constraint multipliers and slack variables
+    #
+    #     if bound == "lower":
+    #         return(x_L)
+    #     else:
+    #         return(x_U)
 
     def dummy(self, x):
         """dummy objective function for ipopt (for when we only care about solving constraints)
