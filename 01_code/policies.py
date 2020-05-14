@@ -131,6 +131,7 @@ class policies:
         # Ghat = Uhat * self.R_hat(ge_dict, v)
         # Ghat = .75 * np.log(Uhat) + .25 * np.log(R_hat)
         Ghat = Uhat
+        # Ghat = np.maximum(Uhat, 0)
 
         if all == False:
             return(Ghat[id]*sign)
@@ -469,7 +470,8 @@ class policies:
         rcv = self.G_hat(rcx, v, id, all=True)
         DeltaG = rcv - G
         # print(DeltaG)
-        DeltaG = np.clip(DeltaG, 1e-10, np.inf)
+        # DeltaG = np.clip(DeltaG, 1e-10, np.inf)
+        DeltaG = np.clip(DeltaG, 1e-10, .1)  # cap above for numerical stability
         DeltaG = np.array([DeltaG[i] for i in range(self.N) if i != id])
         print(id)
         print(DeltaG)
@@ -731,7 +733,7 @@ class policies:
 
         # optimizer tracker
         self.tick += 1
-        if self.tick % 50 == 0:  # print output every 25 calls
+        if self.tick % 25 == 0:  # print output every 25 calls
 
             # s = np.reshape(xlshvt_dict["s"], (self.N, self.N))
             # print("s:")
@@ -782,6 +784,13 @@ class policies:
                 print("peace probs " + str(i) + ":")
                 peace_probs_i = self.peace_probs(ge_x, h_i, i, self.m, v, self.rewrap_theta(theta_x))[1]
                 print(peace_probs_i)
+
+                rcx = self.rcx(ge_dict["tau_hat"], h_i, i)
+                G = self.G_hat(ge_x, v, i, all=True)
+                rcv = self.G_hat(rcx, v, i, all=True)
+                DeltaG = rcv - G
+                print("DeltaG" + str(i) + ":")
+                print(DeltaG)
 
             sys.stdout.flush()
 
@@ -1170,13 +1179,13 @@ class policies:
 
         c_lb = 25.
         c_ub = 25.
-        # c_lb = 10
-        # c_ub = 1000
+        # c_lb = 15.
+        # c_ub = 1000.
         # alpha_lb = -1.
         # alpha_ub = 2.
 
         theta_dict_lb = dict()
-        theta_dict_lb["eta"] = 1
+        theta_dict_lb["eta"] = 2.
         # theta_dict_lb["gamma"] = -.5
         theta_dict_lb["gamma"] = -np.inf
         theta_dict_lb["c_hat"] = c_lb
@@ -1188,8 +1197,8 @@ class policies:
         lb = self.unwrap_theta(theta_dict_lb)
 
         theta_dict_ub = dict()
-        theta_dict_ub["eta"] = 1
-        theta_dict_ub["gamma"] = 2.
+        theta_dict_ub["eta"] = 2.
+        theta_dict_ub["gamma"] = 3.
         # theta_dict_ub["gamma"] = np.inf
         theta_dict_ub["c_hat"] = c_ub
         theta_dict_ub["alpha1"] = 1. # distance coefficient
@@ -1268,7 +1277,7 @@ class policies:
 
         if nash_eq == False:  # set lower bounds on parameters, of fix some values for testing estimator
             x_L[b:b+self.N] = np.min(tau_min_mat, axis=1) - .4
-            x_U[b:b+self.N] = opt.root(self.v_upper, x0=np.ones(self.N))['x'] - .01
+            x_U[b:b+self.N] = opt.root(self.v_upper, x0=np.ones(self.N))['x'] - .05
             b += self.N
             theta_lb = self.theta_bounds("lower")
             theta_ub = self.theta_bounds("upper")
@@ -1389,6 +1398,17 @@ class policies:
 
         return(out)
 
+    def update_sv(self, sv):
+
+        sv_dict = self.rewrap_xlhvt(sv)
+
+        v_upper = opt.root(self.v_upper, x0=np.ones(self.N))['x']
+        v_out = np.minimum(v_upper - .5, sv_dict["v"])
+
+        out = np.concatenate((sv_dict["ge_x"], sv_dict["lbda"], sv_dict["h"], v_out, sv_dict["theta"]))
+
+        return(out)
+
     def estimator(self, v_sv, theta_x_sv, m, sv=None, nash_eq=False):
         """estimate the model
 
@@ -1423,6 +1443,7 @@ class policies:
             xlhvt_sv = self.estimator_sv(m, v_sv, theta_x_sv, nash_eq=nash_eq) # initialize starting values
         else:
             xlhvt_sv = sv
+            # xlhvt_sv = self.update_sv(sv)
 
         # Jacobian sparsity (none)
         g_sparsity_indices_a = np.array(np.meshgrid(range(self.g_len), range(x_len))).T.reshape(-1,2)
@@ -1442,8 +1463,13 @@ class policies:
 
         if nash_eq == False:
             problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, mu_min=self.mu_min, bound_push=.2)
-            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, mu_min=self.mu_min, bound_push=.2)
+            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, mu_min=self.mu_min)
+            # start_with_resto="yes", required_infeasibility_reduction=.01)
+            # start_with_resto="yes", required_infeasibility_reduction=.01
+            # nlp_scaling_method="none"
+            # gamma_theta=1.0e-1
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, mu_min=self.mu_min, bound_push=.2)
+            # bound_push=.2
             # line_search_method="cg-penalty"
             # gamma_theta=1.0e-1
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso")

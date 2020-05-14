@@ -44,14 +44,19 @@ def bootstrap_i(id):
     r_id = results.results(location, size, sv=x_base, bootstrap=True, bootstrap_id=id)
     r_id.compute_estimates()
 # bootstrap_i(1)
-# r_1 = results.results(location, size, sv=x_base, bootstrap=True, bootstrap_id=2)
-# pecmy_1 = policies.policies(r_1.data, r_1.params, r_1.ROWname)
-# opt.root(pecmy_1.v_upper, x0=np.ones(pecmy_1.N))['x']
-# pecmy_1.ecmy.tau
+r_1 = results.results(location, size, sv=x_base, bootstrap=True, bootstrap_id=2)
+pecmy_1 = policies.policies(r_1.data, r_1.params, r_1.ROWname)
+opt.root(pecmy_1.v_upper, x0=np.ones(pecmy_1.N))['x']
+pecmy_1.ecmy.tau
+pecmy_1.ecmy.Y + pecmy_1.ecmy.r_v(pecmy_1.rewrap_xlhvt(x_base)["v"])
+np.maximum([1, -1, 2], 0)
+pecmy_1.rewrap_xlhvt(pecmy_1.update_sv(x_base))["v"]
+pecmy_1.rewrap_xlhvt(x_base)["v"]
+
 # tau_min_mat = copy.deepcopy(pecmy_1.ecmy.tau)
 # np.fill_diagonal(tau_min_mat, 5)
 # np.reshape(np.repeat(np.min(tau_min_mat - pecmy_1.tau_buffer_lower, axis=1), pecmy_1.N), (pecmy_1.N, pecmy_1.N))
-# pecmy_1.x_len + pecmy_1.lambda_i_len * 2
+pecmy_1.x_len + pecmy_1.lambda_i_len * 2
 # # for i in range(2, 3):
 # #     print(i)
 # pecmy_1.ecmy.rewrap_ge_dict(pecmy.geq_lb(x_base))["tau_hat"] * pecmy_1.ecmy.tau
@@ -80,8 +85,8 @@ if __name__ == '__main__':
             pool = mp.Pool(num_cores)
         else:
             pool = mp.Pool()
-        for i in range(2, 3):
-        # for i in range(1, M+1):
+        # for i in range(2, 3):
+        for i in range(1, M+1):
             pool.apply_async(bootstrap_i, args=(i,))
         pool.close()
         pool.join()
