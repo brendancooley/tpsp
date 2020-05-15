@@ -1198,12 +1198,12 @@ class policies:
 
         theta_dict_ub = dict()
         theta_dict_ub["eta"] = 2.
-        theta_dict_ub["gamma"] = 3.
+        theta_dict_ub["gamma"] = 4.
         # theta_dict_ub["gamma"] = np.inf
         theta_dict_ub["c_hat"] = c_ub
         theta_dict_ub["alpha1"] = 1. # distance coefficient
         # theta_dict_ub["alpha1"] = np.inf # distance coefficient
-        theta_dict_ub["alpha2"] = 1.5  # gdp coefficient
+        theta_dict_ub["alpha2"] = 2.25  # gdp coefficient
         # theta_dict_ub["alpha2"] = np.inf  # gdp coefficient
         theta_dict_ub["C"] = np.repeat(c_ub, self.N)
         ub = self.unwrap_theta(theta_dict_ub)
