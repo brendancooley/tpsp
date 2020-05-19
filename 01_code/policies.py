@@ -93,10 +93,10 @@ class policies:
         self.wv_min = -1.0e2  # minimum war value
         self.alpha1_ub = self.alpha1_min(.01)  # restrict alpha search (returns alpha such that rho(alpha)=.01)
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
-        self.mu_min = 1.0e-6
+        self.mu_min = 1.0e-25
         self.v_min = .7
         self.tau_buffer_upper = .5
-        self.tau_buffer_lower = .25
+        self.tau_buffer_lower = .5
         # self.tau_buffer_lower = .25
 
         self.tick = 0  # tracker for optimization calls to loss function
@@ -733,7 +733,7 @@ class policies:
 
         # optimizer tracker
         self.tick += 1
-        if self.tick % 25 == 0:  # print output every 25 calls
+        if self.tick % 50 == 0:  # print output every 25 calls
 
             # s = np.reshape(xlshvt_dict["s"], (self.N, self.N))
             # print("s:")
@@ -1139,8 +1139,8 @@ class policies:
         np.fill_diagonal(tau_sv_min_mat, 5)
 
         lb_dict = dict()
-        # lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
-        lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_sv_min_mat - .1, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        # lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_sv_min_mat - .1, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
         # lb_dict["tau_hat"] = self.v_min / self.ecmy.tau
         # lb_dict["tau_hat"] = .9 / self.ecmy.tau
@@ -1177,6 +1177,8 @@ class policies:
 
     def theta_bounds(self, bound="lower"):
 
+        # c_lb = 20.
+        # c_ub = 20.
         c_lb = 25.
         c_ub = 25.
         # c_lb = 15.
@@ -1186,24 +1188,29 @@ class policies:
 
         theta_dict_lb = dict()
         theta_dict_lb["eta"] = 2.
-        # theta_dict_lb["gamma"] = -.5
-        theta_dict_lb["gamma"] = -np.inf
+        # theta_dict_lb["eta"] = 1.
+        theta_dict_lb["gamma"] = -.5
+        # theta_dict_lb["gamma"] = -np.inf
         theta_dict_lb["c_hat"] = c_lb
-        theta_dict_lb["alpha1"] = -1.  # distance coefficient
+        theta_dict_lb["alpha1"] = -1.5  # distance coefficient
         # theta_dict_lb["alpha1"] = -np.inf  # distance coefficient
-        theta_dict_lb["alpha2"] = -.5  # gdp coefficient
+        # theta_dict_lb["alpha2"] = -.5  # gdp coefficient
+        theta_dict_lb["alpha2"] = -1.  # gdp coefficient
         # theta_dict_lb["alpha2"] = -np.inf  # gdp coefficient
         theta_dict_lb["C"] = np.repeat(c_lb, self.N)
         lb = self.unwrap_theta(theta_dict_lb)
 
         theta_dict_ub = dict()
         theta_dict_ub["eta"] = 2.
+        # theta_dict_ub["eta"] = 1.
         theta_dict_ub["gamma"] = 4.
+        # theta_dict_ub["gamma"] = 2.
         # theta_dict_ub["gamma"] = np.inf
         theta_dict_ub["c_hat"] = c_ub
         theta_dict_ub["alpha1"] = 1. # distance coefficient
         # theta_dict_ub["alpha1"] = np.inf # distance coefficient
         theta_dict_ub["alpha2"] = 2.25  # gdp coefficient
+        # theta_dict_ub["alpha2"] = 1.5  # gdp coefficient
         # theta_dict_ub["alpha2"] = np.inf  # gdp coefficient
         theta_dict_ub["C"] = np.repeat(c_ub, self.N)
         ub = self.unwrap_theta(theta_dict_ub)
