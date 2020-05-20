@@ -96,7 +96,7 @@ class policies:
         self.mu_min = 1.0e-25
         self.v_min = .7
         self.tau_buffer_upper = .5
-        self.tau_buffer_lower = .5
+        self.tau_buffer_lower = .25
         # self.tau_buffer_lower = .25
 
         self.tick = 0  # tracker for optimization calls to loss function
@@ -1133,10 +1133,11 @@ class policies:
         tau_min_mat = copy.deepcopy(self.ecmy.tau)
         np.fill_diagonal(tau_min_mat, 5)
 
-        geq_sv = self.rewrap_xlhvt(sv)["ge_x"]
-        tau_sv = self.ecmy.rewrap_ge_dict(geq_sv)["tau_hat"]*self.ecmy.tau
-        tau_sv_min_mat = copy.deepcopy(tau_sv)
-        np.fill_diagonal(tau_sv_min_mat, 5)
+        if sv is not None:
+            geq_sv = self.rewrap_xlhvt(sv)["ge_x"]
+            tau_sv = self.ecmy.rewrap_ge_dict(geq_sv)["tau_hat"]*self.ecmy.tau
+            tau_sv_min_mat = copy.deepcopy(tau_sv)
+            np.fill_diagonal(tau_sv_min_mat, 5)
 
         lb_dict = dict()
         lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
@@ -1187,30 +1188,32 @@ class policies:
         # alpha_ub = 2.
 
         theta_dict_lb = dict()
-        theta_dict_lb["eta"] = 2.
         # theta_dict_lb["eta"] = 1.
+        theta_dict_lb["eta"] = 1.5
         theta_dict_lb["gamma"] = -.5
         # theta_dict_lb["gamma"] = -np.inf
         theta_dict_lb["c_hat"] = c_lb
+        # theta_dict_lb["alpha1"] = -1.  # distance coefficient
         theta_dict_lb["alpha1"] = -1.5  # distance coefficient
         # theta_dict_lb["alpha1"] = -np.inf  # distance coefficient
-        # theta_dict_lb["alpha2"] = -.5  # gdp coefficient
-        theta_dict_lb["alpha2"] = -1.  # gdp coefficient
+        theta_dict_lb["alpha2"] = -.5  # gdp coefficient
+        # theta_dict_lb["alpha2"] = -1.  # gdp coefficient
         # theta_dict_lb["alpha2"] = -np.inf  # gdp coefficient
         theta_dict_lb["C"] = np.repeat(c_lb, self.N)
         lb = self.unwrap_theta(theta_dict_lb)
 
         theta_dict_ub = dict()
-        theta_dict_ub["eta"] = 2.
         # theta_dict_ub["eta"] = 1.
-        theta_dict_ub["gamma"] = 4.
+        theta_dict_ub["eta"] = 1.5
         # theta_dict_ub["gamma"] = 2.
+        theta_dict_ub["gamma"] = 4.
         # theta_dict_ub["gamma"] = np.inf
         theta_dict_ub["c_hat"] = c_ub
-        theta_dict_ub["alpha1"] = 1. # distance coefficient
+        theta_dict_ub["alpha1"] = .5 # distance coefficient
+        # theta_dict_ub["alpha1"] = 1. # distance coefficient
         # theta_dict_ub["alpha1"] = np.inf # distance coefficient
-        theta_dict_ub["alpha2"] = 2.25  # gdp coefficient
         # theta_dict_ub["alpha2"] = 1.5  # gdp coefficient
+        theta_dict_ub["alpha2"] = 2.25  # gdp coefficient
         # theta_dict_ub["alpha2"] = np.inf  # gdp coefficient
         theta_dict_ub["C"] = np.repeat(c_ub, self.N)
         ub = self.unwrap_theta(theta_dict_ub)
