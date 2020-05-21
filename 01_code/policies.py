@@ -93,11 +93,11 @@ class policies:
         self.wv_min = -1.0e2  # minimum war value
         self.alpha1_ub = self.alpha1_min(.01)  # restrict alpha search (returns alpha such that rho(alpha)=.01)
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
-        self.mu_min = 1.0e-25
+        self.mu_min = 1.0e-200
         self.v_min = .7
         self.tau_buffer_upper = .5
-        self.tau_buffer_lower = .25
         # self.tau_buffer_lower = .25
+        self.tau_buffer_lower = .35
 
         self.tick = 0  # tracker for optimization calls to loss function
 
@@ -1205,15 +1205,15 @@ class policies:
         theta_dict_ub = dict()
         # theta_dict_ub["eta"] = 1.
         theta_dict_ub["eta"] = 1.5
-        # theta_dict_ub["gamma"] = 2.
-        theta_dict_ub["gamma"] = 4.
+        theta_dict_ub["gamma"] = 1.75
+        # theta_dict_ub["gamma"] = 4.
         # theta_dict_ub["gamma"] = np.inf
         theta_dict_ub["c_hat"] = c_ub
         theta_dict_ub["alpha1"] = .5 # distance coefficient
         # theta_dict_ub["alpha1"] = 1. # distance coefficient
         # theta_dict_ub["alpha1"] = np.inf # distance coefficient
         # theta_dict_ub["alpha2"] = 1.5  # gdp coefficient
-        theta_dict_ub["alpha2"] = 2.25  # gdp coefficient
+        theta_dict_ub["alpha2"] = 2.  # gdp coefficient
         # theta_dict_ub["alpha2"] = np.inf  # gdp coefficient
         theta_dict_ub["C"] = np.repeat(c_ub, self.N)
         ub = self.unwrap_theta(theta_dict_ub)
@@ -1286,7 +1286,7 @@ class policies:
         b += self.N*self.hhat_len
 
         if nash_eq == False:  # set lower bounds on parameters, of fix some values for testing estimator
-            x_L[b:b+self.N] = np.min(tau_min_mat, axis=1) - .4
+            x_L[b:b+self.N] = np.min(tau_min_mat, axis=1) - .25
             x_U[b:b+self.N] = opt.root(self.v_upper, x0=np.ones(self.N))['x'] - .05
             b += self.N
             theta_lb = self.theta_bounds("lower")

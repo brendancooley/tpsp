@@ -43,7 +43,8 @@ x_base = np.genfromtxt(r_base.xlhvt_star_path)
 # pecmy.ecmy.rewrap_ge_dict(pecmy.rewrap_xlhvt(pecmy.estimator_bounds(pecmy.rewrap_xlhvt(x_base)["theta"], pecmy.rewrap_xlhvt(x_base)["v"], x_base, "lower"))["ge_x"])["tau_hat"] * pecmy.ecmy.tau
 
 def bootstrap_i(id):
-    r_id = results.results(location, size, sv=x_base, bootstrap=True, bootstrap_id=id)
+    # r_id = results.results(location, size, sv=x_base, bootstrap=True, bootstrap_id=id)
+    r_id = results.results(location, size, bootstrap=True, bootstrap_id=id)
     r_id.compute_estimates()
 
 # bootstrap_i(1)
@@ -56,8 +57,9 @@ def bootstrap_i(id):
 # pecmy_1.rewrap_xlhvt(pecmy_1.update_sv(x_base))["v"]
 # pecmy_1.rewrap_xlhvt(x_base)["v"]
 
-# tau_min_mat = copy.deepcopy(pecmy_1.ecmy.tau)
+# tau_min_mat = copy.deepcopy(pecmy.ecmy.tau)
 # np.fill_diagonal(tau_min_mat, 5)
+# np.min(tau_min_mat, axis=1) - .25
 # np.reshape(np.repeat(np.min(tau_min_mat - pecmy_1.tau_buffer_lower, axis=1), pecmy_1.N), (pecmy_1.N, pecmy_1.N))
 # pecmy_1.x_len + pecmy_1.lambda_i_len * 2
 # # for i in range(2, 3):
