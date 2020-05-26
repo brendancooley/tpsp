@@ -15,7 +15,7 @@ import sys
 
 class policies:
 
-    def __init__(self, data, params, ROWname):
+    def __init__(self, data, params, ROWname, bid):
         """
 
         Parameters
@@ -28,6 +28,8 @@ class policies:
             name of rest of world aggregate ("RoW")
 
         """
+
+        self.bid = bid
 
         # Setup economy
         self.ecmy = economy.economy(data, params)
@@ -93,11 +95,11 @@ class policies:
         self.wv_min = -1.0e2  # minimum war value
         self.alpha1_ub = self.alpha1_min(.01)  # restrict alpha search (returns alpha such that rho(alpha)=.01)
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
-        self.mu_min = 1.0e-200
+        self.mu_min = 1.0e-300
         self.v_min = .7
         self.tau_buffer_upper = .5
-        # self.tau_buffer_lower = .25
-        self.tau_buffer_lower = .35
+        self.tau_buffer_lower = .5
+        # self.tau_buffer_lower = .4
 
         self.tick = 0  # tracker for optimization calls to loss function
 
@@ -733,7 +735,9 @@ class policies:
 
         # optimizer tracker
         self.tick += 1
-        if self.tick % 50 == 0:  # print output every 25 calls
+        if self.tick % 2 == 0:  # print output every 25 calls
+
+            print("bootstrap id: " + str(self.bid))
 
             # s = np.reshape(xlshvt_dict["s"], (self.N, self.N))
             # print("s:")
@@ -773,6 +777,12 @@ class policies:
             print("r_v:")
             print(self.r_v(v))
 
+            bounds_dist_lower = np.abs(self.estimator_bounds(theta_x, v, None, "lower") - xlhvt)
+            bounds_dist_upper = np.abs(self.estimator_bounds(theta_x, v, None, "upper") - xlhvt)
+
+            bounds_dist_lower_nz = bounds_dist_lower[bounds_dist_lower>0])
+            bounds_dist_upper_nz = bounds_dist_upper[bounds_dist_upper>0])
+
             for i in range(self.N):
                 # print("lambda chi " + str(i))
                 lbda = np.reshape(self.rewrap_xlhvt(xlhvt)["lbda"], (self.N, self.lambda_i_len))
@@ -789,10 +799,18 @@ class policies:
                 G = self.G_hat(ge_x, v, i, all=True)
                 rcv = self.G_hat(rcx, v, i, all=True)
                 DeltaG = rcv - G
-                print("DeltaG" + str(i) + ":")
-                print(DeltaG)
+                # print("DeltaG" + str(i) + ":")
+                # print(DeltaG)
+
+            print("bounds_dist_lower:")
+            print(np.argmin(bounds_dist_lower_nz))
+            print(np.min(bounds_dist_lower_nz))
+            print("bounds_dist_upper:")
+            print(np.argmin(bounds_dist_upper_nz))
+            print(np.min(bounds_dist_upper_nz))
 
             sys.stdout.flush()
+
 
         tau_hat = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
         tau_star = tau_hat * self.ecmy.tau  # calculate equilibrium tau
@@ -801,6 +819,8 @@ class policies:
         loss = np.sum(tau_diffs**2)  # euclidean norm
         # loss = np.sum(np.abs(tau_diffs))  # 1-norm
         # loss = np.sum(np.where(np.abs(tau_diffs) < alpha, tau_diffs**2, np.abs(tau_diffs))) # smooth l-1 loss
+
+
 
         return(loss)
 
@@ -1188,13 +1208,13 @@ class policies:
         # alpha_ub = 2.
 
         theta_dict_lb = dict()
-        # theta_dict_lb["eta"] = 1.
+        # theta_dict_lb["eta"] = 2.
         theta_dict_lb["eta"] = 1.5
         theta_dict_lb["gamma"] = -.5
         # theta_dict_lb["gamma"] = -np.inf
         theta_dict_lb["c_hat"] = c_lb
-        # theta_dict_lb["alpha1"] = -1.  # distance coefficient
-        theta_dict_lb["alpha1"] = -1.5  # distance coefficient
+        theta_dict_lb["alpha1"] = -1.  # distance coefficient
+        # theta_dict_lb["alpha1"] = -1.5  # distance coefficient
         # theta_dict_lb["alpha1"] = -np.inf  # distance coefficient
         theta_dict_lb["alpha2"] = -.5  # gdp coefficient
         # theta_dict_lb["alpha2"] = -1.  # gdp coefficient
@@ -1203,7 +1223,7 @@ class policies:
         lb = self.unwrap_theta(theta_dict_lb)
 
         theta_dict_ub = dict()
-        # theta_dict_ub["eta"] = 1.
+        # theta_dict_ub["eta"] = 2.
         theta_dict_ub["eta"] = 1.5
         theta_dict_ub["gamma"] = 1.75
         # theta_dict_ub["gamma"] = 4.
@@ -1212,8 +1232,10 @@ class policies:
         theta_dict_ub["alpha1"] = .5 # distance coefficient
         # theta_dict_ub["alpha1"] = 1. # distance coefficient
         # theta_dict_ub["alpha1"] = np.inf # distance coefficient
-        # theta_dict_ub["alpha2"] = 1.5  # gdp coefficient
-        theta_dict_ub["alpha2"] = 2.  # gdp coefficient
+        theta_dict_ub["alpha2"] = 1.5  # gdp coefficient
+        # theta_dict_ub["alpha2"] = 2.  # gdp coefficient
+        # theta_dict_ub["alpha2"] = 2.5  # gdp coefficient
+
         # theta_dict_ub["alpha2"] = np.inf  # gdp coefficient
         theta_dict_ub["C"] = np.repeat(c_ub, self.N)
         ub = self.unwrap_theta(theta_dict_ub)
@@ -1249,8 +1271,6 @@ class policies:
 
         tau_min_mat = copy.deepcopy(self.ecmy.tau)
         np.fill_diagonal(tau_min_mat, 5)
-
-        theta_dict = self.rewrap_theta(theta_x)
 
         # set initial values for bounds
         x_L = np.repeat(-np.inf, self.xlhvt_len)
@@ -1295,6 +1315,9 @@ class policies:
             x_L[b:b+theta_len] = theta_lb
             x_U[b:b+theta_len] = theta_ub
         else:  # fix all parameters at initial values
+
+            theta_dict = self.rewrap_theta(theta_x)
+
             x_L[b:b+self.N] = v
             x_U[b:b+self.N] = v
             b += self.N
@@ -1473,12 +1496,12 @@ class policies:
 
         if nash_eq == False:
             problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
-            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, mu_min=self.mu_min)
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, constr_viol_tol=1.0e-04, dual_inf_tol=1.0, tol=1.0e-04, mu_min=self.mu_min, bound_push=.2)
             # start_with_resto="yes", required_infeasibility_reduction=.01)
             # start_with_resto="yes", required_infeasibility_reduction=.01
             # nlp_scaling_method="none"
             # gamma_theta=1.0e-1
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-05, dual_inf_tol=1.0, tol=1.0e-05, mu_min=self.mu_min, bound_push=.2)
+            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-04, dual_inf_tol=1.0, tol=1.0e-04, mu_min=self.mu_min, bound_push=.2)
             # bound_push=.2
             # line_search_method="cg-penalty"
             # gamma_theta=1.0e-1

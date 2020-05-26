@@ -12,7 +12,7 @@ import helpers_tpsp as hp
 
 class results:
 
-    def __init__(self, location, size, sv=None, bootstrap=False, bootstrap_id=1):
+    def __init__(self, location, size, sv=None, bootstrap=False, bootstrap_id=0):
 
         location = location  # local, hpc
         size = size # mini/, mid/, large/
@@ -20,6 +20,7 @@ class results:
         # size = "mid_RUS/"
         # bootstrap = True
         # bootstrap_id = 1
+        self.bootstrap_id = bootstrap_id
 
         basePath = os.path.expanduser('~')
 
@@ -92,7 +93,7 @@ class results:
 
     def compute_estimates(self):
 
-        pecmy = policies.policies(self.data, self.params, self.ROWname)
+        pecmy = policies.policies(self.data, self.params, self.ROWname, self.bootstrap_id)
 
         # starting values
         theta_dict = dict()
@@ -118,7 +119,7 @@ class results:
 
     def unravel_estimates(self):
 
-        pecmy = policies.policies(self.data, self.params, self.ROWname)
+        pecmy = policies.policies(self.data, self.params, self.ROWname, self.bootstrap_id)
 
         xlhvt_star = np.genfromtxt(self.xlhvt_star_path, delimiter=",")
         ge_x_star = pecmy.rewrap_xlhvt(xlhvt_star)["ge_x"]
@@ -155,7 +156,7 @@ class results:
 
     def compute_counterfactuals(self):
 
-        pecmy = policies.policies(self.data, self.params, self.ROWname)
+        pecmy = policies.policies(self.data, self.params, self.ROWname, self.bootstrap_id)
 
         xlhvt_star = np.genfromtxt(self.xlhvt_star_path, delimiter=",")
 

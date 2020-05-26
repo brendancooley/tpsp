@@ -52,7 +52,7 @@ def task_results():
         'params':[{'name':'size',
 		      'long':'size',
 		      'type':str,
-		      'default':'mini/'}],
+		      'default':'mid/'}],
         'actions':["cd " + code_dir + "; python " + "bootstrap.py local %(size)s"],
         'verbosity': 2,
     }
