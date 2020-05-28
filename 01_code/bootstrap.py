@@ -26,6 +26,7 @@ M = 100 # number of bootstrap iterations
 
 r_base = results.results(location, size, bootstrap_id=0)
 # pecmy_base = policies.policies(r_base.data, r_base.params, r_base.ROWname, 0)
+# pecmy_base.x_len + pecmy_base.lambda_i_len*pecmy_base.N + pecmy_base.hhat_len*pecmy_base.N
 # pecmy_base.ecmy.tau
 
 if results_base == True:

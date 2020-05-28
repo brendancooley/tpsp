@@ -96,6 +96,8 @@ class policies:
         self.alpha1_ub = self.alpha1_min(.01)  # restrict alpha search (returns alpha such that rho(alpha)=.01)
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
         self.mu_min = 1.0e-300
+        # self.mu_min = 1.0e-6
+        self.theta_min_fact = 1.0e-15
         self.v_min = .7
         self.tau_buffer_upper = .5
         self.tau_buffer_lower = .5
@@ -735,7 +737,7 @@ class policies:
 
         # optimizer tracker
         self.tick += 1
-        if self.tick % 2 == 0:  # print output every 25 calls
+        if self.tick % 50 == 0:  # print output every 25 calls
 
             print("bootstrap id: " + str(self.bid))
 
@@ -780,8 +782,8 @@ class policies:
             bounds_dist_lower = np.abs(self.estimator_bounds(theta_x, v, None, "lower") - xlhvt)
             bounds_dist_upper = np.abs(self.estimator_bounds(theta_x, v, None, "upper") - xlhvt)
 
-            bounds_dist_lower_nz = bounds_dist_lower[bounds_dist_lower>0])
-            bounds_dist_upper_nz = bounds_dist_upper[bounds_dist_upper>0])
+            bounds_dist_lower_nz = bounds_dist_lower[bounds_dist_lower>0]
+            bounds_dist_upper_nz = bounds_dist_upper[bounds_dist_upper>0]
 
             for i in range(self.N):
                 # print("lambda chi " + str(i))
@@ -1181,8 +1183,8 @@ class policies:
     def geq_ub(self):
 
         ub_dict = dict()
-        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
-        ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau + self.tau_buffer_upper, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
+        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau + self.tau_buffer_upper, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         np.fill_diagonal(ub_dict["tau_hat"], 1)
         ub_dict["D_hat"] = np.repeat(1, self.N)
@@ -1232,8 +1234,8 @@ class policies:
         theta_dict_ub["alpha1"] = .5 # distance coefficient
         # theta_dict_ub["alpha1"] = 1. # distance coefficient
         # theta_dict_ub["alpha1"] = np.inf # distance coefficient
-        theta_dict_ub["alpha2"] = 1.5  # gdp coefficient
-        # theta_dict_ub["alpha2"] = 2.  # gdp coefficient
+        # theta_dict_ub["alpha2"] = 1.5  # gdp coefficient
+        theta_dict_ub["alpha2"] = 1.75  # gdp coefficient
         # theta_dict_ub["alpha2"] = 2.5  # gdp coefficient
 
         # theta_dict_ub["alpha2"] = np.inf  # gdp coefficient
@@ -1496,12 +1498,12 @@ class policies:
 
         if nash_eq == False:
             problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, constr_viol_tol=1.0e-04, dual_inf_tol=1.0, tol=1.0e-04, mu_min=self.mu_min, bound_push=.2)
+            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, constr_viol_tol=1.0e-04, dual_inf_tol=1.0, tol=1.0e-04, mu_min=self.mu_min, bound_push=.2)
             # start_with_resto="yes", required_infeasibility_reduction=.01)
             # start_with_resto="yes", required_infeasibility_reduction=.01
             # nlp_scaling_method="none"
             # gamma_theta=1.0e-1
-            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-04, dual_inf_tol=1.0, tol=1.0e-04, mu_min=self.mu_min, bound_push=.2)
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-04, dual_inf_tol=1.0, tol=1.0e-04, mu_min=self.mu_min, bound_push=.2, theta_min_fact=self.theta_min_fact)
             # bound_push=.2
             # line_search_method="cg-penalty"
             # gamma_theta=1.0e-1
