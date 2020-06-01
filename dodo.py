@@ -136,17 +136,18 @@ def task_transfer_dodo_hpc():
         'verbosity':2
     }
 
+def task_transfer_slurm_hpc():
+    yield {
+        'name': "transfering slurms to hpc...",
+        'actions':["scp -r slurm/* " + "bcooley@adroit.princeton.edu:" + hpc_base_dir],
+        'verbosity':2
+    }
+
 def task_transfer_data_hpc():
     # code
     # data
     # dodo.py
     # NOTE: make sure vpn is connected
-    yield {
-        'name': "transfering files to hpc...",
-        'actions':["scp -r source/* " + "bcooley@adroit.princeton.edu:" + hpc_source_dir,
-        "scp -r slurm/* " + "bcooley@adroit.princeton.edu:" + hpc_base_dir],
-        'verbosity':2
-    }
     for i in sizes:
         yield {'name': "transferring data " + i,
                 'actions': ["scp -r " + data_dir_base + i + "* " +
@@ -157,7 +158,8 @@ def task_transfer_data_hpc():
 def task_transfer_code_hpc():
     yield {
         'name': "transfering code to hpc...",
-        'actions':["scp -r " + code_dir + "* " + "bcooley@adroit.princeton.edu:" + hpc_code_dir]
+        'actions':["scp -r source/* " + "bcooley@adroit.princeton.edu:" + hpc_source_dir,
+        "scp -r " + code_dir + "* " + "bcooley@adroit.princeton.edu:" + hpc_code_dir]
     }
 
 def task_grab_results():
