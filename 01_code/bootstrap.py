@@ -15,6 +15,8 @@ imp.reload(results)
 
 location = sys.argv[1]  # local, hpc
 size = sys.argv[2] # mini/, mid/, large/
+Mstart = sys.argv[3]
+Mend = sys.argv[4]
 # location = "local"
 # size = "mid/"
 
@@ -92,7 +94,7 @@ if __name__ == '__main__':
         else:
             pool = mp.Pool()
         # for i in range(2, 3):
-        for i in range(1, M+1):
+        for i in range(Mstart, Mend):
             pool.apply_async(bootstrap_i, args=(i,))
         pool.close()
         pool.join()
