@@ -15,8 +15,8 @@ imp.reload(results)
 
 location = sys.argv[1]  # local, hpc
 size = sys.argv[2] # mini/, mid/, large/
-Mstart = sys.argv[3]
-Mend = sys.argv[4]
+Mstart = int(sys.argv[3])
+Mend = int(sys.argv[4])
 # location = "local"
 # size = "mid/"
 
