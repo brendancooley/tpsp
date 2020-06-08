@@ -40,9 +40,11 @@ def bootstrap_i(id):
     r_id = results.results(location, size, bootstrap=True, bootstrap_id=id)
     if os.path.exists(r_id.xlhvt_star_path):
         print("bootstrap id " + str(id) + " completed, proceeding...")
+        sys.stdout.flush()
     else:
         print("beginning bootstrap id " + str(id) + "...")
-    r_id.compute_estimates()
+        sys.stdout.flush()
+        r_id.compute_estimates()
 
 if __name__ == '__main__':
 
