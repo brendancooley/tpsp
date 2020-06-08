@@ -1234,8 +1234,8 @@ class policies:
         theta_dict_ub["alpha1"] = .5 # distance coefficient
         # theta_dict_ub["alpha1"] = 1. # distance coefficient
         # theta_dict_ub["alpha1"] = np.inf # distance coefficient
-        # theta_dict_ub["alpha2"] = 1.5  # gdp coefficient
-        theta_dict_ub["alpha2"] = 1.75  # gdp coefficient
+        theta_dict_ub["alpha2"] = 1.5  # gdp coefficient
+        # theta_dict_ub["alpha2"] = 1.75  # gdp coefficient
         # theta_dict_ub["alpha2"] = 2.5  # gdp coefficient
 
         # theta_dict_ub["alpha2"] = np.inf  # gdp coefficient
