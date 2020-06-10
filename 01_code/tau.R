@@ -4,7 +4,7 @@ for (i in sourceFiles) {
   source(paste0(sourceDir, i))
 }
 
-libs <- c("tidyverse", "modelsummary")
+libs <- c("tidyverse", "modelsummary", "dotwhisker", "ggsci")
 ipak(libs)
 
 projectFiles <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
@@ -73,15 +73,15 @@ data$rcv_ij <- data$rcv_ij - 1
 data %>% filter(i_iso3 %in% c("USA", "EU")) %>% arrange(i_iso3, rcv_ij) %>% print(n=100)
 
 model1 <- lm(data=data, log(rcv_ij)~log(m_frac_ij))
-model2 <- lm(data=data, log(rcv_ij)~log(m_frac_ij)*log(W))  # conditional effect of distance
-model3 <- lm(data=data, log(rcv_ij)~log(m_frac_ij)+i_iso3)  # attacker-specific costs w/ FE
+model2 <- lm(data=data, log(rcv_ij)~log(m_frac_ij)+i_iso3)  # attacker-specific costs w/ FE
+model3 <- lm(data=data, log(rcv_ij)~log(m_frac_ij)*log(W))  # conditional effect of distance
 model4 <- lm(data=data, log(rcv_ij)~log(m_frac_ij)*log(W)+i_iso3)  # attacker-specific costs w/ FE
 summary(model4)
 
 models <- list()
 models[["Base"]] <- model1
-models[["Loss of Strength"]] <- model2
-models[["Base (Attacker FE)"]] <- model3
+models[["Base (Attacker FE)"]] <- model2
+models[["Loss of Strength"]] <- model3
 models[["Loss of Strength (Attacker FE)"]] <- model4
 
 cm <- c("log(m_frac_ij)"="Log Mil Capability Ratio",
@@ -89,7 +89,21 @@ cm <- c("log(m_frac_ij)"="Log Mil Capability Ratio",
         "log(m_frac_ij):log(W)"="(Log Mil Capability Ratio) X (Log Distance)")
 fe_row <- c("Attacker FE?", " ", " ", "\U2713", "\U2713")
 
-modelsummary(models, coef_map=cm, add_rows=list(fe_row), gof_omit="AIC|BIC|Log.Lik")
+table <- modelsummary(models, coef_map=cm, add_rows=list(fe_row), gof_omit="AIC|BIC|Log.Lik", title="Regime Change Values and Military Capability Ratios")
+
+for (i in names(models)) {
+  models[[i]] <- models[[i]] %>% tidy() %>% filter(term %in% c("log(m_frac_ij)", "log(W)", "log(m_frac_ij):log(W)")) %>% mutate(model=i)
+}
+
+models <- bind_rows(models)
+
+dw <- dwplot(models) %>%
+  relabel_predictors(cm) +
+  geom_vline(xintercept=0, lty=2) +
+  scale_color_npg() +
+  theme_classic()
+
+### Raw Bivaritate Correlation 
 
 rcvm_plot <- ggplot(data, aes(x=log(m_frac_ij), y=log(rcv_ij))) +
   geom_point() +
