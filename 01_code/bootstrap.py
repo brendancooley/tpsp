@@ -45,6 +45,9 @@ def bootstrap_i(id):
         print("beginning bootstrap id " + str(id) + "...")
         sys.stdout.flush()
         r_id.compute_estimates()
+    # print("beginning bootstrap id " + str(id) + "...")
+    # sys.stdout.flush()
+    # r_id.compute_estimates()
 
 if __name__ == '__main__':
 

@@ -1162,9 +1162,9 @@ class policies:
             np.fill_diagonal(tau_sv_min_mat, 5)
 
         lb_dict = dict()
-        lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        # lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         # lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_sv_min_mat - .1, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
-        # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
+        lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
         # lb_dict["tau_hat"] = self.v_min / self.ecmy.tau
         # lb_dict["tau_hat"] = .9 / self.ecmy.tau
         np.fill_diagonal(lb_dict["tau_hat"], 1)
@@ -1200,8 +1200,8 @@ class policies:
 
     def theta_bounds(self, bound="lower"):
 
-        # c_lb = 20.
-        # c_ub = 20.
+        # c_lb = 50.
+        # c_ub = 50.
         c_lb = 25.
         c_ub = 25.
         # c_lb = 15.
@@ -1227,6 +1227,7 @@ class policies:
         theta_dict_ub = dict()
         # theta_dict_ub["eta"] = 2.
         theta_dict_ub["eta"] = 1.5
+        # theta_dict_ub["gamma"] = 1.5
         theta_dict_ub["gamma"] = 1.75
         # theta_dict_ub["gamma"] = 4.
         # theta_dict_ub["gamma"] = np.inf
@@ -1234,9 +1235,10 @@ class policies:
         theta_dict_ub["alpha1"] = .5 # distance coefficient
         # theta_dict_ub["alpha1"] = 1. # distance coefficient
         # theta_dict_ub["alpha1"] = np.inf # distance coefficient
+        # theta_dict_ub["alpha2"] = 1.25  # gdp coefficient
         theta_dict_ub["alpha2"] = 1.5  # gdp coefficient
-        # theta_dict_ub["alpha2"] = 1.75  # gdp coefficient
-        # theta_dict_ub["alpha2"] = 2.5  # gdp coefficient
+        # theta_dict_ub["alpha2"] = 2.  # gdp coefficient
+        # theta_dict_ub["alpha2"] = np.inf # distance coefficient
 
         # theta_dict_ub["alpha2"] = np.inf  # gdp coefficient
         theta_dict_ub["C"] = np.repeat(c_ub, self.N)
