@@ -42,6 +42,7 @@ class results:
         data_dir_base = projectFiles + "data/"
         results_dir_base = projectFiles + "results/"
 
+
         if bootstrap == True:
             self.dataPath = data_dir_base + size + str(bootstrap_id) + "/"
             resultsPath = results_dir_base + size
@@ -50,6 +51,8 @@ class results:
             self.dataPath = data_dir_base + size
             resultsPath = results_dir_base + size
             self.estimatesPath = resultsPath + "estimates/"
+
+        self.resultsPath = resultsPath
 
         self.counterfactualsPath = resultsPath + "counterfactuals/"
         self.xlhvt_star_path = self.estimatesPath + "x.csv"
