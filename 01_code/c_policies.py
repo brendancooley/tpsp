@@ -3,15 +3,16 @@ import autograd.numpy as np
 import scipy.optimize as opt
 import scipy.stats as stats
 import statsmodels.api as sm
-import economy
 import csv
-import helpers_tpsp as hp
 import time
 import os
 import copy
 import multiprocessing as mp
 import ipyopt
 import sys
+
+import c_economy as economy
+import s_helpers_tpsp as hp
 
 class policies:
 
@@ -97,7 +98,7 @@ class policies:
         self.zero_lb_relax = -1.0e-30  # relaxation on zero lower bound for ipopt (which are enforced without slack by ipopt (see 0.15 NLP in ipopt options))
         self.mu_min = 1.0e-300
         # self.mu_min = 1.0e-6
-        self.theta_min_fact = 1.0e-15
+        self.theta_min_fact = 1.0e-100
         self.v_min = .7
         self.tau_buffer_upper = .5
         self.tau_buffer_lower = .5
@@ -1509,6 +1510,7 @@ class policies:
             # bound_push=.2
             # line_search_method="cg-penalty"
             # gamma_theta=1.0e-1
+            # required_infeasibility_reduction=1.0e-1
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso")
             # for derivative test, make sure we don't travel too far from initial point with point_perturbation_radius (leads to evaluation errors)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)

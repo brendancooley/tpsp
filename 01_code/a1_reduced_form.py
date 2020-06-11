@@ -1,10 +1,8 @@
 import numpy as np
 import imp
 
-import results
-import policies
-imp.reload(policies)
-imp.reload(results)
+import c_results as results
+import c_policies as policies
 
 location = "local"
 size = "mid/"

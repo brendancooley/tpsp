@@ -6,9 +6,9 @@ import time
 import csv
 import sys
 
-import economy
-import policies
-import helpers_tpsp as hp
+import c_economy as economy
+import c_policies as policies
+import s_helpers_tpsp as hp
 
 class results:
 
@@ -120,7 +120,7 @@ class results:
 
         np.savetxt(self.xlhvt_star_path, xlhvt_star, delimiter=",")
 
-    def unravel_estimates(self):
+    def unravel_estimates(self, est_dict):
 
         pecmy = policies.policies(self.data, self.params, self.ROWname, self.bootstrap_id)
 
@@ -135,7 +135,10 @@ class results:
         theta_dict_star = pecmy.rewrap_theta(theta_x_star)
         for i in theta_dict_star.keys():
             np.savetxt(self.estimatesPath + i + ".csv", np.array([theta_dict_star[i]]), delimiter=",")
+            if i in est_dict.keys():
+                est_dict[i].append(theta_dict_star[i])
         np.savetxt(self.estimatesPath + "v.csv", v_star, delimiter=",")
+        est_dict["v"].append(v_star)
 
         G_star = pecmy.G_hat(ge_x_star, v_star, 0, all=True)
         rcv_eq = pecmy.rcv_ft(ge_x_star, v_star)

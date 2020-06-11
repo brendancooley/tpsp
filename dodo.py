@@ -110,18 +110,6 @@ def task_methods_slides():
 		'actions':["R --slave -e \"rmarkdown::render(\'" + "tpsp_methods_slides.rmd" + "\', output_file=\'" + "tpsp_methods_slides.pdf" +"\')\""]
 	}
 
-def task_notes():
-    notesFiles = helpers.getFiles("notes/")
-    for i in range(len(notesFiles)):
-        fName = notesFiles[i].split(".")[0]
-        suffix = notesFiles[i].split(".")[1]
-        if suffix == "md":
-            yield {
-                'name': notesFiles[i],
-                'actions':["pandoc --template=templates/cooley-plain.latex -o " +
-                            fName + ".pdf " + notesFiles[i]]
-            }
-
 def task_setup_dirs():
     for i in sizes:
         yield {

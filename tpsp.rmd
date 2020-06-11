@@ -60,6 +60,8 @@ Ltick <- 1
 
 size <- "mid/"
 
+sections_dir <- "03_sections/"
+
 tpspPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
 dataPath <- paste0(tpspPath, "data/", size)
 resultsPath <- paste0(tpspPath, "results/", size)
@@ -101,44 +103,45 @@ options(scipen=999)
 
 # Introduction
 
-```{r, child = "sections/introduction.rmd"}
+```{r, child = paste0(sections_dir, "introduction.rmd")}
 ```
-
 
 ## Literature
 
-```{r, child = "sections/literature.md"}
-```
-
-# Model
-
-```{r, child = "sections/model.md"}
+```{r, child = paste0(sections_dir, "literature.md")}
 ```
 
 # Data and Calibration of Economy
 
-```{r, child = "sections/data.rmd"}
+```{r, child = paste0(sections_dir, "data.rmd")}
 ```
+
+# Model
+
+```{r, child = paste0(sections_dir, "model.md")}
+```
+
 
 # Estimation
 
-```{r, child = "sections/estimation.rmd"}
+```{r, child = paste0(sections_dir, "estimation.rmd")}
 ```
 
 # Results
 
-```{r, child = "sections/results.rmd"}
+```{r, child = paste0(sections_dir, "results.rmd")}
 ```
 
 # Counterfactual: Coercion-Free World
 
-*coming soon*
+<!-- ```{r, child = paste0(sections_dir, "counterfactuals.rmd")}
+``` -->
+
 
 # Conclusion
 
-```{r, child = "sections/conclusion.md"}
+```{r, child = paste0(sections_dir, "conclusion.md")}
 ```
-
 
 \clearpage
 
@@ -159,7 +162,7 @@ Aeconomy <- LETTERS[a]
 
 ## `r Aeconomy`: Economy
 
-```{r, child = "sections/Aeconomy.md"}
+```{r, child = paste0(sections_dir, "Aeconomy.md")}
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
@@ -178,7 +181,7 @@ AeconomyC <- LETTERS[a]
 
 ## `r AeconomyC`: Calibration of Economy
 
-```{r, child = "sections/AeconomyC.rmd"}
+```{r, child = paste0(sections_dir, "AeconomyC.rmd")}
 ```
 \clearpage
 
