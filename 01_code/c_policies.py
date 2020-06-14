@@ -1506,7 +1506,7 @@ class policies:
             # start_with_resto="yes", required_infeasibility_reduction=.01
             # nlp_scaling_method="none"
             # gamma_theta=1.0e-1
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-03, compl_inf_tol=1.03-03, dual_inf_tol=1.0e02, tol=1.0e-03, acceptable_tol=1.0e-03, mu_min=self.mu_min, bound_push=.2, theta_min_fact=self.theta_min_fact, max_filter_resets=0, gamma_phi=1.0e-1,required_infeasibility_reduction=1.0e-3)
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-03, compl_inf_tol=1.03-03, dual_inf_tol=1.0e03, tol=1.0e-03, acceptable_tol=1.0e-03, mu_min=self.mu_min, bound_push=.2, theta_min_fact=self.theta_min_fact, max_filter_resets=0, gamma_phi=1.0e-1,required_infeasibility_reduction=1.0e-3)
             # bound_push=.2
             # line_search_method="cg-penalty"
             # gamma_theta=1.0e-1
