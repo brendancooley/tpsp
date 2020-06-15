@@ -53,7 +53,7 @@ def task_results():
 		      'long':'size',
 		      'type':str,
 		      'default':'mid/'}],
-        'actions':["cd " + code_dir + "; python " + "bootstrap.py local %(size)s"],
+        'actions':["cd " + code_dir + "; python " + "01_bootstrap.py local %(size)s 1 100"],
         'verbosity': 2,
     }
 

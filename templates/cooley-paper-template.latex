@@ -82,7 +82,7 @@ $endif$
 
 % add ubar command
 \usepackage{accents}
-\newcommand{\ubar}[1]{\underaccent{\bar}{#1}}
+\DeclareRobustCommand{\ubar}[1]{\underaccent{\bar}{#1}}
 
 % Expectation, Variance, Covariance
 \newcommand{\E}{\mathrm{E}}
@@ -121,6 +121,9 @@ $endif$
     \fi}
 \renewcommand{\backreftwosep}{ and~} 
 \renewcommand{\backreflastsep}{ and~}
+
+% bbm
+\usepackage{bbm}
 
 $if(colorlinks)$
 \PassOptionsToPackage{usenames,dvipsnames}{color} % color is loaded by hyperref

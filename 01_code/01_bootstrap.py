@@ -20,10 +20,9 @@ Mend = int(sys.argv[4])
 
 M = 100 # number of bootstrap iterations
 
-# mp.cpu_count()
-
 results_base = False
 results_bootstrap = True
+mil_off = True
 
 r_base = results.results(location, size, bootstrap_id=0)
 
@@ -34,9 +33,9 @@ if results_base == True:
 
 x_base = np.genfromtxt(r_base.xlhvt_star_path)
 
-def bootstrap_i(id):
+def bootstrap_i(id, mil_off=False):
     # r_id = results.results(location, size, sv=x_base, bootstrap=True, bootstrap_id=id)
-    r_id = results.results(location, size, bootstrap=True, bootstrap_id=id)
+    r_id = results.results(location, size, bootstrap=True, bootstrap_id=id, mil_off=mil_off)
     if os.path.exists(r_id.xlhvt_star_path):
         print("bootstrap id " + str(id) + " completed, proceeding...")
         sys.stdout.flush()
@@ -61,8 +60,8 @@ if __name__ == '__main__':
         else:
             pool = mp.Pool()
         # for i in range(2, 3):
-        for i in range(Mstart, Mend):
-            pool.apply_async(bootstrap_i, args=(i,))
+        for i in range(Mstart, Mend+1):
+            pool.apply_async(bootstrap_i, args=(i, mil_off, ))
         pool.close()
         pool.join()
 

@@ -12,7 +12,7 @@ import s_helpers_tpsp as hp
 
 class results:
 
-    def __init__(self, location, size, sv=None, bootstrap=False, bootstrap_id=0):
+    def __init__(self, location, size, sv=None, bootstrap=False, bootstrap_id=0, mil_off=False):
 
         location = location  # local, hpc
         size = size # mini/, mid/, large/
@@ -21,6 +21,7 @@ class results:
         # bootstrap = True
         # bootstrap_id = 1
         self.bootstrap_id = bootstrap_id
+        self.mil_off = mil_off
 
         basePath = os.path.expanduser('~')
 
@@ -42,15 +43,20 @@ class results:
         data_dir_base = projectFiles + "data/"
         results_dir_base = projectFiles + "results/"
 
-
         if bootstrap == True:
             self.dataPath = data_dir_base + size + str(bootstrap_id) + "/"
             resultsPath = results_dir_base + size
-            self.estimatesPath = resultsPath + "estimates/" + str(bootstrap_id) + "/"
+            if mil_off == False:
+                self.estimatesPath = resultsPath + "estimates/" + str(bootstrap_id) + "/"
+            else:
+                self.estimatesPath = resultsPath + "estimates_mil_off/" + str(bootstrap_id) + "/"
         else:
             self.dataPath = data_dir_base + size
             resultsPath = results_dir_base + size
-            self.estimatesPath = resultsPath + "estimates/"
+            if mil_off == False:
+                self.estimatesPath = resultsPath + "estimates/"
+            else:
+                self.estimatesPath = resultsPath + "estimates_mil_off/"
 
         self.resultsPath = resultsPath
 
@@ -111,14 +117,24 @@ class results:
         theta_x_sv = pecmy.unwrap_theta(theta_dict)
 
         start_time = time.time()
-        xlhvt_star, obj, status = pecmy.estimator(v, theta_x_sv, pecmy.m, sv=self.sv, nash_eq=False)
-        print("--- Estimator converged in %s seconds ---" % (time.time() - start_time))
 
-        print(xlhvt_star)
-        print(obj)
-        print(status)
+        if self.mil_off == False:
+            xlhvt_star, obj, status = pecmy.estimator(v, theta_x_sv, pecmy.m, sv=self.sv, nash_eq=False)
+        else:
+            print("hello")
+            xlhvt_star, obj, status = pecmy.estimator(v, theta_x_sv, np.diag(np.ones(pecmy.N)), sv=self.sv, nash_eq=False)
 
-        np.savetxt(self.xlhvt_star_path, xlhvt_star, delimiter=",")
+        if status == 0:
+
+            print("--- Estimator converged in %s seconds ---" % (time.time() - start_time))
+            print(xlhvt_star)
+            print(obj)
+            print(status)
+
+            np.savetxt(self.xlhvt_star_path, xlhvt_star, delimiter=",")
+
+        else:
+            print("estimator failed to converge after %s seconds" % (time.time() - start_time))
 
     def unravel_estimates(self, est_dict):
 
