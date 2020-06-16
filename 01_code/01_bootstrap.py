@@ -22,9 +22,10 @@ M = 100 # number of bootstrap iterations
 
 results_base = False
 results_bootstrap = True
-mil_off = True
+mil_off = False
 
 r_base = results.results(location, size, bootstrap_id=0)
+# pecmy_test = policies.policies(r_base.data, r_base.params, r_base.ROWname, 0)
 
 if results_base == True:
     print("results base...")

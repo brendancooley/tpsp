@@ -121,7 +121,6 @@ class results:
         if self.mil_off == False:
             xlhvt_star, obj, status = pecmy.estimator(v, theta_x_sv, pecmy.m, sv=self.sv, nash_eq=False)
         else:
-            print("hello")
             xlhvt_star, obj, status = pecmy.estimator(v, theta_x_sv, np.diag(np.ones(pecmy.N)), sv=self.sv, nash_eq=False)
 
         if status == 0:

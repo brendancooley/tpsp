@@ -452,39 +452,6 @@ class policies:
 
         return(rho)
 
-    def C(self, ge_x, h, id, m, v, theta_dict):
-
-        # Cinv = theta_dict["C"] ** -1
-        # Cinv_i = np.array([Cinv[i] for i in range(self.N) if i != id])
-        # Cinv_i = theta_dict["c_hat"] ** -1
-        # Cinv = np.delete(Cinv, id)
-        eta = theta_dict["eta"]
-        gamma = theta_dict["gamma"]
-        alpha = theta_dict["alpha1"]
-
-        m_diag = np.diagonal(m)
-        m_frac = m / m_diag
-        np.fill_diagonal(m_frac, 0)
-
-        m_frac_i = np.array([m_frac[:,id][i] for i in range(self.N) if i != id])
-        W_i = np.array([self.W[:,id][i] for i in range(self.N) if i != id])
-
-        ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
-        rcx = self.rcx(ge_dict["tau_hat"], h, id)
-        G = self.G_hat(ge_x, v, id, all=True)
-        rcv = self.G_hat(rcx, v, id, all=True)
-        DeltaG = rcv - G
-        # print(DeltaG)
-        # DeltaG = np.clip(DeltaG, 1e-10, np.inf)
-        DeltaG = np.clip(DeltaG, 1e-10, .1)  # cap above for numerical stability
-        DeltaG = np.array([DeltaG[i] for i in range(self.N) if i != id])
-        print(id)
-        print(DeltaG)
-
-        out = np.sum(theta_dict["c_hat"] * m_frac_i**gamma * W_i**(-alpha) * DeltaG**eta)
-
-        return(out)
-
     def H(self, ge_x, h, id, m, v, theta_dict):
         """Compute probability nobody attacks government id
 
@@ -541,7 +508,6 @@ class policies:
         np.fill_diagonal(m_frac, 0)
 
         m_frac_i = np.array([m_frac[:,id][i] for i in range(self.N) if i not in [id, self.ROW_id]])
-        # print(m_frac_i)
         W_i = np.array([self.W[:,id][i] for i in range(self.N) if i not in [id, self.ROW_id]])
         Y_i = np.array([self.Y_norm[i] for i in range(self.N) if i not in [id, self.ROW_id]])
 
@@ -561,6 +527,7 @@ class policies:
 
         # chi_ji = -Cinv_i * m_frac_i**gamma * W_i**(-1*alpha) * DeltaG**eta
         chi_ji = -Cinv_i * Y_i**alpha2 * m_frac_i**gamma * W_i**(-1*alpha) * DeltaG**eta
+        print(chi_ji)
         # chi_ji = - m_frac[:,id]**gamma * self.W[:,id]**(-1*alpha) * DeltaG**eta
         # print(chi_ji)
 
@@ -795,6 +762,7 @@ class policies:
                 # print(s[i, ])
                 h_i = h[i, ]
                 print("peace probs " + str(i) + ":")
+                # NOTE: this will evaluate incorrectly in coercion-free counterfactuals because we are inputing self.m
                 peace_probs_i = self.peace_probs(ge_x, h_i, i, self.m, v, self.rewrap_theta(theta_x))[1]
                 print(peace_probs_i)
 
