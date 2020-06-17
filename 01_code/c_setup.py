@@ -8,11 +8,12 @@ import helpers
 
 class setup:
 
-    def __init__(self, location, size, bootstrap=False, bootstrap_id=0, mil_off=False):
+    def __init__(self, location, size, bootstrap=False, bootstrap_id=0, mil_off=False, base_path=None):
 
         # MACRO PATHS
 
-        base_path = os.path.expanduser('~')
+        if base_path is None:
+            base_path = os.path.expanduser('~')
 
         if location == "local":
             self.project_files = base_path + "/Dropbox (Princeton)/1_Papers/tpsp/01_files/"
@@ -78,6 +79,7 @@ class setup:
 
         # MAKE DIRECTORIES
 
-        helpers.mkdir(self.results_path_base)
-        helpers.mkdir(self.estimates_path)
-        helpers.mkdir(self.counterfactuals_path)
+        if base_path is None:
+            helpers.mkdir(self.results_path_base)
+            helpers.mkdir(self.estimates_path)
+            helpers.mkdir(self.counterfactuals_path)
