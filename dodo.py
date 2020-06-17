@@ -19,7 +19,7 @@ verticatorPath = "~/Dropbox\ \(Princeton\)/8_Templates/plugin/verticator"
 pluginDest = "index_files/reveal.js-3.8.0/plugin"
 revealPath = "~/Dropbox\ \(Princeton\)/8_Templates/reveal.js-3.8.0"
 
-csv_dir_base = "~/Dropbox\ \(Princeton\)/1_Papers/tpsp/01_data/"
+csv_dir_base = "~/Dropbox\ \(Princeton\)/1_Papers/tpsp/01_files/"
 results_dir_base = csv_dir_base + "results/"
 data_dir_base = csv_dir_base + "data/"
 
@@ -156,6 +156,7 @@ def task_grab_results():
         'params':[{'name':'size',
 		      'long':'size',
 		      'type':str,
-		      'default':'mini/'}],
-        'actions':["scp -r bcooley@adroit.princeton.edu:" + hpc_results_dir + "%(size)s* " + results_dir_base + "%(size)s"]
+		      'default':'mid/'}],
+        'actions':["scp -r bcooley@adroit.princeton.edu:" + hpc_results_dir + "%(size)s* " + results_dir_base + "%(size)s",
+        "cd " + code_dir + "; python 02_results_compile.py"]
     }

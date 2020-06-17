@@ -32,18 +32,18 @@ if results_base == True:
     r_base.compute_estimates()
     r_base.unravel_estimates()
 
-x_base = np.genfromtxt(r_base.xlhvt_star_path)
+x_base = np.genfromtxt(r_base.setup.xlhvt_star_path)
 
 def bootstrap_i(id, mil_off=False):
     # r_id = results.results(location, size, sv=x_base, bootstrap=True, bootstrap_id=id)
     r_id = results.results(location, size, bootstrap=True, bootstrap_id=id, mil_off=mil_off)
-    if os.path.exists(r_id.xlhvt_star_path):
+    if os.path.exists(r_id.setup.xlhvt_star_path):
         print("bootstrap id " + str(id) + " completed, proceeding...")
         sys.stdout.flush()
     else:
         print("beginning bootstrap id " + str(id) + "...")
-        sys.stdout.flush()
         r_id.compute_estimates()
+        sys.stdout.flush()
     # print("beginning bootstrap id " + str(id) + "...")
     # sys.stdout.flush()
     # r_id.compute_estimates()
@@ -59,7 +59,8 @@ if __name__ == '__main__':
             num_cores = int(os.getenv('SLURM_CPUS_PER_TASK'))
             pool = mp.Pool(num_cores)
         else:
-            pool = mp.Pool()
+            num_cores = mp.cpu_count()
+            pool = mp.Pool(num_cores)
         # for i in range(2, 3):
         for i in range(Mstart, Mend+1):
             pool.apply_async(bootstrap_i, args=(i, mil_off, ))

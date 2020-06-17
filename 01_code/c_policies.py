@@ -527,7 +527,6 @@ class policies:
 
         # chi_ji = -Cinv_i * m_frac_i**gamma * W_i**(-1*alpha) * DeltaG**eta
         chi_ji = -Cinv_i * Y_i**alpha2 * m_frac_i**gamma * W_i**(-1*alpha) * DeltaG**eta
-        print(chi_ji)
         # chi_ji = - m_frac[:,id]**gamma * self.W[:,id]**(-1*alpha) * DeltaG**eta
         # print(chi_ji)
 
