@@ -62,7 +62,7 @@ class setup:
         self.Eq_path = self.data_path + "Eq.csv"
         self.Ex_path = self.data_path + "Ex.csv"
         self.r_path = self.data_path + "r.csv"
-        self.D_path = self.data_path + "D.csv"
+        self.D_path = self.data_path + "d.csv"
 
         self.dists_path = self.data_path + "cDists.csv"
         self.M_path = self.data_path + "milex.csv"
