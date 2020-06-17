@@ -38,9 +38,10 @@ for i in est_dict.keys():
         quantiles_mil_off[i] = np.quantile(est_dict_mil_off[i], [.025, .5, .975])
 
 r_base = results.results(location, size)
+np.savetxt(r_base.setup.quantiles_v_path, quantiles["v"], delimiter=",")
+np.savetxt(r_base.setup.quantiles_gamma_path, quantiles["gamma"], delimiter=",")
+np.savetxt(r_base.setup.quantiles_alpha1_path, quantiles["alpha1"], delimiter=",")
+np.savetxt(r_base.setup.quantiles_alpha2_path, quantiles["alpha2"], delimiter=",")
+
 r_base_mil_off = results.results(location, size, mil_off=True)
-
-for i in quantiles.keys():
-    np.savetxt(r_base.setup.estimates_path + "quantiles_" + i + ".csv", quantiles[i], delimiter=",")
-
-np.savetxt(r_base_mil_off.setup.estimates_path + "quantiles_v_mil_off.csv", quantiles_mil_off["v"], delimiter=",")
+np.savetxt(r_base_mil_off.setup.quantiles_v_path, quantiles_mil_off["v"], delimiter=",")

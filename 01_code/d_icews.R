@@ -11,7 +11,7 @@ use_virtualenv("python3")
 c_setup <- import_from_path("c_setup", path=".")
 setup <- c_setup$setup("local", "mid/")
 
-ccodes <- read_csv(paste0(params$data_path_base, "ccodes.csv"), col_names=F) %>% pull(.)
+ccodes <- read_csv(setup$ccodes_path, col_names=F) %>% pull(.)
 
 grab_reduced_icews <- FALSE
 
@@ -21,7 +21,7 @@ if (grab_reduced_icews==TRUE) {
     ifelse(as.character(x)!="", x, NA)
   }
   
-  reducedFiles <- list.files(params$icews_reduced_path)
+  reducedFiles <- list.files(setup$icews_reduced_path)
   events.Y <- list()  # list holding data frames for each year
   # for each of the reduced files
   for (i in 1:length(reducedFiles)) {
@@ -53,11 +53,11 @@ if (grab_reduced_icews==TRUE) {
   
   counts <- event.counts(events, 'year', 'quad')
   
-  write_csv(counts, params$icews_counts_path)
+  write_csv(counts, setup$icews_counts_path)
   
 }
 
-counts <- read_csv(params$icews_counts_path)
+counts <- read_csv(setup$icews_counts_path)
 
 counts$j_iso3 <- countrycode(counts$sourceCOW, "cown", "iso3c")
 counts$i_iso3 <- countrycode(counts$tarCOW, "cown", "iso3c")

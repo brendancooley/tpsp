@@ -4,19 +4,21 @@ for (i in sourceFiles) {
   source(paste0(sourceDir, i))
 }
 
-source("00_params.R")
-
-libs <- c("tidyverse")
+libs <- c("tidyverse", "reticulate")
 ipak(libs)
+
+use_virtualenv("python3")
+c_setup <- import_from_path("c_setup", path=".")
+setup <- c_setup$setup("local", "mid/")
 
 #### DATA ####
 
-quantiles_alpha1 <- read_csv(paste0(estimatesPath, "quantiles_alpha1.csv"), col_names=F)
-quantiles_alpha2 <- read_csv(paste0(estimatesPath, "quantiles_alpha2.csv"), col_names=F)
-quantiles_gamma <- read_csv(paste0(estimatesPath, "quantiles_gamma.csv"), col_names=F)
-quantiles_v <- read_csv(paste0(estimatesPath, "quantiles_v.csv"), col_names=F)
+quantiles_alpha1 <- read_csv(setup$quantiles_alpha1_path, col_names=F)
+quantiles_alpha2 <- read_csv(setup$quantiles_alpha2_path, col_names=F)
+quantiles_gamma <- read_csv(setup$quantiles_gamma_path, col_names=F)
+quantiles_v <- read_csv(setup$quantiles_v_path, col_names=F)
 
-ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
+ccodes <- read_csv(setup$ccodes_path, col_names=FALSE)
 
 #### CLEAN ####
 

@@ -4,20 +4,23 @@ for (i in sourceFiles) {
   source(paste0(sourceDir, i))
 }
 
-source("00_params.R")
-
-libs <- c("tidyverse", "modelsummary", "dotwhisker", "ggsci")
+libs <- c("tidyverse", "modelsummary", "dotwhisker", "ggsci", "reticulate")
 ipak(libs)
 
-ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=F) %>% pull(.)
+use_virtualenv("python3")
+c_setup <- import_from_path("c_setup", path=".")
+setup <- c_setup$setup("local", "mid/")
+
+ccodes <- read_csv(setup$ccodes_path, col_names=F) %>% pull(.)
+tau <- read_csv(setup$tau_path, col_names=F)
+M <- read_csv(setup$M_path, col_names=F) %>% pull(.)
+Y <- read_csv(setup$Y_path, col_names=F)
+W <- read_csv(setup$dists_path, col_names=F)
+X <- read_csv(setup$Xcif_path, col_names=F)
+gdp <- read_csv(setup$gdp_raw_path)
+rcv_ft <- read_csv(setup$rcv_ft_path, col_names=F) # %>% t() %>% as_tibble()
+
 N <- length(ccodes)
-tau <- read_csv(paste0(dataPath, "tau.csv"), col_names=F)
-M <- read_csv(paste0(dataPath, "milex.csv"), col_names=F) %>% pull(.)
-Y <- read_csv(paste0(dataPath, "y.csv"), col_names=F)
-W <- read_csv(paste0(dataPath, "cDists.csv"), col_names=F)
-X <- read_csv(paste0(dataPath, "Xcif.csv"), col_names=F)
-gdp <- read_csv(paste0(dataPath, "gdp_raw.csv"))
-rcv_ft <- read_csv(paste0(resultsPath, "rcv_ft.csv"), col_names=F) # %>% t() %>% as_tibble()
 
 colnames(tau) <- colnames(W) <- colnames(X) <- colnames(rcv_ft) <- ccodes
 
@@ -38,7 +41,7 @@ X_long <- X %>% pivot_longer(-j_iso3, names_to="i_iso3", values_to="X_ji")
 rcv_ft <- cbind(ccodes, rcv_ft)
 colnames(rcv_ft)[1] <- c("j_iso3")
 rcv_long <- rcv_ft %>% pivot_longer(-j_iso3, names_to="i_iso3", values_to="rcv_ij")  # i's value for attacking j
-rcv_long %>% arrange(desc(rcv_ij))
+# rcv_long %>% arrange(desc(rcv_ij))
 
 M <- M / min(M)
 M_diag <- diag(M)
@@ -64,10 +67,9 @@ data <- data %>% filter(j_iso3!="RoW" & i_iso3!="RoW")
 
 ### REG ###
 
-data$tau_rev_frac <- (data$tau - 1) * data$X_ji / data$Y_j
+# data$tau_rev_frac <- (data$tau - 1) * data$X_ji / data$gdp_j
 data$rcv_ij <- data$rcv_ij - 1
-
-data %>% filter(i_iso3 %in% c("USA", "EU")) %>% arrange(i_iso3, rcv_ij) %>% print(n=100)
+# data %>% filter(i_iso3 %in% c("USA", "EU")) %>% arrange(i_iso3, rcv_ij) %>% print(n=100)
 
 model1 <- lm(data=data, log(rcv_ij)~log(m_frac_ij))
 model2 <- lm(data=data, log(rcv_ij)~log(m_frac_ij)+i_iso3)  # attacker-specific costs w/ FE
@@ -115,3 +117,4 @@ rcvm_plot <- ggplot(data, aes(x=log(m_frac_ij), y=log(rcv_ij))) +
   geom_point() +
   geom_smooth(method="lm") +
   theme_classic()
+

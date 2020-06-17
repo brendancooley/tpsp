@@ -43,7 +43,7 @@ class setup:
         # DATA (STATIC)
 
         self.icews_reduced_path = "~/Dropbox (Princeton)/Public/reducedICEWS/"
-        self.icews_counts_path = self.data_path_0 + "icews_counts.csv"
+        self.gdp_raw_path = self.data_path_base + "gdp_raw.csv"
 
         # DATA (DYNAMIC)
 
@@ -65,6 +65,16 @@ class setup:
 
         self.dists_path = self.data_path + "cDists.csv"
         self.M_path = self.data_path + "milex.csv"
+
+        # OUTPUT
+
+        self.icews_counts_path = self.data_path_0 + "icews_counts.csv"
+        self.rcv_ft_path = self.results_path_base + "rcv_ft.csv"
+
+        self.quantiles_v_path = self.estimates_path_base + "quantiles_v.csv"
+        self.quantiles_gamma_path = self.estimates_path_base + "quantiles_gamma.csv"
+        self.quantiles_alpha1_path = self.estimates_path_base + "quantiles_alpha1.csv"
+        self.quantiles_alpha2_path = self.estimates_path_base + "quantiles_alpha2.csv"
 
         # MAKE DIRECTORIES
 
