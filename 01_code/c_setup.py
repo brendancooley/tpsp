@@ -10,6 +10,11 @@ class setup:
 
     def __init__(self, location, size, bootstrap=False, bootstrap_id=0, mil_off=False, base_path=None):
 
+        # CALIBRATED PARAMETERS
+
+        self.eta = 1.5
+        self.c_hat = 25
+
         # MACRO PATHS
 
         if base_path is None:
@@ -82,9 +87,18 @@ class setup:
         self.quantiles_rcv_path = self.estimates_path_base + "quantiles_rcv.csv"
         self.quantiles_peace_probs_path = self.estimates_path_base + "quantiles_peace_probs.csv"
 
+        # COUNTERFACTUAL PATHS
+
+        self.cfct_demilitarization_path = self.counterfactuals_path + "demilitarization/"
+        self.cfct_china_path = self.counterfactuals_path + "china/"
+
+        # FIGURE PATHS
+
         # MAKE DIRECTORIES
 
         if mkdirs == True:
             helpers.mkdir(self.results_path_base)
             helpers.mkdir(self.estimates_path)
             helpers.mkdir(self.counterfactuals_path)
+            helpers.mkdir(self.cfct_demilitarization_path)
+            helpers.mkdir(self.cfct_china_path)

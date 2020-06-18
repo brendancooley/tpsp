@@ -11,6 +11,8 @@ import c_policies as policies
 import c_setup as setup
 import s_helpers_tpsp as hp
 
+imp.reload(setup)
+
 class results:
 
     def __init__(self, location, size, sv=None, bootstrap=False, bootstrap_id=0, mil_off=False):
@@ -47,7 +49,7 @@ class results:
         M = M / np.min(M)  # normalize milex
         W = dists
 
-        N = len(Y)
+        self.N = len(Y)
 
         E = Eq + Ex
 
@@ -97,9 +99,9 @@ class results:
         xlhvt_star = np.genfromtxt(self.setup.xlhvt_star_path, delimiter=",")
         ge_x_star = pecmy.rewrap_xlhvt(xlhvt_star)["ge_x"]
         tau_star = pecmy.ecmy.rewrap_ge_dict(ge_x_star)["tau_hat"] * pecmy.ecmy.tau
-        X_star = pecmy.ecmy.rewrap_ge_dict(ge_x_star)["X_hat"] * pecmy.ecmy.Xcif
 
-        np.savetxt(self.setup.estimates_path + "X_star.csv", X_star, delimiter=",")
+        # X_star = pecmy.ecmy.rewrap_ge_dict(ge_x_star)["X_hat"] * pecmy.ecmy.Xcif
+        # np.savetxt(self.setup.estimates_path + "X_star.csv", X_star, delimiter=",")
 
         v_star = pecmy.rewrap_xlhvt(xlhvt_star)["v"]
         theta_x_star = pecmy.rewrap_xlhvt(xlhvt_star)["theta"]
@@ -133,23 +135,19 @@ class results:
         np.savetxt(self.setup.estimates_path + "peace_probs.csv", peace_prob_mat, delimiter=",")
         est_dict["peace_probs"].append(peace_prob_mat.ravel())
 
-    def compute_counterfactuals(self):
+    def compute_counterfactual(self, v_star, theta_x_star, m):
 
         pecmy = policies.policies(self.data, self.params, self.ROWname, self.bootstrap_id)
+        xlhvt_prime, obj, status = pecmy.estimator(v_star, theta_x_star, m, nash_eq=True)
 
-        xlhvt_star = np.genfromtxt(self.xlhvt_star_path, delimiter=",")
+        if status == 0:
 
-        xlhvt_dict = pecmy.rewrap_xlhvt(xlhvt_star)
-        theta_x_star = xlhvt_dict["theta"]
-        v_star = xlhvt_dict["v"]
+            print(xlhvt_prime)
+            print(obj)
+            print(status)
 
-        xlhvt_prime, obj, status = pecmy.estimator(v_star, theta_x_star, pecmy.mzeros, nash_eq=True)
+            # np.savetxt(xlhvt_prime_path, x_path_base + "x.csv", delimiter=",")
 
-        print(xlhvt_prime)
-        print(obj)
-        print(status)
-
-        xlhvt_prime_path = self.setup.counterfactuals_path + "x.csv"
-        np.savetxt(xlhvt_prime_path, xlhvt_prime, delimiter=",")
+        return(xlhvt_prime)
 
 # bootstrap: https://github.com/brendancooley/tpsp/blob/f45862d123edce4ecaa026d7fa3947e3dc11cfb6/01_code/convexity_test.py

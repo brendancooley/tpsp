@@ -151,21 +151,31 @@ def task_transfer_code_hpc():
         'verbosity':2
     }
 
-def task_grab_results():
+def task_compile_results():
     yield {
-        'name': "grab_results",
+        'name': "compile_results",
         'params':[{'name':'size',
 		      'long':'size',
 		      'type':str,
 		      'default':'mid/'}],
-        'actions':["scp -r bcooley@adroit.princeton.edu:" + hpc_results_dir + "%(size)s* " + results_dir_base + "%(size)s",
-        "cd " + code_dir + "; python 02_results_compile.py"],
+        'actions':["cd " + code_dir + "; python 02_results_compile.py"],
         'verbosity':2
     }
 
 def task_sync_results():
     yield {
         'name': "sync_results",
-        'actions':["cd " + code_dir + "; python d_sync_hpc.py"],
+        'params':[{'name':'mil_off',
+		      'long':'mil_off',
+		      'type':str,
+		      'default':'False'}],
+        'actions':["cd " + code_dir + "; python d_sync_hpc.py " + "%(mil_off)s"],
+        'verbosity':2
+    }
+
+def task_counterfactuals():
+    yield {
+        'name': "computing counterfactuals...",
+        'actions':["cd " + code_dir + "; python 03_counterfactuals.py"],
         'verbosity':2
     }

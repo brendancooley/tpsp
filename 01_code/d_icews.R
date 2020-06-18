@@ -1,5 +1,6 @@
 # TODO: add MIDs
 # TODO: aggregate Europe, RoW for events
+# TODO: counterfactual: welfare under
 
 sourceDir <- paste0("../source/R/")
 sourceFiles <- list.files(sourceDir)

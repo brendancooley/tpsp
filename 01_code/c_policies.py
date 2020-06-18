@@ -1309,6 +1309,9 @@ class policies:
             x_L[b] = theta_dict["alpha1"]
             x_U[b] = theta_dict["alpha1"]
             b += 1
+            x_L[b] = theta_dict["alpha2"]
+            x_U[b] = theta_dict["alpha2"]
+            b += 1
             x_L[b:b+self.N] = theta_dict["C"]
             x_U[b:b+self.N] = theta_dict["C"]
 
