@@ -11,8 +11,6 @@ imp.reload(setup)
 size = "mid/"
 M = 100
 
-pwd = sys.argv[1]
-
 ssh = SSHClient()
 ssh.load_system_host_keys()
 ssh.connect(hostname='adroit.princeton.edu', username="bcooley", password=getpass.getpass('password: '))

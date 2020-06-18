@@ -84,9 +84,11 @@ class results:
             print(status)
 
             np.savetxt(self.setup.xlhvt_star_path, xlhvt_star, delimiter=",")
+            sys.stdout.flush()
 
         else:
             print("estimator failed to converge after %s seconds" % (time.time() - start_time))
+            sys.stdout.flush()
 
     def unravel_estimates(self, est_dict):
 
@@ -113,6 +115,7 @@ class results:
         rcv_eq = pecmy.rcv_ft(ge_x_star, v_star)
         np.fill_diagonal(rcv_eq, 0)
         np.savetxt(self.setup.estimates_path + "rcv_eq.csv", rcv_eq, delimiter=",")
+        est_dict["rcv"].append(rcv_eq.ravel())
 
         # probabilities of peace
         h = np.reshape(pecmy.rewrap_xlhvt(xlhvt_star)["h"], (pecmy.N, pecmy.hhat_len))
@@ -128,6 +131,7 @@ class results:
                     peace_prob_mat[i, j] = 1
 
         np.savetxt(self.setup.estimates_path + "peace_probs.csv", peace_prob_mat, delimiter=",")
+        est_dict["peace_probs"].append(peace_prob_mat.ravel())
 
     def compute_counterfactuals(self):
 

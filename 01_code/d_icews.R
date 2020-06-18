@@ -1,10 +1,13 @@
+# TODO: another relevant metric is to measure how much coercion is being applied, remove each threatener one by one and recompute equilibrium welfare
+# TODO: peace probs
+
 sourceDir <- paste0("../source/R/")
 sourceFiles <- list.files(sourceDir)
 for (i in sourceFiles) {
   source(paste0(sourceDir, i))
 }
 
-libs <- c("tidyverse", "zoo", "lubridate", "countrycode", "reticulate")
+libs <- c("tidyverse", "zoo", "lubridate", "countrycode", "reticulate", "ca", "ggrepel")
 ipak(libs)
 
 use_virtualenv("python3")
@@ -12,6 +15,11 @@ c_setup <- import_from_path("c_setup", path=".")
 setup <- c_setup$setup("local", "mid/")
 
 ccodes <- read_csv(setup$ccodes_path, col_names=F) %>% pull(.)
+q_rcv <- read_csv(setup$quantiles_rcv_path, col_names=F)
+
+quantiles_rcv <- expand.grid(ccodes, ccodes)
+quantiles_rcv <- quantiles_rcv %>% cbind(q_rcv %>% t()) %>% as_tibble()  # i's value for conquering j
+colnames(quantiles_rcv) <- c("i_iso3", "j_iso3", "q025", "q500", "q975")
 
 grab_reduced_icews <- FALSE
 
@@ -59,11 +67,71 @@ if (grab_reduced_icews==TRUE) {
 
 counts <- read_csv(setup$icews_counts_path)
 
-counts$j_iso3 <- countrycode(counts$sourceCOW, "cown", "iso3c")
-counts$i_iso3 <- countrycode(counts$tarCOW, "cown", "iso3c")
+counts$j_iso3 <- countrycode(counts$tarCOW, "cown", "iso3c")
+counts$i_iso3 <- countrycode(counts$sourceCOW, "cown", "iso3c")  # i's events toward j, consistent with conquest vals (i conquering j)
 
-counts <- counts %>% filter(!is.na(j_iso3), !is.na(i_iso3))
+counts <- counts %>% filter(!is.na(j_iso3), !is.na(i_iso3)) %>% filter(i_iso3!=j_iso3) %>% select(i_iso3, j_iso3, year, everything()) %>% select(-sourceCOW, -tarCOW)
+counts$era <- ntile(counts$year, 8)
+# counts %>% filter(era==6) %>% pull(year) %>% unique()
+
+# aggregate by era
+counts_era <- counts %>% group_by(i_iso3, j_iso3, era) %>% summarise(q1=sum(`1`), q2=sum(`2`), q3=sum(`3`), q4=sum(`4`))
+counts_era$n <- counts_era$q1 + counts_era$q2 + counts_era$q3 + counts_era$q4
 
 #### SCALING ####
 
-# see Archive/2016-2017/IR Event Data Project/   (ca wrapper?)
+# Quad codes:
+# 1 - verbal cooperation
+# 2 - material cooperation
+# 3 - verbal conflict
+# 4 - material conflict
+
+# counts %>% filter(j_iso3=="USA", i_iso3=="CAN", year==1995)
+# counts %>% filter(j_iso3=="CAN", i_iso3=="USA", year==1995)
+# counts_era <- counts_era %>% filter(era==6, i_iso3 %in% ccodes, j_iso3 %in% ccodes)
+counts_sub <- counts %>% filter(year >=2006, year <=2016, i_iso3 %in% ccodes, j_iso3 %in% ccodes) %>% 
+  group_by(i_iso3, j_iso3) %>% summarise(q1=sum(`1`), q2=sum(`2`), q3=sum(`3`), q4=sum(`4`)) %>%
+  mutate(n=q1+q2+q3+q4)
+
+counts_sub_ca <- ca(counts_sub[3:6], nd=2)
+counts_sub_ca_1 <- ca(counts_sub[3:6], nd=1)
+counts_sub$score1 <- counts_sub_ca$rowcoord[,1] %>% as.vector()
+counts_sub$score2 <- counts_sub_ca$rowcoord[,2] %>% as.vector()
+
+# counts_sub$score2 <- -1 * counts_sub$score2
+# counts_sub$score1 <- -1 * counts_sub$score1
+# high numbers consistent with more conflict in this run
+
+counts_tpsp <- counts_sub
+
+counts_tpsp$ddyad <- paste0(counts_tpsp$i_iso3, "-", counts_tpsp$j_iso3)
+counts_tpsp %>% arrange(score1) %>% print(n=100)
+counts_tpsp %>% arrange(score2) %>% print(n=100)
+
+ggplot(data=counts_tpsp, aes(x=score1, y=score2)) +
+  geom_point() +
+  geom_vline(xintercept=0, lty=2) +
+  geom_hline(yintercept=0, lty=2) +
+  geom_text_repel(aes(label=ddyad)) +
+  theme_classic()
+
+counts_tpsp <- counts_tpsp %>% left_join(quantiles_rcv)
+counts_tpsp$rcv <- counts_tpsp$q500 - 1
+counts_tpsp$rcv_prime <- ifelse(counts_tpsp$rcv < 0, 0, counts_tpsp$rcv)
+counts_tpsp %>% print(n=50)
+
+model1 <- lm(data=counts_tpsp, score1 ~ rcv_prime)
+summary(model1)
+model2 <- lm(data=counts_tpsp, score2 ~ rcv_prime)
+summary(model2)
+model3 <- lm(data=counts_tpsp, rcv_prime ~ score1 + score2)
+summary(model3)
+
+ggplot(data=counts_tpsp, aes(x=score1, y=rcv_prime)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_classic()
+
+ggplot(data=counts_tpsp, aes(x=score2, y=rcv_prime)) +
+  geom_point() +
+  theme_classic()

@@ -160,3 +160,9 @@ def task_grab_results():
         'actions':["scp -r bcooley@adroit.princeton.edu:" + hpc_results_dir + "%(size)s* " + results_dir_base + "%(size)s",
         "cd " + code_dir + "; python 02_results_compile.py"]
     }
+
+def task_sync_results():
+    yield {
+        'name': "sync_results",
+        'actions':["cd " + code_dir + "; python d_sync_hpc.py"]
+    }

@@ -13,7 +13,10 @@ class setup:
         # MACRO PATHS
 
         if base_path is None:
+            mkdirs = False
             base_path = os.path.expanduser('~')
+        else:
+            mkdirs = True
 
         if location == "local":
             self.project_files = base_path + "/Dropbox (Princeton)/1_Papers/tpsp/01_files/"
@@ -76,10 +79,12 @@ class setup:
         self.quantiles_gamma_path = self.estimates_path_base + "quantiles_gamma.csv"
         self.quantiles_alpha1_path = self.estimates_path_base + "quantiles_alpha1.csv"
         self.quantiles_alpha2_path = self.estimates_path_base + "quantiles_alpha2.csv"
+        self.quantiles_rcv_path = self.estimates_path_base + "quantiles_rcv.csv"
+        self.quantiles_peace_probs_path = self.estimates_path_base + "quantiles_peace_probs.csv"
 
         # MAKE DIRECTORIES
 
-        if base_path is None:
+        if mkdirs == True:
             helpers.mkdir(self.results_path_base)
             helpers.mkdir(self.estimates_path)
             helpers.mkdir(self.counterfactuals_path)
