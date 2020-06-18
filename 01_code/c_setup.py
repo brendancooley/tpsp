@@ -86,6 +86,7 @@ class setup:
         self.quantiles_alpha2_path = self.estimates_path_base + "quantiles_alpha2.csv"
         self.quantiles_rcv_path = self.estimates_path_base + "quantiles_rcv.csv"
         self.quantiles_peace_probs_path = self.estimates_path_base + "quantiles_peace_probs.csv"
+        self.quantiles_tau_path = self.estimates_path_base + "quantiles_tau.csv"
 
         # COUNTERFACTUAL PATHS
 

@@ -1,6 +1,5 @@
-# TODO: add MIDs
-# TODO: aggregate Europe, RoW for events
-# TODO: counterfactual: welfare under
+# TODO: add MIDs, ICB
+# TODO: counterfactual: welfare when others military spending is reduced
 
 sourceDir <- paste0("../source/R/")
 sourceFiles <- list.files(sourceDir)
@@ -14,6 +13,12 @@ ipak(libs)
 use_virtualenv("python3")
 c_setup <- import_from_path("c_setup", path=".")
 setup <- c_setup$setup("local", "mid/")
+
+#### EXTERNAL DATA ####
+
+icb <- read_csv("http://people.duke.edu/~kcb38/ICB/icbdy_v12.csv") # statea/stateb are cow codes
+
+#### INTERNAL DATA ####
 
 ccodes <- read_csv(setup$ccodes_path, col_names=F) %>% pull(.)
 q_rcv <- read_csv(setup$quantiles_rcv_path, col_names=F)
@@ -76,6 +81,10 @@ counts <- read_csv(setup$icews_counts_path)
 counts$j_iso3 <- countrycode(counts$tarCOW, "cown", "iso3c")
 counts$i_iso3 <- countrycode(counts$sourceCOW, "cown", "iso3c")  # i's events toward j, consistent with conquest vals (i conquering j)
 
+# map EU
+counts$j_iso3 <- mapEU(counts$j_iso3, counts$year)
+counts$i_iso3 <- mapEU(counts$i_iso3, counts$year)
+
 counts <- counts %>% filter(!is.na(j_iso3), !is.na(i_iso3)) %>% filter(i_iso3!=j_iso3) %>% select(i_iso3, j_iso3, year, everything()) %>% select(-sourceCOW, -tarCOW)
 counts$era <- ntile(counts$year, 8)
 # counts %>% filter(era==6) %>% pull(year) %>% unique()
@@ -100,7 +109,7 @@ counts_sub <- counts %>% filter(year >=2006, year <=2016, i_iso3 %in% ccodes, j_
   mutate(n=q1+q2+q3+q4)
 
 counts_sub_ca <- ca(counts_sub[3:6], nd=2)
-counts_sub_ca_1 <- ca(counts_sub[3:6], nd=1)
+# counts_sub_ca_1 <- ca(counts_sub[3:6], nd=1)
 counts_sub$score1 <- counts_sub_ca$rowcoord[,1] %>% as.vector()
 counts_sub$score2 <- counts_sub_ca$rowcoord[,2] %>% as.vector()
 
@@ -131,18 +140,21 @@ counts_tpsp %>% arrange(desc(q4))
 counts_tpsp %>% arrange(desc(pp_inv))
 quantiles_pp %>% arrange(pp_q500)
 
-model1 <- lm(data=counts_tpsp, score1 ~ rcv_prime)
+model1 <- lm(data=counts_tpsp, score1 ~ rcv_q500)
 summary(model1)
-model2 <- lm(data=counts_tpsp, score2 ~ rcv_prime)
+model2 <- lm(data=counts_tpsp, score2 ~ rcv_q500)
 summary(model2)
-model3 <- lm(data=counts_tpsp, rcv_prime ~ score1 + score2)
+model3 <- lm(data=counts_tpsp, rcv_q500 ~ score1 + score2)
 summary(model3)
 
-ggplot(data=counts_tpsp, aes(x=score1, y=rcv_prime)) +
+model1 <- lm(data=counts_tpsp, q4 ~ pp_inv)
+summary(model1)
+
+ggplot(data=counts_tpsp, aes(x=score1, y=rcv_q500)) +
   geom_point() +
   geom_smooth(method="lm") +
   theme_classic()
 
-ggplot(data=counts_tpsp, aes(x=score2, y=rcv_prime)) +
+ggplot(data=counts_tpsp, aes(x=score2, y=rcv_q500)) +
   geom_point() +
   theme_classic()

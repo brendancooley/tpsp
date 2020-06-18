@@ -99,6 +99,7 @@ class results:
         xlhvt_star = np.genfromtxt(self.setup.xlhvt_star_path, delimiter=",")
         ge_x_star = pecmy.rewrap_xlhvt(xlhvt_star)["ge_x"]
         tau_star = pecmy.ecmy.rewrap_ge_dict(ge_x_star)["tau_hat"] * pecmy.ecmy.tau
+        est_dict["tau"].append(tau_star.ravel())
 
         # X_star = pecmy.ecmy.rewrap_ge_dict(ge_x_star)["X_hat"] * pecmy.ecmy.Xcif
         # np.savetxt(self.setup.estimates_path + "X_star.csv", X_star, delimiter=",")

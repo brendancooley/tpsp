@@ -1363,12 +1363,13 @@ class policies:
 
         theta_dict = self.rewrap_theta(theta_x)
 
-        # if nash_eq == True:
-        #     ge_x_sv = self.v_sv_all(v)
-        # else:
-        #     ge_x_sv = np.ones(self.x_len)
-        ge_x_sv = self.v_sv_all(v)
+        if nash_eq == True:
+            ge_x_sv = np.ones(self.x_len)
+        else:
+            ge_x_sv = self.v_sv_all(v)
+        # ge_x_sv = self.v_sv_all(v)
         # ge_x_sv = np.ones(self.x_len)
+        # print(self.ecmy.rewrap_ge_dict(ge_x_sv)["tau_hat"])
 
         lambda_sv = np.zeros(self.lambda_i_len*self.N)
         # lambda_sv = np.ones(self.lambda_i_len*self.N)
@@ -1485,8 +1486,8 @@ class policies:
             # for derivative test, make sure we don't travel too far from initial point with point_perturbation_radius (leads to evaluation errors)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, derivative_test="first-order", point_perturbation_radius=0.)
         else:
-            problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes")
+            problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.loss, self.loss_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", start_with_resto="yes", required_infeasibility_reduction=1.0e-3)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", derivative_test="first-order", point_perturbation_radius=0.)
         print("solving...")
         _x, obj, status = problem.solve(xlhvt_sv)
@@ -1757,124 +1758,124 @@ class policies:
     #     else:
     #         return(x_U)
 
-    def dummy(self, x):
-        """dummy objective function for ipopt (for when we only care about solving constraints)
-
-        Parameters
-        ----------
-        x : vector
-            arbitrary-lengthed vector
-
-        Returns
-        -------
-        float
-            constant
-
-        """
-        self.tick += 1
-        if len(x) == self.xlhvt_len:
-            if self.tick % 25 == 0:
-                x_dict = self.rewrap_xlhvt(x)
-                ge_dict = self.ecmy.rewrap_ge_dict(x_dict["ge_x"])
-                lbda = np.reshape(x_dict["lbda"], (self.N, self.lambda_i_len))
-                # s = np.reshape(x_dict["s"], (self.N, self.N))
-                h = np.reshape(x_dict["h"], (self.N, self.hhat_len))
-                v = x_dict["v"]
-                print("tau:")
-                print(ge_dict["tau_hat"]*self.ecmy.tau)
-                print("-----")
-                for i in range(self.N):
-                    Lzeros_i = self.Lzeros_i_xlhvt(x, i, self.m)
-                    h_diffs_i = self.h_diffs_xlhvt(x, i)
-                    lbda_i = self.rewrap_lbda_i(lbda[i, ])
-                    h_i = h[i, ]
-                    # print("h " + str(i) + ":")
-                    # print(h_i)
-                    # print("h_diffs" + str(i) + ":")
-                    # print(h_diffs_i)
-                    # print("Lzeros:" + str(i) + ":")
-                    # print(Lzeros_i)
-                    print("peace probs " + str(i) + ":")
-                    peace_probs_i = self.peace_probs(x_dict["ge_x"], h_i, i, self.m, x_dict["v"], self.rewrap_theta(x_dict["theta"]))
-                    print(peace_probs_i)
-                    print("-----")
-                    # print("lbda_chi " + str(i) + ":")
-                    # print(lbda_i["chi_i"])
-                    # print("s " + str(i) + ":")
-                    # print(s[i, ])
-                    # print("-----")
-                # diffs = self.estimator_cons(x, self.m)
-                # print(np.argmax(diffs))
-                print("ge_dict:")
-                print(ge_dict)
-                print("-----")
-                print("G_hat:")
-                print(self.G_hat(x_dict["ge_x"], x_dict["v"], 0, all=True))
-                print("-----")
-                print("R_hat:")
-                print(self.R_hat(ge_dict, x_dict["v"]))
-                print("-----")
-                print("geq_diffs:")
-                print(self.ecmy.geq_diffs(x_dict["ge_x"], v))
-                # for i in range(self.N):
-                #     rcx_i = self.rcx(ge_dict["tau_hat"], h[i, ], i)
-                #     print("rcx_i:")
-                #     print(self.ecmy.rewrap_ge_dict(rcx_i))
-                #     print("rcv_i:")
-                #     print(self.G_hat(rcx_i, x_dict["v"], 0, all=True))
-                #     print("rhat_i:")
-                #     print(self.R_hat(self.ecmy.rewrap_ge_dict(rcx_i), x_dict["v"]))
-                #     print("-----")
-        if len(x) == self.xlh_len:
-
-            if self.tick % 25 == 0:
-
-                id = 2
-                v = (self.v_max() - 1) / 2 + 1
-                theta_dict = dict()
-                theta_dict["eta"] = 1
-                theta_dict["alpha0"] = 0
-                theta_dict["alpha1"] = .25
-                theta_dict["gamma"] = 1
-                theta_dict["C"] = np.repeat(.25, self.N)
-
-                x_dict = self.rewrap_xlh(x)
-                ge_dict = self.ecmy.rewrap_ge_dict(x_dict["ge_x"])
-                print("tau:")
-                print(ge_dict["tau_hat"]*self.ecmy.tau)
-                print("-----")
-                print("ge_dict:")
-                print(ge_dict)
-                print("-----")
-                rcx_i = self.rcx(ge_dict["tau_hat"], x_dict["h"], id)
-                # print("rcx_i:")
-                # print(self.ecmy.rewrap_ge_dict(rcx_i))
-                peace_probs = self.peace_probs(x_dict["ge_x"], x_dict["h"], id, self.m, v, theta_dict)
-                print("peace probs:")
-                print(peace_probs)
-
-
-        c = 1
-        return(c)
-
-    def dummy_grad(self, x, out):
-        """dummy objective gradient for ipopt
-
-        Parameters
-        ----------
-        x : vector
-            arbirtary-lengthed input vector
-        out : vector
-            arbirtary-lengthed out vector
-
-        Returns
-        -------
-        out
-            null gradient
-
-        """
-        out[()] = np.zeros(len(x))
-        return(out)
+    # def dummy(self, x):
+    #     """dummy objective function for ipopt (for when we only care about solving constraints)
+    #
+    #     Parameters
+    #     ----------
+    #     x : vector
+    #         arbitrary-lengthed vector
+    #
+    #     Returns
+    #     -------
+    #     float
+    #         constant
+    #
+    #     """
+    #     self.tick += 1
+    #     if len(x) == self.xlhvt_len:
+    #         if self.tick % 25 == 0:
+    #             x_dict = self.rewrap_xlhvt(x)
+    #             ge_dict = self.ecmy.rewrap_ge_dict(x_dict["ge_x"])
+    #             lbda = np.reshape(x_dict["lbda"], (self.N, self.lambda_i_len))
+    #             # s = np.reshape(x_dict["s"], (self.N, self.N))
+    #             h = np.reshape(x_dict["h"], (self.N, self.hhat_len))
+    #             v = x_dict["v"]
+    #             print("tau:")
+    #             print(ge_dict["tau_hat"]*self.ecmy.tau)
+    #             print("-----")
+    #             for i in range(self.N):
+    #                 Lzeros_i = self.Lzeros_i_xlhvt(x, i, self.m)
+    #                 h_diffs_i = self.h_diffs_xlhvt(x, i)
+    #                 lbda_i = self.rewrap_lbda_i(lbda[i, ])
+    #                 h_i = h[i, ]
+    #                 # print("h " + str(i) + ":")
+    #                 # print(h_i)
+    #                 # print("h_diffs" + str(i) + ":")
+    #                 # print(h_diffs_i)
+    #                 # print("Lzeros:" + str(i) + ":")
+    #                 # print(Lzeros_i)
+    #                 print("peace probs " + str(i) + ":")
+    #                 peace_probs_i = self.peace_probs(x_dict["ge_x"], h_i, i, self.m, x_dict["v"], self.rewrap_theta(x_dict["theta"]))
+    #                 print(peace_probs_i)
+    #                 print("-----")
+    #                 # print("lbda_chi " + str(i) + ":")
+    #                 # print(lbda_i["chi_i"])
+    #                 # print("s " + str(i) + ":")
+    #                 # print(s[i, ])
+    #                 # print("-----")
+    #             # diffs = self.estimator_cons(x, self.m)
+    #             # print(np.argmax(diffs))
+    #             print("ge_dict:")
+    #             print(ge_dict)
+    #             print("-----")
+    #             print("G_hat:")
+    #             print(self.G_hat(x_dict["ge_x"], x_dict["v"], 0, all=True))
+    #             print("-----")
+    #             print("R_hat:")
+    #             print(self.R_hat(ge_dict, x_dict["v"]))
+    #             print("-----")
+    #             print("geq_diffs:")
+    #             print(self.ecmy.geq_diffs(x_dict["ge_x"], v))
+    #             # for i in range(self.N):
+    #             #     rcx_i = self.rcx(ge_dict["tau_hat"], h[i, ], i)
+    #             #     print("rcx_i:")
+    #             #     print(self.ecmy.rewrap_ge_dict(rcx_i))
+    #             #     print("rcv_i:")
+    #             #     print(self.G_hat(rcx_i, x_dict["v"], 0, all=True))
+    #             #     print("rhat_i:")
+    #             #     print(self.R_hat(self.ecmy.rewrap_ge_dict(rcx_i), x_dict["v"]))
+    #             #     print("-----")
+    #     if len(x) == self.xlh_len:
+    #
+    #         if self.tick % 25 == 0:
+    #
+    #             id = 2
+    #             v = (self.v_max() - 1) / 2 + 1
+    #             theta_dict = dict()
+    #             theta_dict["eta"] = 1
+    #             theta_dict["alpha0"] = 0
+    #             theta_dict["alpha1"] = .25
+    #             theta_dict["gamma"] = 1
+    #             theta_dict["C"] = np.repeat(.25, self.N)
+    #
+    #             x_dict = self.rewrap_xlh(x)
+    #             ge_dict = self.ecmy.rewrap_ge_dict(x_dict["ge_x"])
+    #             print("tau:")
+    #             print(ge_dict["tau_hat"]*self.ecmy.tau)
+    #             print("-----")
+    #             print("ge_dict:")
+    #             print(ge_dict)
+    #             print("-----")
+    #             rcx_i = self.rcx(ge_dict["tau_hat"], x_dict["h"], id)
+    #             # print("rcx_i:")
+    #             # print(self.ecmy.rewrap_ge_dict(rcx_i))
+    #             peace_probs = self.peace_probs(x_dict["ge_x"], x_dict["h"], id, self.m, v, theta_dict)
+    #             print("peace probs:")
+    #             print(peace_probs)
+    #
+    #
+    #     c = 1
+    #     return(c)
+    #
+    # def dummy_grad(self, x, out):
+    #     """dummy objective gradient for ipopt
+    #
+    #     Parameters
+    #     ----------
+    #     x : vector
+    #         arbirtary-lengthed input vector
+    #     out : vector
+    #         arbirtary-lengthed out vector
+    #
+    #     Returns
+    #     -------
+    #     out
+    #         null gradient
+    #
+    #     """
+    #     out[()] = np.zeros(len(x))
+    #     return(out)
 
     def Lsolve_i_ipopt(self, id, m, v, theta_dict):
         """solve best response (Lagrange) for i using ipopt
