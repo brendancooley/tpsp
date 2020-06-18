@@ -147,7 +147,8 @@ def task_transfer_code_hpc():
     yield {
         'name': "transfering code to hpc...",
         'actions':["scp -r source/* " + "bcooley@adroit.princeton.edu:" + hpc_source_dir,
-        "scp -r " + code_dir + "* " + "bcooley@adroit.princeton.edu:" + hpc_code_dir]
+        "scp -r " + code_dir + "* " + "bcooley@adroit.princeton.edu:" + hpc_code_dir],
+        'verbosity':2
     }
 
 def task_grab_results():
@@ -158,11 +159,13 @@ def task_grab_results():
 		      'type':str,
 		      'default':'mid/'}],
         'actions':["scp -r bcooley@adroit.princeton.edu:" + hpc_results_dir + "%(size)s* " + results_dir_base + "%(size)s",
-        "cd " + code_dir + "; python 02_results_compile.py"]
+        "cd " + code_dir + "; python 02_results_compile.py"],
+        'verbosity':2
     }
 
 def task_sync_results():
     yield {
         'name': "sync_results",
-        'actions':["cd " + code_dir + "; python d_sync_hpc.py"]
+        'actions':["cd " + code_dir + "; python d_sync_hpc.py"],
+        'verbosity':2
     }

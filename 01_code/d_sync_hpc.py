@@ -26,7 +26,9 @@ for i in range(1, M+1):
     try:
         sftp.stat(setup_hpc.xlhvt_star_path)
         print("bootstrap id " + str(i) + " exists on hpc")
+        sys.stdout.flush()
     except IOError:
         if os.path.exists(setup_local.xlhvt_star_path):
-            print("transferring local bootstrap id " + str(i) + " to hpc...")
             scp.put(setup_local.xlhvt_star_path, setup_hpc.xlhvt_star_path)
+            print("transferring local bootstrap id " + str(i) + " to hpc...")
+            sys.stdout.flush()

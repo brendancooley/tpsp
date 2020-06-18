@@ -1,5 +1,5 @@
-# TODO: another relevant metric is to measure how much coercion is being applied, remove each threatener one by one and recompute equilibrium welfare
-# TODO: peace probs
+# TODO: add MIDs
+# TODO: aggregate Europe, RoW for events
 
 sourceDir <- paste0("../source/R/")
 sourceFiles <- list.files(sourceDir)
@@ -16,10 +16,15 @@ setup <- c_setup$setup("local", "mid/")
 
 ccodes <- read_csv(setup$ccodes_path, col_names=F) %>% pull(.)
 q_rcv <- read_csv(setup$quantiles_rcv_path, col_names=F)
+pp <- read_csv(setup$quantiles_peace_probs_path, col_names=F)
 
 quantiles_rcv <- expand.grid(ccodes, ccodes)
 quantiles_rcv <- quantiles_rcv %>% cbind(q_rcv %>% t()) %>% as_tibble()  # i's value for conquering j
-colnames(quantiles_rcv) <- c("i_iso3", "j_iso3", "q025", "q500", "q975")
+colnames(quantiles_rcv) <- c("i_iso3", "j_iso3", "rcv_q025", "rcv_q500", "rcv_q975")
+
+quantiles_pp <- expand.grid(ccodes, ccodes)
+quantiles_pp <- quantiles_pp %>% cbind(pp %>% t()) %>% as_tibble()  # i's value for conquering j
+colnames(quantiles_pp) <- c("i_iso3", "j_iso3", "pp_q025", "pp_q500", "pp_q975")  # probability j faces attack from i
 
 grab_reduced_icews <- FALSE
 
@@ -105,8 +110,6 @@ counts_sub$score2 <- counts_sub_ca$rowcoord[,2] %>% as.vector()
 counts_tpsp <- counts_sub
 
 counts_tpsp$ddyad <- paste0(counts_tpsp$i_iso3, "-", counts_tpsp$j_iso3)
-counts_tpsp %>% arrange(score1) %>% print(n=100)
-counts_tpsp %>% arrange(score2) %>% print(n=100)
 
 ggplot(data=counts_tpsp, aes(x=score1, y=score2)) +
   geom_point() +
@@ -115,10 +118,17 @@ ggplot(data=counts_tpsp, aes(x=score1, y=score2)) +
   geom_text_repel(aes(label=ddyad)) +
   theme_classic()
 
-counts_tpsp <- counts_tpsp %>% left_join(quantiles_rcv)
-counts_tpsp$rcv <- counts_tpsp$q500 - 1
+counts_tpsp <- counts_tpsp %>% left_join(quantiles_rcv) %>% left_join(quantiles_pp)
+counts_tpsp %>% arrange(pp_q500) %>% print(n=100)
+counts_tpsp$rcv <- counts_tpsp$rcv_q500 - 1
 counts_tpsp$rcv_prime <- ifelse(counts_tpsp$rcv < 0, 0, counts_tpsp$rcv)
-counts_tpsp %>% print(n=50)
+
+counts_tpsp$pp_inv <- 1 - counts_tpsp$pp_q500
+
+counts_tpsp <- counts_tpsp %>% select(i_iso3, j_iso3, ddyad, q4, n, score1, score2, rcv_q500, pp_inv)
+counts_tpsp %>% arrange(desc(q4))
+counts_tpsp %>% arrange(desc(pp_inv))
+quantiles_pp %>% arrange(pp_q500)
 
 model1 <- lm(data=counts_tpsp, score1 ~ rcv_prime)
 summary(model1)
