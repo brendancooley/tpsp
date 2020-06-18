@@ -13,10 +13,10 @@ class setup:
         # MACRO PATHS
 
         if base_path is None:
-            mkdirs = False
+            mkdirs = True
             base_path = os.path.expanduser('~')
         else:
-            mkdirs = True
+            mkdirs = False
 
         if location == "local":
             self.project_files = base_path + "/Dropbox (Princeton)/1_Papers/tpsp/01_files/"
