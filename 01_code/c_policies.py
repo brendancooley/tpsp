@@ -704,83 +704,8 @@ class policies:
 
         # optimizer tracker
         self.tick += 1
-        if self.tick % 100 == 0:  # print output every 25 calls
-
-            print("bootstrap id: " + str(self.bid))
-
-            # s = np.reshape(xlshvt_dict["s"], (self.N, self.N))
-            # print("s:")
-            # print(s)
-            h = np.reshape(xlhvt_dict["h"], (self.N, self.hhat_len))
-            ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
-
-            cons = self.estimator_cons(xlhvt, self.m)
-
-            print("max constraint violation:")
-            print(np.argmax(np.abs(cons)))
-            print(np.max(np.abs(cons)))
-
-            print("tau:")
-            print(ge_dict["tau_hat"]*self.ecmy.tau)
-            print("-----")
-
-            print("ge dict:")
-            print(ge_dict)
-            print("-----")
-
-            print("v:")
-            print(v)
-
-            theta_dict = self.rewrap_theta(theta_x)
-            print("theta_dict:")
-            for i in theta_dict.keys():
-                print(i)
-                print(theta_dict[i])
-            # print(self.rewrap_theta(theta_x))
-
-            print("G_hat:")
-            print(self.G_hat(ge_x, v, 0, all=True))
-
-            print("R_hat:")
-            print(self.R_hat(self.ecmy.rewrap_ge_dict(ge_x), v))
-            print("r_v:")
-            print(self.r_v(v))
-
-            bounds_dist_lower = np.abs(self.estimator_bounds(theta_x, v, None, "lower") - xlhvt)
-            bounds_dist_upper = np.abs(self.estimator_bounds(theta_x, v, None, "upper") - xlhvt)
-
-            bounds_dist_lower_nz = bounds_dist_lower[bounds_dist_lower>0]
-            bounds_dist_upper_nz = bounds_dist_upper[bounds_dist_upper>0]
-
-            for i in range(self.N):
-                # print("lambda chi " + str(i))
-                lbda = np.reshape(self.rewrap_xlhvt(xlhvt)["lbda"], (self.N, self.lambda_i_len))
-                # lbda_chi_i = self.rewrap_lbda_i(lbda[i, ])["chi_i"]
-                # print(lbda_chi_i)
-                # print("s " + str(i))
-                # print(s[i, ])
-                h_i = h[i, ]
-                print("peace probs " + str(i) + ":")
-                # NOTE: this will evaluate incorrectly in coercion-free counterfactuals because we are inputing self.m
-                peace_probs_i = self.peace_probs(ge_x, h_i, i, self.m, v, self.rewrap_theta(theta_x))[1]
-                print(peace_probs_i)
-
-                rcx = self.rcx(ge_dict["tau_hat"], h_i, i)
-                G = self.G_hat(ge_x, v, i, all=True)
-                rcv = self.G_hat(rcx, v, i, all=True)
-                DeltaG = rcv - G
-                # print("DeltaG" + str(i) + ":")
-                # print(DeltaG)
-
-            print("bounds_dist_lower:")
-            print(np.argmin(bounds_dist_lower_nz))
-            print(np.min(bounds_dist_lower_nz))
-            print("bounds_dist_upper:")
-            print(np.argmin(bounds_dist_upper_nz))
-            print(np.min(bounds_dist_upper_nz))
-
-            sys.stdout.flush()
-
+        if self.tick % 100 == 0:  # print output every 100 calls
+            self.ipopt_printout(xlhvt)
 
         tau_hat = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
         tau_star = tau_hat * self.ecmy.tau  # calculate equilibrium tau
@@ -790,9 +715,81 @@ class policies:
         # loss = np.sum(np.abs(tau_diffs))  # 1-norm
         # loss = np.sum(np.where(np.abs(tau_diffs) < alpha, tau_diffs**2, np.abs(tau_diffs))) # smooth l-1 loss
 
-
-
         return(loss)
+
+    def ipopt_printout(self, xlhvt):
+
+        xlhvt_dict = self.rewrap_xlhvt(xlhvt)
+
+        ge_x = xlhvt_dict["ge_x"]
+        v = xlhvt_dict["v"]
+        theta_x = xlhvt_dict["theta"]
+
+        print("bootstrap id: " + str(self.bid))
+
+        h = np.reshape(xlhvt_dict["h"], (self.N, self.hhat_len))
+        ge_dict = self.ecmy.rewrap_ge_dict(ge_x)
+
+        cons = self.estimator_cons(xlhvt, self.m)
+
+        print("max constraint violation:")
+        print(np.argmax(np.abs(cons)))
+        print(np.max(np.abs(cons)))
+
+        print("tau:")
+        print(ge_dict["tau_hat"]*self.ecmy.tau)
+        print("-----")
+
+        print("ge dict:")
+        print(ge_dict)
+        print("-----")
+
+        print("v:")
+        print(v)
+
+        theta_dict = self.rewrap_theta(theta_x)
+        print("theta_dict:")
+        for i in theta_dict.keys():
+            print(i)
+            print(theta_dict[i])
+        # print(self.rewrap_theta(theta_x))
+
+        print("G_hat:")
+        print(self.G_hat(ge_x, v, 0, all=True))
+
+        print("R_hat:")
+        print(self.R_hat(self.ecmy.rewrap_ge_dict(ge_x), v))
+        print("r_v:")
+        print(self.r_v(v))
+
+        bounds_dist_lower = np.abs(self.estimator_bounds(theta_x, v, None, "lower") - xlhvt)
+        bounds_dist_upper = np.abs(self.estimator_bounds(theta_x, v, None, "upper") - xlhvt)
+
+        bounds_dist_lower_nz = bounds_dist_lower[bounds_dist_lower>0]
+        bounds_dist_upper_nz = bounds_dist_upper[bounds_dist_upper>0]
+
+        for i in range(self.N):
+            lbda = np.reshape(self.rewrap_xlhvt(xlhvt)["lbda"], (self.N, self.lambda_i_len))
+
+            h_i = h[i, ]
+            print("peace probs " + str(i) + ":")
+            # NOTE: this will evaluate incorrectly in coercion-free counterfactuals because we are inputing self.m
+            peace_probs_i = self.peace_probs(ge_x, h_i, i, self.m, v, self.rewrap_theta(theta_x))[1]
+            print(peace_probs_i)
+
+            rcx = self.rcx(ge_dict["tau_hat"], h_i, i)
+            G = self.G_hat(ge_x, v, i, all=True)
+            rcv = self.G_hat(rcx, v, i, all=True)
+            DeltaG = rcv - G
+
+        print("bounds_dist_lower:")
+        print(np.argmin(bounds_dist_lower_nz))
+        print(np.min(bounds_dist_lower_nz))
+        print("bounds_dist_upper:")
+        print(np.argmin(bounds_dist_upper_nz))
+        print(np.min(bounds_dist_upper_nz))
+
+        sys.stdout.flush()
 
     def loss_grad(self, xlhvt, out):
         """gradient of loss function (autograd wrapper)
@@ -1364,7 +1361,8 @@ class policies:
         theta_dict = self.rewrap_theta(theta_x)
 
         if nash_eq == True:
-            ge_x_sv = np.ones(self.x_len)
+            # ge_x_sv = np.ones(self.x_len)
+            ge_x_sv = self.v_sv_all(v)
         else:
             ge_x_sv = self.v_sv_all(v)
         # ge_x_sv = self.v_sv_all(v)
@@ -1489,7 +1487,7 @@ class policies:
 
             problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
 
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes")
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes")
 
             # start_with_resto="yes", required_infeasibility_reduction=1.0e-3
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", derivative_test="first-order", point_perturbation_radius=0.)
@@ -1778,6 +1776,8 @@ class policies:
         """
 
         self.tick += 1
+        if self.tick % 25 == 0:  # print output every 25 calls
+            self.ipopt_printout(xlhvt)
         c = 1
 
         return(c)

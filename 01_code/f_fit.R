@@ -42,10 +42,10 @@ tau_cor <- lm(data=quantiles_tau, tau_q500 ~ tau)
 
 # 45 degree
 ggplot(data=quantiles_tau, aes(x=tau, y=tau_q500)) +
-  geom_abline(slope=1, intercept=0) +
-  geom_smooth(method="lm", se=FALSE, color="red", size=.5) +
   geom_segment(aes(xend=tau, x=tau, yend=tau_q975, y=tau_q025), color="lightgray", size=.5) +
   geom_point(size=1) +
+  geom_abline(slope=1, intercept=0) +
+  geom_smooth(method="lm", se=FALSE, color="red", size=.5) +
   geom_vline(xintercept=1, lty=2) +
   geom_hline(yintercept=1, lty=2) +
   theme_classic() +
