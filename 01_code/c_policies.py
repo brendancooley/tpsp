@@ -1127,9 +1127,9 @@ class policies:
             np.fill_diagonal(tau_sv_min_mat, 5)
 
         lb_dict = dict()
-        lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        # lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         # lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_sv_min_mat - .1, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
-        # lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
+        lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
         # lb_dict["tau_hat"] = self.v_min / self.ecmy.tau
         # lb_dict["tau_hat"] = .9 / self.ecmy.tau
         np.fill_diagonal(lb_dict["tau_hat"], 1)
@@ -1148,8 +1148,8 @@ class policies:
     def geq_ub(self):
 
         ub_dict = dict()
-        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
-        ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau + self.tau_buffer_upper, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
+        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau + self.tau_buffer_upper, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         np.fill_diagonal(ub_dict["tau_hat"], 1)
         ub_dict["D_hat"] = np.repeat(1, self.N)
@@ -1776,7 +1776,7 @@ class policies:
         """
 
         self.tick += 1
-        if self.tick % 25 == 0:  # print output every 25 calls
+        if self.tick % 10 == 0:  # print output every 25 calls
             self.ipopt_printout(xlhvt)
         c = 1
 
