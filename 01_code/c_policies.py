@@ -37,6 +37,10 @@ class policies:
         self.N = self.ecmy.N
         self.ids = np.arange(self.N)
 
+        # calibrated parameters
+        self.eta = params["eta"]
+        self.c_hat = params["c_hat"]
+
         self.ROW_id = np.where(data["ccodes"]==ROWname)[0][0]
         self.ccodes = data["ccodes"]
 
@@ -1167,16 +1171,15 @@ class policies:
 
         # c_lb = 50.
         # c_ub = 50.
-        c_lb = 25.
-        c_ub = 25.
+        c_lb = self.c_hat
+        c_ub = self.c_hat
         # c_lb = 15.
         # c_ub = 1000.
         # alpha_lb = -1.
         # alpha_ub = 2.
 
         theta_dict_lb = dict()
-        # theta_dict_lb["eta"] = 2.
-        theta_dict_lb["eta"] = 1.5
+        theta_dict_lb["eta"] = self.eta
         theta_dict_lb["gamma"] = -.5
         # theta_dict_lb["gamma"] = -np.inf
         theta_dict_lb["c_hat"] = c_lb
@@ -1190,8 +1193,7 @@ class policies:
         lb = self.unwrap_theta(theta_dict_lb)
 
         theta_dict_ub = dict()
-        # theta_dict_ub["eta"] = 2.
-        theta_dict_ub["eta"] = 1.5
+        theta_dict_ub["eta"] = self.eta
         # theta_dict_ub["gamma"] = 1.5
         theta_dict_ub["gamma"] = 1.75
         # theta_dict_ub["gamma"] = 4.
@@ -1776,8 +1778,8 @@ class policies:
         """
 
         self.tick += 1
-        if self.tick % 10 == 0:  # print output every 25 calls
-            self.ipopt_printout(xlhvt)
+        if self.tick % 100 == 0:  # print output every 25 calls
+            self.ipopt_printout(x)
         c = 1
 
         return(c)

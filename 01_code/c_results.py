@@ -29,7 +29,7 @@ class results:
         mu = np.genfromtxt(self.setup.mu_path, delimiter=',')
         nu = np.genfromtxt(self.setup.nu_path, delimiter=',')
 
-        self.params = {"beta":beta,"theta":theta,"mu":mu,"nu":nu}
+        self.params = {"beta":beta,"theta":theta,"mu":mu,"nu":nu, "eta":self.setup.eta, "c_hat":self.setup.c_hat}
 
         # Data
         tau = np.genfromtxt(self.setup.tau_path, delimiter=',')
@@ -61,12 +61,12 @@ class results:
 
         # starting values
         theta_dict = dict()
-        theta_dict["eta"] = 1.
-        theta_dict["c_hat"] = 25.
+        theta_dict["eta"] = self.setup.eta
+        theta_dict["c_hat"] = self.setup.c_hat
         theta_dict["alpha1"] = -.25
         theta_dict["alpha2"] = .5
         theta_dict["gamma"] = 1.
-        theta_dict["C"] = np.repeat(25., pecmy.N)
+        theta_dict["C"] = np.repeat(self.setup.c_hat, pecmy.N)
 
         v = np.mean(pecmy.ecmy.tau, axis=1)
         theta_x_sv = pecmy.unwrap_theta(theta_dict)

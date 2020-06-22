@@ -37,6 +37,7 @@ x_base = np.genfromtxt(r_base.setup.xlhvt_star_path)
 def bootstrap_i(id, mil_off=False):
     # r_id = results.results(location, size, sv=x_base, bootstrap=True, bootstrap_id=id)
     r_id = results.results(location, size, bootstrap=True, bootstrap_id=id, mil_off=mil_off)
+    print(r_id.setup.xlhvt_star_path)
     if os.path.exists(r_id.setup.xlhvt_star_path):
         print("bootstrap id " + str(id) + " completed, proceeding...")
         sys.stdout.flush()
