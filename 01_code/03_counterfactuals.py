@@ -48,7 +48,7 @@ results_2.data["M"][CHN_id] = results_2.data["M"][USA_id]
 
 pecmy_2 = policies.policies(results_2.data, results_2.params, results_2.ROWname, 0, tau_buffer=.75)
 
-xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, tau_bounds=True, ge_ones=True)
+xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, tau_bounds=False, ge_ones=True)
 np.savetxt(results_1.setup.cfct_china_path + "x.csv", xlhvt_prime_2, delimiter=",")
 
 ge_x_star_2 = pecmy_2.rewrap_xlhvt(xlhvt_prime_2)["ge_x"]

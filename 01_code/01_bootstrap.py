@@ -42,8 +42,8 @@ def bootstrap_i(id, mil_off=False):
         sys.stdout.flush()
     else:
         print("beginning bootstrap id " + str(id) + "...")
-        r_id.compute_estimates()
         sys.stdout.flush()
+        r_id.compute_estimates()
     # print("beginning bootstrap id " + str(id) + "...")
     # sys.stdout.flush()
     # r_id.compute_estimates()

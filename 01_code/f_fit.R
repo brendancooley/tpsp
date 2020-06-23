@@ -50,10 +50,21 @@ ggplot(data=quantiles_tau, aes(x=tau, y=tau_q500)) +
   geom_hline(yintercept=1, lty=2) +
   theme_classic() +
   lims(x=c(tau_min, tau_max), y=c(tau_min, tau_max)) +
-  labs(x="Barriers to Trade: Data", y="Barriers to Trade: Model", title="Model Fit", subtitle="Correlation between empirical trade barriers and model predictions (point estimates and 95 percent confidence intervals)") +
+  labs(x="Barriers to Trade: Data", y="Barriers to Trade: Model (Point estimates and 95% CIs)", title="Model Fit", subtitle="Correlation between empirical trade barriers and model predictions") +
   theme(aspect.ratio=1)
 
 # epsilons by magnitude
 
+quantiles_tau$epsilon <- quantiles_tau$tau_q500 - quantiles_tau$tau
+quantiles_tau$ddyad <- paste0(quantiles_tau$j_iso3, "-", quantiles_tau$i_iso3)
+# quantiles_tau <- quantiles_tau %>% arrange(epsilon)
+quantiles_tau$ddyad <- fct_reorder(quantiles_tau$ddyad, quantiles_tau$epsilon)
+
+ggplot(data=quantiles_tau, aes(x=epsilon, y=ddyad)) +
+  geom_point() +
+  geom_segment(aes(x=epsilon, xend=0, y=ddyad, yend=ddyad)) +
+  geom_vline(xintercept=0, lty=2) +
+  labs(x="Barriers to Trade: Median Predictive Error (Model Prediction - Data)", y="Importer-Exporter", title="Model Fit", subtitle="Median Predictive Error") +
+  theme_bw()
 
   
