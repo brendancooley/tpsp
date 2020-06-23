@@ -7,30 +7,27 @@ for (i in sourceFiles) {
   source(paste0(sourceDir, i))
 }
 
-libs <- c("tidyverse", "zoo", "lubridate", "countrycode", "reticulate", "ca", "ggrepel")
+libs <- c("tidyverse", "zoo", "lubridate", "countrycode", "reticulate", "ca", "ggrepel", "utils", "readstata13")
 ipak(libs)
 
 use_virtualenv("python3")
 c_setup <- import_from_path("c_setup", path=".")
 setup <- c_setup$setup("local", "mid/")
 
+ccodes <- read_csv(setup$ccodes_path, col_names=F) %>% pull(.)
+
+year_L <- 2006
+year_H <- 2016
+
 #### EXTERNAL DATA ####
 
 icb <- read_csv("http://people.duke.edu/~kcb38/ICB/icbdy_v12.csv") # statea/stateb are cow codes
 
-#### INTERNAL DATA ####
-
-ccodes <- read_csv(setup$ccodes_path, col_names=F) %>% pull(.)
-q_rcv <- read_csv(setup$quantiles_rcv_path, col_names=F)
-pp <- read_csv(setup$quantiles_peace_probs_path, col_names=F)
-
-quantiles_rcv <- expand.grid(ccodes, ccodes)
-quantiles_rcv <- quantiles_rcv %>% cbind(q_rcv %>% t()) %>% as_tibble()  # i's value for conquering j
-colnames(quantiles_rcv) <- c("i_iso3", "j_iso3", "rcv_q025", "rcv_q500", "rcv_q975")
-
-quantiles_pp <- expand.grid(ccodes, ccodes)
-quantiles_pp <- quantiles_pp %>% cbind(pp %>% t()) %>% as_tibble()  # i's value for conquering j
-colnames(quantiles_pp) <- c("i_iso3", "j_iso3", "pp_q025", "pp_q500", "pp_q975")  # probability j faces attack from i
+temp <- tempfile()
+download.file("https://correlatesofwar.org/data-sets/MIDs/dyadic-mids-and-dyadic-wars-v3.1/@@download/file/dyadic%20mids.zip", temp)
+mids_f <- unzip(temp, files=c("dyadic mid 3.1_may 2018.dta"))
+mids <- read.dta13(mids_f) %>% as_tibble()
+unlink(temp)
 
 grab_reduced_icews <- FALSE
 
@@ -70,30 +67,98 @@ if (grab_reduced_icews==TRUE) {
     return(output)
   }
   
-  counts <- event.counts(events, 'year', 'quad')
+  icews <- event.counts(events, 'year', 'quad')
   
-  write_csv(counts, setup$icews_counts_path)
+  write_csv(icews, setup$icews_counts_path)
   
 }
 
-counts <- read_csv(setup$icews_counts_path)
+icews <- read_csv(setup$icews_counts_path)
 
-counts$j_iso3 <- countrycode(counts$tarCOW, "cown", "iso3c")
-counts$i_iso3 <- countrycode(counts$sourceCOW, "cown", "iso3c")  # i's events toward j, consistent with conquest vals (i conquering j)
+### CLEAN ###
+
+# i is source, j is target
+
+mids <- mids %>% select(statea, stateb, year, hihost, rolea)
+mids <- mids %>% filter(rolea=="Primary Initiator")  # filter to directed interations initiated by a
+
+icb <- icb %>% select(statea, stateb, year)
+
+mids$i_iso3 <- countrycode(mids$statea, "cown", "iso3c")
+mids$j_iso3 <- countrycode(mids$stateb, "cown", "iso3c")
+mids <- mids %>% select(-statea, -stateb)
+
+icb$i_iso3 <- countrycode(icb$statea, "cown", "iso3c")
+icb$j_iso3 <- countrycode(icb$stateb, "cown", "iso3c")
+icb <- icb %>% select(-statea, -stateb)
+
+icews$j_iso3 <- countrycode(icews$tarCOW, "cown", "iso3c")
+icews$i_iso3 <- countrycode(icews$sourceCOW, "cown", "iso3c")  # i's events toward j, consistent with conquest vals (i conquering j)
 
 # map EU
-counts$j_iso3 <- mapEU(counts$j_iso3, counts$year)
-counts$i_iso3 <- mapEU(counts$i_iso3, counts$year)
+icews$j_iso3 <- mapEU(icews$j_iso3, icews$year)
+icews$i_iso3 <- mapEU(icews$i_iso3, icews$year)
+mids$j_iso3 <- mapEU(mids$j_iso3, mids$year)
+mids$i_iso3 <- mapEU(mids$i_iso3, mids$year)
+icb$j_iso3 <- mapEU(icb$j_iso3, icb$year)
+icb$i_iso3 <- mapEU(icb$i_iso3, icb$year)
 
-counts <- counts %>% filter(!is.na(j_iso3), !is.na(i_iso3)) %>% filter(i_iso3!=j_iso3) %>% select(i_iso3, j_iso3, year, everything()) %>% select(-sourceCOW, -tarCOW)
-counts$era <- ntile(counts$year, 8)
+icews <- icews %>% filter(!is.na(j_iso3), !is.na(i_iso3)) %>% filter(i_iso3!=j_iso3) %>% select(i_iso3, j_iso3, year, everything()) %>% select(-sourceCOW, -tarCOW)
+mids <- mids %>% filter(!is.na(j_iso3), !is.na(i_iso3)) %>% filter(i_iso3!=j_iso3) %>% select(i_iso3, j_iso3, year, everything())
+icb <- icb %>% filter(!is.na(j_iso3), !is.na(i_iso3)) %>% filter(i_iso3!=j_iso3) %>% select(i_iso3, j_iso3, year, everything())
+icb %>% arrange(desc(year)) %>% print(n=100)
+
+icews <- icews %>% filter(year >= year_L, year <= year_H, i_iso3 %in% ccodes, j_iso3 %in% ccodes)
+mids <- mids %>% filter(year >= year_L, year <= year_H, i_iso3 %in% ccodes, j_iso3 %in% ccodes)
+icb <- icb %>% filter(year >= year_L, year <= year_H, i_iso3 %in% ccodes, j_iso3 %in% ccodes) # very few of these
+
+# mids$i_iso3 <- as.factor(mids$i_iso3)
+# mids$j_iso3 <- as.factor(mids$j_iso3)
+
+# icews$era <- ntile(icews$year, 8)
 # counts %>% filter(era==6) %>% pull(year) %>% unique()
 
 # aggregate by era
-counts_era <- counts %>% group_by(i_iso3, j_iso3, era) %>% summarise(q1=sum(`1`), q2=sum(`2`), q3=sum(`3`), q4=sum(`4`))
-counts_era$n <- counts_era$q1 + counts_era$q2 + counts_era$q3 + counts_era$q4
+# icews_era <- icews %>% group_by(i_iso3, j_iso3, era) %>% summarise(q1=sum(`1`), q2=sum(`2`), q3=sum(`3`), q4=sum(`4`))
+# icews_era$n <- icews_era$q1 + icews_era$q2 + icews_era$q3 + icews_era$q4
 
-#### SCALING ####
+icews_sub <- icews %>% 
+  group_by(i_iso3, j_iso3) %>% summarise(q1=sum(`1`), q2=sum(`2`), q3=sum(`3`), q4=sum(`4`)) %>%
+  mutate(n=q1+q2+q3+q4)
+mids_sub <- mids %>% 
+  group_by(i_iso3, j_iso3) %>% summarise(n_mids=n())
+
+#### INTERNAL DATA ####
+
+q_rcv <- read_csv(setup$quantiles_rcv_path, col_names=F)
+pp <- read_csv(setup$quantiles_peace_probs_path, col_names=F)
+
+quantiles_rcv <- expand.grid(ccodes, ccodes)
+quantiles_rcv <- quantiles_rcv %>% cbind(q_rcv %>% t()) %>% as_tibble()  # i's value for conquering j
+colnames(quantiles_rcv) <- c("i_iso3", "j_iso3", "rcv_q025", "rcv_q500", "rcv_q975")
+
+quantiles_pp <- expand.grid(ccodes, ccodes)
+quantiles_pp <- quantiles_pp %>% cbind(pp %>% t()) %>% as_tibble()  # i's value for conquering j
+colnames(quantiles_pp) <- c("i_iso3", "j_iso3", "pp_q025", "pp_q500", "pp_q975")  # probability j faces attack from i
+
+#### MODELS ####
+
+counts_tpsp <- icews_sub %>% left_join(quantiles_rcv) %>% left_join(quantiles_pp)
+counts_tpsp <- counts_tpsp %>% left_join(mids_sub)
+counts_tpsp$n_mids <- ifelse(is.na(counts_tpsp$n_mids), 0, counts_tpsp$n_mids)
+
+counts_tpsp$pp_inv <- 1 - counts_tpsp$pp_q500
+
+icews_model_mc <- lm(data=counts_tpsp, q4 ~ pp_inv)  # material conflict
+summary(icews_model_mc)
+
+icews_model_vc <- lm(data=counts_tpsp, q3 ~ pp_inv)  # verbal conflict
+summary(icews_model_vc)
+
+mids_model <- lm(data=counts_tpsp, n_mids ~ pp_inv)  # mids (very few of these)
+summary(mids_model)
+
+#### SCALING ICEWS ####
 
 # Quad codes:
 # 1 - verbal cooperation
@@ -101,23 +166,17 @@ counts_era$n <- counts_era$q1 + counts_era$q2 + counts_era$q3 + counts_era$q4
 # 3 - verbal conflict
 # 4 - material conflict
 
-# counts %>% filter(j_iso3=="USA", i_iso3=="CAN", year==1995)
-# counts %>% filter(j_iso3=="CAN", i_iso3=="USA", year==1995)
-# counts_era <- counts_era %>% filter(era==6, i_iso3 %in% ccodes, j_iso3 %in% ccodes)
-counts_sub <- counts %>% filter(year >=2006, year <=2016, i_iso3 %in% ccodes, j_iso3 %in% ccodes) %>% 
-  group_by(i_iso3, j_iso3) %>% summarise(q1=sum(`1`), q2=sum(`2`), q3=sum(`3`), q4=sum(`4`)) %>%
-  mutate(n=q1+q2+q3+q4)
 
-counts_sub_ca <- ca(counts_sub[3:6], nd=2)
+icews_sub_ca <- ca(icews_sub_ca[3:6], nd=2)
 # counts_sub_ca_1 <- ca(counts_sub[3:6], nd=1)
-counts_sub$score1 <- counts_sub_ca$rowcoord[,1] %>% as.vector()
-counts_sub$score2 <- counts_sub_ca$rowcoord[,2] %>% as.vector()
+icews_sub_ca$score1 <- icews_sub_ca$rowcoord[,1] %>% as.vector()
+icews_sub_ca$score2 <- icews_sub_ca$rowcoord[,2] %>% as.vector()
 
 # counts_sub$score2 <- -1 * counts_sub$score2
 # counts_sub$score1 <- -1 * counts_sub$score1
 # high numbers consistent with more conflict in this run
 
-counts_tpsp <- counts_sub
+counts_tpsp <- icews_sub
 
 counts_tpsp$ddyad <- paste0(counts_tpsp$i_iso3, "-", counts_tpsp$j_iso3)
 
@@ -146,9 +205,6 @@ model2 <- lm(data=counts_tpsp, score2 ~ rcv_q500)
 summary(model2)
 model3 <- lm(data=counts_tpsp, rcv_q500 ~ score1 + score2)
 summary(model3)
-
-model1 <- lm(data=counts_tpsp, q4 ~ pp_inv)
-summary(model1)
 
 ggplot(data=counts_tpsp, aes(x=score1, y=rcv_q500)) +
   geom_point() +

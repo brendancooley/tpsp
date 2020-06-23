@@ -23,7 +23,8 @@ csv_dir_base = "~/Dropbox\ \(Princeton\)/1_Papers/tpsp/01_files/"
 results_dir_base = csv_dir_base + "results/"
 data_dir_base = csv_dir_base + "data/"
 
-sizes = ["mini/", "mid/", "large/", "mid_RUS/"]
+# sizes = ["mini/", "mid/", "large/", "mid_RUS/"]
+sizes = ["mid/"]
 
 code_dir = "01_code/"
 

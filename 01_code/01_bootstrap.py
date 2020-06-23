@@ -18,11 +18,11 @@ Mend = int(sys.argv[4])
 # location = "local"
 # size = "mid/"
 
-M = 100 # number of bootstrap iterations
+M = 250 # number of bootstrap iterations
 
 results_base = False
 results_bootstrap = True
-mil_off = True
+mil_off = False
 
 r_base = results.results(location, size, bootstrap_id=0)
 # pecmy_test = policies.policies(r_base.data, r_base.params, r_base.ROWname, 0)
@@ -37,7 +37,6 @@ x_base = np.genfromtxt(r_base.setup.xlhvt_star_path)
 def bootstrap_i(id, mil_off=False):
     # r_id = results.results(location, size, sv=x_base, bootstrap=True, bootstrap_id=id)
     r_id = results.results(location, size, bootstrap=True, bootstrap_id=id, mil_off=mil_off)
-    print(r_id.setup.xlhvt_star_path)
     if os.path.exists(r_id.setup.xlhvt_star_path):
         print("bootstrap id " + str(id) + " completed, proceeding...")
         sys.stdout.flush()

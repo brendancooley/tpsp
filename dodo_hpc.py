@@ -53,7 +53,7 @@ def task_results():
               {'name':'Mend',
               'long':'Mend',
               'type':int,
-              'default':100}],
+              'default':250}],
         'actions':["cd " + hpc_code_dir + "; python " + "01_bootstrap.py hpc %(size)s %(Mstart)s %(Mend)s"],
         'verbosity': 2,
     }

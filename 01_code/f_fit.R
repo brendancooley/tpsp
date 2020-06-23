@@ -50,8 +50,10 @@ ggplot(data=quantiles_tau, aes(x=tau, y=tau_q500)) +
   geom_hline(yintercept=1, lty=2) +
   theme_classic() +
   lims(x=c(tau_min, tau_max), y=c(tau_min, tau_max)) +
-  labs(x="Barriers to Trade: Data", y="Barriers to Trade: Model", title="Model Fit", subtitle="Correlation between empirical trade barriers and model predictions") +
+  labs(x="Barriers to Trade: Data", y="Barriers to Trade: Model", title="Model Fit", subtitle="Correlation between empirical trade barriers and model predictions (point estimates and 95 percent confidence intervals)") +
   theme(aspect.ratio=1)
 
 # epsilons by magnitude
+
+
   

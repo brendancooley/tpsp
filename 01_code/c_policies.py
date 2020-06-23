@@ -16,7 +16,7 @@ import s_helpers_tpsp as hp
 
 class policies:
 
-    def __init__(self, data, params, ROWname, bid):
+    def __init__(self, data, params, ROWname, bid, tau_bounds=False, tau_buffer=.5):
         """
 
         Parameters
@@ -104,8 +104,10 @@ class policies:
         # self.mu_min = 1.0e-6
         self.theta_min_fact = 1.0e-100
         self.v_min = .7
-        self.tau_buffer_upper = .5
-        self.tau_buffer_lower = .5
+
+        self.tau_bounds = tau_bounds
+        self.tau_buffer_upper = tau_buffer
+        self.tau_buffer_lower = tau_buffer
         # self.tau_buffer_lower = .4
 
         self.tick = 0  # tracker for optimization calls to loss function
@@ -1131,9 +1133,11 @@ class policies:
             np.fill_diagonal(tau_sv_min_mat, 5)
 
         lb_dict = dict()
-        # lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        if self.tau_bounds == True:
+            lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        else:
+            lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
         # lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_sv_min_mat - .1, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
-        lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
         # lb_dict["tau_hat"] = self.v_min / self.ecmy.tau
         # lb_dict["tau_hat"] = .9 / self.ecmy.tau
         np.fill_diagonal(lb_dict["tau_hat"], 1)
@@ -1152,8 +1156,10 @@ class policies:
     def geq_ub(self):
 
         ub_dict = dict()
-        ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
-        # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau + self.tau_buffer_upper, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        if self.tau_bounds == True:
+            ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau + self.tau_buffer_upper, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+        else:
+            ub_dict["tau_hat"] = np.reshape(np.repeat(np.inf, self.N**2), (self.N, self.N))
         # ub_dict["tau_hat"] = np.reshape(np.repeat(np.max(self.ecmy.tau, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         np.fill_diagonal(ub_dict["tau_hat"], 1)
         ub_dict["D_hat"] = np.repeat(1, self.N)
@@ -1358,13 +1364,13 @@ class policies:
 
         return(out)
 
-    def estimator_sv(self, m, v, theta_x, nash_eq=False):
+    def estimator_sv(self, m, v, theta_x, nash_eq=False, ge_ones=False):
 
         theta_dict = self.rewrap_theta(theta_x)
 
-        if nash_eq == True:
-            # ge_x_sv = np.ones(self.x_len)
-            ge_x_sv = self.v_sv_all(v)
+        if ge_ones == True:
+            ge_x_sv = np.ones(self.x_len)
+            # ge_x_sv = self.v_sv_all(v)
         else:
             ge_x_sv = self.v_sv_all(v)
         # ge_x_sv = self.v_sv_all(v)
@@ -1418,7 +1424,7 @@ class policies:
 
         return(out)
 
-    def estimator(self, v_sv, theta_x_sv, m, sv=None, nash_eq=False):
+    def estimator(self, v_sv, theta_x_sv, m, sv=None, nash_eq=False, tau_bounds=False, ge_ones=False):
         """estimate the model
 
         Parameters
@@ -1449,7 +1455,7 @@ class policies:
         # xlshvt_sv_dc = np.concatenate((np.ones(self.x_len), np.repeat(.01, self.lambda_i_len*self.N), np.zeros(self.N**2), v_sv, theta_x_sv))  # NOTE: for derivative checker, we will use these to calculate Jacobian sparsity
         # xlshvt_sv = np.concatenate((np.ones(self.x_len), np.zeros(self.lambda_i_len*self.N), np.zeros(self.N**2), v_sv, theta_x_sv)) # initialize starting values
         if sv is None:
-            xlhvt_sv = self.estimator_sv(m, v_sv, theta_x_sv, nash_eq=nash_eq) # initialize starting values
+            xlhvt_sv = self.estimator_sv(m, v_sv, theta_x_sv, nash_eq=nash_eq, ge_ones=ge_ones) # initialize starting values
         else:
             xlhvt_sv = sv
             # xlhvt_sv = self.update_sv(sv)
@@ -1477,7 +1483,9 @@ class policies:
             # start_with_resto="yes", required_infeasibility_reduction=.01
             # nlp_scaling_method="none"
             # gamma_theta=1.0e-1
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", constr_viol_tol=1.0e-03, compl_inf_tol=1.0e-03, dual_inf_tol=1.0e03, tol=1.0e-01, acceptable_tol=1.0e-01, mu_min=self.mu_min, bound_push=.2, theta_min_fact=self.theta_min_fact, max_filter_resets=0, gamma_phi=1.0e-1, required_infeasibility_reduction=1.0e-3)
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes",
+            constr_viol_tol=1.0e-03, compl_inf_tol=1.0e-03, dual_inf_tol=1.0e03, tol=1.0e-01, acceptable_tol=1.0e-01, mu_min=self.mu_min,
+            bound_push=.2, theta_min_fact=self.theta_min_fact, max_filter_resets=0, gamma_phi=1.0e-1, required_infeasibility_reduction=1.0e-3)
             # bound_push=.2
             # line_search_method="cg-penalty"
             # gamma_theta=1.0e-1
@@ -1489,7 +1497,7 @@ class policies:
 
             problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
 
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes")
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", start_with_resto="yes", required_infeasibility_reduction=1.0e-3)
 
             # start_with_resto="yes", required_infeasibility_reduction=1.0e-3
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", derivative_test="first-order", point_perturbation_radius=0.)

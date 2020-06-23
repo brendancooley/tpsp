@@ -136,10 +136,10 @@ class results:
         np.savetxt(self.setup.estimates_path + "peace_probs.csv", peace_prob_mat, delimiter=",")
         est_dict["peace_probs"].append(peace_prob_mat.ravel())
 
-    def compute_counterfactual(self, v_star, theta_x_star, m):
+    def compute_counterfactual(self, v_star, theta_x_star, m, tau_bounds=False, ge_ones=False):
 
-        pecmy = policies.policies(self.data, self.params, self.ROWname, self.bootstrap_id)
-        xlhvt_prime, obj, status = pecmy.estimator(v_star, theta_x_star, m, nash_eq=True)
+        pecmy = policies.policies(self.data, self.params, self.ROWname, self.bootstrap_id, tau_bounds=tau_bounds)
+        xlhvt_prime, obj, status = pecmy.estimator(v_star, theta_x_star, m, nash_eq=True, ge_ones=ge_ones)
 
         if status == 0:
 
