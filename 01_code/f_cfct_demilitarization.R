@@ -1,23 +1,22 @@
-helperPath <- "~/Dropbox (Princeton)/14_Software/R/"
-helperFiles <- list.files(helperPath)
-for (i in helperFiles) {
-  source(paste0(helperPath, i))
+sourceDir <- paste0("../source/R/")
+sourceFiles <- list.files(sourceDir)
+for (i in sourceFiles) {
+  source(paste0(sourceDir, i))
 }
 
-libs <- c("tidyverse", "patchwork", "reshape2")
+libs <- c("tidyverse", "reticulate", 'patchwork', 'reshape2')
 ipak(libs)
 
-tpspPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
-dataPath <- paste0(tpspPath, "data/mid/")
-resultsPath <- paste0(tpspPath, "results/mid/")
-estimatesPath <- paste0(resultsPath, "estimates/")
+use_virtualenv("python3")
+c_setup <- import_from_path("c_setup", path=".")
+setup <- c_setup$setup("local", "mid/")
 
-ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE) %>% pull(.)
+ccodes <- read_csv(setup$ccodes_path, col_names=FALSE) %>% pull(.)
 N <- length(ccodes)
-year <- read_csv(paste0(dataPath, "year.csv"), col_names=FALSE) %>% pull(.)
+year <- read_csv(paste0(setup$data_path, "year.csv"), col_names=FALSE) %>% pull(.)
 
-X_star <- read_csv(paste0(estimatesPath, "X_star.csv"), col_names=FALSE) %>% as.matrix()
-X_prime <- read_csv(paste0(estimatesPath, "X_prime.csv"), col_names=FALSE) %>% as.matrix()
+X_star <- read_csv(setup$Xcif_path, col_names=FALSE) %>% as.matrix()
+X_prime <- read_csv(paste0(setup$cfct_demilitarization_path, "X_prime.csv"), col_names=FALSE) %>% as.matrix()
 X_diff <- X_prime - X_star
 
 for (i in 1:N) {
@@ -45,6 +44,7 @@ X_prime_melted$X_prime_log <- log(X_prime_melted$value)
 
 X_diff_melted <- left_join(X_star_melted, X_prime_melted, by=c("Var1", "Var2"))
 X_diff_melted <- X_diff_melted %>% mutate(Var1 = factor(Var1, levels = rev(levels(Var1))))
+X_diff_melted <- X_diff_melted %>% filter(Var1 != Var2)
 
 min_val <- min(c(X_diff_melted$X_prime_log, X_diff_melted$X_star_log), na.rm=T)
 max_val <- max(c(X_diff_melted$X_prime_log, X_diff_melted$X_star_log), na.rm=T)

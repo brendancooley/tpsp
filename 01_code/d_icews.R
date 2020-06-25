@@ -23,10 +23,12 @@ year_H <- 2016
 
 icb <- read_csv("http://people.duke.edu/~kcb38/ICB/icbdy_v12.csv") # statea/stateb are cow codes
 
+mids_fname <- "dyadic mid 3.1_may 2018.dta"
 temp <- tempfile()
 download.file("https://correlatesofwar.org/data-sets/MIDs/dyadic-mids-and-dyadic-wars-v3.1/@@download/file/dyadic%20mids.zip", temp)
-mids_f <- unzip(temp, files=c("dyadic mid 3.1_may 2018.dta"))
+mids_f <- unzip(temp, files=c(mids_fname))
 mids <- read.dta13(mids_f) %>% as_tibble()
+file.remove(mids_fname)
 unlink(temp)
 
 grab_reduced_icews <- FALSE

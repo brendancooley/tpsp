@@ -1500,6 +1500,7 @@ class policies:
             problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", bound_push=.2, mu_min=self.mu_min)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, bound_push=.2, mu_min=self.mu_min, mu_init=1.0e-100)
             problem.set(resto_proximity_weight=1.0e-10)
+            problem.set(resto_penalty_parameter=1.0e10)
             if start_with_resto == True:
                 problem.set(start_with_resto="yes")
                 problem.set(required_infeasibility_reduction=1.0e-3)
