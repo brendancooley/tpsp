@@ -4,12 +4,15 @@ import imp
 import c_results as results
 import c_policies as policies
 imp.reload(results)
+imp.reload(policies)
 
 location = "local"
 size = "mid/"
 
 results_0 = results.results(location, size)
 pecmy_0 = policies.policies(results_0.data, results_0.params, results_0.ROWname, 0)
+
+x_base = np.genfromtxt(results_0.setup.xlhvt_star_path)
 
 v_500 = np.genfromtxt(results_0.setup.quantiles_v_path, delimiter=",")[1]
 gamma_500 = np.genfromtxt(results_0.setup.quantiles_gamma_path, delimiter=",")[1]
@@ -31,7 +34,7 @@ theta_x = pecmy_0.unwrap_theta(theta_dict)
 # results_1 = results.results(location, size)
 # pecmy_1 = policies.policies(results_1.data, results_1.params, results_1.ROWname, 0)
 #
-# xlhvt_prime_1 = results_1.compute_counterfactual(v_500, theta_x, pecmy_1.mzeros)
+# xlhvt_prime_1 = results_1.compute_counterfactual(v_500, theta_x, pecmy_1.mzeros, start_with_resto=True)
 # np.savetxt(results_1.setup.cfct_demilitarization_path + "x.csv", xlhvt_prime_1, delimiter=",")
 #
 # ge_x_star_1 = pecmy_1.rewrap_xlhvt(xlhvt_prime_1)["ge_x"]
@@ -46,9 +49,10 @@ CHN_id = np.where(results_2.data["ccodes"]=="CHN")
 USA_id = np.where(results_2.data["ccodes"]=="USA")
 results_2.data["M"][CHN_id] = results_2.data["M"][USA_id]
 
-pecmy_2 = policies.policies(results_2.data, results_2.params, results_2.ROWname, 0, tau_buffer=.75)
+pecmy_2 = policies.policies(results_2.data, results_2.params, results_2.ROWname, 0)
+# np.reshape(pecmy_2.geq_ub()[0:pecmy_2.N**2], (pecmy_2.N, pecmy_2.N)) * pecmy_2.ecmy.tau
 
-xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, tau_bounds=False, ge_ones=True)
+xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=x_base, tau_bounds=False, ge_ones=False, tau_buffer=1., start_with_resto=True)
 np.savetxt(results_1.setup.cfct_china_path + "x.csv", xlhvt_prime_2, delimiter=",")
 
 ge_x_star_2 = pecmy_2.rewrap_xlhvt(xlhvt_prime_2)["ge_x"]

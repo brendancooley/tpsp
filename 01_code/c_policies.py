@@ -1424,7 +1424,7 @@ class policies:
 
         return(out)
 
-    def estimator(self, v_sv, theta_x_sv, m, sv=None, nash_eq=False, tau_bounds=False, ge_ones=False):
+    def estimator(self, v_sv, theta_x_sv, m, sv=None, nash_eq=False, tau_bounds=False, ge_ones=False, start_with_resto=False):
         """estimate the model
 
         Parameters
@@ -1497,9 +1497,12 @@ class policies:
 
             problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
 
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", start_with_resto="yes", required_infeasibility_reduction=1.0e-3)
-
-            # start_with_resto="yes", required_infeasibility_reduction=1.0e-3
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", bound_push=.2, mu_min=self.mu_min)
+            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, bound_push=.2, mu_min=self.mu_min, mu_init=1.0e-100)
+            problem.set(resto_proximity_weight=1.0e-10)
+            if start_with_resto == True:
+                problem.set(start_with_resto="yes")
+                problem.set(required_infeasibility_reduction=1.0e-3)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", derivative_test="first-order", point_perturbation_radius=0.)
         print("solving...")
         _x, obj, status = problem.solve(xlhvt_sv)

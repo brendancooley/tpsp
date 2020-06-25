@@ -11,7 +11,7 @@ imp.reload(setup)
 mil_off = sys.argv[1] == "True"
 
 size = "mid/"
-M = 100
+M = 250
 
 ssh = SSHClient()
 ssh.load_system_host_keys()

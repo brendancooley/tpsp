@@ -10,7 +10,7 @@ imp.reload(results)
 
 location = "local"
 size = "mid/"
-M = 100
+M = 250
 
 est_dict = dict()
 est_dict["alpha1"] = []

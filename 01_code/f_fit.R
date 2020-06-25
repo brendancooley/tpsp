@@ -33,6 +33,7 @@ quantiles_tau <- quantiles_tau %>% cbind(q_tau %>% t()) %>% as_tibble()  # i's v
 colnames(quantiles_tau) <- c("i_iso3", "j_iso3", "tau_q025", "tau_q500", "tau_q975")
 
 quantiles_tau <- quantiles_tau %>% left_join(tau_long) %>% filter(i_iso3 != j_iso3)
+quantiles_tau %>% print(n=100)
 
 ### PLOTS ###
 
