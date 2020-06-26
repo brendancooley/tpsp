@@ -49,6 +49,8 @@ class setup:
         self.counterfactuals_path = self.results_path_base + "counterfactuals/"
         self.xlhvt_star_path = self.estimates_path + "x.csv"
 
+        self.figs_path_0 = "../02_figs/"
+
         # DATA (STATIC)
 
         self.icews_reduced_path = "~/Dropbox (Princeton)/Public/reducedICEWS/"
@@ -87,6 +89,8 @@ class setup:
         self.quantiles_rcv_path = self.estimates_path_base + "quantiles_rcv.csv"
         self.quantiles_peace_probs_path = self.estimates_path_base + "quantiles_peace_probs.csv"
         self.quantiles_tau_path = self.estimates_path_base + "quantiles_tau.csv"
+        self.quantiles_Ghat_path = self.estimates_path_base + "quantiles_Ghat.csv"
+        self.quantiles_Uhat1_path = self.estimates_path_base + "quantiles_Uhat1.csv"
 
         # COUNTERFACTUAL PATHS
 
@@ -94,6 +98,19 @@ class setup:
         self.cfct_china_path = self.counterfactuals_path + "china/"
 
         # FIGURE PATHS
+
+        self.f_ccodes_path = self.figs_path_0 + "ccodes.png"
+        self.f_cfact_demilitarization_Xprime_path = self.figs_path_0 + "cfact_demilitarization_Xprime.png"
+        self.f_estimates_pref_path = self.figs_path_0 + "estimates_pref.png"
+        self.f_estimates_mil_path = self.figs_path_0 + "estimates_mil.png"
+        self.f_fit_path = self.figs_path_0 + "fit.png"
+        self.f_fit_eps_path = self.figs_path_0 + "fit_eps.png"
+        self.f_milex_path = self.figs_path_0 + "milex.png"
+        self.f_pr_peace_path = self.figs_path_0 + "pr_peace.png"
+        self.f_rcv_path = self.figs_path_0 + "rcv.png"
+        self.f_tau_epbt_path = self.figs_path_0 + "tau_epbt.png"
+        self.f_tau_rf_dw_path = self.figs_path_0 + "tau_rf_dw.png"
+        self.f_tau_rf_table_path = self.figs_path_0 + "tau_rf_table.png"
 
         # MAKE DIRECTORIES
 

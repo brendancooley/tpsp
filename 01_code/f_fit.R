@@ -33,7 +33,7 @@ quantiles_tau <- quantiles_tau %>% cbind(q_tau %>% t()) %>% as_tibble()  # i's v
 colnames(quantiles_tau) <- c("i_iso3", "j_iso3", "tau_q025", "tau_q500", "tau_q975")
 
 quantiles_tau <- quantiles_tau %>% left_join(tau_long) %>% filter(i_iso3 != j_iso3)
-quantiles_tau %>% print(n=100)
+# quantiles_tau %>% print(n=100)
 
 ### PLOTS ###
 
@@ -54,6 +54,8 @@ ggplot(data=quantiles_tau, aes(x=tau, y=tau_q500)) +
   labs(x="Barriers to Trade: Data", y="Barriers to Trade: Model (Point estimates and 95% CIs)", title="Model Fit", subtitle="Correlation between empirical trade barriers and model predictions") +
   theme(aspect.ratio=1)
 
+ggsave(setup$f_fit_path)
+
 # epsilons by magnitude
 
 quantiles_tau$epsilon <- quantiles_tau$tau_q500 - quantiles_tau$tau
@@ -68,4 +70,4 @@ ggplot(data=quantiles_tau, aes(x=epsilon, y=ddyad)) +
   labs(x="Barriers to Trade: Median Predictive Error (Model Prediction - Data)", y="Importer-Exporter", title="Model Fit", subtitle="Median Predictive Error") +
   theme_bw()
 
-  
+ggsave(setup$f_fit_eps_path)

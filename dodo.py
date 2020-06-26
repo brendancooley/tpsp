@@ -34,6 +34,9 @@ hpc_source_dir = hpc_base_dir + "source/"
 hpc_code_dir = hpc_base_dir + "code/"
 hpc_results_dir = hpc_base_dir + "results/"
 
+fig_files = ["f_ccodes.R", "f_cfct_demilitarization.R", "f_estimates.R", "f_fit.R", "f_milex.R", "f_pr_peace.R", 
+"f_rcv.R", "f_tau_epbt.R", "f_tau_rf.R"]
+
 def task_source():
     yield {
         'name': "migrating templates...",
@@ -105,12 +108,6 @@ def task_slides():
 		'verbosity': 2,
 	}
 
-def task_methods_slides():
-	yield {
-		'name': "building methods slides...",
-		'actions':["R --slave -e \"rmarkdown::render(\'" + "tpsp_methods_slides.rmd" + "\', output_file=\'" + "tpsp_methods_slides.pdf" +"\')\""]
-	}
-
 def task_setup_dirs():
     for i in sizes:
         yield {
@@ -178,5 +175,13 @@ def task_counterfactuals():
     yield {
         'name': "computing counterfactuals...",
         'actions':["cd " + code_dir + "; python 03_counterfactuals.py"],
+        'verbosity':2
+    }
+
+def task_build_figs():
+    for i in fig_files:
+        yield {
+        'name': "building figure " + i + "...",
+        'actions':["cd " + code_dir + "; Rscript " + i],
         'verbosity':2
     }

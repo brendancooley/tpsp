@@ -4,7 +4,7 @@ for (i in sourceFiles) {
   source(paste0(sourceDir, i))
 }
 
-libs <- c("tidyverse", "modelsummary", "dotwhisker", "ggsci", "reticulate")
+libs <- c("tidyverse", "modelsummary", "dotwhisker", "ggsci", "reticulate", "broom")
 ipak(libs)
 
 use_virtualenv("python3")
@@ -95,7 +95,7 @@ cm <- c("log(m_frac_ij)"="Log Mil Capability Ratio",
         "log(m_frac_ij):log(W)"="(Log Mil Capability Ratio) X (Log Distance)")
 fe_row <- c("Attacker FE?", " ", " ", "\U2713", "\U2713")
 
-table <- modelsummary(models, coef_map=cm, add_rows=list(fe_row), gof_omit="AIC|BIC|Log.Lik", title="Regime Change Values and Military Capability Ratios")
+table <- modelsummary(models, coef_map=cm, add_rows=list(fe_row), gof_omit="AIC|BIC|Log.Lik", title="Regime Change Values and Military Capability Ratios", output=setup$f_tau_rf_table_path)
 
 for (i in names(models)) {
   models[[i]] <- models[[i]] %>% tidy() %>% filter(term %in% c("log(m_frac_ij)", "log(W)", "log(m_frac_ij):log(W)")) %>% mutate(model=i)
@@ -111,10 +111,11 @@ dw <- dwplot(models) %>%
   labs(color="Model", title="Correlates of Regime Change Values", subtitle="Point estimates and 95 percent confidence intervals") +
   theme_classic()
 
+ggsave(setup$f_tau_rf_dw_path, width=7, height=3.5)
+
 ### Raw Bivaritate Correlation 
 
 rcvm_plot <- ggplot(data, aes(x=log(m_frac_ij), y=log(rcv_ij))) +
   geom_point() +
   geom_smooth(method="lm") +
   theme_classic()
-

@@ -4,7 +4,7 @@ for (i in sourceFiles) {
   source(paste0(sourceDir, i))
 }
 
-libs <- c("tidyverse", "reticulate", 'patchwork', 'reshape2', 'knitr', "kableExtra")
+libs <- c("tidyverse", "reticulate", 'patchwork', 'reshape2', 'knitr', "kableExtra", "countrycode", "magick")
 ipak(libs)
 
 use_virtualenv("python3")
@@ -23,4 +23,4 @@ ccodesT$`Country Name` <- ifelse(ccodesT$iso3=="RoW", "Rest of World", ccodesT$`
 ccodes_table <- kable(ccodesT, "latex", booktabs = T, caption = "In-Sample Countries", escape = FALSE) %>% kable_styling(position = "center", latex_options=c("striped"))
 
 
-# save_kable(ccodes_table, ccodes_table_path)
+save_kable(ccodes_table, setup$f_ccodes_path)

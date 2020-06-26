@@ -29,3 +29,5 @@ min_val <- min(rcv_melted$value, na.rm=T)
 max_val <- max(rcv_melted$value, na.rm=T)
 
 rcv_hm <- hm(rcv_melted, min_val, max_val, x="Attacker", y="Defender", plot_title="Point Estimates: Positive Equilibrium War Values")
+
+ggsave(setup$f_rcv_path)

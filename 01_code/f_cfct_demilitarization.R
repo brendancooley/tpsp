@@ -66,3 +66,5 @@ X_diff_pp2 <- X_diff_pp1 +
   scale_x_continuous(limits=c(min_val, max_val)) +
   geom_point(aes(x=X_prime_log, y=Var1, color="red"), size=point_size) +
   geom_segment(aes(x=X_prime_log, xend=X_star_log, y=Var1, yend=Var1))
+
+ggsave(setup$f_cfact_demilitarization_Xprime_path)

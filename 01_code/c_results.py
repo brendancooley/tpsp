@@ -114,7 +114,12 @@ class results:
         np.savetxt(self.setup.estimates_path + "v.csv", v_star, delimiter=",")
         est_dict["v"].append(v_star)
 
-        G_star = pecmy.G_hat(ge_x_star, v_star, 0, all=True)
+        Ghat = pecmy.G_hat(ge_x_star, v_star, 0, all=True)
+        Uhat1 = pecmy.ecmy.U_hat(pecmy.ecmy.rewrap_ge_dict(ge_x_star), np.ones(pecmy.N))  # consumer welfare under v=1 for all i
+
+        est_dict["Ghat"].append(Ghat)
+        est_dict["Uhat1"].append(Uhat1)
+
         rcv_eq = pecmy.rcv_ft(ge_x_star, v_star)
         np.fill_diagonal(rcv_eq, 0)
         np.savetxt(self.setup.estimates_path + "rcv_eq.csv", rcv_eq, delimiter=",")

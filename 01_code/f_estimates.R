@@ -44,9 +44,14 @@ pref_plot <- ggplot(pref_params, aes(x=q500, y=coef)) +
   theme_classic() +
   labs(x="Estimate", y="Country", title="Preferences for Protectionism", subtitle="Point estimates and 95 percent confidence interval")
 
+ggsave(setup$f_estimates_pref_path, width=7, height=3.5)
+
 mil_plot <- ggplot(mil_params, aes(x=q500, y=coef_name)) +
   geom_point() +
   geom_vline(xintercept=0, lty=2) +
   geom_segment(aes(xend=q025, x=q975, yend=coef_name, y=coef_name)) +
   theme_classic() +
   labs(x="Estimate", y="Coefficient", title="War Costs", subtitle="Point estimates and 95 percent confidence intervals")
+
+ggsave(setup$f_estimates_mil_path, width=7, height=3.5)
+

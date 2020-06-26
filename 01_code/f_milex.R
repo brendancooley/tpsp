@@ -30,3 +30,5 @@ milexFig <- ggplot(data=M, aes(x=ccode, y=m)) +
   theme_classic() +
   labs(title=paste0("Military Expenditure, ", year), x="", y="Military Expenditure (in billion $)") +
   theme(axis.text.x=element_text(angle=60, hjust=1))
+
+ggsave(setup$f_milex_path)

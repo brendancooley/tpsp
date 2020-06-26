@@ -34,3 +34,5 @@ min_val <- min(tau_melted$value, na.rm=T)
 max_val <- max(tau_melted$value, na.rm=T)
 
 tau_hm <- hm(tau_melted, min_val, max_val, x="Exporter", y="Importer", plot_title="Point Estimates: Policy Barriers to Trade")
+
+ggsave(setup$f_tau_epbt_path)

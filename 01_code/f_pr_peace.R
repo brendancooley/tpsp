@@ -35,3 +35,5 @@ min_val <- min(war_probs_melted$value, na.rm=T)
 max_val <- max(war_probs_melted$value, na.rm=T)
 
 war_probs_hm <- hm(war_probs_melted, min_val, max_val, x="Attacker", y="Defender", plot_title="Point Estimates: Equilibrium War Probabilities")
+
+ggsave(setup$f_pr_peace_path)
