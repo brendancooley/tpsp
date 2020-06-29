@@ -81,6 +81,7 @@ class setup:
 
         self.icews_counts_path = self.data_path_0 + "icews_counts.csv"
         self.rcv_ft_path = self.results_path_base + "rcv_ft.csv"
+        self.M2030_path = self.results_path_base + "M2030.csv"
 
         self.quantiles_v_path = self.estimates_path_base + "quantiles_v.csv"
         self.quantiles_gamma_path = self.estimates_path_base + "quantiles_gamma.csv"

@@ -1509,7 +1509,7 @@ class policies:
             if start_with_resto == True:
                 problem.set(start_with_resto="yes")
                 # problem.set(required_infeasibility_reduction=1.0e-3)
-                problem.set(required_infeasibility_reduction=1.0e-8)
+                # problem.set(required_infeasibility_reduction=1.0e-8)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", derivative_test="first-order", point_perturbation_radius=0.)
         print("solving...")
         _x, obj, status = problem.solve(xlhvt_sv)

@@ -43,11 +43,14 @@ theta_x = pecmy_0.unwrap_theta(theta_dict)
 
 ### COUNTERFACTUAL 2: CHINESE MILITARY EXPANSION ###
 
+M2030 = np.genfromtxt(results_0.setup.M2030_path, delimiter=",")
+
 results_2 = results.results(location, size)
 
-CHN_id = np.where(results_2.data["ccodes"]=="CHN")
-USA_id = np.where(results_2.data["ccodes"]=="USA")
-results_2.data["M"][CHN_id] = results_2.data["M"][USA_id]
+# CHN_id = np.where(results_2.data["ccodes"]=="CHN")
+# USA_id = np.where(results_2.data["ccodes"]=="USA")
+# results_2.data["M"][CHN_id] = results_2.data["M"][USA_id]
+results_2.data["M"] = M2030
 
 pecmy_2 = policies.policies(results_2.data, results_2.params, results_2.ROWname, 0)
 # pecmy_2.m
@@ -55,8 +58,8 @@ pecmy_2 = policies.policies(results_2.data, results_2.params, results_2.ROWname,
 
 sv = pecmy_2.estimator_sv(pecmy_2.m, np.mean(pecmy_2.ecmy.tau, axis=1), theta_x)
 
-xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer=1., start_with_resto=True)
-np.savetxt(results_1.setup.cfct_china_path + "x.csv", xlhvt_prime_2, delimiter=",")
+xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=False, ge_ones=False, tau_buffer=1., start_with_resto=True)
+np.savetxt(results_2.setup.cfct_china_path + "x.csv", xlhvt_prime_2, delimiter=",")
 
 ge_x_star_2 = pecmy_2.rewrap_xlhvt(xlhvt_prime_2)["ge_x"]
 X_star_2 = pecmy_2.ecmy.rewrap_ge_dict(ge_x_star_2)["X_hat"] * pecmy_2.ecmy.Xcif  # counterfactual trade flows
