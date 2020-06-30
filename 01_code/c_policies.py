@@ -16,7 +16,7 @@ import s_helpers_tpsp as hp
 
 class policies:
 
-    def __init__(self, data, params, ROWname, bid, tau_bounds=False, tau_buffer=.5):
+    def __init__(self, data, params, ROWname, bid, tau_bounds=False, tau_buffer_lower=.5, tau_buffer_upper=.5):
         """
 
         Parameters
@@ -106,8 +106,8 @@ class policies:
         self.v_min = .7
 
         self.tau_bounds = tau_bounds
-        self.tau_buffer_upper = tau_buffer
-        self.tau_buffer_lower = tau_buffer
+        self.tau_buffer_upper = tau_buffer_upper
+        self.tau_buffer_lower = tau_buffer_lower
         # self.tau_buffer_lower = .4
 
         self.tick = 0  # tracker for optimization calls to loss function
@@ -1505,7 +1505,7 @@ class policies:
             # problem.set(resto_penalty_parameter=1.0e3)
             # problem.set(mu_max=1.0e-20)
             # problem.set(linear_solver="pardiso")
-            # problem.set(nlp_scaling_method="none")
+            problem.set(nlp_scaling_method="none")
             if start_with_resto == True:
                 problem.set(start_with_resto="yes")
                 # problem.set(required_infeasibility_reduction=1.0e-3)
