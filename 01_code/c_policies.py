@@ -1499,9 +1499,9 @@ class policies:
 
             problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
 
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", bound_push=.2, mu_min=self.mu_min)
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", bound_push=.2, mu_min=self.mu_min, constr_viol_tol=1.0e-03, compl_inf_tol=1.0e-03, dual_inf_tol=1.0e03, tol=1.0e-01, acceptable_tol=1.0e-01)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, bound_push=.2, mu_min=self.mu_min)
-            # problem.set(resto_proximity_weight=0.)
+            problem.set(resto_proximity_weight=0.)
             # problem.set(resto_penalty_parameter=1.0e3)
             # problem.set(mu_max=1.0e-20)
             # problem.set(linear_solver="pardiso")
