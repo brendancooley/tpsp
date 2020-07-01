@@ -11,6 +11,8 @@ size = "mid/"
 
 run_cfact1 = False
 run_cfact2 = False
+run_cfact3 = True
+run_cfact4 = True
 
 results_0 = results.results(location, size)
 pecmy_0 = policies.policies(results_0.data, results_0.params, results_0.ROWname, 0)
@@ -38,6 +40,7 @@ results_1 = results.results(location, size)
 pecmy_1 = policies.policies(results_1.data, results_1.params, results_1.ROWname, 0)
 
 if run_cfact1 == True:
+    print("beginning counterfactual 1...")
     xlhvt_prime_1 = results_1.compute_counterfactual(v_500, theta_x, pecmy_1.mzeros, start_with_resto=False, tau_bounds=False, tau_buffer_lower=.25, tau_buffer_upper=2.25)
     # xlhvt_prime_1 = results_1.compute_counterfactual(v_500, theta_x, pecmy_1.mzeros, start_with_resto=False, tau_bounds=False, tau_buffer_lower=.25, tau_buffer_upper=2.25)
     np.savetxt(results_1.setup.cfct_demilitarization_path + "x.csv", xlhvt_prime_1, delimiter=",")
@@ -55,7 +58,7 @@ np.savetxt(results_1.setup.cfct_demilitarization_path + "X_prime.csv", X_star_1,
 np.savetxt(results_1.setup.cfct_demilitarization_path + "G_hat.csv", Ghat_1, delimiter=",")
 np.savetxt(results_1.setup.cfct_demilitarization_path + "U_hat.csv", Uhat_1, delimiter=",")
 
-### COUNTERFACTUAL 2: CHINESE MILITARY EXPANSION ###
+### COUNTERFACTUAL 2: MILEX 2030 ###
 
 M2030 = np.genfromtxt(results_0.setup.M2030_path, delimiter=",")
 
@@ -73,7 +76,8 @@ pecmy_2 = policies.policies(results_2.data, results_2.params, results_2.ROWname,
 sv = x_base
 
 if run_cfact2 == True:
-    xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=1.5, tau_buffer_upper=1.5, start_with_resto=False, proximity_weight_off=True)
+    print("beginning counterfactual 2...")
+    xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=1.75, tau_buffer_upper=1.75, start_with_resto=True, proximity_weight_off=True)
     np.savetxt(results_2.setup.cfct_china_path + "x.csv", xlhvt_prime_2, delimiter=",")
 
 xlhvt_prime_2 = np.genfromtxt(results_2.setup.cfct_china_path + "x.csv", delimiter=",")
@@ -88,3 +92,63 @@ np.savetxt(results_2.setup.cfct_china_path + "tau.csv", tau_2, delimiter=",")
 np.savetxt(results_2.setup.cfct_china_path + "X_prime.csv", X_star_2, delimiter=",")
 np.savetxt(results_2.setup.cfct_china_path + "G_hat.csv", Ghat_2, delimiter=",")
 np.savetxt(results_2.setup.cfct_china_path + "U_hat.csv", Uhat_2, delimiter=",")
+
+### COUNTERFACTUAL 3: VALUE OF U.S. MILITARY ###
+
+results_3 = results.results(location, size)
+
+USA_id = np.where(results_3.data["ccodes"]=="USA")
+results_3.data["M"][USA_id] = results_3.data["M"][USA_id] / 2
+
+pecmy_3 = policies.policies(results_3.data, results_3.params, results_3.ROWname, 0)
+
+sv = x_base
+
+if run_cfact3 == True:
+    print("beginning counterfactual 3...")
+    xlhvt_prime_3 = results_3.compute_counterfactual(v_500, theta_x, pecmy_3.m, sv=sv, tau_bounds=False, ge_ones=False, tau_buffer_lower=1.75, tau_buffer_upper=1.75, start_with_resto=False, proximity_weight_off=True)
+    np.savetxt(results_3.setup.cfct_us_path + "x.csv", xlhvt_prime_3, delimiter=",")
+
+xlhvt_prime_3 = np.genfromtxt(results_3.setup.cfct_us_path + "x.csv", delimiter=",")
+ge_x_star_3 = pecmy_3.rewrap_xlhvt(xlhvt_prime_3)["ge_x"]
+
+tau_3 = pecmy_3.ecmy.rewrap_ge_dict(ge_x_star_3)["tau_hat"] * pecmy_3.ecmy.tau
+X_star_3 = pecmy_3.ecmy.rewrap_ge_dict(ge_x_star_3)["X_hat"] * pecmy_3.ecmy.Xcif  # counterfactual trade flows
+Ghat_3 = pecmy_3.G_hat(ge_x_star_3, v_500, 0, all=True)
+Uhat_3 = pecmy_3.ecmy.U_hat(pecmy_3.ecmy.rewrap_ge_dict(ge_x_star_3), np.ones(pecmy_3.N))  # consumer welfare under v=1 for all i
+
+np.savetxt(results_3.setup.cfct_us_path + "tau.csv", tau_3, delimiter=",")
+np.savetxt(results_3.setup.cfct_us_path + "X_prime.csv", X_star_3, delimiter=",")
+np.savetxt(results_3.setup.cfct_us_path + "G_hat.csv", Ghat_3, delimiter=",")
+np.savetxt(results_3.setup.cfct_us_path + "U_hat.csv", Uhat_3, delimiter=",")
+
+### COUNTERFACTUAL 4: CHINESE PREFERENCE LIBERALIZATION ###
+
+results_4 = results.results(location, size)
+
+USA_id = np.where(results_4.data["ccodes"]=="USA")
+CHN_id = np.where(results_4.data["ccodes"]=="CHN")
+v_4 = np.copy(v_500)
+v_4[CHN_id] = v_4[USA_id]
+
+pecmy_4 = policies.policies(results_4.data, results_4.params, results_4.ROWname, 0)
+
+sv = x_base
+
+if run_cfact4 == True:
+    print("beginning counterfactual 4...")
+    xlhvt_prime_4 = results_4.compute_counterfactual(v_4, theta_x, pecmy_4.m, sv=sv, tau_bounds=False, ge_ones=False, tau_buffer_lower=1.75, tau_buffer_upper=1.75, start_with_resto=False, proximity_weight_off=True)
+    np.savetxt(results_4.setup.cfct_china_v_path + "x.csv", xlhvt_prime_4, delimiter=",")
+
+xlhvt_prime_4 = np.genfromtxt(results_4.setup.cfct_china_v_path + "x.csv", delimiter=",")
+ge_x_star_4 = pecmy_4.rewrap_xlhvt(xlhvt_prime_4)["ge_x"]
+
+tau_4 = pecmy_4.ecmy.rewrap_ge_dict(ge_x_star_4)["tau_hat"] * pecmy_4.ecmy.tau
+X_star_4 = pecmy_4.ecmy.rewrap_ge_dict(ge_x_star_4)["X_hat"] * pecmy_4.ecmy.Xcif  # counterfactual trade flows
+Ghat_4 = pecmy_4.G_hat(ge_x_star_4, v_4, 0, all=True)
+Uhat_4 = pecmy_4.ecmy.U_hat(pecmy_4.ecmy.rewrap_ge_dict(ge_x_star_4), np.ones(pecmy_4.N))  # consumer welfare under v=1 for all i
+
+np.savetxt(results_4.setup.cfct_china_v_path + "tau.csv", tau_4, delimiter=",")
+np.savetxt(results_4.setup.cfct_china_v_path + "X_prime.csv", X_star_4, delimiter=",")
+np.savetxt(results_4.setup.cfct_china_v_path + "G_hat.csv", Ghat_4, delimiter=",")
+np.savetxt(results_4.setup.cfct_china_v_path + "U_hat.csv", Uhat_4, delimiter=",")

@@ -97,6 +97,8 @@ class setup:
 
         self.cfct_demilitarization_path = self.counterfactuals_path + "demilitarization/"
         self.cfct_china_path = self.counterfactuals_path + "china/"
+        self.cfct_china_v_path = self.counterfactuals_path + "china_v/"
+        self.cfct_us_path = self.counterfactuals_path + "us/"
 
         # FIGURE PATHS
 
@@ -107,6 +109,7 @@ class setup:
         self.f_cfact_china_Xprime_path = self.figs_path_0 + "cfact_china_Xprime.png"
         self.f_cfact_china_G_path = self.figs_path_0 + "cfact_china_G.png"
         self.f_cfact_china_U_path = self.figs_path_0 + "cfact_china_U.png"
+        self.f_cfact_china_tau_path = self.figs_path_0 + "cfact_china_tau.png"
         self.f_estimates_pref_path = self.figs_path_0 + "estimates_pref.png"
         self.f_estimates_pref_mo_path = self.figs_path_0 + "estimates_pref_mo.png"
         self.f_estimates_mil_path = self.figs_path_0 + "estimates_mil.png"

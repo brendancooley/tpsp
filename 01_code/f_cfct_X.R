@@ -83,7 +83,7 @@ X_diff_pp_china <- cfct_X_L[["cfct_china_path"]] %>% ggplot(aes(x=X_star_log, y=
   geom_point(size=point_size) +
   geom_point(aes(x=X_prime_log, y=Var1, color="red"), alpha=0) +
   scale_x_continuous(limits=c(min_val, max_val)) +
-  scale_color_manual("Equilibrium", values=c("black", "red"), labels=c("Coercive", "Non-Coercive"), guide="legend") +
+  scale_color_manual("Equilibrium", values=c("black", "red"), labels=c("Baseline", "2030 Projected Military Capability"), guide="legend") +
   theme_classic() +
   theme(axis.ticks.x=element_blank(),
         axis.text.x=element_blank()) +
