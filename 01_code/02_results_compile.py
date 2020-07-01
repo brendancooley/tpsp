@@ -38,7 +38,7 @@ for i in range(1, M+1):
 quantiles = dict()
 quantiles_mil_off = dict()
 for i in est_dict.keys():
-    if i in ["v", "rcv", "peace_probs", "tau", "G_hat", "U_hat1"]:
+    if i in ["v", "rcv", "peace_probs", "tau", "Ghat", "Uhat1"]:
         quantiles[i] = np.quantile(np.array(est_dict[i]), [.025, .5, .975], axis=0)
         quantiles_mil_off[i] = np.quantile(np.array(est_dict_mil_off[i]), [.025, .5, .975], axis=0)
     else:

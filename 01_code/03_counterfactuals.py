@@ -65,7 +65,7 @@ pecmy_2 = policies.policies(results_2.data, results_2.params, results_2.ROWname,
 # sv = pecmy_2.estimator_sv(pecmy_2.m, v_500, theta_x)
 sv = x_base
 
-xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=1.25, tau_buffer_upper=1.25, start_with_resto=True, proximity_weight_off=True)
+xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=1.5, tau_buffer_upper=1.5, start_with_resto=False, proximity_weight_off=True)
 np.savetxt(results_2.setup.cfct_china_path + "x.csv", xlhvt_prime_2, delimiter=",")
 
 ge_x_star_2 = pecmy_2.rewrap_xlhvt(xlhvt_prime_2)["ge_x"]

@@ -102,7 +102,10 @@ class setup:
 
         self.f_ccodes_path = self.figs_path_0 + "ccodes.png"
         self.f_cfact_demilitarization_Xprime_path = self.figs_path_0 + "cfact_demilitarization_Xprime.png"
+        self.f_cfact_demilitarization_G_path = self.figs_path_0 + "cfact_demilitarization_G.png"
+        self.f_cfact_demilitarization_U_path = self.figs_path_0 + "cfact_demilitarization_U.png"
         self.f_estimates_pref_path = self.figs_path_0 + "estimates_pref.png"
+        self.f_estimates_pref_mo_path = self.figs_path_0 + "estimates_pref_mo.png"
         self.f_estimates_mil_path = self.figs_path_0 + "estimates_mil.png"
         self.f_fit_path = self.figs_path_0 + "fit.png"
         self.f_fit_eps_path = self.figs_path_0 + "fit_eps.png"

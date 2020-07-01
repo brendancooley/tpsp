@@ -1,75 +1,64 @@
-helperPath <- "~/Dropbox (Princeton)/14_Software/R/"
-helperFiles <- list.files(helperPath)
-for (i in helperFiles) {
-  source(paste0(helperPath, i))
+sourceDir <- paste0("../source/R/")
+sourceFiles <- list.files(sourceDir)
+for (i in sourceFiles) {
+  source(paste0(sourceDir, i))
 }
 
-libs <- c("tidyverse", "latex2exp")
+libs <- c("tidyverse", "reticulate", 'patchwork', 'reshape2')
 ipak(libs)
 
-tpspPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
-dataPath <- paste0(tpspPath, "tpsp_data_mini/")
-resultsPath <- paste0(tpspPath, "results_rcv_ft/")
-counterfactualsPath <- paste0(resultsPath, "counterfactuals/")
+use_virtualenv("python3")
+c_setup <- import_from_path("c_setup", path=".")
+setup <- c_setup$setup("local", "mid/")
 
-ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
-Y <- read_csv(paste0(dataPath, "year.csv"), col_names=FALSE) %>% pull(.)
+ccodes <- read_csv(setup$ccodes_path, col_names=FALSE) %>% pull(.)
+N <- length(ccodes)
+year <- read_csv(paste0(setup$data_path, "year.csv"), col_names=FALSE) %>% pull(.)
 
-G_star <- read_csv(paste0(counterfactualsPath, "G_star.csv"), col_names=FALSE)
-G_prime <- read_csv(paste0(counterfactualsPath, "G_prime.csv"), col_names=FALSE)
-V_star <- read_csv(paste0(counterfactualsPath, "V_star.csv"), col_names=FALSE)
-V_prime <- read_csv(paste0(counterfactualsPath, "V_prime.csv"), col_names=FALSE)
+q_G <- read_csv(setup$quantiles_Ghat_path, col_names=FALSE)
+q_U <- read_csv(setup$quantiles_Uhat1_path, col_names=FALSE)
 
-# Ghatft <- read_csv(paste0(resultsPath, "Ghatft.csv"), col_names=FALSE)
+quantiles_G <- data.frame(ccodes)
 
-G <- bind_cols(ccodes, G_star, G_prime)
-colnames(G) <- c("ccode", "G_star", "G_prime")
-G$frac <- G$G_star / G$G_prime
-G$base <- 1
-Gmin <- min(G$frac)
-Gmax <- max(G$frac)
+quantiles_G <- quantiles_G %>% cbind(q_G %>% t()) %>% as_tibble()
+colnames(quantiles_G) <- c("iso3", "G_q025", "G_q500", "G_q975")
+quantiles_U <- q_U %>% t() %>% as_tibble()
+colnames(quantiles_U) <- c("U_q025", "U_q500", "U_q975")
 
-V <- bind_cols(ccodes, V_star, V_prime)
-colnames(V) <- c("ccode", "V_star", "V_prime")
-V$frac <- V$V_star / V$V_prime
-V$base <- 1
-Vmin <- min(V$frac)
-Vmax <- max(V$frac)
+welfare <- cbind(quantiles_G, quantiles_U)
 
-# Ghat <- bind_cols(ccodes, Ghatft) %>% as_tibble()
-# Ghat_base <- rep(1, nrow(Ghat)) %>% as_tibble()
-# Ghat <- bind_cols(Ghat, Ghat_base)
-# 
-# colnames(Ghat) <- c("ccode", "ghat", "ghat_base")
-# 
-# Ghat <- Ghat %>% arrange(desc(ghat)) %>%
-#   mutate(ccode = factor(ccode, unique(ccode)))
-# 
-# ghat_max <- ceiling(max(Ghat$ghat))
+### COUNTERFACTUAL 1 ###
 
-# GhatftFig <- ggplot(data=Ghat, aes(x=ccode, y=ghat,ymin= ghat_base, ymax=ghat)) +
-#   geom_linerange(color=bcOrange, size=.75, lty=2) +
-#   geom_point(color=bcOrange, size=3) +
-#   geom_hline(yintercept=1, lty=2) +
-#   theme_classic() +
-#   labs(title=paste0("Welfare Effects of Free Trade, ", Y), x="", y="Change in Consumer Welfare") +
-#   scale_y_continuous(breaks=seq(0, ghat_max), limit=c(0, ghat_max)) +
-#   theme(axis.text.x=element_text(angle=60, hjust=1))
+G_prime <- read_csv(paste0(setup$cfct_demilitarization_path, "G_hat.csv"), col_names=FALSE)
+colnames(G_prime) <- "G_prime"
+U_prime <- read_csv(paste0(setup$cfct_demilitarization_path, "U_hat.csv"), col_names=FALSE)
+colnames(U_prime) <- "U_prime"
 
-deltaG <- ggplot(data=G, aes(x=ccode, y=frac, ymin=base, ymax=frac)) +
+welfare <- cbind(welfare, G_prime)
+welfare <- cbind(welfare, U_prime)
+
+welfare$G_frac <- welfare$G_q500 / welfare$G_prime
+welfare$U_frac <- welfare$U_q500 / welfare$U_prime
+
+
+deltaG1 <- ggplot(data=welfare, aes(x=iso3, y=G_frac, ymin=1, ymax=G_frac)) +
     geom_linerange(color=bcOrange, size=.75, lty=2) +
     geom_point(color=bcOrange, size=3) +
     geom_hline(yintercept=1, lty=2) +
     theme_classic() +
-    labs(title=paste0("Effects of Military Coercion on Government Welfare, ", Y), x="", y="Fractional Change in Gov. Welfare") +
-    scale_y_continuous(limit=c(Gmin, Gmax)) +
+    labs(title=paste0("Effects of Military Coercion on Government Welfare, ", year), x="", y="Fractional Change in Gov. Welfare") +
+    scale_y_continuous(limit=c(min(welfare$G_frac), max(welfare$G_frac))) +
     theme(axis.text.x=element_text(angle=60, hjust=1))
 
-deltaV <- ggplot(data=V, aes(x=ccode, y=frac, ymin=base, ymax=frac)) +
+ggsave(setup$f_cfact_demilitarization_G_path)
+
+deltaU1 <- ggplot(data=welfare, aes(x=iso3, y=U_frac, ymin=1, ymax=U_frac)) +
   geom_linerange(color=bcOrange, size=.75, lty=2) +
   geom_point(color=bcOrange, size=3) +
   geom_hline(yintercept=1, lty=2) +
   theme_classic() +
-  labs(title=paste0("Effects of Military Coercion on Consumer Welfare, ", Y), x="", y="Fractional Change in Con. Welfare") +
-  scale_y_continuous(limit=c(Vmin, Vmax)) +
+  labs(title=paste0("Effects of Military Coercion on Consumer Welfare, ", year), x="", y="Fractional Change in Con. Welfare") +
+  scale_y_continuous(limit=c(1, max(welfare$U_frac))) +
   theme(axis.text.x=element_text(angle=60, hjust=1))
+
+ggsave(setup$f_cfact_demilitarization_U_path)
