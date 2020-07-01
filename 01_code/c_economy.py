@@ -214,7 +214,7 @@ class economy:
         else:
             # print("recursing...")
             # print("fct: " + str(fct))
-            if fct / 2 > .01: # recurse with smaller steps
+            if fct / 2 > .005: # recurse with smaller steps
                 return(self.geq_solve(tau_hat, D_hat, v, fct=fct/2, mtd=mtd))
             else:
                 if mtd == "lm":
