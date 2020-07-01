@@ -34,7 +34,7 @@ hpc_source_dir = hpc_base_dir + "source/"
 hpc_code_dir = hpc_base_dir + "code/"
 hpc_results_dir = hpc_base_dir + "results/"
 
-fig_files = ["f_ccodes.R", "f_cfct_demilitarization.R", "f_estimates.R", "f_fit.R", "f_milex.R", "f_pr_peace.R",
+fig_files = ["f_ccodes.R", "f_cfct_X.R", "f_estimates.R", "f_fit.R", "f_milex.R", "f_pr_peace.R",
 "f_rcv.R", "f_tau_epbt.R", "f_tau_rf.R", "f_welfare.R"]
 
 def task_source():
