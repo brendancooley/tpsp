@@ -1,5 +1,6 @@
 import numpy as np
 import imp
+import sys
 
 import c_results as results
 import c_policies as policies
@@ -41,7 +42,7 @@ pecmy_1 = policies.policies(results_1.data, results_1.params, results_1.ROWname,
 
 if run_cfact1 == True:
     print("beginning counterfactual 1...")
-    xlhvt_prime_1 = results_1.compute_counterfactual(v_500, theta_x, pecmy_1.mzeros, start_with_resto=False, tau_bounds=False, tau_buffer_lower=.25, tau_buffer_upper=2.25)
+    xlhvt_prime_1 = results_1.compute_counterfactual(v_500, theta_x, pecmy_1.mzeros, start_with_resto=False, tau_bounds=False, tau_buffer_lower=2.25, tau_buffer_upper=2.25)
     # xlhvt_prime_1 = results_1.compute_counterfactual(v_500, theta_x, pecmy_1.mzeros, start_with_resto=False, tau_bounds=False, tau_buffer_lower=.25, tau_buffer_upper=2.25)
     np.savetxt(results_1.setup.cfct_demilitarization_path + "x.csv", xlhvt_prime_1, delimiter=",")
 
@@ -77,7 +78,7 @@ sv = x_base
 
 if run_cfact2 == True:
     print("beginning counterfactual 2...")
-    xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=1.75, tau_buffer_upper=1.75, start_with_resto=True, proximity_weight_off=True)
+    xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=1.25, tau_buffer_upper=1.25, start_with_resto=True, proximity_weight_off=True)
     np.savetxt(results_2.setup.cfct_china_path + "x.csv", xlhvt_prime_2, delimiter=",")
 
 xlhvt_prime_2 = np.genfromtxt(results_2.setup.cfct_china_path + "x.csv", delimiter=",")
@@ -103,11 +104,20 @@ results_3.data["M"][USA_id] = results_3.data["M"][USA_id] / 2
 pecmy_3 = policies.policies(results_3.data, results_3.params, results_3.ROWname, 0)
 
 sv = x_base
+# sv = pecmy_3.estimator_sv(pecmy_3.m, np.mean(pecmy_3.ecmy.tau, axis=1), theta_x)
+# sv = pecmy_3.estimator_sv(pecmy_3.m, v_500, theta_x)
+
+x_catch_path = results_3.setup.cfct_us_path + "x_catch.csv"
 
 if run_cfact3 == True:
     print("beginning counterfactual 3...")
-    xlhvt_prime_3 = results_3.compute_counterfactual(v_500, theta_x, pecmy_3.m, sv=sv, tau_bounds=False, ge_ones=False, tau_buffer_lower=1.75, tau_buffer_upper=1.75, start_with_resto=False, proximity_weight_off=True)
-    np.savetxt(results_3.setup.cfct_us_path + "x.csv", xlhvt_prime_3, delimiter=",")
+    xlhvt_prime_3 = results_3.compute_counterfactual(v_500, theta_x, pecmy_3.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=1.5, tau_buffer_upper=1.5, start_with_resto=True, proximity_weight_off=True, catch=False, catch_path=x_catch_path)
+    # np.savetxt(results_3.setup.cfct_us_path + "x.csv", xlhvt_prime_3, delimiter=",")
+    # x_catch = np.genfromtxt(x_catch_path, delimiter=",")
+    # print(x_catch)
+    # pecmy_3.estimator_cons_grad(x_catch, pecmy_3.m)
+    # sys.stdout.flush()
+    # xlhvt_prime_3 = results_3.compute_counterfactual(v_500, theta_x, pecmy_3.m, sv=x_catch, tau_bounds=False, ge_ones=False, tau_buffer_lower=1.5, tau_buffer_upper=2., start_with_resto=False, proximity_weight_off=False, catch=False)
 
 xlhvt_prime_3 = np.genfromtxt(results_3.setup.cfct_us_path + "x.csv", delimiter=",")
 ge_x_star_3 = pecmy_3.rewrap_xlhvt(xlhvt_prime_3)["ge_x"]

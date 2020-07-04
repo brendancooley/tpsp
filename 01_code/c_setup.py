@@ -130,3 +130,5 @@ class setup:
             helpers.mkdir(self.counterfactuals_path)
             helpers.mkdir(self.cfct_demilitarization_path)
             helpers.mkdir(self.cfct_china_path)
+            helpers.mkdir(self.cfct_us_path)
+            helpers.mkdir(self.cfct_china_v_path)

@@ -16,7 +16,7 @@ import s_helpers_tpsp as hp
 
 class policies:
 
-    def __init__(self, data, params, ROWname, bid, tau_bounds=False, tau_buffer_lower=.5, tau_buffer_upper=.5):
+    def __init__(self, data, params, ROWname, bid, tau_bounds=False, tau_buffer_lower=.5, tau_buffer_upper=.5, catch=False, catch_path=None):
         """
 
         Parameters
@@ -29,6 +29,10 @@ class policies:
             name of rest of world aggregate ("RoW")
 
         """
+
+        self.catch_thres = 10.0
+        self.catch = catch
+        self.catch_path = catch_path
 
         self.bid = bid
 
@@ -710,7 +714,7 @@ class policies:
 
         # optimizer tracker
         self.tick += 1
-        if self.tick % 100 == 0:  # print output every 100 calls
+        if self.tick % 500 == 0:  # print output every 100 calls
             self.ipopt_printout(xlhvt)
 
         tau_hat = self.ecmy.rewrap_ge_dict(ge_x)["tau_hat"]
@@ -1028,6 +1032,15 @@ class policies:
         if abs == True:
             out = np.sum(np.abs(out))
 
+        if self.catch == True:
+            if np.sum(np.abs(out)) < self.catch_thres:
+                print("catching and saving output...")
+                np.savetxt(self.catch_path, xlhvt, delimiter=",")
+
+        # optimizer tracker
+        self.tick += 1
+        if self.tick % 500 == 0:  # print output every 100 calls
+            self.ipopt_printout(xlhvt)
         sys.stdout.flush()
 
         return(out)
@@ -1148,7 +1161,7 @@ class policies:
 
         return(f)
 
-    def geq_lb(self, sv):
+    def geq_lb(self, sv, bounds_off=False):
 
         tau_min_mat = copy.deepcopy(self.ecmy.tau)
         np.fill_diagonal(tau_min_mat, 5)
@@ -1163,20 +1176,35 @@ class policies:
         if self.tau_bounds == True:
             lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         else:
-            lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
+            if bounds_off == True:
+                lb_dict["tau_hat"] = np.reshape(np.repeat(-np.inf, self.N**2), (self.N, self.N))
+            else:
+                lb_dict["tau_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
         # lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_sv_min_mat - .1, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
         # lb_dict["tau_hat"] = self.v_min / self.ecmy.tau
         # lb_dict["tau_hat"] = .9 / self.ecmy.tau
         np.fill_diagonal(lb_dict["tau_hat"], 1)
-        lb_dict["D_hat"] = np.repeat(1, self.N)
-        lb_dict["X_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
-        lb_dict["P_hat"] = np.repeat(0, self.N)
-        lb_dict["w_hat"] = np.repeat(0, self.N)
-        lb_dict["r_hat"] = np.repeat(-np.inf, self.N)
-        # lb_dict["r_hat"] = np.repeat(0, self.N)
-        lb_dict["E_hat"] = np.repeat(0, self.N)
+
+        if bounds_off == True:
+            lb_dict["D_hat"] = np.repeat(1, self.N)
+            lb_dict["X_hat"] = np.reshape(np.repeat(-np.inf, self.N**2), (self.N, self.N))
+            lb_dict["P_hat"] = np.repeat(-np.inf, self.N)
+            lb_dict["w_hat"] = np.repeat(-np.inf, self.N)
+            lb_dict["r_hat"] = np.repeat(-np.inf, self.N)
+            lb_dict["E_hat"] = np.repeat(-np.inf, self.N)
+        else:
+            lb_dict["D_hat"] = np.repeat(1, self.N)
+            # lb_dict["X_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
+            lb_dict["X_hat"] = np.reshape(np.repeat(0, self.N**2), (self.N, self.N))
+            lb_dict["P_hat"] = np.repeat(0, self.N)
+            lb_dict["w_hat"] = np.repeat(0, self.N)
+            lb_dict["r_hat"] = np.repeat(-np.inf, self.N)
+            # lb_dict["r_hat"] = np.repeat(0, self.N)
+            lb_dict["E_hat"] = np.repeat(0, self.N)
+            # lb_dict["E_hat"] = np.repeat(-np.inf, self.N)
 
         out = self.ecmy.unwrap_ge_dict(lb_dict)
+        # out = np.repeat(-np.inf, len(out))
 
         return(out)
 
@@ -1451,7 +1479,7 @@ class policies:
 
         return(out)
 
-    def estimator(self, v_sv, theta_x_sv, m, sv=None, nash_eq=False, tau_bounds=False, ge_ones=False, start_with_resto=False, proximity_weight_off=False):
+    def estimator(self, v_sv, theta_x_sv, m, sv=None, nash_eq=False, tau_bounds=False, ge_ones=False, start_with_resto=False, proximity_weight_off=False, solver="ipopt"):
         """estimate the model
 
         Parameters
@@ -1535,21 +1563,26 @@ class policies:
             # h_sparsity_indices = (h_sparsity_indices_a[:,0], h_sparsity_indices_a[:,1])
 
             problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.dummy, self.dummy_grad, self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
-            # problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, 0, g_L, g_U, g_sparsity_indices, h_sparsity_indices, self.estimator_cons_loss_wrap(m), self.estimator_cons_grad_wrap(m), g, g_jac)
 
-            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", bound_push=.2, mu_min=self.mu_min, constr_viol_tol=1.0e-03, compl_inf_tol=1.0e-03, dual_inf_tol=1.0e03, tol=1.0e-01, acceptable_tol=1.0e-01)
-            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, bound_push=.2, mu_min=self.mu_min)
+            # objective and constraints as estimator_cons
+            # problem = ipyopt.Problem(self.xlhvt_len, b_L, b_U, self.g_len, g_lower, g_upper, g_sparsity_indices, h_sparsity_indices, self.estimator_cons_loss_wrap(m), self.estimator_cons_grad_wrap(m), self.estimator_cons_wrap(m), self.estimator_cons_jac_wrap(m))
+
+            # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", bound_push=.2, mu_min=self.mu_min, constr_viol_tol=1.0e-03, compl_inf_tol=1.0e-03, dual_inf_tol=1.0e03, tol=1.0e-01, acceptable_tol=1.0e-01)
+            problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, mu_strategy="adaptive", mu_oracle="probing", fixed_mu_oracle="probing", adaptive_mu_restore_previous_iterate="yes", mu_min=self.mu_min, constr_viol_tol=1.0e-03, compl_inf_tol=1.0e-03, dual_inf_tol=1.0e03, tol=1.0e-01, acceptable_tol=1.0e-01)
             if proximity_weight_off == True:
                 problem.set(resto_proximity_weight=0.)
+            # problem.set(expect_infeasible_problem="no")
             # problem.set(resto_penalty_parameter=1.0e3)
-            # problem.set(mu_max=1.0e-20)
+            # problem.set(mu_max=1.0e-25)
             # problem.set(linear_solver="pardiso")
+            # problem.set(line_search_method="cg-penalty")
             # problem.set(nlp_scaling_method="none")
             if start_with_resto == True:
                 problem.set(start_with_resto="yes")
                 # problem.set(required_infeasibility_reduction=1.0e-3)
                 # problem.set(required_infeasibility_reduction=1.0e-8)
             # problem.set(print_level=5, fixed_variable_treatment='make_parameter', max_iter=self.max_iter_ipopt, linear_solver="pardiso", derivative_test="first-order", point_perturbation_radius=0.)
+
         print("solving...")
         _x, obj, status = problem.solve(xlhvt_sv)
 
