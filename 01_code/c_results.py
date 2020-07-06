@@ -154,6 +154,6 @@ class results:
 
             # np.savetxt(xlhvt_prime_path, x_path_base + "x.csv", delimiter=",")
 
-        return(xlhvt_prime)
+            return(xlhvt_prime)
 
 # bootstrap: https://github.com/brendancooley/tpsp/blob/f45862d123edce4ecaa026d7fa3947e3dc11cfb6/01_code/convexity_test.py

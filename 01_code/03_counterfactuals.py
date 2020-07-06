@@ -112,7 +112,7 @@ x_catch_path = results_3.setup.cfct_us_path + "x_catch.csv"
 if run_cfact3 == True:
     print("beginning counterfactual 3...")
     xlhvt_prime_3 = results_3.compute_counterfactual(v_500, theta_x, pecmy_3.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=1.5, tau_buffer_upper=1.5, start_with_resto=True, proximity_weight_off=True, catch=False, catch_path=x_catch_path)
-    # np.savetxt(results_3.setup.cfct_us_path + "x.csv", xlhvt_prime_3, delimiter=",")
+    np.savetxt(results_3.setup.cfct_us_path + "x.csv", xlhvt_prime_3, delimiter=",")
     # x_catch = np.genfromtxt(x_catch_path, delimiter=",")
     # print(x_catch)
     # pecmy_3.estimator_cons_grad(x_catch, pecmy_3.m)
