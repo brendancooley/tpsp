@@ -79,3 +79,19 @@ welfare2$U_frac <- welfare2$U_q500 / welfare2$U_prime
 welfare2 <- welfare2 %>% as_tibble()
 
 # negative values for AUS make these plots not particularly sensible
+
+
+### COUNTERFACTUAL 3 ###
+
+G_prime <- read_csv(paste0(setup$cfct_us_path, "G_hat.csv"), col_names=FALSE)
+colnames(G_prime) <- "G_prime"
+U_prime <- read_csv(paste0(setup$cfct_us_path, "U_hat.csv"), col_names=FALSE)
+colnames(U_prime) <- "U_prime"
+
+welfare3 <- cbind(welfare, G_prime)
+welfare3 <- cbind(welfare3, U_prime)
+
+welfare3$G_frac <- welfare3$G_q500 / welfare3$G_prime
+welfare3$U_frac <- welfare3$U_q500 / welfare3$U_prime
+welfare3 <- welfare3 %>% as_tibble()
+
