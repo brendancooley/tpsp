@@ -148,17 +148,26 @@ colnames(quantiles_pp) <- c("i_iso3", "j_iso3", "pp_q025", "pp_q500", "pp_q975")
 counts_tpsp <- icews_sub %>% left_join(quantiles_rcv) %>% left_join(quantiles_pp)
 counts_tpsp <- counts_tpsp %>% left_join(mids_sub)
 counts_tpsp$n_mids <- ifelse(is.na(counts_tpsp$n_mids), 0, counts_tpsp$n_mids)
+counts_tpsp <- counts_tpsp %>% arrange(j_iso3)
 
 counts_tpsp$pp_inv <- 1 - counts_tpsp$pp_q500
 
 icews_model_mc <- lm(data=counts_tpsp, q4 ~ pp_inv)  # material conflict
+icews_model_mc_pos <- glm(formula = q4 ~ pp_inv, data=counts_tpsp, family="poisson")
 summary(icews_model_mc)
+summary(icews_model_mc_pos)
 
 icews_model_vc <- lm(data=counts_tpsp, q3 ~ pp_inv)  # verbal conflict
+icews_model_vc_pos <- glm(formula = q3 ~ pp_inv, data=counts_tpsp, family="poisson")
 summary(icews_model_vc)
+summary(icews_model_vc_pos)
+
+# Note: we get similar results with regressions on cooperation, just picking up that EU and US interact more with others
 
 mids_model <- lm(data=counts_tpsp, n_mids ~ pp_inv)  # mids (very few of these)
+mids_model_pos <- glm(formula = n_mids ~ pp_inv, data=counts_tpsp, family="poisson")
 summary(mids_model)
+summary(mids_model_pos)
 
 #### SCALING ICEWS ####
 
@@ -168,11 +177,22 @@ summary(mids_model)
 # 3 - verbal conflict
 # 4 - material conflict
 
-
-icews_sub_ca <- ca(icews_sub_ca[3:6], nd=2)
+icews_sub_ca <- ca(icews_sub[3:6], nd=2)
 # counts_sub_ca_1 <- ca(counts_sub[3:6], nd=1)
-icews_sub_ca$score1 <- icews_sub_ca$rowcoord[,1] %>% as.vector()
-icews_sub_ca$score2 <- icews_sub_ca$rowcoord[,2] %>% as.vector()
+icews_sub$score1 <- icews_sub_ca$rowcoord[,1] %>% as.vector()
+icews_sub$score2 <- icews_sub_ca$rowcoord[,2] %>% as.vector()
+icews_scores <- icews_sub %>% select(i_iso3, j_iso3, score1, score2) %>% arrange(j_iso3)
+
+counts_tpsp <- counts_tpsp %>% left_join(icews_scores)
+
+icews_model_score <- lm(data=counts_tpsp, pp_inv ~ score2)
+summary(icews_model_score)
+
+
+
+
+### ARCHIVE ###
+
 
 # counts_sub$score2 <- -1 * counts_sub$score2
 # counts_sub$score1 <- -1 * counts_sub$score1

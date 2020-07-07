@@ -12,8 +12,8 @@ size = "mid/"
 
 run_cfact1 = False
 run_cfact2 = False
-run_cfact3 = True
-run_cfact4 = True
+run_cfact3 = False
+run_cfact4 = False
 
 results_0 = results.results(location, size)
 pecmy_0 = policies.policies(results_0.data, results_0.params, results_0.ROWname, 0)
@@ -48,6 +48,7 @@ if run_cfact1 == True:
 
 xlhvt_prime_1 = np.genfromtxt(results_1.setup.cfct_demilitarization_path + "x.csv", delimiter=",")
 ge_x_star_1 = pecmy_1.rewrap_xlhvt(xlhvt_prime_1)["ge_x"]
+h_1 = pecmy_1.rewrap_xlhvt(xlhvt_prime_1)["h"]
 
 tau_1 = pecmy_1.ecmy.rewrap_ge_dict(ge_x_star_1)["tau_hat"] * pecmy_1.ecmy.tau
 X_star_1 = pecmy_1.ecmy.rewrap_ge_dict(ge_x_star_1)["X_hat"] * pecmy_1.ecmy.Xcif  # counterfactual trade flows
@@ -83,16 +84,30 @@ if run_cfact2 == True:
 
 xlhvt_prime_2 = np.genfromtxt(results_2.setup.cfct_china_path + "x.csv", delimiter=",")
 ge_x_star_2 = pecmy_2.rewrap_xlhvt(xlhvt_prime_2)["ge_x"]
+h_2 = pecmy_1.rewrap_xlhvt(xlhvt_prime_2)["h"]
 
 tau_2 = pecmy_2.ecmy.rewrap_ge_dict(ge_x_star_2)["tau_hat"] * pecmy_2.ecmy.tau
 X_star_2 = pecmy_2.ecmy.rewrap_ge_dict(ge_x_star_2)["X_hat"] * pecmy_2.ecmy.Xcif  # counterfactual trade flows
 Ghat_2 = pecmy_2.G_hat(ge_x_star_2, v_500, 0, all=True)
 Uhat_2 = pecmy_2.ecmy.U_hat(pecmy_2.ecmy.rewrap_ge_dict(ge_x_star_2), np.ones(pecmy_2.N))  # consumer welfare under v=1 for all i
 
+pp_2 = np.ones((pecmy_2.N, pecmy_2.N))
+for i in range(pecmy_2.N):
+    if i != pecmy_2.ROW_id:
+        pp_2_i = pecmy_2.peace_probs(ge_x_star_2, h_2, i, pecmy_2.m, v_500, theta_dict)[1]
+    else:
+        pp_2_i = np.ones(pecmy_2.N)
+    tick = 0
+    for j in range(pecmy_2.N):
+        if i != j and j != pecmy_2.ROW_id:
+            pp_2[i, j] = pp_2_i[tick]
+            tick += 1
+
 np.savetxt(results_2.setup.cfct_china_path + "tau.csv", tau_2, delimiter=",")
 np.savetxt(results_2.setup.cfct_china_path + "X_prime.csv", X_star_2, delimiter=",")
 np.savetxt(results_2.setup.cfct_china_path + "G_hat.csv", Ghat_2, delimiter=",")
 np.savetxt(results_2.setup.cfct_china_path + "U_hat.csv", Uhat_2, delimiter=",")
+np.savetxt(results_2.setup.cfct_china_path + "pp.csv", pp_2, delimiter=",")
 
 ### COUNTERFACTUAL 3: VALUE OF U.S. MILITARY ###
 
@@ -121,16 +136,30 @@ if run_cfact3 == True:
 
 xlhvt_prime_3 = np.genfromtxt(results_3.setup.cfct_us_path + "x.csv", delimiter=",")
 ge_x_star_3 = pecmy_3.rewrap_xlhvt(xlhvt_prime_3)["ge_x"]
+h_3 = pecmy_3.rewrap_xlhvt(xlhvt_prime_3)["h"]
 
 tau_3 = pecmy_3.ecmy.rewrap_ge_dict(ge_x_star_3)["tau_hat"] * pecmy_3.ecmy.tau
 X_star_3 = pecmy_3.ecmy.rewrap_ge_dict(ge_x_star_3)["X_hat"] * pecmy_3.ecmy.Xcif  # counterfactual trade flows
 Ghat_3 = pecmy_3.G_hat(ge_x_star_3, v_500, 0, all=True)
 Uhat_3 = pecmy_3.ecmy.U_hat(pecmy_3.ecmy.rewrap_ge_dict(ge_x_star_3), np.ones(pecmy_3.N))  # consumer welfare under v=1 for all i
 
+pp_3 = np.ones((pecmy_3.N, pecmy_3.N))
+for i in range(pecmy_3.N):
+    if i != pecmy_3.ROW_id:
+        pp_3_i = pecmy_3.peace_probs(ge_x_star_3, h_3, i, pecmy_3.m, v_500, theta_dict)[1]
+    else:
+        pp_3_i = np.ones(pecmy_3.N)
+    tick = 0
+    for j in range(pecmy_3.N):
+        if i != j and j != pecmy_3.ROW_id:
+            pp_3[i, j] = pp_3_i[tick]
+            tick += 1
+
 np.savetxt(results_3.setup.cfct_us_path + "tau.csv", tau_3, delimiter=",")
 np.savetxt(results_3.setup.cfct_us_path + "X_prime.csv", X_star_3, delimiter=",")
 np.savetxt(results_3.setup.cfct_us_path + "G_hat.csv", Ghat_3, delimiter=",")
 np.savetxt(results_3.setup.cfct_us_path + "U_hat.csv", Uhat_3, delimiter=",")
+np.savetxt(results_3.setup.cfct_us_path + "pp.csv", pp_3, delimiter=",")
 
 ### COUNTERFACTUAL 4: CHINESE PREFERENCE LIBERALIZATION ###
 
@@ -152,13 +181,27 @@ if run_cfact4 == True:
 
 xlhvt_prime_4 = np.genfromtxt(results_4.setup.cfct_china_v_path + "x.csv", delimiter=",")
 ge_x_star_4 = pecmy_4.rewrap_xlhvt(xlhvt_prime_4)["ge_x"]
+h_4 = pecmy_4.rewrap_xlhvt(xlhvt_prime_4)["h"]
 
 tau_4 = pecmy_4.ecmy.rewrap_ge_dict(ge_x_star_4)["tau_hat"] * pecmy_4.ecmy.tau
 X_star_4 = pecmy_4.ecmy.rewrap_ge_dict(ge_x_star_4)["X_hat"] * pecmy_4.ecmy.Xcif  # counterfactual trade flows
 Ghat_4 = pecmy_4.G_hat(ge_x_star_4, v_4, 0, all=True)
 Uhat_4 = pecmy_4.ecmy.U_hat(pecmy_4.ecmy.rewrap_ge_dict(ge_x_star_4), np.ones(pecmy_4.N))  # consumer welfare under v=1 for all i
 
+pp_4 = np.ones((pecmy_4.N, pecmy_4.N))
+for i in range(pecmy_4.N):
+    if i != pecmy_4.ROW_id:
+        pp_4_i = pecmy_4.peace_probs(ge_x_star_4, h_4, i, pecmy_4.m, v_4, theta_dict)[1]
+    else:
+        pp_4_i = np.ones(pecmy_4.N)
+    tick = 0
+    for j in range(pecmy_4.N):
+        if i != j and j != pecmy_4.ROW_id:
+            pp_4[i, j] = pp_4_i[tick]
+            tick += 1
+
 np.savetxt(results_4.setup.cfct_china_v_path + "tau.csv", tau_4, delimiter=",")
 np.savetxt(results_4.setup.cfct_china_v_path + "X_prime.csv", X_star_4, delimiter=",")
 np.savetxt(results_4.setup.cfct_china_v_path + "G_hat.csv", Ghat_4, delimiter=",")
 np.savetxt(results_4.setup.cfct_china_v_path + "U_hat.csv", Uhat_4, delimiter=",")
+np.savetxt(results_4.setup.cfct_china_v_path + "pp.csv", pp_4, delimiter=",")
