@@ -1,20 +1,30 @@
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 
-yDF <- bind_cols(ccodes, y)
+use_virtualenv("python3")
+c_setup <- import_from_path("c_setup", path=paste0("../", code_dir))
+setup <- c_setup$setup("local", size)
+
+ccodes <- read_csv(setup$ccodes_path, col_names=F) %>% pull(.)
+Y <- 2011
+y <- read_csv(setup$Y_path, col_names=F) %>% pull(.)
+tau <- read_csv(setup$tau_path, col_names=F) %>% as.matrix()
+
+yDF <- data.frame(ccodes, y) %>% as_tibble()
 colnames(yDF) <- c("iso3", "y")
 
 yAll <- sum(yDF$y)
 yROW <- yDF %>% filter(iso3=="RoW") %>% pull(y)
 
+meanTau <- round((mean(tau) - 1) * 100)  # in percent
+
 ```
 
-I estimate the model on a set of `r N` governments in the year `r Y`.^[Focusing on a small set of governments is necessary for computational tractability. However, the largest countries (by GDP) are the most attractive targets for coercion, as changes to their trade policies return the largest welfare gains.] These governments are listed in Table \ref{tab:v_estsT}. I aggregate all European Union governments into a single entity and collapse all countries not included in the analysis into a "Rest of World" (ROW) aggregate.^[Such an aggregation is necessary in order to calculate fully general equilibrium effects of counterfactual trade policies. However, I prohibit other countries from invading ROW and likewise prohibit ROW from invading others. This ensures that estimates of military parameters depend almost entirely on interactions between countries within my sample.] Non-ROW countries make up `r round( (yAll - yROW) / yAll * 100 )` percent of world GDP.
+I estimate the model on a set of `r N` governments in the year `r Y`.^[Focusing on a small set of governments is necessary for computational tractability. However, the largest countries (by GDP) are the most attractive targets for coercion, as changes to their trade policies return the largest welfare gains.] These governments are listed in Table \ref{tab:ccodes}. I aggregate all European Union governments into a single entity and collapse all countries not included in the analysis into a "Rest of World" (ROW) aggregate.^[Such an aggregation is necessary in order to calculate fully general equilibrium effects of counterfactual trade policies. However, I prohibit other countries from invading ROW and likewise prohibit ROW from invading others. This ensures that estimates of military parameters depend almost entirely on interactions between countries within my sample.] Non-ROW countries make up `r round( (yAll - yROW) / yAll * 100 )` percent of world GDP.
 
 ```{r ccodes, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
-source("../02_figs/ccodes.R")
-
-kable(ccodesT, "latex", booktabs = T, caption = "In-Sample Countries \\label{tab:ccodes}") %>% kable_styling(position = "center")
+source(paste0("../", code_dir, "f_ccodes.R"))
+ccodes_table
 
 ```
 
@@ -28,10 +38,27 @@ In the coercive political economy developed below, governments' relative directe
 
 ```{r milex, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste("Military expenditure for in-sample governments. Values for ROW and EU are obtained by summing expenditure of all member countries. \\label{fig:milex}"), fig.height=5, dpi=300, fig.pos="t"}
 
-source("../02_figs/milex.R")
+source(paste0("../", code_dir, "f_milex.R"))
 milexFig + theme(aspect.ratio=1)
 
 ```
 
 ## Reduced Form Evidence on Coercion and Trade Policy
+
+To assist in the interpretation of the following results, consider a simple bilateral coercive bargaining setting. Governments 1 and 2 bargain over a pie of size 1. Let $x \in [0, 1]$ denote the share of the pie awarded to government 1 (with the remainder, $1-x$, going to government 2). Each government's valuation of the pie is given by an increasing, weakly concave utility function $u_i(x)$. The value of each government's outside option is given by a war function, $w_i(M_i / M_j)$, which depends on their relative military capabilities, $\frac{M_i}{M_j}$. Assume $w_i$ is increasing in this military capability ratio -- that is, more powerful governments enjoy better outside options.
+
+For simplicity, assume the pie is divided via the Nash Bargaining Solution, satisfying
+\begin{equation}
+\begin{split}
+x^\star \in \argmax_x & \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( u_2(x) - w_2(M_2 / M_1) \right) \\
+\text{subject to} & \quad u_1(x) \geq w_1(M_1 / M_2) \\
+& \quad u_2(x) \geq w_2(M_2 / M_1) .
+\end{split}
+\end{equation}
+Taking first order conditions, it is straightforward to show that the allocation to government 1, $x^\star$, satisfies
+$$
+u_1(x^\star; M_1, M_2) = \frac{u_1^\prime(x^\star)}{u_2^\prime(1 - x^\star)} \left( u_2(1 - x^\star) - w_2(M_2 / M_1) \right) + w_1(M_1 / M_2)
+$$
+
+
 

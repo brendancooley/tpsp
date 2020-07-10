@@ -1,28 +1,3 @@
-```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
-
-meanTau <- round((mean(tauM) - 1) * 100)  # in percent
-
-tauI <- tau
-colnames(tauI) <- ccodes %>% pull(.)
-tauI <- bind_cols(tauI, ccodes) 
-colnames(tauI)[colnames(tauI)=="X1"] <- "j_iso3"
-tauDF <- tauI %>% gather("i_iso3", "tau_ji", -j_iso3)
-tauDF$tau_ji <- as.numeric(tauDF$tau_ji)
-
-tauUS <- tauDF %>% filter(j_iso3=="USA")
-
-tauUSJPN <- tauUS %>% filter(i_iso3=="JPN") %>% pull(tau_ji)
-tauUSCAN <- tauUS %>% filter(i_iso3=="CAN") %>% pull(tau_ji)
-tauUSEU <- tauUS %>% filter(i_iso3=="EU") %>% pull(tau_ji)
-
-tauUSmin <- min(tauUSJPN, tauUSCAN, tauUSEU)
-tauUSmax <- max(tauUSJPN, tauUSCAN, tauUSEU)
-
-tauUSIDN <- tauUS %>% filter(i_iso3=="IDN") %>% pull(tau_ji)
-tauUSTUR <- tauUS %>% filter(i_iso3=="TUR") %>% pull(tau_ji)
-
-```
-
 Military power holds a central position in international relations (IR) theory. Governments exist in a state of anarchy — there is no world authority tasked with preventing the use of violence in settling policies disputes between them. As a result, powerful governments can employ force against others to secure more favorable policy outcomes. This does not necessarily imply that international relations are uniquely violent, however. Threatened governments can adjust their policy choices to accommodate the interests of the powerful, avoiding costly conflict [@Brito1985; @Fearon1995]. This setting raises an inference problem — do observed policies reflect the preferences of the governments that adopted them, or the military constraints of the anarchic international system?
 
 In this paper, I propose and implement a method to assess the effect of military power on trade policy choices. Trade is a natural issue area in which undertake such an investigation. For a variety of reasons, governments' endeavor to protect their home market to some extent. Governments also seek access to foreign markets [@Grossman2016]. These preferences put governments into conflict with one another -- each would like to erect some barriers to imports while dismantling barriers to trade abroad. Given dictatorial power, governments would protect their home market and enforce openness elsewhere. Moreover, aggregate policy-induced trade frictions are large [@Cooley2019b] and have large effects on the distribution and level of welfare within and across countries [@Autor2013; @Costinot2015; @Goldberg2016]. These effects may be particularly salient for politically influential groups [@Grossman1994; @Osgood2017]. Governments therefore have incentives to use force to shape trade policy abroad to their liking. Historically, they have been willing to fight wars to realize such goals [@Findlay2007].
