@@ -19,6 +19,10 @@ $endif$
 % set font
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+\usepackage{pifont}
+\usepackage{newunicodechar}
+\newunicodechar{✓}{\ding{51}}
+\newunicodechar{✗}{\ding{55}}
 \usepackage[oldstyle]{libertine}
 
 

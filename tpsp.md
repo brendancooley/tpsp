@@ -110,7 +110,7 @@ In the coercive political economy developed below, governments' relative directe
 
 ## Reduced Form Evidence on Coercion and Trade Policy
 
-To assist in the interpretation of the following results, consider a simple bilateral coercive bargaining setting. Governments 1 and 2 bargain over a pie of size 1. Let $x \in [0, 1]$ denote the share of the pie awarded to government 1 (with the remainder, $1-x$, going to government 2). Each government's valuation of the pie is given by an increasing, weakly concave utility function $u_i(x)$. The value of each government's outside option is given by a war function, $w_i(M_i / M_j)$, which depends on their relative military capabilities, $\frac{M_i}{M_j}$. Assume $w_i$ is increasing in this military capability ratio -- that is, more powerful governments enjoy better outside options.
+To assist in the interpretation of the following results, consider a simple bilateral coercive bargaining setting. Governments 1 and 2 bargain over a pie of size 1. Let $x \in [0, 1]$ denote the share of the pie awarded to government 1 (with the remainder, $1-x$, going to government 2). In the trade setting studied here, $x=1$ might correspond to government 1 implementing optimal tariffs and government 2 liberalizing fully. Each government's valuation of the pie is given by an increasing, weakly concave utility function $u_i(x)$. The value of each government's outside option is given by a war function, $w_i(M_i / M_j)$, which depends on their relative military capabilities, $\frac{M_i}{M_j}$. Assume $w_i$ is increasing in this military capability ratio -- that is, more powerful governments enjoy better outside options.
 
 For simplicity, assume the pie is divided via the Nash Bargaining Solution, satisfying
 \begin{equation}
@@ -122,8 +122,51 @@ x^\star \in \argmax_x & \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( u_2(
 \end{equation}
 Taking first order conditions, it is straightforward to show that the allocation to government 1, $x^\star$, satisfies
 $$
-u_1(x^\star; M_1, M_2) = \frac{u_1^prime(x^\star)}{u_2^\prime(1 - x^\star)} \left( u_2(1 - x^\star) - w_2(M_2 / M_1) \right) + w_1(M_1 / M_2)
+u_1^\star(x^\star; M_1, M_2) = \frac{u_1^\prime(x^\star)}{u_2^\prime(1 - x^\star)} \left( u_2(1 - x^\star) - w_2(M_2 / M_1) \right) + w_1(M_1 / M_2) . 
 $$
+Differentiating this equation with respect to government 1's military capacity, $M_1$, we see that $u_1(x^\star; M_1, M_2)$ is increasing in $M_1$,
+$$
+\frac{\partial u_1^\star(x^\star; M_1, M_2) }{\partial M_1} = \underbrace{- \frac{u_1^\prime(x^\star)}{u_2^\prime(1 - x^\star)} \frac{\partial w_2(M_2 / M_1)}{\partial M_1}}_{>0} + \underbrace{\frac{\partial w_1(M_1 / M_2)}{ \partial M_1}}_{>0} > 0 .
+$$
+In other words, the distance between government 1's equilibrium utility and the utility it receives at it's ideal point id decreasing in it's relative military advantage.
+
+Suppose that governments endeavor to maximize the welfare of the representative consumer.^[I will relax this assumption in the structural model developed below.] With the economy, $h$, calibrated, I can calculate the change in utility each representative consumer would experience when every other government adopts free trade, relative to their utility at the baseline set of policies. Taking this as a empirical measure of the ratio $u_1^\star(x^\star; M_1, M_2) / u_1(1)$, the model implies this quantity will be increasing in $M_1$, country 1's military capacity. I will refer to this quantity as government 1's inverse *conquest value* vis-à-vis government 2.
+
+![Correlation between military capability ratios and inverse conquest values, all pairs of in-sample countries. \label{fig:rcvm}](figure/rcvm-1.png)
+
+Figure \ref{fig:rcvm} plots the empirical relationship between military capability ratios and inverse regime change values. A potential "attacking" country's military capability ratio vis a vis every "defending" country is plotted on the x-axis. On the y-axis is the attacking country's value for conquering each defending country. Consistent with the predictions of this simple model, government's inverse conquest values correlate positively with their relative military power. Table \ref{fig:rcvm_reg_tex} and Figure \ref{fig:rcvm_reg_dw} display the results of a series of linear models that estimate the conditional correlations between the inverse conquest value and the military capability ratio, distance between the countries, and country-specific factors. 
+
+\begin{table}
+
+\caption{\label{tab:rcvm}Inverse Conquest Values and Military Capability Ratios}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tabular}[t]{lllll}
+\toprule
+        & Base & Base (Attacker FE) & Loss of Strength & Loss of Strength (Attacker FE)\\
+\midrule
+Log Mil Capability Ratio & 0.016*** & 0.033*** & 0.026 & 0.045\\
+ & (0.004) & (0.004) & (0.052) & (0.039)\\
+Log Distance &  &  & 0.003 & 0.002\\
+ &  &  & (0.010) & (0.008)\\
+(Log Mil Capability Ratio) X (Log Distance) &  &  & -0.001 & -0.001\\
+ &  &  & (0.006) & (0.004)\\
+\midrule
+Num.Obs. & 56 & 56 & 56 & 56\\
+R2 & 0.247 & 0.676 & 0.249 & 0.677\\
+R2 Adj. & 0.233 & 0.621 & 0.205 & 0.605\\
+Attacker FE? &  & ✓ &  & ✓\\
+\bottomrule
+\multicolumn{5}{l}{\textsuperscript{} * p < 0.1, ** p < 0.05, *** p < 0.01}\\
+\end{tabular}}
+\end{table}
+
+![\label{fig:rcvm_reg_dw}](figure/rcv_reg_dw-1.png)
+
+The first model confirms the statistical significance of the correlation shown in Figure \ref{fig:rcvm}. The second model estimates this correlation within potential "attacking" countries. Here, inverse conquest values continue to rise as military advantage rises. The final two models interact the military capability ratio with a measure of distance between the attacker and defender. The estimated correlation between military capbility is not attenuated, but does lose statistical significance in these specifications. Distance and the interaction of distance with military capability does not covary with the inverse conquest values, whether or not country-specific factors are included. These raw correlations are informative about the role of coercion in the formation of trade policy but suggestive at best. Trade policy bargaining is a multilateral endeavor in which third party externalities loom large. Moreover, governments may vary in their preferences for protectionism, changing their ideal policies and their valuations for conquering others. The model developed below accounts explicitly for these features of trade policy bargaining, delivering interpretable estimates of the effects of military capability and geographic distance on trade policy outcomes.
+
+
+
 
 
 

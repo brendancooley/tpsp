@@ -4,7 +4,7 @@ for (i in sourceFiles) {
   source(paste0(sourceDir, i))
 }
 
-libs <- c("tidyverse", "modelsummary", "dotwhisker", "ggsci", "reticulate", "broom")
+libs <- c("tidyverse", "modelsummary", "dotwhisker", "ggsci", "reticulate", "broom", "patchwork", "kableExtra")
 ipak(libs)
 
 use_virtualenv("python3")
@@ -68,13 +68,13 @@ data <- data %>% filter(j_iso3!="RoW" & i_iso3!="RoW")
 ### REG ###
 
 # data$tau_rev_frac <- (data$tau - 1) * data$X_ji / data$gdp_j
-data$rcv_ij <- data$rcv_ij - 1
+# data$rcv_ij <- data$rcv_ij - 1
 # data %>% filter(i_iso3 %in% c("USA", "EU")) %>% arrange(i_iso3, rcv_ij) %>% print(n=100)
 
-model1 <- lm(data=data, log(rcv_ij)~log(m_frac_ij))
-model2 <- lm(data=data, log(rcv_ij)~log(m_frac_ij)+i_iso3)  # attacker-specific costs w/ FE
-model3 <- lm(data=data, log(rcv_ij)~log(m_frac_ij)*log(W))  # conditional effect of distance
-model4 <- lm(data=data, log(rcv_ij)~log(m_frac_ij)*log(W)+i_iso3)  # attacker-specific costs w/ FE
+model1 <- lm(data=data, log(rcv_ij**-1)~log(m_frac_ij))
+model2 <- lm(data=data, log(rcv_ij**-1)~log(m_frac_ij)+i_iso3)  # attacker-specific costs w/ FE
+model3 <- lm(data=data, log(rcv_ij**-1)~log(m_frac_ij)*log(W))  # conditional effect of distance
+model4 <- lm(data=data, log(rcv_ij**-1)~log(m_frac_ij)*log(W)+i_iso3)  # attacker-specific costs w/ FE
 
 # model5 <- lm(data=data, log(rcv_ij)~log(m_frac_ij)*log(W)+log(gdp_i))
 # summary(model5)
@@ -93,9 +93,10 @@ models[["Loss of Strength (Attacker FE)"]] <- model4
 cm <- c("log(m_frac_ij)"="Log Mil Capability Ratio",
         "log(W)"="Log Distance",
         "log(m_frac_ij):log(W)"="(Log Mil Capability Ratio) X (Log Distance)")
-fe_row <- c("Attacker FE?", " ", " ", "\U2713", "\U2713")
+fe_row <- c("Attacker FE?", " ", "\U2713", " ", "\U2713")
 
-table <- modelsummary(models, coef_map=cm, add_rows=list(fe_row), gof_omit="AIC|BIC|Log.Lik", title="Regime Change Values and Military Capability Ratios", output=setup$f_tau_rf_table_path)
+table_tex <- modelsummary(models, coef_map=cm, add_rows=list(fe_row), gof_omit="AIC|BIC|Log.Lik", title="Inverse Conquest Values and Military Capability Ratios", stars=TRUE, output="latex") %>% kable_styling(latex_options=c("scale_down"))
+table_png <- modelsummary(models, coef_map=cm, add_rows=list(fe_row), gof_omit="AIC|BIC|Log.Lik", title="Inverse Conquest Values and Military Capability Ratios", stars=TRUE, output=setup$f_tau_rf_table_path)
 
 for (i in names(models)) {
   models[[i]] <- models[[i]] %>% tidy() %>% filter(term %in% c("log(m_frac_ij)", "log(W)", "log(m_frac_ij):log(W)")) %>% mutate(model=i)
@@ -108,14 +109,21 @@ dw <- dwplot(models) %>%
   relabel_predictors(cm) +
   geom_vline(xintercept=0, lty=2) +
   scale_color_manual(values=dw_colors) +
-  labs(color="Model", title="Correlates of Regime Change Values", subtitle="Point estimates and 95 percent confidence intervals") +
+  labs(color="Model", title="Correlates of Conquest Values", subtitle="Point estimates and 95 percent confidence intervals") +
   theme_classic()
 
 ggsave(setup$f_tau_rf_dw_path, width=7, height=3.5)
 
+
 ### Raw Bivaritate Correlation 
 
-rcvm_plot <- ggplot(data, aes(x=log(m_frac_ij), y=log(rcv_ij))) +
+rcvm_plot <- ggplot(data, aes(x=log(m_frac_ij), y=log(rcv_ij**-1))) +
   geom_point() +
-  geom_smooth(method="lm") +
-  theme_classic()
+  geom_smooth(method="lm", se=FALSE, color=bcOrange) +
+  theme_classic() +
+  labs(x="Military Capability Ratio (Log)", y="Inverse Conquest Value (Log)", title="Military Capability Ratios and Regime Change Values",
+       subtitle="Observations: All In-Sample Directed Dyads") +
+  theme(axis.text=element_blank(),
+        axis.ticks=element_blank(),
+        aspect.ratio=1)
+  

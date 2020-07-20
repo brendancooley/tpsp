@@ -61,6 +61,7 @@ Ltick <- 1
 size <- "mid/"
 sections_dir <- "03_sections/"
 code_dir <- "01_code/"
+figs_dir <- "02_figs/"
 
 options(scipen=999)
 
