@@ -1,46 +1,88 @@
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 
-# rcv0max <- max(rcv0)
-# coords <- which(rcv0 == max(rcv0), arr.ind = TRUE)
 
-# ccodesL <- ccodes %>% pull(.)
+use_virtualenv("python3")
+c_setup <- import_from_path("c_setup", path=paste0("../", code_dir))
+setup <- c_setup$setup("local", size)
 
-# rcv0j <- ccodesL[coords[1]]
-# rcv0i <- ccodesL[coords[2]]
-
-# rcv0jName <- ccodesT %>% filter(iso3==rcv0j) %>% pull(`Country Name`)
-# rcv0iName <- ccodesT %>% filter(iso3==rcv0i) %>% pull(`Country Name`)
 USA_id <- which(ccodes=="USA")
 CHN_id <- which(ccodes=="CHN")
 
-# chi_gamma_ex <- 2^gamma_tilde / (2^gamma_tilde + 1)
-# rho_ex = exp(-1*alpha1* W[USA_id, CHN_id] %>% pull(.))
+```
+
+```{r ests, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Model parameter estimates and 95 percent confidence intervals. The top panel shows protectionism preference parameter estimates ($v_i$) for each country. The bottom panel shows parameter estimates for observables affecting costs of war ($\\gamma, \\alpha_1, \\alpha_2$). \\label{fig:ests}"), fig.height=6, dpi=300, fig.pos="t"}
+
+source(paste0("../", code_dir, "f_estimates.R"))
+
+pref_plot / mil_plot + plot_layout(heights=c(2, 1))
 
 ```
 
+Figure \ref{fig:ests} displays results from the estimation. Recall that $v_i$ governs the ease with which governments can extract revenues from trade policy distortions. When $v_i$ is higher government $i$ prefers higher barriers to trade, all else equal. When $v_i=1$ the government acts as a classical social welfare maximizer. There is considerable heterogeneity in governments' estimated preferences for protectionism. The United States and Russia are estimated to be relatively liberal, while Australia and Canada are quite protectionist. 
+
+An attacking country's military advantage and g.d.p. are estimated to reduce war costs, facilitating coercion. There are increasing returns to both of these features in reducing the average costs of war ($\gamma, \alpha_2 > 1$). Economically large and military powerful countries are the most effective at coercion, holding the distance of their adversary constant. Figure \ref{fig:war_costs} displays estimated average war costs, relative to those of the United States, holding the distance to the adversary constant. Given its large economy and military, the United States is estimated to enjoy the smallest averge war costs. The European Union, China, and Russia pay between `r round(costs$c_mean[costs$iso3=="EU"], 1)` and `r round(costs$c_mean[costs$iso3=="RUS"], 1)` times the costs of the United States to prosecute wars on average. Wars are estimated to cost at least an order of magnitude more than U.S. wars for other countries in the sample.
+
+```{r war_costs, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Estimated relative war costs against fixed adversary. United States' costs serve as baseline ($c=1$). \\label{fig:war_costs}"), fig.height=5, dpi=300, fig.pos="t"}
+
+# source(paste0("../", code_dir, "f_estimates.R"))
+
+costs_plot
+
+```
+
+War costs are estimated to depend on the distance between the attacker and potential adversay. Attackers that are more distant from their adversaries are estimated to enjoy smaller war costs. In other words, model estimates imply an inverse loss of strength gradient. This may emerge due to the peculiarities of military technology in 2011, a period in which geographic distance respresents a uniquely small impediment to the projection of force.
+
+The model estimates can be readily transformed to deliver empirical quantities that measure the salience of military coercion in international relations. Figure \ref{fig:rcv} plots the conquest value for each potential attacking country vis-à-vis each potential defending country. These quantities differ from those analyzed in the reduced form section above in that they account explicitly for the attacking government's preferences for protectionism. Russia's conquest values are estimated to be among the highest in the sample. This reflects the relatively poor market access conditions it enjoys at the estimated equilibrium. Because their economies are the largest in the sample, the gains that accrue from successfuly conquering the United States, China and the European Union tend to be larger than the gains from conquering other countries. Australia, Canada, and China have very few positive conquest values. This result obtains because of their governments' preferences for protectionism. Conquest stimulates trade that is disadvantageous when $v_i$ is high and trade barriers are relatively low due to the effects of coercion. This variation in conquest values highlights the dependence of the coercive environment on the underlying international economy.
+
+```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Estimated conquest value for each potential attacking country vis-à-vis each potential defending country. Darker colors indicate higher conquest values. \\label{fig:rcv}"), fig.height=5, dpi=300, fig.pos="t"}
+
+source(paste0("../", code_dir, "f_rcv.R"))
+
+rcv_hm
+
+```
+
+It is also straightforward to calculate the equilibrium probability of war once the model has been estimated by simply plugging parameter estimates back into the inverse cost distribution given in Equation \ref{eq:inv_costs}. Figure \ref{fig:pr_peace} plots point estimates and uncertainty intervals surrounding the likelihood of war between all pairs of countries in the sample. The threat of war with the United States looms large in the sample. The probabilities the United States attacks each other country in the sample are highlighted in orange in the Figure. Countries also run significant risks of war with the European Union.
+
+```{r pr_peace, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Estimated equilibrium probabilities of war, point estimates and 95 percent confidence intervals. Probabilities the United States attacks each other country highlighted in orange. \\label{fig:pr_peace}"), fig.height=5, dpi=300, fig.pos="t"}
+
+source(paste0("../", code_dir, "f_pr_peace.R"))
+
+war_probs_pp
+
+```
+
+It is worth noting that the countries with the highest estimated risk of war with the United States, Japan and Australia, happen to be U.S. allies. The security guarantees encapsulated in these allliances are not explicitly modeled. One way to interpret these results is that Australian and Japanese security would deteriorate rapidly in the absence of U.S. military protection, representing an implicit threat the United States can leverage to affect trade policy.
+
+## Model Fit
+
+plot and discuss average taus
+
+## Old
+
 *NOTE: Computing uncertainty intervals is computationally expensive and in-progress. I report and discuss point estimates here, with the necessary caution such preliminary discussion requires.*
 
-Recall that $v_i$ governs the ease with which governments can extract revenues from trade policy distortions. When $v_i$ is higher government $i$ prefers higher barriers to trade, all else equal. Estimates of these parameters are reported in Table \ref{tab:v_estsT}.
 
 
-```{r v_estsT, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+<!-- ```{r v_estsT, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 source("../02_figs/ccodes.R")
 
 kable(v_estsT, "latex", booktabs = T, caption = "Preference Parameter ($\\tilde{\\bm{v}}$) Estimates \\label{tab:v_estsT}", escape = FALSE) %>% kable_styling(position = "center")
 
-```
+``` -->
 
 With estimates of $v_i$ in hand, I can calculate each government's conquest value vis-à-vis all other governments. Recall that governments impose free trade on other governments when they defeat them in wars. Then, $j$'s counterfactual utility in this scenario can be readily calculated given knowledge of its objective function (\ref{eq:Ghat}). These values are shown in Figure \ref{fig:rcv}. Each cell measures the utility change each row government experiences when successfully conquering each column government, evaluated at estimated $v_i$. Darker colors correspond to larger changes in utility.
 
 In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These conquest values assist in the identification of the power projection and war cost parameters in $\bm{\theta}_m$.
 
-```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Conquest values evaluated at $\\tilde{\\bm{v}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \\label{fig:rcv}"), fig.height=4, dpi=300, fig.pos="t"}
+<!-- ```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Conquest values evaluated at $\\tilde{\\bm{v}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \\label{fig:rcv}"), fig.height=4, dpi=300, fig.pos="t"}
 
 source("../02_figs/rcv.R")
 rcvhm(rcv_eq, mint, maxt)
 
-```
+``` -->
 
 Recall that $\alpha$ governs how war costs respond to the distance between prospective adversaries and that $\gamma$ governs the effectiveness of military advantage in reducing war costs. When these parameters take the value of zero then geography and military advantage have no effect on the war cost distributions. I estimate $\alpha$ to be `r round(alpha1, 2)`, consistent with an inverse effect of distance on power projection capacity. In other words, I find no evidence of a loss of strength gradient. There are, however, substantial returns to military advantage. I estimate $\gamma$ to be `r round(gamma, 2)`, consistent with increasing returns to military advantage. In general, however, war is estimated to be quite costly. The scale parameter, $\hat{C}$ is estimated to be `r round(c_hat, 1)`, which renders war prohibitively costly for those that do not enjoy other advantages, such as military strength. In general, governments run very small risks of invasion from other governments. The exception to this rule is threats from the United States, which are estimated to play a significant role in many governments' calculations of optimal policy. This is the result of the United States' substantial military advantages over potential adversaries and the returns these are estimated to bring in the realm of trade policy.
 

@@ -58,6 +58,9 @@ point_size <- 1
 
 ### COUNTERFACTUAL 1 ###
 
+cfct1_trade <- cfct_X_L[["cfct_demilitarization_path"]] %>% filter(i_iso3!=j_iso3) %>% summarise(X_star=sum(X_star), X_prime=sum(X_prime))
+crct1_trade_ratio <- cfct1_trade$X_prime / cfct1_trade$X_star
+
 min_val <- min(c(cfct_X_L[["cfct_demilitarization_path"]]$X_prime_log, cfct_X_L[["cfct_demilitarization_path"]]$X_star_log), na.rm=T)
 max_val <- max(c(cfct_X_L[["cfct_demilitarization_path"]]$X_prime_log, cfct_X_L[["cfct_demilitarization_path"]]$X_star_log), na.rm=T)
 

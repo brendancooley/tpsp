@@ -27,7 +27,8 @@ rcv_melted <- quantiles_rcv %>% select(Var1, Var2, value)
 
 min_val <- min(rcv_melted$value, na.rm=T)
 max_val <- max(rcv_melted$value, na.rm=T)
+rcv_melted$value[rcv_melted$Var1==rcv_melted$Var2] <- NA
 
-rcv_hm <- hm(rcv_melted, min_val, max_val, x="Attacker", y="Defender", plot_title="Point Estimates: Positive Equilibrium War Values")
+rcv_hm <- hm(rcv_melted %>% filter(Var1!="RoW", Var2!="RoW"), min_val, max_val, x="Attacker", y="Defender", plot_title="Equilibrium Conquest Values")
 
 ggsave(setup$f_rcv_path)

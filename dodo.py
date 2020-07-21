@@ -160,6 +160,8 @@ def task_compile_results():
     }
 
 def task_sync_results():
+    # for mil_off
+    # doit sync_results:sync_results --mil_off True
     yield {
         'name': "sync_results",
         'params':[{'name':'mil_off',

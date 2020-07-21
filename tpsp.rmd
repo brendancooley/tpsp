@@ -86,19 +86,19 @@ options(scipen=999)
 
 # Model
 
-<!-- ```{r, child = paste0(sections_dir, "model.md")}
+```{r, child = paste0(sections_dir, "model.rmd")}
 ```
- -->
+
 
 # Estimation
 
-<!-- ```{r, child = paste0(sections_dir, "estimation.rmd")}
-``` -->
+```{r, child = paste0(sections_dir, "estimation.rmd")}
+```
 
 # Results
 
-<!-- ```{r, child = paste0(sections_dir, "results.rmd")}
-``` -->
+```{r, child = paste0(sections_dir, "results.rmd")}
+```
 
 # Counterfactual: Coercion-Free World
 

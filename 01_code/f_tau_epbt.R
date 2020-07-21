@@ -30,6 +30,8 @@ tau_melted$tau <- tau %>% as.matrix() %>% as.vector()
 tau_melted <- tau_melted %>% as_tibble()
 colnames(tau_melted) <- c("Var1", "Var2", "value")
 
+tau_mean <- tau_melted %>% filter(Var1 != Var2) %>% group_by(Var1) %>% summarise(tau_mean=mean(value))
+
 min_val <- min(tau_melted$value, na.rm=T)
 max_val <- max(tau_melted$value, na.rm=T)
 

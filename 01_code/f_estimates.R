@@ -4,7 +4,7 @@ for (i in sourceFiles) {
   source(paste0(sourceDir, i))
 }
 
-libs <- c("tidyverse", "reticulate")
+libs <- c("tidyverse", "reticulate", "patchwork")
 ipak(libs)
 
 use_virtualenv("python3")
@@ -22,6 +22,12 @@ quantiles_v <- read_csv(setup$quantiles_v_path, col_names=F)
 quantiles_v_mil_off <- read_csv(setup2$quantiles_v_path, col_names=F)
 
 ccodes <- read_csv(setup$ccodes_path, col_names=FALSE)
+
+Y <- read_csv(setup$Y_path, col_names=FALSE)
+M <- read_csv(setup$M_path, col_names=FALSE)
+
+costs <- cbind(ccodes, Y, M)
+colnames(costs) <- c("iso3", "Y", "M")
 
 #### CLEAN ####
 
@@ -47,6 +53,11 @@ pref_params_mo$coef <- ccodes %>% pull()
 pref_params_mo <- left_join(pref_params, pref_params_mo, by=c("coef"))
 pref_params_mo$coef <- fct_reorder(pref_params_mo$coef, rev(pref_params_mo$coef))
 
+costs$Y <- costs$Y / min(costs$Y)
+costs$M <- costs$M / min(costs$M)
+costs$c_mean <- costs$Y ** mil_params$q500[mil_params$coef=="alpha1"] * (costs$M / mean(costs$M)) ** mil_params$q500[mil_params$coef=="gamma"]
+costs$c_mean <- (costs$c_mean / max(costs$c_mean)) ** -1
+  
 ### PLOTS ####
 
 pref_plot <- ggplot(pref_params, aes(x=q500, y=coef)) +
@@ -54,7 +65,7 @@ pref_plot <- ggplot(pref_params, aes(x=q500, y=coef)) +
   geom_vline(xintercept=1, lty=2) +
   geom_segment(aes(xend=q025, x=q975, yend=coef, y=coef)) +
   theme_classic() +
-  labs(x="Estimate", y="Country", title="Preferences for Protectionism", subtitle="Point estimates and 95 percent confidence interval")
+  labs(x="Estimate", y="Country", title="Preferences for Protectionism", subtitle="Point estimates and 95 percent confidence intervals")
 
 ggsave(setup$f_estimates_pref_path, width=7, height=3.5)
 
@@ -66,7 +77,7 @@ pref_plot_mil_off <- ggplot(pref_params_mo, aes(x=q500, y=coef)) +
   geom_segment(aes(xend=mo_q025, x=mo_q975, yend=coef, y=coef, color="other"), position=position_nudge(y=-.25)) +
   scale_colour_manual(name='Model', values =c('other'=bcOrange,'black'='black'), labels=c('Coercion','Coercion-Free')) +
   theme_classic() +
-  labs(x="Estimate", y="Country", title="Preferences for Protectionism", subtitle="Point estimates and 95 percent confidence interval")
+  labs(x="Estimate", y="Country", title="Preferences for Protectionism", subtitle="Point estimates and 95 percent confidence intervals")
 
 ggsave(setup$f_estimates_pref_mo_path, width=7, height=3.5)
 
@@ -79,3 +90,14 @@ mil_plot <- ggplot(mil_params, aes(x=q500, y=coef_name)) +
 
 ggsave(setup$f_estimates_mil_path, width=7, height=3.5)
 
+# pref_plot / mil_plot + plot_layout(heights=c(2, 1))
+
+costs$iso3 <- fct_reorder(costs$iso3, costs$c_mean)
+
+costs_plot <- ggplot(costs %>% filter(!(iso3 %in% c("USA", "RoW"))), aes(x=iso3, y=c_mean)) +
+  geom_point(size=2) +
+  geom_hline(yintercept=1, lty=2) +
+  geom_segment(aes(yend=1, y=c_mean, xend=iso3, x=iso3)) +
+  theme_classic() +
+  labs(x="Country", y="War Cost (Base: USA)", title="War Costs Relative to USA", subtitle="For fixed adversary distance and military capability") +
+  theme(aspect.ratio=1)
