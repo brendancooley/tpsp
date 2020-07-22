@@ -43,24 +43,26 @@ welfare1 <- welfare1 %>% as_tibble()
 
 
 deltaG1 <- ggplot(data=welfare1, aes(x=iso3, y=G_frac, ymin=1, ymax=G_frac)) +
-    geom_linerange(color=bcOrange, size=.75, lty=2) +
-    geom_point(color=bcOrange, size=3) +
+    geom_linerange(color="black", size=.75) +
+    geom_point(color="black", size=2) +
     geom_hline(yintercept=1, lty=2) +
     theme_classic() +
-    labs(title="Effects of Military Coercion on Government Welfare", x="", y="Fractional Change in Gov. Welfare") +
+    labs(subtitle="Military Coercion and Government Welfare", x="", y="Fractional Change in Gov. Welfare") +
     scale_y_continuous(limit=c(min(welfare1$G_frac), max(welfare1$G_frac))) +
-    theme(axis.text.x=element_text(angle=60, hjust=1))
+    theme(axis.text.x=element_text(angle=60, hjust=1),
+          aspect.ratio=1)
 
 ggsave(setup$f_cfact_demilitarization_G_path)
 
 deltaU1 <- ggplot(data=welfare1, aes(x=iso3, y=U_frac, ymin=1, ymax=U_frac)) +
-  geom_linerange(color=bcOrange, size=.75, lty=2) +
-  geom_point(color=bcOrange, size=3) +
+  geom_linerange(color="black", size=.75) +
+  geom_point(color="black", size=2) +
   geom_hline(yintercept=1, lty=2) +
   theme_classic() +
-  labs(subtitle="Effects of Military Coercion on Consumer Welfare", x="", y="Fractional Change in Cons. Welfare") +
+  labs(subtitle="Military Coercion and Consumer Welfare", x="", y="Fractional Change in Cons. Welfare") +
   scale_y_continuous(limit=c(1, max(welfare1$U_frac))) +
-  theme(axis.text.x=element_text(angle=60, hjust=1))
+  theme(axis.text.x=element_text(angle=60, hjust=1),
+        aspect.ratio=1)
 
 ggsave(setup$f_cfact_demilitarization_U_path)
 

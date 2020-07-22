@@ -58,3 +58,4 @@ np.savetxt(r_base.setup.quantiles_Uhat1_path, quantiles["Uhat1"], delimiter=",")
 
 r_base_mil_off = results.results(location, size, mil_off=True)
 np.savetxt(r_base_mil_off.setup.quantiles_v_path, quantiles_mil_off["v"], delimiter=",")
+np.savetxt(r_base_mil_off.setup.quantiles_tau_path, quantiles_mil_off["tau"], delimiter=",")

@@ -43,11 +43,7 @@ Pc <- "NA"
 Pm <- "NA"
 Aeconomy <- "NA"
 AeconomyC <- "NA"
-Achat <- "NA"
-# Aproofs <- "NA"
-Aalphagamma <- "NA"
-Ampec <- "NA"
-AestimationAlg <- "NA"
+Afit <- "NA"
 
 # load references picked up later in document
 if (file.exists('references.RData')) load('references.RData')
@@ -100,57 +96,63 @@ options(scipen=999)
 ```{r, child = paste0(sections_dir, "results.rmd")}
 ```
 
-# Counterfactual: Coercion-Free World
+# Counterfactuals: Coercion and the World Economy
 
-<!-- ```{r, child = paste0(sections_dir, "counterfactuals.rmd")}
-``` -->
+```{r, child = paste0(sections_dir, "counterfactuals.rmd")}
+```
 
 
 # Conclusion
 
-<!-- ```{r, child = paste0(sections_dir, "conclusion.md")}
-``` -->
+```{r, child = paste0(sections_dir, "conclusion.md")}
+```
 
 \clearpage
 
 # Appendix
 
-<!-- ```{r Appendix Numbering, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+```{r Appendix Numbering, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 
-a <- 1
-
-# reset definition, assumption, proposition, lemma tickers
 Dtick <- 1
 Atick <- 1
 Ptick <- 1
 Ltick <- 1
 
-Aeconomy <- LETTERS[a]
-``` -->
+Appdx_tick <- 1
+Aeconomy <- LETTERS[Appdx_tick]
+
+```
 
 ## `r Aeconomy`: Economy
 
-<!-- ```{r, child = paste0(sections_dir, "Aeconomy.md")}
+```{r, child = paste0(sections_dir, "Aeconomy.md")}
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 
-a <- a + 1
+Appdx_tick <- Appdx_tick + 1
 
-# reset definition, assumption, proposition, lemma tickers
-Dtick <- 1
-Atick <- 1
-Ptick <- 1
-Ltick <- 1
+AeconomyC <- LETTERS[Appdx_tick]
 
-AeconomyC <- LETTERS[a]
-
-``` -->
+```
 
 ## `r AeconomyC`: Calibration of Economy
 
-<!-- ```{r, child = paste0(sections_dir, "AeconomyC.rmd")}
-``` -->
+```{r, child = paste0(sections_dir, "AeconomyC.rmd")}
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+Appdx_tick <- Appdx_tick + 1
+
+Afit <- LETTERS[Appdx_tick]
+
+```
+
+## `r Afit`: Other Measures of Model Fit
+
+```{r, child = paste0(sections_dir, "Afit.rmd")}
+```
 
 \clearpage
 

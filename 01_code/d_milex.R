@@ -48,6 +48,7 @@ milex <- bind_rows(milex, milex_f)
 
 M2030 <- milex %>% filter(year==2030) %>% arrange(iso3c)
 M2030$milex[M2030$iso3c=="RoW"] <- min(M2030$milex[M2030$milex > 0])
-M2030$milex <- M2030$milex / min(M2030$milex)
+write_csv(M2030$milex %>% as.data.frame(), setup$M2030_raw_path, col_names=F)
 
+M2030$milex <- M2030$milex / min(M2030$milex)
 write_csv(M2030$milex %>% as.data.frame(), setup$M2030_path, col_names=F)

@@ -168,7 +168,7 @@ $$
 This transformation reduces the vector of parameters to be calibrated to $\bm{\theta}_h = \left\{\theta, \beta, \nu_i, \right\}_{i \in \left\{ 1, ..., N \right\}}$.
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
-DeeqHat <- paste0(LETTERS[a], Dtick)
+DeeqHat <- paste0(LETTERS[Appdx_tick], Dtick)
 Dtick <- Dtick + 1
 
 DeeqHatText <- knit_child("../results/DeeqHat.md")

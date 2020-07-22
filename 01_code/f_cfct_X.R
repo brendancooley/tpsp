@@ -27,7 +27,7 @@ cfct_X_L <- list()
 
 for (i in cfct_names) {
   
-  print(i)
+  # print(i)
   X_prime <- read_csv(paste0(setup[[i]], "X_prime.csv"), col_names=FALSE) %>% as.matrix()
   X_diff <- X_prime - X_star
   
@@ -59,30 +59,33 @@ point_size <- 1
 ### COUNTERFACTUAL 1 ###
 
 cfct1_trade <- cfct_X_L[["cfct_demilitarization_path"]] %>% filter(i_iso3!=j_iso3) %>% summarise(X_star=sum(X_star), X_prime=sum(X_prime))
-crct1_trade_ratio <- cfct1_trade$X_prime / cfct1_trade$X_star
+cfct1_trade_ratio <- cfct1_trade$X_prime / cfct1_trade$X_star
 
 min_val <- min(c(cfct_X_L[["cfct_demilitarization_path"]]$X_prime_log, cfct_X_L[["cfct_demilitarization_path"]]$X_star_log), na.rm=T)
 max_val <- max(c(cfct_X_L[["cfct_demilitarization_path"]]$X_prime_log, cfct_X_L[["cfct_demilitarization_path"]]$X_star_log), na.rm=T)
 
 X_diff_pp_dm1 <- cfct_X_L[["cfct_demilitarization_path"]] %>% filter(i_iso3!=j_iso3) %>% ggplot(aes(x=X_star_log, y=i_iso3, color="black")) + 
   geom_point(size=point_size) +
-  geom_point(aes(x=X_prime_log, y=i_iso3, color="red"), alpha=0) +
+  geom_point(aes(x=X_prime_log, y=i_iso3, color=bcOrange), alpha=0) +
   scale_x_continuous(limits=c(min_val, max_val)) +
-  scale_color_manual("Equilibrium", values=c("black", "red"), labels=c("Coercive", "Non-Coercive"), guide="legend") +
+  scale_color_manual("Equilibrium", values=c(bcOrange, "black"), labels=c("Coercion-Free", "Baseline"), guide="legend") +
   theme_classic() +
   theme(axis.ticks.x=element_blank(),
         axis.text.x=element_blank()) +
-  labs(x="Trade Flows", y="Trade Partner", title="Effect of Coercion on International Trade", subtitle=paste0("Change in (Log) Imports")) +
+  labs(x="(Log) Value of Imports", y="Trade Partner", title="Effect of Coercion on International Trade", subtitle=paste0("Change in (Log) Imports")) +
   facet_wrap(~j_iso3, nrow=2)
 
 X_diff_pp_dm2 <- X_diff_pp_dm1 + 
   scale_x_continuous(limits=c(min_val, max_val)) +
-  geom_point(aes(x=X_prime_log, y=i_iso3, color="red"), size=point_size) +
-  geom_segment(aes(x=X_prime_log, xend=X_star_log, y=i_iso3, yend=i_iso3))
+  geom_point(aes(x=X_prime_log, y=i_iso3, color=bcOrange), size=point_size) +
+  geom_segment(aes(x=X_prime_log, xend=X_star_log, y=i_iso3, yend=i_iso3, color=bcOrange))
 
 ggsave(setup$f_cfact_demilitarization_Xprime_path)
 
 ### COUNTERFACTUAL 2 ###
+
+cfct2_trade <- cfct_X_L[["cfct_china_path"]] %>% filter(i_iso3!=j_iso3) %>% summarise(X_star=sum(X_star), X_prime=sum(X_prime))
+cfct2_trade_ratio <- cfct2_trade$X_prime / cfct2_trade$X_star
 
 X_diff_pp_china <- cfct_X_L[["cfct_china_path"]] %>% filter(i_iso3!=j_iso3) %>% ggplot(aes(x=X_star_log, y=i_iso3, color="black")) + 
   geom_point(size=point_size) +

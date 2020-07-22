@@ -34,25 +34,50 @@ quantiles_tau$tau_prime3 <- tau_prime3 %>% as.matrix() %>% t() %>% as.vector()
 quantiles_tau$tau_prime4 <- tau_prime4 %>% as.matrix() %>% t() %>% as.vector()
 quantiles_tau <- quantiles_tau %>% filter(i_iso3!=j_iso3)
 
+# quantiles_tau %>% filter(j_iso3=="EU")
+
+### COUNTERFACTUAL 1 ###
+
+min_val <- min(c(quantiles_tau$tau_prime1, quantiles_tau$tau_q500), na.rm=T)
+max_val <- max(c(quantiles_tau$tau_prime1, quantiles_tau$tau_q500), na.rm=T)
+
+tau_pp_demilitarization <- quantiles_tau %>% ggplot(aes(x=tau_q500, y=i_iso3, color="black")) + 
+  geom_point(size=1) +
+  geom_point(aes(x=tau_prime1, y=i_iso3, color=bcOrange), alpha=0) +
+  geom_vline(xintercept=1, lty=2) +
+  scale_x_continuous(limits=c(min_val, max_val)) +
+  scale_color_manual("Equilibrium", values=c(bcOrange, "black"), labels=c("Coercion-Free", "Baseline"), guide="legend") +
+  theme_classic() +
+  theme(axis.ticks.x=element_blank(),
+        axis.text.x=element_blank()) +
+  labs(x="Trade Policy", y="Trade Partner", title="Effect of Coercion on Trade Policies ", subtitle=paste0("Changes in Protectionism")) +
+  facet_wrap(~j_iso3, nrow=2) +
+  scale_x_continuous(limits=c(min_val, max_val)) +
+  geom_point(aes(x=tau_prime1, y=i_iso3, color=bcOrange), size=1) +
+  geom_segment(aes(x=tau_prime1, xend=tau_q500, y=i_iso3, yend=i_iso3, color=bcOrange))
+
 ### COUNTERFACTUAL 2 ###
 
 min_val <- min(c(quantiles_tau$tau_prime2, quantiles_tau$tau_q500), na.rm=T)
 max_val <- max(c(quantiles_tau$tau_prime2, quantiles_tau$tau_q500), na.rm=T)
 
-tau_pp_china <- quantiles_tau %>% ggplot(aes(x=tau_q500, y=i_iso3, color="black")) + 
+quantiles_tau_china <- quantiles_tau %>% filter(j_iso3=="CHN")
+# quantiles_tau_china <- quantiles_tau
+tau_pp_china <- quantiles_tau_china %>% ggplot(aes(x=tau_q500, y=i_iso3, color="black")) + 
   geom_point(size=1) +
-  geom_point(aes(x=tau_prime2, y=i_iso3, color="red"), alpha=0) +
+  geom_point(aes(x=tau_prime2, y=i_iso3, color=bcOrange), alpha=0) +
   geom_vline(xintercept=1, lty=2) +
   scale_x_continuous(limits=c(min_val, max_val)) +
-  scale_color_manual("Equilibrium", values=c("black", "red"), labels=c("Baseline", "2030 Projected Military Capability"), guide="legend") +
+  scale_color_manual("Equilibrium", values=c(bcOrange, "black"), labels=c("2030 Projected Military Capability", "Baseline"), guide="legend") +
   theme_classic() +
   theme(axis.ticks.x=element_blank(),
         axis.text.x=element_blank()) +
-  labs(x="Trade Policy", y="Trade Partner", title="Effect of Multipolarization on Trade Policies ", subtitle=paste0("Changes in Protectionism")) +
-  facet_wrap(~j_iso3, nrow=2) +
+  labs(x="Trade Policy", y="Trade Partner", title="Effect of Multipolarization on Chinese Trade Policies ", subtitle=paste0("Changes in Protectionism")) +
+  # facet_wrap(~j_iso3, nrow=2) +
+  theme(aspect.ratio=1) +
   scale_x_continuous(limits=c(min_val, max_val)) +
-  geom_point(aes(x=tau_prime2, y=i_iso3, color="red"), size=1) +
-  geom_segment(aes(x=tau_prime2, xend=tau_q500, y=i_iso3, yend=i_iso3))
+  geom_point(aes(x=tau_prime2, y=i_iso3, color=bcOrange), size=1) +
+  geom_segment(aes(x=tau_prime2, xend=tau_q500, y=i_iso3, yend=i_iso3), color=bcOrange)
 
 ggsave(setup$f_cfact_china_tau_path)
 

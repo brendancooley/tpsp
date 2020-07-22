@@ -84,4 +84,4 @@ $$
 \hat{H}_i \left( \hat{\tilde{\bm{\tau}}}; \bm{Z}, \bm{\theta}_m \right) = \exp \left( - \sum_{j \neq i} - \frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} W_{ji}^{-\alpha_1} Y_j^{-\alpha_2} \left( \hat{V}_j \left( \bm{1}_i; \tilde{\bm{\tau}}_{-i} \right) - \hat{V}_j \left( \hat{\tilde{\bm{\tau}}} \right) \right)^{-\eta} \right) .
 $$
 
-Let $\hat{\tilde{\bm{\tau}}}_i^\star(\hat{\tilde{\bm{\tau}}}_{-i})$ denote a solution to policy change proposal problem and $\hat{\tilde{\bm{\tau}}}^\star$ a Nash equilibrium of this policy change announcement game. 
+Let $\hat{\tilde{\bm{\tau}}}_i^\star(\hat{\tilde{\bm{\tau}}}_{-i})$ denote a solution to policy change proposal problem and $\hat{\tilde{\bm{\tau}}}^\star(\bm{\theta}_m; \bm{Z}_m)$ a Nash equilibrium of this policy change announcement game. 

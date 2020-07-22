@@ -40,15 +40,15 @@ war_probs_hm <- hm(war_probs_melted, min_val, max_val, x="Attacker", y="Defender
 
 ggsave(setup$f_pr_peace_path)
 
-quantiles_pp <- quantiles_pp %>% filter(Var1 != Var2, Var1 !="RoW", Var2 != "RoW") %>% arrange(pp_q500)
-quantiles_pp$ddyad <- paste0(quantiles_pp$Var2, "-", quantiles_pp$Var1) %>% as.factor()
-quantiles_pp$ddyad <- fct_reorder(quantiles_pp$ddyad, quantiles_pp$pp_q500, .desc=TRUE)
-quantiles_pp$label <- ifelse(quantiles_pp$pp_q500 < .65, as.character(quantiles_pp$ddyad), "")
-quantiles_pp$USA <- ifelse(quantiles_pp$Var2=="USA", bcOrange, "black")
+quantiles_pp2 <- quantiles_pp %>% filter(Var1 != Var2, Var1 !="RoW", Var2 != "RoW") %>% arrange(pp_q500)
+quantiles_pp2$ddyad <- paste0(quantiles_pp2$Var2, "-", quantiles_pp2$Var1) %>% as.factor()
+quantiles_pp2$ddyad <- fct_reorder(quantiles_pp2$ddyad, quantiles_pp2$pp_q500, .desc=TRUE)
+quantiles_pp2$label <- ifelse(quantiles_pp2$pp_q500 < .5, as.character(quantiles_pp2$ddyad), "")
+quantiles_pp2$USA <- ifelse(quantiles_pp2$Var2=="USA", bcOrange, "black")
 
-war_probs_pp <- quantiles_pp %>% ggplot(aes(x=ddyad, y=1-pp_q500, label=label)) +
-  geom_point(size=.5, color=quantiles_pp$USA) + 
-  geom_segment(aes(x=ddyad, xend=ddyad, y=1-pp_q025, yend=1-pp_q975), color=quantiles_pp$USA) +
+war_probs_pp <- quantiles_pp2 %>% ggplot(aes(x=ddyad, y=1-pp_q500, label=label)) +
+  geom_point(size=.5, color=quantiles_pp2$USA) + 
+  geom_segment(aes(x=ddyad, xend=ddyad, y=1-pp_q025, yend=1-pp_q975), color=quantiles_pp2$USA) +
   geom_text_repel() +
   geom_hline(yintercept=0, lty=2) +
   theme_classic() +
@@ -56,6 +56,32 @@ war_probs_pp <- quantiles_pp %>% ggplot(aes(x=ddyad, y=1-pp_q500, label=label)) 
         axis.ticks.x=element_blank(),
         aspect.ratio=1) +
   labs(x="Directed Dyad", y="Probability of War", title="Equilibrium Probabilities of War", subtitle="All directed dyads, point estimates and 95 percent confidence intervals")
+
+### CHINESE LIBERALIZATION COUNTERFACTUAL ###
+
+pp_prime4 <- read_csv(paste0(setup$cfct_china_v_path, "pp.csv"), col_names=F) %>% as.matrix() %>% t() %>% as.numeric()
+
+quantiles_pp$pp_prime4 <- pp_prime4
+quantiles_pp4 <- quantiles_pp %>% filter(Var1 != Var2, Var1 !="RoW", Var2 != "RoW") %>% arrange(pp_q500)
+quantiles_pp4$ddyad <- paste0(quantiles_pp4$Var2, "-", quantiles_pp4$Var1) %>% as.factor()
+quantiles_pp4$ddyad <- fct_reorder(quantiles_pp4$ddyad, quantiles_pp4$pp_q500, .desc=TRUE)
+quantiles_pp4$Var2 <- fct_reorder(quantiles_pp4$Var2, quantiles_pp4$pp_q500, .desc=TRUE)
+
+pw_USA <- 1 - quantiles_pp4 %>% filter(Var1=="CHN", Var2=="USA") %>% pull(pp_q500)
+pw4_USA <- 1 - quantiles_pp4 %>% filter(Var1=="CHN", Var2=="USA") %>% pull(pp_prime4)
+
+# quantiles_pp4 %>% arrange(desc(pp_prime4)) %>% print(n=100)
+war_probs_pp4 <- quantiles_pp4 %>% filter(Var1=="CHN") %>% ggplot(aes(x=Var2, y=1-pp_q500, color="black")) +
+  geom_point(size=.5) + 
+  geom_point(aes(x=Var2, y=1-pp_prime4, color=bcOrange), size=.5) +
+  geom_segment(aes(x=Var2, xend=Var2, y=1-pp_prime4, yend=1-pp_q500), color=bcOrange) +
+  scale_color_manual("Equilibrium", values=c(bcOrange, "black"), labels=c("Preference Liberalization", "Baseline"), guide="legend") +
+  geom_hline(yintercept=0, lty=2) +
+  theme_classic() +
+  theme(aspect.ratio=1) +
+  labs(x="Directed Dyad", y="Probability of War", title="China: Probability of Invasion", subtitle="Change after preference liberalization")
+
+### OLD ### 
 
 # quantiles_pp %>% filter(Var2=="USA")
 
@@ -71,4 +97,4 @@ war_probs_pp <- quantiles_pp %>% ggplot(aes(x=ddyad, y=1-pp_q500, label=label)) 
 #   theme_classic() +
 #   theme(axis.ticks.x=element_blank(),
 #         axis.text.x=element_blank()) +
-  facet_wrap(~Var1, nrow=2)
+#  facet_wrap(~Var1, nrow=2)

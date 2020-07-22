@@ -8,6 +8,8 @@ setup <- c_setup$setup("local", size)
 USA_id <- which(ccodes=="USA")
 CHN_id <- which(ccodes=="CHN")
 
+source(paste0("../", code_dir, "f_fit.R"))
+
 ```
 
 ```{r ests, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Model parameter estimates and 95 percent confidence intervals. The top panel shows protectionism preference parameter estimates ($v_i$) for each country. The bottom panel shows parameter estimates for observables affecting costs of war ($\\gamma, \\alpha_1, \\alpha_2$). \\label{fig:ests}"), fig.height=6, dpi=300, fig.pos="t"}
@@ -42,9 +44,9 @@ rcv_hm
 
 ```
 
-It is also straightforward to calculate the equilibrium probability of war once the model has been estimated by simply plugging parameter estimates back into the inverse cost distribution given in Equation \ref{eq:inv_costs}. Figure \ref{fig:pr_peace} plots point estimates and uncertainty intervals surrounding the likelihood of war between all pairs of countries in the sample. The threat of war with the United States looms large in the sample. The probabilities the United States attacks each other country in the sample are highlighted in orange in the Figure. Countries also run significant risks of war with the European Union.
+It is also straightforward to calculate the equilibrium probability of war once the model has been estimated by simply plugging parameter estimates back into the inverse cost distribution given in Equation \ref{eq:inv_costs}. Figure \ref{fig:pr_peace} plots point estimates and uncertainty intervals surrounding the likelihood of war between all pairs of countries in the sample. In general, governments run very small risks of invasion from other governments. However, the threat of war with the United States looms large in the sample. The probabilities the United States attacks each other country in the sample are highlighted in orange in the Figure. The European Union is also estimated to impose substantial threats.
 
-```{r pr_peace, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Estimated equilibrium probabilities of war, point estimates and 95 percent confidence intervals. Probabilities the United States attacks each other country highlighted in orange. \\label{fig:pr_peace}"), fig.height=5, dpi=300, fig.pos="t"}
+```{r war_probs, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Estimated equilibrium probabilities of war, point estimates and 95 percent confidence intervals. Probabilities the United States attacks each other country highlighted in orange. \\label{fig:pr_peace}"), fig.height=5, dpi=300, fig.pos="t"}
 
 source(paste0("../", code_dir, "f_pr_peace.R"))
 
@@ -54,35 +56,26 @@ war_probs_pp
 
 It is worth noting that the countries with the highest estimated risk of war with the United States, Japan and Australia, happen to be U.S. allies. The security guarantees encapsulated in these allliances are not explicitly modeled. One way to interpret these results is that Australian and Japanese security would deteriorate rapidly in the absence of U.S. military protection, representing an implicit threat the United States can leverage to affect trade policy.
 
-## Model Fit
+## Model Fit and Inferences about Policy Preferences
 
-plot and discuss average taus
+```{r fit, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Correlation between trade barrier data and model predictions. \\label{fig:fit}"), fig.height=5, dpi=300, fig.pos="t"}
 
-## Old
+# source(paste0("../", code_dir, "f_fit.R"))
 
-*NOTE: Computing uncertainty intervals is computationally expensive and in-progress. I report and discuss point estimates here, with the necessary caution such preliminary discussion requires.*
+fit
 
+```
 
+Figure \ref{fig:fit} evaluates the ability of the estimated model to predict the level of trade barriers. The model's mean absolute error is `r round(fit_mae, 2)`. The model's predictions are fairly well correlated with the trade barrier data ($\rho=$ `r round(fit_rho, 2)`). In Appendix `r Afit` I plot the model's predictive error for each directed dyad in the sample, higlighting which observations are well explained by the model and which are not. Of note, Russia faces uniquely poor market access conditions in the data that the model does not fully replicate.
 
+```{r ests_mil_off, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Effect of modeling military coercion on inferences about governments' preferences for protectionism. Figure plots point estimates and 95 percent confidence intervals for preference parameters under baseline model and model in which coercion is impossible. \\label{fig:ests_mil_off}"), fig.height=4, dpi=300, fig.pos="t"}
 
-<!-- ```{r v_estsT, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+# source(paste0("../", code_dir, "f_estimates.R"))
+pref_plot_mil_off
 
-source("../02_figs/ccodes.R")
+```
 
-kable(v_estsT, "latex", booktabs = T, caption = "Preference Parameter ($\\tilde{\\bm{v}}$) Estimates \\label{tab:v_estsT}", escape = FALSE) %>% kable_styling(position = "center")
+Modeling coercion explicitly both improves model fit and alters inferences about government's underlying preferences for protectionism. I re-estimate the model under the assumption that coercion is impossible. Equilibrium policies reflect only governments' underlying preferences, $v_i$. Estimated preferences for protectionism under this model are shown in \ref{fig:ests_mil_off}. The estimated preferences of militarily powerful countries are largely unchanged across models. This is not true for less powerful countries. The estimated preferences of Australia, Canada, and China move dramatically when coercion is prohibited. The model developed here rationalizes their trade barriers as the result of highly protectionist latent preferences tempered by the effects of international coercion. The coercion-free model instead infers instead that they are relatively liberal in their preferences. Leaving coercion out of the model exerts downward bias on estimates of governments' welfare-mindedness. A large literature employs the equilibrium trade policies of @Grossman1994 or @Grossman1995 to estimate the weight governments place on the welfare of special interests relative to that of society at large [@Goldberg1999; @Mitra2006; @Gawande2009; @Gawande2012; @Ossa2014; @Gawande2015]. Because the "protection for sale" model incorporates no theory of international coercion, these studies over-estimate governments' social welfare conciousness. 
 
-``` -->
-
-With estimates of $v_i$ in hand, I can calculate each government's conquest value vis-à-vis all other governments. Recall that governments impose free trade on other governments when they defeat them in wars. Then, $j$'s counterfactual utility in this scenario can be readily calculated given knowledge of its objective function (\ref{eq:Ghat}). These values are shown in Figure \ref{fig:rcv}. Each cell measures the utility change each row government experiences when successfully conquering each column government, evaluated at estimated $v_i$. Darker colors correspond to larger changes in utility.
-
-In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These conquest values assist in the identification of the power projection and war cost parameters in $\bm{\theta}_m$.
-
-<!-- ```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Conquest values evaluated at $\\tilde{\\bm{v}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \\label{fig:rcv}"), fig.height=4, dpi=300, fig.pos="t"}
-
-source("../02_figs/rcv.R")
-rcvhm(rcv_eq, mint, maxt)
-
-``` -->
-
-Recall that $\alpha$ governs how war costs respond to the distance between prospective adversaries and that $\gamma$ governs the effectiveness of military advantage in reducing war costs. When these parameters take the value of zero then geography and military advantage have no effect on the war cost distributions. I estimate $\alpha$ to be `r round(alpha1, 2)`, consistent with an inverse effect of distance on power projection capacity. In other words, I find no evidence of a loss of strength gradient. There are, however, substantial returns to military advantage. I estimate $\gamma$ to be `r round(gamma, 2)`, consistent with increasing returns to military advantage. In general, however, war is estimated to be quite costly. The scale parameter, $\hat{C}$ is estimated to be `r round(c_hat, 1)`, which renders war prohibitively costly for those that do not enjoy other advantages, such as military strength. In general, governments run very small risks of invasion from other governments. The exception to this rule is threats from the United States, which are estimated to play a significant role in many governments' calculations of optimal policy. This is the result of the United States' substantial military advantages over potential adversaries and the returns these are estimated to bring in the realm of trade policy.
+Modeling coercion explicitly also improves model fit substantially. The correlation coefficient between model predictions and observed trade barriers falls to `r round(fit_rho_mo, 2)` when coercion is prohibited. The mean absolute error increases `r round((fit_mae_mo / fit_mae - 1)*100, 1)` percent to `r round(fit_mae_mo, 2)`. In Appendix `r Afit` I replicate Figure \ref{fig:fit} for the coercion-free model. 
 

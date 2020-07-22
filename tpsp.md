@@ -42,7 +42,7 @@ Assessing the effect of military power on trade policy requires imagining what p
 
 I proceed in three steps to untangle power and preferences as determinants of trade policies. First, I model a coercive international political economy in which governments propose trade policies, observe others proposals, and choose whether or not to fight wars in bids to modify these. The model's equilibrium depends on a vector of parameters governing governments' preferences for protectionism and costs of war, which in turn depend on the military strengths of potential belligerents and the geographic distance between them. I then estimate these parameters by minimizing the distance between the model's predictions and observed policies in 2011. Finally, I answer the question posed here: how does military coercion affect trade policy? With estimates for the model's parameters in hand, this question can be answered by a simple counterfactual experiment — eliminate governments' military capacity, and recalculate the model's equilibrium. The difference between counterfactual equilibrium policies and the factual policies represents the net effect of military coercion on trade policy.
 
-I find that there are increasing returns to military advantage in international trade policy bargaining. Governments that are militarily powerful are estimated to enjoy lower costs of war, which they exploit to coerce policy concessions from their trade partners. In this sense, military might is a force for trade liberalization, inducing reductions in barriers to trade that governments would be unwilling to undertake in the absence of coercion. These reductions in barriers to trade stimulate international economic exchange. Counterfactually eliminating militaries results in a 38.6 percent reduction in the value of international trade. I estimate that the effectiveness of military coercion does not degrade across space -- in fact, governments are estimated to enjoy lower average costs of war against geographically distant adversaries. This may reflect the peculiarities of war in the era under study, in which geographic distance represents a minimal impediment to the projection of power. 
+I find that there are increasing returns to military advantage in international trade policy bargaining. Governments that are militarily powerful are estimated to enjoy lower costs of war, which they exploit to coerce policy concessions from their trade partners. In this sense, military might is a force for trade liberalization, inducing reductions in barriers to trade that governments would be unwilling to undertake in the absence of coercion. These reductions in barriers to trade stimulate international economic exchange. Counterfactually eliminating militaries reduces the value of global trade to 38.6 percent of its model-estimated value. I estimate that the effectiveness of military coercion does not degrade across space -- in fact, governments are estimated to enjoy lower average costs of war against geographically distant adversaries. This may reflect the peculiarities of war in the era under study, in which geographic distance represents a minimal impediment to the projection of power. 
 
 In the model, governments choose trade policies to maximize a country-specific social welfare function. Each government's trade policy is a set of taxes, one for each importing country, imposed on imports. Notably, trade policies can be discriminatory, affecting certain source countries disproportionately. A model of the international economy connects trade policy choices to social welfare.^[The model of the international economy is a variant of the workhorse model of @Eaton2002. @Costinot2015 study a broader class of structural gravity models that connect trade frictions (such as trade policy) to trade and welfare outcomes.] After observing trade policies, governments may choose to fight wars against other governments in order to impose free trade. The threat of war constrains threatened governments and affects their trade policy choices. The costs of war depend on the potential bellligerents' relative military strengths' on the geographic distance between them.
 
@@ -258,7 +258,7 @@ $$
 \hat{H}_i \left( \hat{\tilde{\bm{\tau}}}; \bm{Z}, \bm{\theta}_m \right) = \exp \left( - \sum_{j \neq i} - \frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} W_{ji}^{-\alpha_1} Y_j^{-\alpha_2} \left( \hat{V}_j \left( \bm{1}_i; \tilde{\bm{\tau}}_{-i} \right) - \hat{V}_j \left( \hat{\tilde{\bm{\tau}}} \right) \right)^{-\eta} \right) .
 $$
 
-Let $\hat{\tilde{\bm{\tau}}}_i^\star(\hat{\tilde{\bm{\tau}}}_{-i})$ denote a solution to policy change proposal problem and $\hat{\tilde{\bm{\tau}}}^\star$ a Nash equilibrium of this policy change announcement game. 
+Let $\hat{\tilde{\bm{\tau}}}_i^\star(\hat{\tilde{\bm{\tau}}}_{-i})$ denote a solution to policy change proposal problem and $\hat{\tilde{\bm{\tau}}}^\star(\bm{\theta}_m; \bm{Z}_m)$ a Nash equilibrium of this policy change announcement game. 
 
 
 # Estimation
@@ -266,13 +266,13 @@ Let $\hat{\tilde{\bm{\tau}}}_i^\star(\hat{\tilde{\bm{\tau}}}_{-i})$ denote a sol
 
 The model's equilibrium, $\hat{\tilde{\bm{\tau}}}^\star$ depends on a vector of unknown parameters $\bm{\theta}_m = \left( \bm{v}, \alpha_1, \alpha_2, \gamma \right)$. I assume observed policies are generated by the model up to measurement error
 $$
-\tilde{\bm{\tau}} = \tilde{\bm{\tau}}^\star(\bm{\theta}_m) + \bm{\epsilon} . 
+\tilde{\bm{\tau}} = \tilde{\bm{\tau}}^\star(\bm{\theta}_m, \bm{Z}_m) + \bm{\epsilon} . 
 $$
 $\bm{\epsilon}$ is an $N \times N$ matrix with $\epsilon_{ii} = 0$ for all $i$ and $\E[\epsilon_{ij}] = 0$ for all $i \neq j$. Recall that $\tilde{\bm{\tau}}^\star$ can be reconstructed from $\hat{\tilde{\bm{\tau}}}^\star$, the model's equilibrium, by simply multiplying equilibrium policies by factual policies, $\bm{\tau}$.
 
 Following the assumption that measurement error is mean-zero, I seek an estimator that solves
 \begin{equation} \label{eq:estimator}
-\min_{\bm{\theta}_m} \sum_i \sum_j \left( \epsilon_{ij}(\bm{\theta}_m) \right)^2 .
+\min_{\bm{\theta}_m} \sum_i \sum_j \left( \epsilon_{ij}(\bm{\theta}_m, \bm{Z}_m) \right)^2 .
 \end{equation}
 
 Solving this problem presents two computational challenges. First, computing government welfare changes for any given $\hat{\bm{\tau}}$ requires solving system of equations characterizing the equilibrium of the international economy, $\hat{h}(\hat{\bm{\tau}})$. These changes must be computed for both the proposed policies and for policies imposed by each potential war. Second, computing $\tilde{\bm{\tau}}^\star(\bm{\theta}_m)$ requires iteratively solving each government's best response problem until covergence at a Nash equilibrium. I sidestep both of these by recasting the best response problem and estimation problem as mathematical programs with equilibrium constraints (MPECs) [@Su2012; @Ossa2014; @Ossa2016].
@@ -324,80 +324,297 @@ The model estimates can be readily transformed to deliver empirical quantities t
 
 ![Estimated conquest value for each potential attacking country vis-à-vis each potential defending country. Darker colors indicate higher conquest values. \label{fig:rcv}](figure/rcv-1.png)
 
-It is also straightforward to calculate the equilibrium probability of war once the model has been estimated by simply plugging parameter estimates back into the inverse cost distribution given in Equation \ref{eq:inv_costs}. Figure \ref{fig:pr_peace} plots point estimates and uncertainty intervals surrounding the likelihood of war between all pairs of countries in the sample. The threat of war with the United States looms large in the sample. The probabilities the United States attacks each other country in the sample are highlighted in orange in the Figure. Countries also run significant risks of war with the European Union.
+It is also straightforward to calculate the equilibrium probability of war once the model has been estimated by simply plugging parameter estimates back into the inverse cost distribution given in Equation \ref{eq:inv_costs}. Figure \ref{fig:pr_peace} plots point estimates and uncertainty intervals surrounding the likelihood of war between all pairs of countries in the sample. In general, governments run very small risks of invasion from other governments. However, the threat of war with the United States looms large in the sample. The probabilities the United States attacks each other country in the sample are highlighted in orange in the Figure. The European Union is also estimated to impose substantial threats.
 
-![Estimated equilibrium probabilities of war, point estimates and 95 percent confidence intervals. Probabilities the United States attacks each other country highlighted in orange. \label{fig:pr_peace}](figure/pr_peace-1.png)
+![Estimated equilibrium probabilities of war, point estimates and 95 percent confidence intervals. Probabilities the United States attacks each other country highlighted in orange. \label{fig:pr_peace}](figure/war_probs-1.png)
 
 It is worth noting that the countries with the highest estimated risk of war with the United States, Japan and Australia, happen to be U.S. allies. The security guarantees encapsulated in these allliances are not explicitly modeled. One way to interpret these results is that Australian and Japanese security would deteriorate rapidly in the absence of U.S. military protection, representing an implicit threat the United States can leverage to affect trade policy.
 
-## Model Fit
+## Model Fit and Inferences about Policy Preferences
 
-plot and discuss average taus
+![Correlation between trade barrier data and model predictions. \label{fig:fit}](figure/fit-1.png)
 
-## Old
+Figure \ref{fig:fit} evaluates the ability of the estimated model to predict the level of trade barriers. The model's mean absolute error is 0.27. The model's predictions are fairly well correlated with the trade barrier data ($\rho=$ 0.68). In Appendix C I plot the model's predictive error for each directed dyad in the sample, higlighting which observations are well explained by the model and which are not. Of note, Russia faces uniquely poor market access conditions in the data that the model does not fully replicate.
 
-*NOTE: Computing uncertainty intervals is computationally expensive and in-progress. I report and discuss point estimates here, with the necessary caution such preliminary discussion requires.*
+![Effect of modeling military coercion on inferences about governments' preferences for protectionism. Figure plots point estimates and 95 percent confidence intervals for preference parameters under baseline model and model in which coercion is impossible. \label{fig:ests_mil_off}](figure/ests_mil_off-1.png)
 
+Modeling coercion explicitly both improves model fit and alters inferences about government's underlying preferences for protectionism. I re-estimate the model under the assumption that coercion is impossible. Equilibrium policies reflect only governments' underlying preferences, $v_i$. Estimated preferences for protectionism under this model are shown in \ref{fig:ests_mil_off}. The estimated preferences of militarily powerful countries are largely unchanged across models. This is not true for less powerful countries. The estimated preferences of Australia, Canada, and China move dramatically when coercion is prohibited. The model developed here rationalizes their trade barriers as the result of highly protectionist latent preferences tempered by the effects of international coercion. The coercion-free model instead infers instead that they are relatively liberal in their preferences. Leaving coercion out of the model exerts downward bias on estimates of governments' welfare-mindedness. A large literature employs the equilibrium trade policies of @Grossman1994 or @Grossman1995 to estimate the weight governments place on the welfare of special interests relative to that of society at large [@Goldberg1999; @Mitra2006; @Gawande2009; @Gawande2012; @Ossa2014; @Gawande2015]. Because the "protection for sale" model incorporates no theory of international coercion, these studies over-estimate governments' social welfare conciousness. 
 
-
-
-<!-- ```{r v_estsT, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-
-source("../02_figs/ccodes.R")
-
-kable(v_estsT, "latex", booktabs = T, caption = "Preference Parameter ($\\tilde{\\bm{v}}$) Estimates \\label{tab:v_estsT}", escape = FALSE) %>% kable_styling(position = "center")
-
-``` -->
-
-With estimates of $v_i$ in hand, I can calculate each government's conquest value vis-à-vis all other governments. Recall that governments impose free trade on other governments when they defeat them in wars. Then, $j$'s counterfactual utility in this scenario can be readily calculated given knowledge of its objective function (\ref{eq:Ghat}). These values are shown in Figure \ref{fig:rcv}. Each cell measures the utility change each row government experiences when successfully conquering each column government, evaluated at estimated $v_i$. Darker colors correspond to larger changes in utility.
-
-In the model, peace requires that the probabilistic benefits of war do not exceed war's cost for each directed pair of governments. These conquest values assist in the identification of the power projection and war cost parameters in $\bm{\theta}_m$.
-
-<!-- ```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Conquest values evaluated at $\\tilde{\\bm{v}}$. Each cell corresponds to the change in utility an attacking country (row) receives for successfully invading the each defending country (column). Darker values correspond to higher utility changes. \\label{fig:rcv}"), fig.height=4, dpi=300, fig.pos="t"}
-
-source("../02_figs/rcv.R")
-rcvhm(rcv_eq, mint, maxt)
-
-``` -->
-
-Recall that $\alpha$ governs how war costs respond to the distance between prospective adversaries and that $\gamma$ governs the effectiveness of military advantage in reducing war costs. When these parameters take the value of zero then geography and military advantage have no effect on the war cost distributions. I estimate $\alpha$ to be -0.55, consistent with an inverse effect of distance on power projection capacity. In other words, I find no evidence of a loss of strength gradient. There are, however, substantial returns to military advantage. I estimate $\gamma$ to be 1.54, consistent with increasing returns to military advantage. In general, however, war is estimated to be quite costly. The scale parameter, $\hat{C}$ is estimated to be 523.1, which renders war prohibitively costly for those that do not enjoy other advantages, such as military strength. In general, governments run very small risks of invasion from other governments. The exception to this rule is threats from the United States, which are estimated to play a significant role in many governments' calculations of optimal policy. This is the result of the United States' substantial military advantages over potential adversaries and the returns these are estimated to bring in the realm of trade policy.
+Modeling coercion explicitly also improves model fit substantially. The correlation coefficient between model predictions and observed trade barriers falls to 0.45 when coercion is prohibited. The mean absolute error increases 19.9 percent to 0.32. In Appendix C I replicate Figure \ref{fig:fit} for the coercion-free model. 
 
 
-# Counterfactual: Coercion-Free World
+# Counterfactuals: Coercion and the World Economy
 
-<!-- ```{r, child = paste0(sections_dir, "counterfactuals.rmd")}
-``` -->
+
+
+
+How does the shadow of coercion affect the functioning of the world economy? How would patterns of trade and trade protectionism change if governments' power resources or preferences were modified? With model estimates computed, this class of questions can be addressed through recomputing the model's equilibrium at alternative sets of parameters or data. In other words, compute $\tilde{\bm{\tau}}^\star(\bm{\theta}_m^\prime; \bm{Z}_m^\prime)$ where $\bm{\theta}_m^\prime$ and $\bm{Z}_m^\prime$ are alternative arrangements of parameters and observable model primitives, respectively. Changes to the economy can then be computed by substituting these counterfactual equilibrium policies into the model of the world economy, solving $h \left( \tilde{\bm{\tau}}^\star(\bm{\theta}_m^\prime; \bm{Z}_m^\prime) \right)$. I consider three counterfactual scenarios here. First, I quantify the aggregate affects of military coercion by conducting a counterfactual in which military coercion is prohibited. Second, I quantify the effects of the diffusion of military power on trade policy and the international economy by recomputing the model's equilibrium at projected levels of military spending in 2030. Finally, I quantify the effects of liberalizing Chinese trade policy preferences on the probability of various wars.
+
+## A Coercion-Free World
+
+First, I calculate the net economic effects of coercion by calculating the equilibrium to a game in which coercion is impossible, holding governments' preferences at their estimated values. The shadow of coercion is a substantial force for trade liberalization. Moving from this counterfactual "pacifist" world to the coercive equilibrium delivers a 63 percent increase in the value of total global trade. Figure \ref{fig:cfct1_X} disaggregates these changes in trade flows, showing the change in imports induced by demilitarization for each importer-exporter pair. It also shows the changes in equilibrium trade policy that generate these changes in trade flows. 
+
+![Changes in trade flows and trade policy when military coercion is counterfactually prohibited. Top plot shows changes in the (log) value of imports for each country in the sample, disaggregated by trade partner. Bottom plot shows changes in equilibrium trade policies for each country in the sample, again disaggregated by trade partner. Counterfactual import values and trade policies are shown in orange. \label{fig:cfct1_X}](figure/cfct1_X-1.png)
+
+U.S. and Russian trade policies remain largely unchanged. Yet their trade patterns are still affected substantially by others' changes in trade policy behavior. Australia, Canada, China, and South Korea become substantially more protectionist, reducing their own trade volumes substantially and shifting patterns of international exchange elsewhere. Trade policies in the coercion-free world are largely homogenous within adopting countries, reflecting the model's ex-ante incentives against policy discrimination. The exception to this rule is for large countries like the United States and European Union, whose counterfactual trade policies reflect dependence on the size of their trading partners [@Johnson1953; @Ossa2014].
+
+![Changes in government welfare and consumer welfare (calculated by setting $v_i=1$ for all $i$) induced by moving from coercion-free equilibrium to baseline equilibrium. \label{fig:cfct1_welfare}](figure/cfct1_welfare-1.png)
+
+Figure \ref{fig:cfct1_welfare} plots the changes in government and consumer welfare due to coercion, calculated as the difference between the coercion-free equilibrium and the baseline equilibrium. The measure of consumer welfare is calculated by setting $v_i=1$ for all governments and evaluating the representative consumer's indirect utility at equilibrium policies, consistent with the interpretation of $v_i$ as a political economy parameter capturing government incentives to deviate from socially optimal trade policies. Consumers benefit substantially from the trade liberalization induced by military coercion, but highly protectionist governments suffer. Australia, Canada, China, and South Korea suffer substantial welfare losses when military coercion is permitted, relative to the counterfactual "pacifist" world. The United States government gains the most from coercion among non-RoW countries. 
+
+## Multipolarity, Trade Policy, and International Trade
+
+Military power in 2011 was highly concentrated in the hands of the United States (see Figure \ref{fig:milex}). Since 2011, other countries, China in particular, have begun to close this military capability gap with the United States. How would the continued diffusion of military power affect trade policy and patterns of international economic exchange? To answer this question I project each in-sample government's military spending in 2030, assuming military budgets grow (shrink_ at their average rate between 2011 and 2018. Projected military spending for 2030 is shown in Figure \ref{fig:milex_2030}. The largest change is the shift in relative military power from the United States and European Union toward China. 
+
+![Projected military spending in 2030, assuming military budgets grow at observed average growth rate between 2011 and 2018. \label{fig:milex_2030}](figure/milex_2030-1.png)
+
+Multipolarization impacts globalization in two ways. On the one hand, newly militarily powerful countries can resist others' demands to liberalize, leading to a less-integrated global economy. On the other hand, the diffusion of military power increases the coercive capacity of some states in the system, allowing them to make greater liberalization demands of others and contributing to global economic integration. These effects are mediated by governments' preferences for protectionism, which determine governments' ideal policies and the returns to coercion. In this "multipolarization" scenario, China leverages these increases in military might to adopt more restrictive trade policies. Figure \ref{fig:cfct2_tau} displays the changes in Chinese trade policies that result under multipolarization. On net, multipolarization is a force for protectionism. The value of global trade under multipolarization is 75.3 percent its baseline value.
+
+![Changes in Chinese trade policies under multipolarization. \label{fig:cfct2_tau}](figure/cfct2_tau-1.png)
+
+## Chinese Preference Liberalization and the Risk of War
+
+Reducing governments' incentives for protectionism can also decrease the risk of war. By reducing governments incentives to adopt high trade barriers, preference liberalization reduces others' incentives for conquest, in turn, reducing the probability of war. To quantify these effects, I consider a liberalization of Chinese policy preferences, setting their revenue collection parameter to that of the United States ($\hat{v}_{\text{CHN}}=$ 2.77, $v_{\text{CHN}}^\prime=$ 1.52). Figure \ref{fig:war_probs_pp4} shows the change in the probability of war against China that occurs as the result of this change in preferences. The United States still poses a threat of war, but the probability the United States launches a war against China is reduced substantially from 33.3 percent to 5.9 percent. The probability China faces attack from another source is virtually eliminated.
+
+![Changes in probability of war against China after Chinese preference liberalization. \label{fig:war_probs_pp4}](figure/war_probs_pp4-1.png)
 
 
 # Conclusion
 
-<!-- ```{r, child = paste0(sections_dir, "conclusion.md")}
-``` -->
+
+The shadow of power plays a central role in international relations theory, but measuring its effects has proved challenging. It is axiomatic that if governments forgo war, then they must at least weakly prefer the policy status quo to the expected policy outcomes that would result from potential wars. In this paper, I have shown that a flexible model of government preferences over trade outcomes can serve to quantify government welfare under this policy counterfactual. I then leverage the difference between factual government welfare and its conquest values to identify parameters governing the technology of coercion in international relations. 
+
+The preliminary estimates of these parameters suggest that military power indeed constrains governments' policy choice in international relations. Military spending advantage translates into battlefield advantage. These military constraints serve to contort trade policy toward the interests of the powerful as well as the resolved — those whose benefits from conquest are the largest. Military threats structure interactions in the international economy.
+
+Drawing these conclusions requires taking seriously extant theoretical models of international conflict and international political economy. On the one hand, this limits the credibility and generalizability of the conclusions reached here — if the models are flawed, so too will our inferences about the world. On the other hand, this provides a foundation upon which empirical and theoretical research in these subfields can progress in tandem. Otherwise intractable empirical questions can be answered, leveraging the identifying assumptions embedded in these theories. And theories can be revised to account for anomalous or unreasonable empirical results that rest on these assumptions. Taking the models seriously provides answers to hard empirical questions, along with a transparent edifice upon which those answers rest.
 
 \clearpage
 
 # Appendix
 
-<!-- ```{r Appendix Numbering, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 
-a <- 1
-
-# reset definition, assumption, proposition, lemma tickers
-Dtick <- 1
-Atick <- 1
-Ptick <- 1
-Ltick <- 1
-
-Aeconomy <- LETTERS[a]
-``` -->
 
 ## A: Economy
 
-<!-- ```{r, child = paste0(sections_dir, "Aeconomy.md")}
-```
+
+The economy is a variant of that of @Eaton2002. I present the model here for clarity, but refer interested readers to their paper and @Alvarez2007 for derivations and proofs of the existence of a general equilibrium of this economy.
+
+### Consumption
+
+Within each country resides a representative consumer which values tradeable goods and nontradable services which are aggregated in Cobb-Douglas utility function, $U_i$.
+
+Consumer utility is Cobb-Douglas in a tradable goods aggregate $Q_i$ and non-tradable services
+\begin{equation} \label{eq:CD}
+U_i = Q_i^{\nu_i} S_i^{1 - \nu_i}
+\end{equation}
+$\nu_i$ determines the consumer's relative preference for tradables versus services. Total consumer expenditure is $\tilde{E}_i = E_i^q + E_i^s$ where the Cobb-Douglas preference structure imply $E_i^q = \nu_i \tilde{E}_i$ and $E_i^s = (1 - \nu_i) \tilde{E}_i$.
+
+There is a continuum of tradable varieties indexed $\omega \in [0,1]$ aggregated into $Q_i$ through a constant elasticity of substitution function
+\begin{equation} \label{eq:CES}
+Q_i = \left( \int_{[0,1]} q_i(\omega)^{\frac{\sigma - 1}{\sigma}} d \omega  \right)^{\frac{\sigma}{\sigma - 1}}
+\end{equation}
+with $\sigma > 0$. With $E_i^q$ fixed by the upper-level preference structure, consumers maximize $Q_i$ subject to their tradable budget constraint
+$$
+\int_{[0,1]} p_i(\omega) q_i(\omega) d \omega \leq E_i^q
+$$
+where $p_i(\omega)$ is the price of variety $\omega$ in country $i$. Let $Q_i^\star$ denote a solution to this problem. The tradable price index $P_i^q$ satisfies $P_i^q Q_i^\star = E_i^q$ with 
+$$
+P_i^q = \left( \int_{[0,1]} p_i(\omega)^{1 - \sigma} \right)^{\frac{1}{1 - \sigma}}
+$$
+
+### Production
+
+Consumers are endowed with labor $L_i$ and earn wage $w_i$ for supplying labor to producers. Services are produced competitively at cost
+$$
+k_i^s = \frac{w_i}{z_i^s}
+$$
+where $z_i^s$ is country $i$'s productivity in services. All countries can produce each tradable variety $\omega$. Production requires labor and a tradable goods bundle of intermediate inputs ($Q_i$).  Producing a unit of variety $\omega$ costs
+$$
+k_i(\omega) = \frac{1}{z_i(\omega)} w_i^{1 - \beta} \left( P_i^q \right)^\beta
+$$
+with $\beta \in [0,1]$ controlling the share of labor required in production. Total expenditure on intermediates in country $i$ is $E_i^x$. $z_i(\omega)$ controls $i$'s productivity in producing variety $\omega$. $z_i(\omega)$ is a Fréchet-distributed random variable. $F_i(z)$ is the probability $i$'s productivity in producing a tradable variety is less than or equal to $z$. With $F \sim$ Fréchet,
+$$
+F(z) = \exp \left\{ - T_i z^{-\theta} \right\}
+$$
+where $T_i$ is a country-specific productivity shifter and $\theta > 1$ is a global parameter that controls the variance of productivity draws around the world. When $\theta$ is large, productivity is less stochastic.
+
+### Trade Frictions
+
+Let $p_{ij}(\omega)$ denote the price in $i$ of a variety $\omega$ produced in $j$. With competitive markets in production, local prices are equal to local costs of production,
+$$
+p_{ii}(\omega) = k_i(\omega)
+$$
+When shipped from $i$ to $j$, a variety incurs iceberg freight costs $\delta_{ji}$ and policy costs $\tau_{ji}$, meaning
+$$
+p_{ji}(\omega) = \tau_{ji} \delta_{ji} p_{ii}(\omega)
+$$
+
+Producers and consumers alike search around the world for the cheapest variety $\omega$, inclusive of shipping and policy costs. Equilibrium local prices therefore satisfy
+$$
+p_i^\star(\omega) = \min_{j \in \left\{ 1,...,N \right\}} \left\{ p_{ij} \right\}
+$$
+The set of varieties $i$ imports from $j$ is 
+$$
+\Omega_{ij}^\star = \left\{ \omega \in [0,1] \left. \right\vert p_{ij}(\omega) \leq \min_{k \neq j} \left\{ p_{ik} \right\} \right\}
+$$
+
+Total expenditure in country $i$ on goods from $j$ (inclusive of freight costs and policy costs) is $X_{ij}$. At the border, the cost, insurance, and freight (c.i.f.) value of these goods is $X_{ij}^{\text{cif}} = \tau_{ij}^{-1} X_{ij}$. Before shipment, their free on board (f.o.b.) value is $X_{ij}^{\text{fob}} = \left( \delta_{ij} \tau_{ij} \right)^{-1} X_{ij}$
+
+### Tariff Revenue (Policy Rents)
+
+Governments collect the difference between each variety's final value and its c.i.f. value. Total rents for government $i$ are
+\begin{equation} \label{eq:revenue}
+r_i = \sum_j (\tau_{ij} - 1) X_{ij}^{\text{cif}}
+\end{equation}
+This revenue is returned to the consumer, but is valued by the government independent of its effect on the consumer's budget.^[This formulation requires the "representative consumer" to encompass individuals that have access to rents and those that do not. It avoids "burning" these rents, as would be implied by a model in which the government valued rents but the consumer did not have access to them.]
+
+### Equilibrium
+
+In equilibrium, national accounts balance and international goods markets clear. Total consumer expenditure is equal to the sum of labor income, tariff revenue, and the value of trade deficits $D_i$
+$$
+\tilde{E}_i = w_i L_i + r_i + D_i
+$$
+Labor income is equal to the labor share of all sales of tradables globally and local services sales
+\begin{equation} \label{eq:income}
+w_i L_i = \sum_j (1 - \beta) X_{ji}^{\text{cif}} + X_i^s
+\end{equation}
+where
+$$
+X_i^s = E_i^s = (1 - \nu_i) (w_i L_i + r_i)
+$$
+The remainder of consumer expenditure is spent on tradables
+$$
+E_i^q = \nu_i (w_i L_i + r_i) + D_i
+$$
+A $\beta$-fraction of producer income is spent on intermediates
+$$
+E_i^x = \sum_j \beta X_{ji}^{\text{cif}}
+$$
+and total tradable expenditure is
+\begin{equation} \label{eq:tExp}
+E_i = E_i^q + E_i^x
+\end{equation}
+
+The share of $i$'s tradable expenditure spent on goods from $j$ is 
+\begin{equation} \label{eq:shares}
+x_{ij}(\bm{w}) = \frac{1}{E_i} \int_{\Omega_{ij}^\star} p_{ij}(\omega) q_i^\star \left( p_{ij} (\omega) \right) d \omega = \frac{ T_j \left( \tau_{ij} \delta_{ij} w_j^{1 - \beta} P_j^{\beta} \right)^{-\theta} }{ \frac{1}{C} \left( P_i^q(\bm{w}) \right)^{-\theta}}
+\end{equation}
+$q_i^\star \left( p_{ij} (\omega) \right)$ is equilibrium consumption of variety $\omega$ from both consumers and producers. $C$ is a constant function of exogenous parameters. The tradable price index is
+\begin{equation} \label{eq:Pindex}
+P_i^q(\bm{w}) = C \left( \sum_j T_j \left( d_{ij} w_j^{1 - \beta} P_j^{\beta} \right)^{- \theta} \right)^{-\frac{1}{\theta}}
+\end{equation}
+
+Finally, I normalize wages to be consistent with world gdp in the data. Denoting world gdp with $Y$, I enforce
+\begin{equation} \label{eq:normalization}
+Y = \sum_i w_i L_i
+\end{equation}
+
+The equilibrium of the economy depends on policy choices $\bm{\tau}$, trade deficits $\bm{D}$, and a vector of structural parameters and constants $\bm{\theta}_h = \left\{ L_i, T_i, \bm{\delta}, \sigma, \theta, \beta, \nu_i, \right\}_{i \in \left\{ 1, ..., N \right\}}$. 
 
 
-```
-## Error: attempt to use zero-length variable name
-```
+
+**Definition F1:** 
+An *international economic equilibrium* is a mapping $h : \left\{ \bm{\tau}, \bm{D}, \bm{\theta}_h \right\} \rightarrow \mathbb{R}_{++}^N$ with $h(\bm{\tau}, \bm{D}; \bm{\theta}_h) = \bm{w}$ solving the system of equations given by \ref{eq:revenue}, \ref{eq:income}, \ref{eq:tExp}, \ref{eq:shares}, \ref{eq:Pindex}, and \ref{eq:normalization}.
+
+@Alvarez2007 demonstrate the existence and uniqueness of such an equilibrium, subject to some restrictions on the values of structural parameters and the magnitude of trade costs. 
+
+### Welfare
+
+With the equilibrium mapping in hand, I can connect trade policies to government welfare given in Equation \ref{eq:G}. Consumer indirect utility is
+\begin{equation} \label{eq:V}
+V_i(\bm{w}) = \frac{\tilde{E}_i(\bm{w})}{P_i(\bm{w})}
+\end{equation}
+where $P_i$ is the aggregate price index in country $i$ and can be written
+$$
+P_i(\bm{w}) = \left( \frac{P_i^q(\bm{w})}{\nu_i} \right)^{\nu_i} \left( \frac{P_i^s(\bm{w})}{1 - \nu_i} \right)^{1 - \nu_i}
+$$
+$P_i^q$ is given in equation \ref{eq:Pindex} and $P_i^s = \frac{w_i}{A_i}$. Substituting $\bm{w}$ with its equilibrium value $h(\bm{\tau}, \bm{D}; \bm{\theta}_h)$ returns consumer indirect utility as a function of trade policies. Equilibrium trade flows can be computed as
+$$
+X_{ij}^{\text{cif}}(\bm{w}) = \tau_{ij}^{-1} x_{ij}(\bm{w}) E_i(\bm{w})
+$$
+Substituting these into the revenue equation (\ref{eq:revenue}) gives the revenue component of the government's objective function.
+
+### Equilibrium in Changes
+
+In "hats," the equilibrium conditions corresponding to \ref{eq:revenue}, \ref{eq:income}, \ref{eq:tExp}, \ref{eq:shares}, \ref{eq:Pindex}, and \ref{eq:normalization} are
+\begin{equation} \label{eq:revenueHat}
+\hat{r}_i = \frac{1}{r_i} \left( E_i \hat{E}_i(\hat{\bm{w}}) - \sum_j X_{ij}^{\text{cif}} \hat{X}_{ij}^{\text{cif}}(\hat{\bm{w}}) \right)
+\end{equation}
+\begin{equation} \label{eq:incomeHat}
+\hat{w}_i = \frac{1}{\nu_i w_i L_i} \left( \sum_j \left( (1 - \beta) X_{ji}^{\text{cif}} \hat{X}_{ji}^{\text{cif}}(\hat{\bm{w}}) \right) + (1 - \nu_i) r_i \hat{r}_i(\hat{\bm{w}}) \right)
+\end{equation}
+\begin{equation} \label{eq:tExpHat}
+\hat{E}_i(\hat{\bm{w}}) = \frac{1}{E_i} \left( E_i^q \hat{E}_i^q(\hat{\bm{w}}) + E_i^x \hat{E}_i^x(\hat{\bm{w}}) \right)
+\end{equation}
+\begin{equation} \label{eq:sharesHat}
+\hat{x}_{ij}(\hat{\bm{w}}) = \left( \hat{\tau}_{ij} \hat{w}_j^{1 - \beta} \hat{P}_j(\hat{\bm{w}})^\beta \right)^{-\theta} \hat{P}_i(\hat{\bm{w}})^{\theta}
+\end{equation}
+\begin{equation} \label{eq:PindexHat}
+\hat{P}_i(\hat{\bm{w}}) = \left( \sum_j x_{ij} \left( \hat{\tau}_{ij} \hat{w}_j^{1 - \beta} \hat{P}_j(\hat{\bm{w}})^\beta \right)^{-\theta} \right)^{-\frac{1}{\theta}}
+\end{equation}
+\begin{equation} \label{eq:normalizationHat}
+1 = \sum_i y_i \hat{w}_i
+\end{equation}
+where
+$$
+y_i = \frac{w_i L_i}{\sum_j w_j L_j}
+$$
+
+This transformation reduces the vector of parameters to be calibrated to $\bm{\theta}_h = \left\{\theta, \beta, \nu_i, \right\}_{i \in \left\{ 1, ..., N \right\}}$.
+
+
+
+**Definition A2:** 
+An *international economic equilibrium in changes* is a mapping $\hat{h} : \left\{ \hat{\bm{\tau}}, \hat{\bm{D}}, \bm{\theta}_h \right\} \rightarrow \mathbb{R}_{++}^N$ with $\hat{h}(\hat{\bm{\tau}}, \hat{\bm{D}}; \bm{\theta}_h) = \hat{\bm{w}}$ solving the system of equations given by \ref{eq:revenueHat}, \ref{eq:incomeHat}, \ref{eq:tExpHat}, \ref{eq:sharesHat}, \ref{eq:PindexHat}, and \ref{eq:normalizationHat}.
+
+### Welfare in Changes
+
+Now changes in consumer welfare can be calculated for any set of trade policy changes $\hat{\bm{\tau}}$. Manipuating \ref{eq:V}, changes in consumer indirect utility are
+\begin{equation} \label{eq:VHat}
+\hat{V}_i(\bm{w}) = \frac{\hat{\tilde{E}}_i(\hat{\bm{w}})}{\hat{P}_i(\hat{\bm{w}})}
+\end{equation}
+where
+$$
+\hat{P}_i(\hat{\bm{w}}) = \hat{P}_i^q(\hat{\bm{w}})^{\nu_i} \hat{P}_i^s(\hat{\bm{w}})^{\nu_i - 1}
+$$
+and $\hat{P}_i^q(\hat{\bm{w}})$ is given by equation \ref{eq:PindexHat} and $\hat{P}_i^s(\hat{\bm{w}}) = \hat{w}_i$. Changes in policy rents are given by equation \ref{eq:revenueHat}.
+
+
+
+## B: Calibration of Economy
+
+
+Solving for an international equilibrium in changes (Definition A2) requires data on national accounts ($E_i$, $E_i^q$, $E_i^x$, $w_i L_i$), international trade flows ($X_{ij}^{\text{cif}}$), policy barriers to trade $\tau_{ij}$ (collectively, $\bm{Z}_h$), and the structural parameters $\theta$, $\beta$, and $\bm{\nu}$ (collectively, $\bm{\theta}_h$). Policy barriers are estimated using the methodology developed in @Cooley2019b. To maintain consistency with the model developed there, I employ the same data on the subset of countries analyzed here. I refer readers to that paper for a deeper discussion of these choices, and briefly summarize the calibration of the economy here. 
+
+### Data
+
+Trade flows valued pre-shipment (free on board) are available from [COMTRADE](https://comtrade.un.org/db/default.aspx). I employ cleaned data from [CEPII](http://www.cepii.fr/CEPII/en/welcome.asp)'s [BACI](http://www.cepii.fr/cepii/en/bdd_modele/presentation.asp?id=1). To get trade in c.i.f. values, I add estimated freight costs from @Cooley2019b to these values. Total home expenditure ($X_{ii} + X_i^s$) and aggregate trade imbalances $D_i$ can then be inferred from national accounts data (GDP, gross output, and gross consumption). GDP gives $w_i L_i$ and gross consumption gives $E_i^s + E_i^q + X_i^x$. To isolate expenditure on services, I use data from the World Bank's International Comparison Program, which reports consumer expenditure shares on various good categories. I classify these as tradable and nontradable, and take the sum over expenditure shares on tradables as the empirical analogue to $\nu_i$. Then, expenditure on services is $X_i^s = (1 - \nu_i) w_i L_i$. 
+
+### Structural Parameters
+
+I set $\theta =$ 6, in line with estimates reported in @Head2014 and @Simonovska2014. A natural empirical analogue for $\beta$ is intermediate imports $(E_i - w_i L_i)$ divided by total tradable production. This varies country to country, however, and equilibrium existence requires a common $\beta$. I therefore take the average of this quantity as the value for $\beta$, which is 0.86 in my data. This means that small changes around the factual equilibrium result in discrete jumps in counterfactual predictions. I therefore first generate counterfactual predictions with this common $\beta$, and use these as a baseline for analysis.
+
+### Trade Imbalances
+
+As noted by @Ossa2014, the assumption of exogenous and fixed trade imbalances generates implausible counterfactual predictions when trade frictions get large. I therefore first purge aggregate deficits from the data, solving $\hat{h}(\hat{\bm{\tau}}, \bm{0}; \bm{\theta}_h)$, replicating @Dekle2007. This counterfactual, deficit-less economy is then employed as the baseline, where $\hat{h}(\hat{\bm{\tau}}; \bm{\theta}_h)$ referring to a counterfactual prediction from this baseline.
+
+### Trade Barrier Estimates
+
+![Distribution of policy barriers to trade. Each cell reports the magnitude of the policy barrier each importing country (y-axis) imposes on every exporting country (x-axis). \label{fig:tauhm}](figure/tauhm-1.png)
+
+
+
+## C: Other Measures of Model Fit
+
+
+
+
+![Absolute errors for each directed dyad in the sample. Positive values indicate that the model predicts a higher trade barrier than is observed in the data (point estimate). \label{fig:fit_ddyad}](figure/fit_ddyad-1.png)
+
+![Correlation between trade barrier data and coercion-free model predictions. \label{fig:fit_mo}](figure/fit_mo-1.png)
+
+\clearpage
+
+# References
+
 

@@ -19,7 +19,6 @@ pp_star <- read_csv(setup$quantiles_peace_probs_path, col_names=FALSE) %>% as.ma
 
 pp_star <- cbind(expand.grid(ccodes, ccodes), pp_star %>% t()) %>% as_tibble()
 colnames(pp_star) <- c("i_iso3", "j_iso3", "q025", "q500", "q975")
-pp_star %>% print(n=100)
 
 ### COUNTERFACTUAL 2 ###
 
