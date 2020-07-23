@@ -19,6 +19,10 @@ $endif$
 % set font
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+\usepackage{pifont}
+\usepackage{newunicodechar}
+\newunicodechar{✓}{\ding{51}}
+\newunicodechar{✗}{\ding{55}}
 \usepackage[oldstyle]{libertine}
 
 
@@ -82,7 +86,7 @@ $endif$
 
 % add ubar command
 \usepackage{accents}
-\newcommand{\ubar}[1]{\underaccent{\bar}{#1}}
+\DeclareRobustCommand{\ubar}[1]{\underaccent{\bar}{#1}}
 
 % Expectation, Variance, Covariance
 \newcommand{\E}{\mathrm{E}}
@@ -121,6 +125,9 @@ $endif$
     \fi}
 \renewcommand{\backreftwosep}{ and~} 
 \renewcommand{\backreflastsep}{ and~}
+
+% bbm
+\usepackage{bbm}
 
 $if(colorlinks)$
 \PassOptionsToPackage{usenames,dvipsnames}{color} % color is loaded by hyperref
