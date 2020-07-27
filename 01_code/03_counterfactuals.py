@@ -11,7 +11,7 @@ location = "local"
 size = "mid/"
 
 run_cfact1 = False
-run_cfact2 = True
+run_cfact2 = False
 run_cfact3 = False
 run_cfact4 = False
 
@@ -82,8 +82,8 @@ sv = x_base
 
 if run_cfact2 == True:
     print("beginning counterfactual 2...")
-    # xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=1.25, tau_buffer_upper=1.25, start_with_resto=True, proximity_weight_off=True)
-    xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=.75, tau_buffer_upper=1.25, start_with_resto=True, proximity_weight_off=True)
+    xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=1.25, tau_buffer_upper=1.25, start_with_resto=True, proximity_weight_off=True)
+    # xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=.75, tau_buffer_upper=1.25, start_with_resto=True, proximity_weight_off=True)
     np.savetxt(results_2.setup.cfct_china_path + "x.csv", xlhvt_prime_2, delimiter=",")
 
 xlhvt_prime_2 = np.genfromtxt(results_2.setup.cfct_china_path + "x.csv", delimiter=",")
