@@ -6,7 +6,7 @@ title: |
 author:
 	- name: Brendan Cooley
       affiliation: Ph.D. Candidate, Department of Politics, Princeton University
-date: \today
+date: 28 July 2020
 abstract: In international relations, how does latent military coercion affect governments’ policy choices? Because militarily powerful governments can credibly threaten to impose their policy preferences by force, weaker governments may adjust their policy choices to avoid costly conflict. This setting raises an inference problem -- do observed policies reflect the preferences of the governments that adopted them or the military constraints of the anarchic international system? Here, I investigate the role of this “shadow of power” in determining trade policy. Specifically, I build a model of trade policy choice under threat that allows me to measure empirically governments’ underlying trade policy preferences, the returns to military advantage, and the extent to which power projection capacity degrades across space. I then estimate the parameters of the model using data on governments' observed trade policies in 2011. I find that geographic distance is not an impediment to the projection of force but that there are increasing returns to military advantage in the technology of coercion. Through counterfactual experiments, I quantify the effect of military constraints on the international economy and governments' welfare. These and other exercises simultaneously shed light on how military power affects international economic exchange, and how patterns of trade and protectionism affect the governments' propensity to engage in military conflict. 
 thanks: Thanks to Geneveive Bates, Allison Carnegie, Jim Fearon, Haosen Ge, Mike Gibilisco, Kyle Haynes, Helen Milner, Sayumi Miyano, Steve Monroe, In Young Park, Jim Qian, Kris Ramsay, and Joe Ruggiero for comments and discussions on many earlier versions of this project. Thanks also to audiences at the American Political Science Association's 2019 annual meeting and the 2020 conference on Formal Models of International Relations.
 # jelcodes: JEL codes go here
@@ -108,15 +108,6 @@ Estimating the magnitude of these trade policies and tracing their impact on gov
 
 In the coercive political economy developed below, governments' relative directed war costs are modeled as a function of the military capability ratio between the attacker and defender, the geographic distance between the belligerents, and the gross domestic product of the attacking country. I store these observable features in the vector $\bm{Z}_m$. To measure military capability ratios, I employ [SIPRI](https://www.sipri.org/)'s data on military expenditure to measure governments' military capacity. These values are displayed in Figure \ref{fig:milex}. I use data from @Weidmann2010 to calculate centroid-centroid geographic distance between all countries in my sample. Data on gross domestic production comes from the [World Input-Output Database (WIOD)](http://www.wiod.org/home) [@Timmer2015]. 
 
-
-```
-## Error: Argument 1 must have names
-```
-
-```
-## Error in valid.units(units): Invalid unit
-```
-
 ![Military expenditure for in-sample governments. Values for ROW and EU are obtained by summing expenditure of all member countries. \label{fig:milex}](figure/milex-1.png)
 
 ## Reduced Form Evidence on Coercion and Trade Policy
@@ -142,15 +133,6 @@ $$
 In other words, the distance between government 1's equilibrium utility and the utility it receives at its ideal point is decreasing in its relative military advantage.
 
 Suppose that governments endeavor to maximize the welfare of the representative consumer.^[I will relax this assumption in the structural model developed below.] With the economy, $h$, calibrated, I can calculate the change in utility each representative consumer would experience when each other government adopts free trade, relative to their utility at the baseline set of policies. Taking this as a empirical measure of the ratio $u_1(x^\star; M_1, M_2) / u_1(1)$, the model implies this quantity will be increasing in $M_1$, country 1's military capacity. I will refer to this quantity as government 1's inverse *conquest value* vis-à-vis government 2.
-
-
-```
-## Error in factory(tab, align = align, fmt = fmt, hrule = hrule, notes = notes, : Assertion on 'add_rows' failed: Must be of type 'data.frame', not 'list'.
-```
-
-```
-## Error in valid.units(units): Invalid unit
-```
 
 ![Correlation between military capability ratios and inverse conquest values, all pairs of in-sample countries. \label{fig:rcvm}](figure/rcvm-1.png)
 
@@ -180,11 +162,6 @@ Attacker FE? &  & ✓ &  & ✓\\
 \multicolumn{5}{l}{\textsuperscript{} * p < 0.1, ** p < 0.05, *** p < 0.01}\\
 \end{tabular}}
 \end{table}
-
-
-```
-## Error in valid.units(units): Invalid unit
-```
 
 ![Conditional correlations between inverse conquest values and military capability ratios, geographic distance, and country-specific constants. \label{fig:rcvm_reg_dw}](figure/rcv_reg_dw-1.png)
 
@@ -387,15 +364,6 @@ Figure \ref{fig:cfct1_welfare} plots the changes in government and consumer welf
 ## Multipolarity, Trade Policy, and International Trade
 
 Military power in 2011 was highly concentrated in the hands of the United States (see Figure \ref{fig:milex}). Since 2011, other countries, China in particular, have begun to close this military capability gap with the United States. How would the continued diffusion of military power affect trade policy and patterns of international economic exchange? To answer this question I project each in-sample government's military spending in 2030, assuming military budgets grow (shrink) at their average rate between 2011 and 2018. Projected military spending for 2030 is shown in Figure \ref{fig:milex_2030}. The largest change is the shift in relative military power from the United States and European Union toward China. 
-
-
-```
-## Error: Argument 1 must have names
-```
-
-```
-## Error in valid.units(units): Invalid unit
-```
 
 ![Projected military spending in 2030, assuming military budgets grow at observed average growth rate between 2011 and 2018. \label{fig:milex_2030}](figure/milex_2030-1.png)
 
