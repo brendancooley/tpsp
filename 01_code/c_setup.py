@@ -1,6 +1,8 @@
 import sys
 import os
 
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
+
 helpersPath = os.path.expanduser("../source/")
 sys.path.insert(1, helpersPath)
 
