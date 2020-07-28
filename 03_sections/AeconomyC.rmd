@@ -1,4 +1,4 @@
-Solving for an international equilibrium in changes (Definition `r DeeqHat`) requires data on national accounts ($E_i$, $E_i^q$, $E_i^x$, $w_i L_i$), international trade flows ($X_{ij}^{\text{cif}}$), policy barriers to trade $\tau_{ij}$ (collectively, $\bm{Z}_h$), and the structural parameters $\theta$, $\beta$, and $\bm{\nu}$ (collectively, $\bm{\theta}_h$). Policy barriers are estimated using the methodology developed in @Cooley2019b. To maintain consistency with the model developed there, I employ the same data on the subset of countries analyzed here. I refer readers to that paper for a deeper discussion of these choices, and briefly summarize the calibration of the economy here. 
+Solving for an international equilibrium in changes (Definition `r DeeqHat`) requires data on national accounts ($E_i$, $E_i^q$, $E_i^x$, $w_i L_i$), and international trade flows ($X_{ij}^{\text{cif}}$) (collectively, $\bm{Z}_h$), the magnitude of observed policy barriers to trade ($\tau_{ij}$), and the structural parameters $\theta$, $\beta$, and $\bm{\nu}$ (collectively, $\bm{\theta}_h$). Policy barriers are estimated using the methodology developed in @Cooley2019b. To maintain consistency with the model developed there, I employ the same data on the subset of countries analyzed here. I refer readers to that paper for a deeper discussion of these choices, and briefly summarize the calibration of the economy here. 
 
 ### Data
 
@@ -6,7 +6,7 @@ Trade flows valued pre-shipment (free on board) are available from [COMTRADE](ht
 
 ### Structural Parameters
 
-I set $\theta =$ `r theta`, in line with estimates reported in @Head2014 and @Simonovska2014. A natural empirical analogue for $\beta$ is intermediate imports $(E_i - w_i L_i)$ divided by total tradable production. This varies country to country, however, and equilibrium existence requires a common $\beta$. I therefore take the average of this quantity as the value for $\beta$, which is `r round(beta, 2)` in my data. This means that small changes around the factual equilibrium result in discrete jumps in counterfactual predictions. I therefore first generate counterfactual predictions with this common $\beta$, and use these as a baseline for analysis.
+I set $\theta =$ `r theta`, in line with estimates reported in @Head2014 and @Simonovska2014. A natural empirical analogue for $\beta$ is intermediate imports $(E_i - w_i L_i)$ divided by total tradable production. This varies country to country, however, and equilibrium existence requires a common $\beta$. I therefore take the average of this quantity as the value for $\beta$, which is `r round(beta, 2)` in my data. This means that small changes around the factual equilibrium result in discontinuous jumps in counterfactual predictions. I therefore first generate counterfactual predictions with this common $\beta$, and use these as a baseline for analysis.
 
 ### Trade Imbalances
 
