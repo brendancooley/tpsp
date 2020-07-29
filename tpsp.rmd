@@ -76,7 +76,7 @@ options(scipen=999)
 ```{r, child = paste0(sections_dir, "introduction.rmd")}
 ```
 
-## Literature
+# Literature
 
 ```{r, child = paste0(sections_dir, "literature.md")}
 ```

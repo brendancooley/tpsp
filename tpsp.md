@@ -52,7 +52,7 @@ The identified model enables two classes of counterfactuals. First, it allows me
 
 I also examine how domestic political economic changes (changes to government preferences) affect the salience of military coercion. Governments that value the welfare of consumers prefer to adopt lower barriers to trade. The returns to coercing these governments are smaller, because their ideal policies impose relatively small externalities on potential threatening governments. Military coercion plays a smaller role in influencing trade policy when governments are relatively liberal. Domestic political institutions are believed to effect trade policy preferences [@Rodrik1995; @Milner1999; @Milner2005]. The model facilitates exploration of how domestic political change affects the quality of international relations and governments' propensity to threaten, display, and use military force against one another. 
 
-## Literature
+# Literature
 
 
 Conflicts of interest and the specter of coercive diplomacy emerge in the model due to governments' protectionist preferences. Trade theory reserves a role for small trade policy distortions for governments that seek to maximize aggregate societal wealth [@Johnson1953; @Broda2008]. Empirically, governments implement larger trade distortions than predicted in theory, however. This regularity motivated the study of the political economics of trade policy. While nearly free trade may be good for a society as a whole, owners of specific factors of production may prefer protectionism. If these groups have better access to the policymaking process, trade policy may be more protectionist than is optimal for society [@Mayer1984; @Rogowski1987; @Grossman1994]. A family of studies uses these theoretical insights to estimate governments' sensitivity to narrow versus diffuse interests [@Goldberg1999; @Mitra2006; @Gawande2009; @Gawande2012; @Ossa2014; @Gawande2015]. Because these models incorporate no theory of international military coercion, these estimates reflect the assumption that policy choices reflect the outcome of non-cooperative policy choice or non-militarized bargaining. Fiscal pressures might also drive protectionism. Some governments are constrained in their ability to raise revenue through taxes on domestic economic activities. Tariffs and other trade distortions may substitute as a revenue-raising strategy in these cases [@Rodrik2008; @Queralt2015]. 
@@ -140,7 +140,7 @@ Figure \ref{fig:rcvm} plots the empirical relationship between military capabili
 
 \begin{table}
 
-\caption{\label{tab:rcvm}Inverse Conquest Values and Military Capability Ratios}
+\caption{\label{tab:rcvm}Inverse Conquest Values and Military Capability Ratios \label{fig:rcvm_reg_tex}}
 \centering
 \resizebox{\linewidth}{!}{
 \begin{tabular}[t]{lllll}
