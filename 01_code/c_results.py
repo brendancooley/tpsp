@@ -141,9 +141,9 @@ class results:
         np.savetxt(self.setup.estimates_path + "peace_probs.csv", peace_prob_mat, delimiter=",")
         est_dict["peace_probs"].append(peace_prob_mat.ravel())
 
-    def compute_counterfactual(self, v_star, theta_x_star, m, sv=None, tau_bounds=False, ge_ones=False, tau_buffer_lower=.5, tau_buffer_upper=.5, start_with_resto=False, proximity_weight_off=False, catch=False, catch_path=None):
+    def compute_counterfactual(self, v_star, theta_x_star, m, sv=None, tau_bounds=False, ge_ones=False, tau_buffer_lower=.5, tau_buffer_upper=.5, start_with_resto=False, proximity_weight_off=False):
 
-        pecmy = policies.policies(self.data, self.params, self.ROWname, self.bootstrap_id, tau_bounds=tau_bounds, tau_buffer_lower=tau_buffer_lower, tau_buffer_upper=tau_buffer_upper, catch=catch, catch_path=catch_path)
+        pecmy = policies.policies(self.data, self.params, self.ROWname, self.bootstrap_id, tau_bounds=tau_bounds, tau_buffer_lower=tau_buffer_lower, tau_buffer_upper=tau_buffer_upper)
         xlhvt_prime, obj, status = pecmy.estimator(v_star, theta_x_star, m, sv=sv, nash_eq=True, ge_ones=ge_ones, start_with_resto=start_with_resto, proximity_weight_off=proximity_weight_off)
 
         if status in [0, 1, -2]:  # include restortion failed

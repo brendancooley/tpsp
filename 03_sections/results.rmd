@@ -54,7 +54,7 @@ war_probs_pp
 
 ```
 
-It is worth noting that the countries with the highest estimated risk of war with the United States, Japan and Australia, happen to be U.S. allies. The security guarantees encapsulated in these allliances are not explicitly modeled. One way to interpret these results is that Australian and Japanese security would deteriorate rapidly in the absence of U.S. military protection, representing an implicit threat the United States can leverage to affect trade policy.
+It is worth noting that the countries with the highest estimated risk of war with the United States, Japan and Australia, happen to be U.S. allies. The security guarantees encapsulated in these allliances are not explicitly modeled. One way to interpret these results is that Australian and Japanese security would deteriorate rapidly in the absence of U.S. military protection, representing an implicit threat the United States can leverage to affect trade policy.^[@Lake2007 would label these relationships "hierarchical" and based on the authority of the United States to dictate the policy of its subordinates. Still, in Lake's conceptualization, "authority is buttressed by the capacity for coercion" (p. 53).]
 
 ## Model Fit and Inferences about Policy Preferences
 

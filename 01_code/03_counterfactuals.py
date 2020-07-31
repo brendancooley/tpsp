@@ -11,7 +11,7 @@ location = "local"
 size = "mid/"
 
 run_cfact1 = False
-run_cfact2 = False
+run_cfact2 = True
 run_cfact3 = False
 run_cfact4 = False
 
