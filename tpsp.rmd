@@ -33,14 +33,14 @@ for (i in helperFiles) {
   source(paste0(helperPath, i))
 }
 
-libs <- c("knitr", "tidyverse", "countrycode", "kableExtra", "latex2exp", "patchwork", "ggpubr", "reticulate")
+libs <- c("knitr", "tidyverse", "countrycode", "kableExtra", "latex2exp", "patchwork", "ggpubr", "reticulate", "rdrop2")
 ipak(libs)
 
 Sys.setenv(KMP_DUPLICATE_LIB_OK="True")
 
 # setup bib
 mkdir("bib/")
-download.file("https://www.dropbox.com/s/2q37ht2zfsrfyls/library.bib?dl=1", "bib/library.bib")
+file.copy("~/Dropbox (Princeton)/References/library.bib", "bib/library.bib")
 
 # not available
 AwarEntry <- "NA"
