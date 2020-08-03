@@ -940,6 +940,7 @@ class policies:
         lb_dict = dict()
         if self.tau_bounds == True:
             lb_dict["tau_hat"] = np.reshape(np.repeat(np.min(tau_min_mat - self.tau_buffer_lower, axis=1), self.N), (self.N, self.N)) / self.ecmy.tau
+            lb_dict["tau_hat"] = np.clip(lb_dict["tau_hat"], 0, np.inf)
         else:
             if bounds_off == True:
                 lb_dict["tau_hat"] = np.reshape(np.repeat(-np.inf, self.N**2), (self.N, self.N))

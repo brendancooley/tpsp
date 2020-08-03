@@ -79,11 +79,13 @@ sv = x_base
 
 # pecmy_2 = policies.policies(results_2.data, results_2.params, results_2.ROWname, 0, tau_buffer_lower=.75, tau_bounds=True)
 # np.reshape(pecmy_2.estimator_bounds(theta_x, v_500, sv)[0:pecmy_2.N**2], (pecmy_2.N, pecmy_2.N)) * pecmy_2.ecmy.tau
+# pecmy_2.geq_lb(sv)
 
 if run_cfact2 == True:
     print("beginning counterfactual 2...")
     # xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=1.25, tau_buffer_upper=1.25, start_with_resto=True, proximity_weight_off=True)
-    xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=.75, tau_buffer_upper=1.25, start_with_resto=True, proximity_weight_off=True)
+    # xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=.75, tau_buffer_upper=1.25, start_with_resto=True, proximity_weight_off=True)
+    xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=1.5, tau_buffer_upper=1.5, start_with_resto=True, proximity_weight_off=True)
     np.savetxt(results_2.setup.cfct_china_path + "x.csv", xlhvt_prime_2, delimiter=",")
 
 xlhvt_prime_2 = np.genfromtxt(results_2.setup.cfct_china_path + "x.csv", delimiter=",")
