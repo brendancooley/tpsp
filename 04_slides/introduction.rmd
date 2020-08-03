@@ -1,11 +1,15 @@
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 
-source(paste0("../", figs_dir, "cfctl_X.R"))
-fig_height_intro <- 5.5
+use_virtualenv("python3")
+c_setup <- import_from_path("c_setup", path=paste0("../", code_dir))
+setup <- c_setup$setup("local", size)
+
+source(paste0("../", code_dir, "f_cfct_X.R"))
+fig_height_intro <- 4.5
 
 ```
 
-# Power and Preferences {id="introduction"}
+## Power and Preferences {id="introduction"}
 
 <div class="fragment">
 
@@ -98,11 +102,11 @@ $$
 
 . . .
 
-**Economic Consequences: Trade flows contract `r round(cftcl_trade_diff_frac*100, 1)` percent in absence of coercion**
+**Economic Consequences: Coercion increases value of global trade `r round(((cfct1_trade_ratio**-1)-1)*100, 1)` percent**
 
-```{r X_diff_pp1, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=fig_height_intro}
+```{r X_diff_pp_dm1, echo=FALSE, warning=FALSE, message=FALSE, dpi=600, fig.align="center", fig.height=fig_height_intro}
 
-X_diff_pp1
+X_diff_pp_dm1
 
 ```
 
@@ -110,10 +114,11 @@ X_diff_pp1
 
 - Positive military capability ratio reduces costs of war, lends coercive advantage
 
-**Economic Consequences: Trade flows contract `r round(cftcl_trade_diff_frac*100, 1)` percent in absence of coercion**
+**Economic Consequences: Coercion increases value of global trade `r round(((cfct1_trade_ratio**-1)-1)*100, 1)` percent**
 
-```{r X_diff_pp2, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=fig_height_intro}
+```{r X_diff_pp_dm2, echo=FALSE, warning=FALSE, message=FALSE, dpi=600, fig.align="center", fig.height=fig_height_intro}
 
-X_diff_pp2
+X_diff_pp_dm2
+
 
 ```

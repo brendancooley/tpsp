@@ -8,10 +8,10 @@ institution: Princeton University
 email: "bcooley (at) princeton.edu"
 note: These slides available at brendancooley.com/tpsp
 
-bibliography: /Users/brendancooley/Dropbox (Princeton)/References/library.bib
+bibliography: bib/library.bib
 biblio-style: apsr
 
-backgroundTitle: "02_figs/cover.jpg"
+backgroundTitle: "02_figs/img/cover.jpg"
 
 output:
   revealjs::revealjs_presentation:
@@ -22,26 +22,15 @@ output:
     self_contained: false
     # reveal_plugins: ["notes"]
     lib_dir: index_files
+    fig_caption: true
     reveal_options:
       slideNumber: false
       progress: false
-      controls: false      
-    includes:
-      after_body: "css/plugins.html"
+      controls: true
 ---
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 
-code_dir <- "01_code/"
-figs_dir <- "02_figs/"
-slides_dir <- "slides/"
-
-size = "mid/"
-
-tpspPath <- "~/Dropbox (Princeton)/1_Papers/tpsp/01_data/"
-dataPath <- paste0(tpspPath, "data/", size)
-resultsPath <- paste0(tpspPath, "results/", size)
-estimatesPath <- paste0(resultsPath, "estimates/")
+```{r references, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 
 helperPath <- "~/Dropbox (Princeton)/14_Software/R/"
 helperFiles <- list.files(helperPath)
@@ -49,44 +38,38 @@ for (i in helperFiles) {
   source(paste0(helperPath, i))
 }
 
-libs <- c("tidyverse")
+libs <- c("tidyverse", "reticulate")
 ipak(libs)
 
-year <- read_csv(paste0(dataPath, "year.csv"), col_names=FALSE) %>% pull(.)
+Sys.setenv(KMP_DUPLICATE_LIB_OK="True")
+
+size <- "mid/"
+sections_dir <- "03_sections/"
+code_dir <- "01_code/"
+figs_dir <- "02_figs/"
+slides_dir <- "04_slides/"
+
+# setup bib
+mkdir("bib/")
+file.copy("~/Dropbox (Princeton)/References/library.bib", "bib/library.bib")
 
 # references from paper
 if (file.exists('references.RData')) load('references.RData')
 
 ```
 
-```{r, child="slides/introduction.rmd"}
+# Introduction {.aligncenter}
+
+```{r, child=paste0(slides_dir, "introduction.rmd")}
 ```
 
-```{r, child="slides/model.rmd"}
-```
-
-```{r, child="slides/data.rmd"}
-```
-
-```{r, child="slides/estimation.rmd"}
-```
-
-```{r, child="slides/results.rmd"}
-```
-
-```{r, child="slides/counterfactuals.rmd"}
-```
-
-```{r, child="slides/conclusion.rmd"}
-```
-
-# Thank You {.aligncenter}
+## Thank You {.aligncenter}
 
 [brendancooley.com](http://brendancooley.com)
 
 [bcooley@princeton.edu](mailto:bcooley@princeton.edu)
 
-# Table of Contents {id="toc"}
+## Table of Contents {id="toc"}
 
 <div id="left">
 
@@ -99,25 +82,15 @@ if (file.exists('references.RData')) load('references.RData')
 5. <a href="#/results">Results</a>
 6. <a href="#/counterfactuals">Conterfactuals</a>
 7. <a href="#/conclusion">Conclusion</a>
-
 </div>
 
 <div id="right">
 
 **Appendix**
 
-1. <a href="#/barriers">Estimated Dyadic Policy Barriers</a>
-2. <a href="#/economyA">Economy (Overview)</a>
-3. <a href="#/frechet">Cost Distribution</a>
-4. <a href="#/milex">Military Expenditure</a>
-5. <a href="#/calibration">Economy (Calibration)</a>
-5. <a href="#/rcv">Conquest Values</a>
-
+1. test
 </div>
-
-
-```{r, child="slides/appendix.rmd"}
-```
 
 <!-- hide references -->
 <hr style="height:30em; visibility:hidden;" />
+ 

@@ -18,6 +18,8 @@ templatePath = "~/Dropbox\ \(Princeton\)/8_Templates/"
 verticatorPath = "~/Dropbox\ \(Princeton\)/8_Templates/plugin/verticator"
 pluginDest = "index_files/reveal.js-3.8.0/plugin"
 revealPath = "~/Dropbox\ \(Princeton\)/8_Templates/reveal.js-3.8.0"
+# pluginDest = "index_files/reveal.js-4.0.2/plugin"
+# revealPath = "~/Dropbox\ \(Princeton\)/8_Templates/reveal.js-4.0.2"
 
 csv_dir_base = "~/Dropbox\ \(Princeton\)/1_Papers/tpsp/01_files/"
 results_dir_base = csv_dir_base + "results/"

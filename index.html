@@ -479,7 +479,7 @@ document.getElementsByTagName('head')[0].appendChild(style);
   	<ul class="verticator"></ul>
     <div class="slides">
 
-<section data-background="02_figs/cover.jpg">
+<section data-background="02_figs/img/cover.jpg">
 	<div class="cover-top">
 	  	<h1 class="title">Trade Policy in the Shadow of Power</h1>
 			  	<h2 class="subtitle">Quantifying Military Coercion in the International System</h1>
@@ -494,7 +494,9 @@ document.getElementsByTagName('head')[0].appendChild(style);
 			</div>
 </section>
 
-<section><section id="introduction" class="title-slide slide level1"><h1>Power and Preferences</h1><div class="fragment">
+<section><section id="introduction" class="title-slide slide level1 aligncenter"><h1>Introduction</h1></section><section id="introduction" class="slide level2">
+<h2>Power and Preferences</h2>
+<div class="fragment">
 <blockquote>
 <p>“A has <strong>power</strong> over B to the extent that he can get B to do something that B <strong>would not otherwise do.</strong>”</p>
 <ul>
@@ -519,7 +521,8 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <li>Dahl: What would B do in the absence of A’s power?</li>
 <li>Do observed policies reflect <strong>preferences</strong> of the governments that adopted them or <strong>constraints of anarchy?</strong></li>
 </ul>
-</div></section><section id="gunboats" class="slide level2">
+</div>
+</section><section id="gunboats" class="slide level2">
 <h2>Trade Policy and Gunboat Diplomacy</h2>
 <p><strong>What Do Governments Want?</strong></p>
 <ul>
@@ -602,414 +605,23 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <li>Positive military capability ratio reduces costs of war, lends coercive advantage</li>
 </ul>
 <div class="fragment">
-<p><strong>Economic Consequences: Trade flows contract 12.4 percent in absence of coercion</strong></p>
-<p><img src="index_files/figure-revealjs/X_diff_pp1-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><strong>Economic Consequences: Coercion increases value of global trade 63 percent</strong></p>
+<p><img src="index_files/figure-revealjs/X_diff_pp_dm1-1.png" style="display: block; margin: auto;" /></p>
 </div>
 </section><section id="results-preview-1" class="slide level2">
 <h2>Results: Preview</h2>
 <ul>
 <li>Positive military capability ratio reduces costs of war, lends coercive advantage</li>
 </ul>
-<p><strong>Economic Consequences: Trade flows contract 12.4 percent in absence of coercion</strong></p>
-<p><img src="index_files/figure-revealjs/X_diff_pp2-1.png" width="768" style="display: block; margin: auto;" /></p>
-</section></section>
-<section><section id="model" class="title-slide slide level1"><h1>Model (Overview)</h1><div class="fragment">
-<ul>
-<li>Governments indexed <span class="math inline">\(i \in \left\{ 1, ..., N \right\}\)</span></li>
-</ul>
-</div>
-<div class="fragment">
-<p><strong>Sequence</strong></p>
-<ol type="1">
-<li>(<span class="math inline">\(\tilde{\bm{\tau}}\)</span>) Governments make trade policy announcements</li>
-<li>Wars
-<ul>
-<li>Winners impose free trade on vanquished governments</li>
-</ul></li>
-<li>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economic (general equilibrium, <span class="citation" data-cites="Eaton2002">Eaton and Kortum (2002)</span>) consequences of announced/imposed trade policies</li>
-</ol>
-</div>
-<div class="fragment">
-<p><strong>Payoffs</strong></p>
-<p><span class="math display">\[
-V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
-\]</span></p>
-<ul>
-<li><span class="math inline">\(\color{bcOrange} v_i\)</span> - latent preference for protectionist policies</li>
-</ul>
-</div></section><section id="economy" class="slide level2">
-<h2>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economy</h2>
-<p><span class="math display">\[
-\bm{\tau} = \begin{pmatrix}
-\tau_{11} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{1N} \\
-\vdots &amp; \ddots &amp; \vdots &amp; \iddots &amp; \vdots \\
-\vdots &amp; \cdots &amp; \tau_{ij} &amp; \cdots &amp; \vdots \\
-\vdots &amp; \iddots &amp; \vdots &amp; \ddots &amp; \vdots \\
-\tau_{N1} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{NN}
-\end{pmatrix}
-\]</span></p>
-</section><section id="hbmtau-economy" class="slide level2">
-<h2>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economy</h2>
-<p><span class="math display">\[
-\bm{\tau} = \begin{pmatrix}
-\tau_{11} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{1N} \\
-\vdots &amp; \ddots &amp; \vdots &amp; \iddots &amp; \vdots \\
-\vdots &amp; \cdots &amp; \color{bcOrange} \tau_{ij} &amp; \cdots &amp; \vdots \\
-\vdots &amp; \iddots &amp; \vdots &amp; \ddots &amp; \vdots \\
-\tau_{N1} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{NN}
-\end{pmatrix}
-\]</span></p>
-<hr style="height:2em; visibility:hidden;" />
-<ul>
-<li><span class="math inline">\(\color{bcOrange} \tau_{ij}\)</span>: trade barrier government <span class="math inline">\(i\)</span> imposes on imports from <span class="math inline">\(j\)</span></li>
-</ul>
-</section><section id="hbmtau-economy-1" class="slide level2">
-<h2>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economy</h2>
-<p><span class="math display">\[
-\bm{\tau} = \begin{pmatrix}
-\color{bcOrange} \tau_{11} &amp; \color{bcOrange} \cdots &amp; \color{bcOrange} \cdots &amp; \color{bcOrange} \cdots &amp; \color{bcOrange} \tau_{1N} \\
-\vdots &amp; \ddots &amp; \vdots &amp; \iddots &amp; \vdots \\
-\vdots &amp; \cdots &amp; \tau_{ij} &amp; \cdots &amp; \vdots \\
-\vdots &amp; \iddots &amp; \vdots &amp; \ddots &amp; \vdots \\
-\tau_{N1} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{NN}
-\end{pmatrix}
-\]</span></p>
-<hr style="height:2em; visibility:hidden;" />
-<p><span class="math display">\[
-\color{bcOrange} \bm{\tau}_1 = \begin{pmatrix} \tau_{11} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{1N}
-\end{pmatrix}
-\]</span></p>
-<hr style="height:2em; visibility:hidden;" />
-<ul>
-<li>Government 1’s trade policy</li>
-</ul>
-</section><section id="economyEnd" class="slide level2">
-<h2>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economy</h2>
-<p><span class="math display">\[
-\color{bcOrange} \bm{\tau} \color{black} = \begin{pmatrix}
-\tau_{11} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{1N} \\
-\vdots &amp; \ddots &amp; \vdots &amp; \iddots &amp; \vdots \\
-\vdots &amp; \cdots &amp; \tau_{ij} &amp; \cdots &amp; \vdots \\
-\vdots &amp; \iddots &amp; \vdots &amp; \ddots &amp; \vdots \\
-\tau_{N1} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{NN}
-\end{pmatrix}
-\]</span></p>
-<hr style="height:2em; visibility:hidden;" />
-<p><span class="math display">\[
-\color{bcOrange} h(\bm{\tau}) \rightarrow \begin{pmatrix}
-w_1 \\
-\vdots \\
-w_N
-\end{pmatrix} = \bm{w}
-\]</span></p>
-<p><a href="#/economyA">Economy Details</a></p>
-</section><section id="government-objective" class="slide level2">
-<h2>Government Objective</h2>
-<p><span class="math display">\[
-h(\bm{\tau}) \rightarrow \begin{pmatrix}
-w_1 \\
-\vdots \\
-w_N
-\end{pmatrix} = \color{bcOrange} \bm{w}
-\]</span></p>
-<hr style="height:1em; visibility:hidden;" />
-<ul>
-<li><span class="math inline">\(X_{ij}(\color{bcOrange} \bm{w} \color{black})\)</span>: <span class="math inline">\(i\)</span>’s imports of goods from <span class="math inline">\(j\)</span></li>
-</ul>
-<div class="fragment">
-<p><strong>Revenues from Policy Distortions</strong></p>
-<p><span class="math display">\[
-r_i(\color{bcOrange} \bm{w} \color{black}; v_i) = \sum_j (\tau_{ij} - v_i) X_{ij}(\color{bcOrange} \bm{w} \color{black})
-\]</span></p>
-</div>
-</section><section id="government-objective-1" class="slide level2">
-<h2>Government Objective</h2>
-<p><span class="math display">\[
-h(\bm{\tau}) \rightarrow \begin{pmatrix}
-w_1 \\
-\vdots \\
-w_N
-\end{pmatrix} = \bm{w}
-\]</span></p>
-<hr style="height:1em; visibility:hidden;" />
-<ul>
-<li><span class="math inline">\(X_{ij}(\bm{w})\)</span>: <span class="math inline">\(i\)</span>’s imports of goods from <span class="math inline">\(j\)</span></li>
-</ul>
-<p><strong>Revenues from Policy Distortions</strong></p>
-<p><span class="math display">\[
-r_i(\bm{w}; \color{bcOrange} v_i \color{black}) = \sum_{j \neq i} (\tau_{ij} - \color{bcOrange} v_i \color{black}) X_{ij}(\bm{w})
-\]</span></p>
-<ul>
-<li><span class="math inline">\(\color{bcOrange} v_i \color{black} \in [1, \infty)\)</span> controls <span class="math inline">\(i\)</span>’s preferences over the level of protection</li>
-</ul>
-<div class="fragment">
-<p><strong>Adjusted Consumer Income</strong></p>
-<p><span class="math display">\[
-\tilde{Y}_i(\bm{w})  = w_i L_i + r_i(\bm{w}; \color{bcOrange} v_i \color{black})
-\]</span></p>
-<p><strong>Indirect Utility</strong></p>
-<p><span class="math display">\[
-V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
-\]</span></p>
-</div>
-</section><section id="wars" class="slide level2">
-<h2>Wars I</h2>
-<ul>
-<li>Directed dyad-specific war costs held as <strong>private information</strong> to prospective attacker
-<ul>
-<li><span class="math inline">\(c_{ji}\)</span> – cost <span class="math inline">\(j\)</span> incurs to invade <span class="math inline">\(i\)</span></li>
-</ul></li>
-<li>Wars fought to impose free trade on target</li>
-</ul>
-<p><span class="math display">\[
-\bm{\tau}_i^\prime = \left( 1, \dots, 1 \right) = \bm{1}_i
-\]</span></p>
-<div class="fragment">
-<p><strong>Conquest Values</strong></p>
-<ul>
-<li><span class="math inline">\(V_j(\bm{1}_i; \tilde{\bm{\tau}}_{-i})\)</span> – <span class="math inline">\(j\)</span>’s value for imposing free trade on <span class="math inline">\(i\)</span></li>
-</ul>
-</div>
-<div class="fragment">
-<p><strong>Peace Condition</strong></p>
-<p><span class="math display">\[
-V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right) - c_{ji} \leq V_j \left( \tilde{\bm{\tau}}, v_j \right)
-\]</span></p>
-</div>
-</section><section id="wars-ii" class="slide level2">
-<h2>Wars II</h2>
-<p><strong>Cost Distribution</strong></p>
-<p><span class="math display">\[
-\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
-\]</span></p>
-<p><span class="math display">\[
-\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}_j} \left( \frac{M_j}{M_i} \right)^{\gamma} (W_{ji})^{-\alpha} \hat{c}^{\eta} \right) .
-\]</span></p>
-</section><section id="wars-ii-1" class="slide level2">
-<h2>Wars II</h2>
-<p><strong>Cost Distribution</strong></p>
-<p><span class="math display">\[
-\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
-\]</span></p>
-<p><span class="math display">\[
-\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\color{bcOrange}  \hat{C}_j \color{black}} \left( \frac{M_j}{M_i} \right)^{\gamma} (W_{ji})^{-\alpha} \hat{c}^{\eta} \right) .
-\]</span></p>
-<ul>
-<li><span class="math inline">\(\color{bcOrange} \hat{C}_j\)</span> – attacker-specific cost-shifter</li>
-</ul>
-</section><section id="wars-ii-2" class="slide level2">
-<h2>Wars II</h2>
-<p><strong>Cost Distribution</strong></p>
-<p><span class="math display">\[
-\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
-\]</span></p>
-<p><span class="math display">\[
-\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}_j} \left( \frac{ \color{bcOrange} M_j \color{black} }{ \color{bcOrange} M_i \color{black} } \right)^{\gamma} (Z_{ji})^{-\alpha} \hat{c}^{\eta} \right) .
-\]</span></p>
-<ul>
-<li><span class="math inline">\(\hat{C}_j\)</span> – attacker-specific cost-shifter</li>
-<li><span class="math inline">\(\color{bcOrange} \frac{M_j}{M_i}\)</span> – military capability ratio (<span class="math inline">\(\gamma = 0 \implies\)</span> no cost advantage for military superiority)</li>
-</ul>
-</section><section id="wars-ii-3" class="slide level2">
-<h2>Wars II</h2>
-<p><strong>Cost Distribution</strong></p>
-<p><span class="math display">\[
-\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
-\]</span></p>
-<p><span class="math display">\[
-\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}_j} \left( \frac{M_j}{M_i} \right)^{\gamma} ( \color{bcOrange} W_{ji} \color{black} )^{-\alpha} \hat{c}^{\eta} \right) .
-\]</span></p>
-<ul>
-<li><span class="math inline">\(\hat{C}_j\)</span> – attacker-specific cost-shifter</li>
-<li><span class="math inline">\(\frac{M_j}{M_i}\)</span> – military capability ratio (<span class="math inline">\(\gamma = 0 \implies\)</span> no cost advantage for military superiority)</li>
-<li><span class="math inline">\(\color{bcOrange} W_{ji}\)</span> – geographic distance between <span class="math inline">\(j\)</span> and <span class="math inline">\(i\)</span> (<span class="math inline">\(\alpha=0 \implies\)</span> no loss of strength gradient)</li>
-</ul>
-<div class="fragment">
-<p><strong>Probability of Peace</strong></p>
-<p><span class="math display">\[\begin{align*}
-\hat{H}_i \left( \hat{\tilde{\bm{\tau}}}; \bm{Z}, \bm{\theta}_m \right) &amp;= \prod_{j \neq i} \hat{F}_{ji} \left( \left( \hat{V}_j \left( \bm{1}_i; \tilde{\bm{\tau}}_{-i} \right) - \hat{V}_j \left( \hat{\tilde{\bm{\tau}}} \right) \right)^{-1} \right) \\
-&amp;= \exp \left( - \sum_{j \neq i} - \frac{1}{\hat{C}_j} \left( \frac{M_j}{M_i} \right)^{\gamma} Z_{ji}^{-\alpha} \left( \hat{V}_j \left( \bm{1}_i; \tilde{\bm{\tau}}_{-i} \right) - \hat{V}_j \left( \hat{\tilde{\bm{\tau}}} \right) \right)^{\eta} \right)
-\end{align*}\]</span></p>
-</div>
-<div class="fragment">
-<p><a href="#/cost_dist">Cost Distribution Details</a></p>
-</div>
-</section><section id="optimal-policies" class="slide level2">
-<h2>Optimal Policies</h2>
-<ul>
-<li>Risk-return tradeoff: ideal policies balance policy optimality against threat of war</li>
-<li>Lower tariffs on goods from countries that pose military threats</li>
-</ul>
-<div class="fragment">
-<p><strong>Best Response</strong></p>
-<p><span class="math display">\[
-\max_{\bm{\tau}_i} \quad \underbrace{\hat{H}_i(\hat{\tilde{\bm{\tau}}}; \bm{Z}, \bm{\theta}_m) \hat{V}_i(\hat{\tilde{\bm{\tau}}})}_{\text{peace}} + \underbrace{\left( 1 - \hat{H}_i(\hat{\tilde{\bm{\tau}}}; \bm{Z}, \bm{\theta}_m) \right) \hat{V}_i(\bm{1}_i; \hat{\tilde{\bm{\tau}}}_{-i})}_{\text{war}}
-\]</span></p>
-</div>
-<div class="fragment">
-<p><strong>Equilibrium</strong></p>
-<p><span class="math display">\[
-\bm{\tau}^\star(\bm{\theta}_m, \bm{Z})
-\]</span></p>
-</div>
-<div class="fragment">
-<ul>
-<li><span class="math inline">\(\bm{\theta}_m = \left( \bm{v}, \gamma, \alpha, \hat{\bm{C}} \right)\)</span> – estimand
-<ul>
-<li><span class="math inline">\(\bm{v}\)</span> – revenue thresholds (preference for protectionism)</li>
-<li><span class="math inline">\(\alpha\)</span> – loss of strength gradient (if <span class="math inline">\(\alpha &gt; 0\)</span>)</li>
-<li><span class="math inline">\(\gamma\)</span> – returns to military advantage (if <span class="math inline">\(\gamma &gt; 0\)</span>)</li>
-<li><span class="math inline">\(\hat{\bm{C}}\)</span> – country-specific cost-shifters</li>
-</ul></li>
-<li><span class="math inline">\(\bm{Z}\)</span> – data</li>
-</ul>
-</div>
-</section><section id="identification-intuition" class="slide level2">
-<h2>Identification (Intuition)</h2>
-<p><strong>Preferences (<span class="math inline">\(\bm{v}\)</span>)</strong></p>
-<ul>
-<li>Holding military technology fixed, <span class="math inline">\(i\)</span>’s overall level of protectionism informs about <span class="math inline">\(v_i\)</span></li>
-<li>Governments with higher trade policies (more protectionist) have higher <span class="math inline">\(v_i\)</span></li>
-</ul>
-<div class="fragment">
-<p><strong>Military Technology</strong></p>
-<ul>
-<li>Holding preferences fixed, heterogeneity in observed policies informs about military parameters</li>
-<li><span class="math inline">\(\alpha\)</span> – does policy favoritism covary with distance from trade partner?</li>
-<li><span class="math inline">\(\gamma\)</span> – does policy favoritism covary with military capability ratio?</li>
-<li><span class="math inline">\(\hat{C}_i\)</span> – does <span class="math inline">\(i\)</span> tend to secure favorable policies everywhere?</li>
-</ul>
-</div>
-</section></section>
-<section><section id="data" class="title-slide slide level1"><h1>Data</h1><p>Year: 2011</p>
-<ul>
-<li><span class="math inline">\(\tau_{ij}\)</span> – aggregate policy barrier to trade imposed by country <span class="math inline">\(i\)</span> on goods from country <span class="math inline">\(j\)</span>
-<ul>
-<li>Measurement: <span class="citation" data-cites="Cooley2019b">Cooley (2019)</span> (<a href="#/barriers">Barriers</a>)</li>
-</ul></li>
-<li><span class="math inline">\(M_i\)</span> – military expenditure
-<ul>
-<li>SIPRI (<a href="#/milex">Milex</a>)</li>
-</ul></li>
-<li><span class="math inline">\(W_{ji}\)</span> – centroid-centroid distances <span class="citation" data-cites="Weidmann2010">(Weidmann, Kuse, and Gleditsch 2010)</span></li>
-</ul>
-<p><a href="#/calibration">Economy Calibration (<span class="math inline">\(h(\bm{\tau})\)</span>)</a></p>
-<ul>
-<li>Trade flows</li>
-<li>National accounts (gdp, gross consumption)</li>
-<li>Parameters
-<ul>
-<li>share of intermediates in traded goods</li>
-<li>share of consumer expenditure spend on traded goods</li>
-<li>trade elasticity</li>
-</ul></li>
-</ul></section><section id="in-sample-countries" class="slide level2">
-<h2>In-Sample Countries</h2>
-<p><img data-src="02_figs/ccodes_table.png" /></p>
-<ul>
-<li>RoW: Aggregate outside economy (cannot coerce or be coerced)
-<ul>
-<li>Non-ROW countriies: 72 percent of world GDP</li>
-</ul></li>
-<li>EU: Aggregate trade policy and military capacity
-<ul>
-<li>Country-level estimation coming soon</li>
-</ul></li>
-</ul>
-</section></section>
-<section id="estimation" class="title-slide slide level1"><h1>Estimation</h1><div class="fragment">
-<p><strong>Measurement Error</strong></p>
-<p><span class="math display">\[
-\tau_{ij} = \tau_{ij}^\star(\bm{\theta}_m, \bm{Z}) + \epsilon_{ij}
-\]</span></p>
-</div>
-<div class="fragment">
-<p><strong>Moment Estimator</strong></p>
-<p><span class="math display">\[
-\min_{\bm{\theta}_m} \quad \sum_i \sum_j \left( \epsilon_{ij}(\bm{\theta}_m, \bm{Z}) \right)^2
-\]</span></p>
-</div>
-<div class="fragment">
-<p><strong>Mathematical Program with Equilibrium Constraints (MPEC) <span class="citation" data-cites="Su2012">(Su and Judd 2012)</span></strong></p>
-<p><span class="math display">\[\begin{equation*}
-\begin{split}
-\min_{ \bm{\theta}_m, \hat{\tilde{\bm{\tau}}}, \hat{\bm{w}}, \hat{\bm{w}}^\prime, \bm{\lambda} } &amp; \quad \sum_i \sum_j \left( \epsilon_{ij} \right)^2 &amp; \quad \text{} \\
-\text{subject to} &amp; \quad \nabla_{\hat{\tilde{\bm{\tau}}}_i} \mathcal{L}_i(\hat{\tilde{\bm{\tau}}}, \hat{\bm{w}}, \bm{\lambda}_i; \bm{\theta}_m) = \bm{0} \text{ for all } i &amp; \quad \text{Policy Optimality} \\
-&amp; \quad \hat{\bm{w}} = \hat{h} \left( \hat{\tilde{\bm{\tau}}} \right) &amp; \quad \text{General Equilibrium (Proposed Policies)} \\
-&amp; \quad \hat{\bm{w}}_i^\prime = \hat{h} \left( \bm{1}_i, \hat{\tilde{\bm{\tau}}}_{-i} \right) \text{ for all } i &amp; \quad \text{General Equilibrium (Imposed Policies)}
-\end{split}
-\end{equation*}\]</span></p>
-</div>
-<div class="fragment">
-<p><strong>Uncertainty</strong></p>
-<ul>
-<li>Bootstrap policy estimates (<span class="math inline">\(\tau_{ij}\)</span>) and recompute <span class="math inline">\(\bm{\theta}_m\)</span> (In progress)</li>
-</ul>
-</div></section>
-<section><section id="results" class="title-slide slide level1"><h1>Results (Preferences)</h1><p><img data-src="02_figs/v_est_table.png" /></p></section><section id="results-power" class="slide level2">
-<h2>Results (Power)</h2>
-<ul>
-<li><span class="math inline">\(\gamma =\)</span> 1.54: increasing returns to military advantage</li>
-</ul>
-<div class="fragment">
-<ul>
-<li><span class="math inline">\(\alpha =\)</span> -0.55: inverse loss of strength gradient</li>
-</ul>
-</div>
-<div class="fragment">
-<p><strong>Likelihood of War</strong></p>
-<p><img src="index_files/figure-revealjs/war_probs-1.png" width="768" style="display: block; margin: auto;" /></p>
-</div>
-</section></section>
-<section id="counterfactuals" class="title-slide slide level1"><h1>Counterfactual: A Coercion-Free World</h1><ul>
-<li>Impose <span class="math inline">\(c_{ji} = \infty\)</span> for all <span class="math inline">\(i, j\)</span>, recompute <span class="math inline">\(\bm{\tau}^\star(\bm{\theta}_m, \bm{Z})\)</span>,
-<ul>
-<li><span class="math inline">\(h \left( \bm{\tau}^\star(\bm{\theta}_m, \bm{Z}) \right)\)</span> for trade flows</li>
-</ul></li>
-</ul>
-<p><img src="index_files/figure-revealjs/unnamed-chunk-14-1.png" width="768" style="display: block; margin: auto;" /></p></section>
-<section id="conclusion" class="title-slide slide level1"><h1>Conclusion</h1><div class="fragment">
-<p><strong>Shadow of Power in International Political Economy</strong></p>
-<ul>
-<li>Quantify governments’ welfare under counterfactual imposition of free trade abroad
-<ul>
-<li>Use difference between factual welfare and welfare under this counterfactual to identify parameters governing technology of coercion in international relations</li>
-</ul></li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
-<li>Results
-<ul>
-<li><input type="checkbox" disabled="" checked="" />
-Returns to military advantage</li>
-<li><input type="checkbox" disabled="" />
-Loss of strength gradient</li>
-</ul></li>
-</ul>
-</div>
-<div class="fragment">
-<p><strong>The Persistence of Hegemony/Hierarchy in International Relations</strong></p>
-<ul>
-<li>Power politics of international trade regime
-<ul>
-<li>Hegemon compels openness from recalcitrant followers</li>
-<li><span class="citation" data-cites="Gallagher1953">Gallagher and Robinson (1953)</span>, <span class="citation" data-cites="Krasner1976">Krasner (1976)</span>, <span class="citation" data-cites="Gilpin1981">Gilpin (1981)</span>, <span class="citation" data-cites="Kindleberger1986">Kindleberger (1986)</span>, <span class="citation" data-cites="Lake2013">Lake (2013)</span></li>
-<li>Largely theoretical literature due to difficulty in constructing counterfactual</li>
-</ul></li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
-<li>What policies would governments adopt in anarchy’s absence?
-<ul>
-<li><strong>Significantly more protectionist world</strong></li>
-</ul></li>
-</ul>
-</div></section>
-<section id="thank-you" class="title-slide slide level1 aligncenter"><h1>Thank You</h1><p><a href="http://brendancooley.com">brendancooley.com</a></p>
-<p><a href="mailto:bcooley@princeton.edu">bcooley@princeton.edu</a></p></section>
-<section id="toc" class="title-slide slide level1"><h1>Table of Contents</h1><div id="left">
+<p><strong>Economic Consequences: Coercion increases value of global trade 63 percent</strong></p>
+<p><img src="index_files/figure-revealjs/X_diff_pp_dm2-1.png" style="display: block; margin: auto;" /></p>
+</section><section id="thank-you" class="slide level2 aligncenter">
+<h2>Thank You</h2>
+<p><a href="http://brendancooley.com">brendancooley.com</a></p>
+<p><a href="mailto:bcooley@princeton.edu">bcooley@princeton.edu</a></p>
+</section><section id="toc" class="slide level2">
+<h2>Table of Contents</h2>
+<div id="left">
 <p><strong>Sections</strong></p>
 <ol type="1">
 <li><a href="#/introduction">Introduction</a></li>
@@ -1024,140 +636,12 @@ Loss of strength gradient</li>
 <div id="right">
 <p><strong>Appendix</strong></p>
 <ol type="1">
-<li><a href="#/barriers">Estimated Dyadic Policy Barriers</a></li>
-<li><a href="#/economyA">Economy (Overview)</a></li>
-<li><a href="#/frechet">Cost Distribution</a></li>
-<li><a href="#/milex">Military Expenditure</a></li>
-<li><a href="#/calibration">Economy (Calibration)</a></li>
-<li><a href="#/rcv">Conquest Values</a></li>
+<li>test</li>
 </ol>
-</div></section>
-<section id="barriers" class="title-slide slide level1"><h1>Estimated Policy Barriers to Trade</h1><p><img src="index_files/figure-revealjs/tauhm1-1.png" width="768" style="display: block; margin: auto;" /></p>
-<p><a href="#/gunboats">Back (Gunboats)</a></p>
-<p><a href="#/toc">Back (TOC)</a></p></section>
-<section><section id="economyA" class="title-slide slide level1"><h1>Economy (Consumption)</h1><p><strong>Consumer’s Problem</strong></p>
-<p><span class="math display">\[\begin{equation*}
-\begin{split}
-\max &amp; \quad U_i = Q_i^{\nu_i} S_i^{1 - \nu_i} \\
-\text{subject to} &amp; \quad P_i Q_i + P_i^s S_i \leq w_i L_i
-\end{split}
-\end{equation*}\]</span></p>
-<p><strong>CES Preferences over Tradable Varieties</strong></p>
-<p><span class="math display">\[
-Q_i = \left( \int_{[0,1]} \alpha_{h(\omega)}^{\frac{1}{\sigma}} q_i(\omega)^{\frac{\sigma - 1}{\sigma}} d \omega \right)^{\frac{\sigma}{\sigma - 1}}
-\]</span></p>
-<p><strong>Tradable Price Index</strong></p>
-<p><span class="math display">\[
-P_i = \left( \int_{[0,1]} \alpha_{h(\omega)} p_i(\omega)^{1 - \sigma} d \omega \right)^{\frac{1}{1 - \sigma}}
-\]</span></p>
-<p><strong>Expenditure on Tradables</strong></p>
-<p><span class="math display">\[
-E_i^q = \nu_i I_i + D_i = P_i Q_i^\star
-\]</span></p></section><section id="economy-production" class="slide level2">
-<h2>Economy (Production)</h2>
-<p><strong>Costs</strong></p>
-<p><span class="math display">\[\begin{equation} \label{eq:c}
-c_i = w_i^{1 - \beta} P_i^{\beta}
-\end{equation}\]</span></p>
-<ul>
-<li><span class="math inline">\(w_i\)</span> - cost of labor</li>
-<li><span class="math inline">\(P_i\)</span> - cost of composite intermediate good
-<ul>
-<li>equivalent to composite consumption good</li>
-</ul></li>
-</ul>
-<p><span class="math display">\[
-E_i^x = \beta X_i
-\]</span></p>
-<p><strong>Local Prices</strong></p>
-<p><span class="math display">\[
-p_{ii}(\omega) = \frac{c_i}{z_i(\omega)}
-\]</span></p>
-<p><strong>Technology (Fréchet)</strong></p>
-<p><span class="math display">\[
-F_i(z) = \text{Pr} \left\{ z_i(\omega) \leq z \right\} = \exp \left\{ - T_i z^{-\theta} \right\}
-\]</span></p>
-</section><section id="economy-equilibrium" class="slide level2">
-<h2>Economy (Equilibrium)</h2>
-<p><strong>Total Expenditure on Tradables</strong></p>
-<p><span class="math display">\[
-X_i = \underbrace{E_i^q + E_i^x}_{E_i} - D_i
-\]</span></p>
-<p><strong>Trade Shares</strong></p>
-<p><span class="math display">\[
-\Omega_{ij}^\star = \left\{ \omega \in [0,1] \left. \right\vert p_{ij}(\omega) \leq \min_{k \neq j} \left\{ p_{ik} \right\} \right\}
-\]</span></p>
-<p><span class="math display">\[
-\lambda_{ij}(\boldsymbol{w}) = \frac{1}{E_i} \int_{\Omega_{ij}^\star} p_{ij}(\omega) q_i \left( p_{ij} (\omega) \right) d \omega
-\]</span></p>
-<p><strong>Market Clearing</strong></p>
-<p><span class="math display">\[
-X_i = \sum_{j=1}^N \lambda_{ji}(\boldsymbol{w}) E_j
-\]</span></p>
-</section><section id="economy-equilibrium-in-changes" class="slide level2">
-<h2>Economy (Equilibrium in Changes)</h2>
-<p><span class="math display">\[
-\hat{r}_i = \frac{1}{r_i} \left( E_i \hat{E}_i(\hat{\bm{w}}) - \sum_j X_{ij}^{\text{cif}} \hat{X}_{ij}^{\text{cif}}(\hat{\bm{w}}) \right)
-\]</span> <span class="math display">\[
-\hat{w}_i = \frac{1}{\nu_i w_i L_i} \left( \sum_j \left( (1 - \beta) X_{ji}^{\text{cif}} \hat{X}_{ji}^{\text{cif}}(\hat{\bm{w}}) \right) + (1 - \nu_i) r_i \hat{r}_i(\hat{\bm{w}}) \right)
-\]</span> <span class="math display">\[
-\hat{E}_i(\hat{\bm{w}}) = \frac{1}{E_i} \left( E_i^q \hat{E}_i^q(\hat{\bm{w}}) + E_i^x \hat{E}_i^x(\hat{\bm{w}}) \right)
-\]</span> <span class="math display">\[
-\hat{x}_{ij}(\hat{\bm{w}}) = \left( \hat{\tau}_{ij} \hat{w}_j^{1 - \beta} \hat{P}_j(\hat{\bm{w}})^\beta \right)^{-\theta} \hat{P}_i(\hat{\bm{w}})^{\theta}
-\]</span> <span class="math display">\[
-\hat{P}_i(\hat{\bm{w}}) = \left( \sum_j x_{ij} \left( \hat{\tau}_{ij} \hat{w}_j^{1 - \beta} \hat{P}_j(\hat{\bm{w}})^\beta \right)^{-\theta} \right)^{-\frac{1}{\theta}}
-\]</span> <span class="math display">\[
-1 = \sum_i y_i \hat{w}_i
-\]</span></p>
-<p><a href="#/economyEnd">Back (Economy)</a></p>
-<p><a href="#/toc">Back (TOC)</a></p>
-</section></section>
-<section id="frechet" class="title-slide slide level1"><h1>Cost Distribution</h1><p><img data-src="02_figs/Frechet.png" style="width:75.0%" alt="Fréchet distribution. Source" /> <a href="#/wars">Back (Wars)</a></p>
-<p><a href="#/toc">Back (TOC)</a></p></section>
-<section id="milex" class="title-slide slide level1"><h1>Military Expenditure</h1><p><img src="index_files/figure-revealjs/milex-1.png" width="768" style="display: block; margin: auto;" /></p>
-<p><a href="#/data">Back (Data)</a></p>
-<p><a href="#/toc">Back (TOC)</a></p></section>
-<section id="calibration" class="title-slide slide level1"><h1>Economy (Calibration I)</h1><ul>
-<li>Trade Flows: BACI</li>
-<li>National Accounts: OECD and WIOD</li>
-</ul>
-<p><strong>Parameters</strong></p>
-<p><span class="math display">\[
-\bm{\theta}_h = \left( \bm{\nu}, \beta, \theta \right)
-\]</span></p>
-<ul>
-<li><span class="math inline">\(\nu_i\)</span> – share of consumer expenditure spent on tradables (World Bank ICP)</li>
-<li><span class="math inline">\(\beta\)</span> – share of intermediate goods in imports (WIOD)
-<ul>
-<li>Average across countries in sample (0.86)</li>
-</ul></li>
-<li><span class="math inline">\(\theta\)</span> – trade elasticity
-<ul>
-<li>Set to 6 <span class="citation" data-cites="Head2014">(Head and Mayer 2014)</span></li>
-</ul></li>
-</ul></section>
-<section><section id="economy-calibration-ii" class="title-slide slide level1"><h1>Economy (Calibration II)</h1><p><strong>Deficits <span class="citation" data-cites="Dekle2007">(Dekle, Eaton, and Kortum 2007)</span></strong></p>
-<ul>
-<li><span class="math inline">\(\bm{D}\)</span> – trade deficits</li>
-<li>Equilibrium in changes <span class="math display">\[
-\hat{h}(\hat{\bm{\tau}}, \hat{\bm{D}}; \bm{\theta}_h)
-\]</span></li>
-<li>Purge deficits before analysis <span class="math display">\[
-\hat{h}(\hat{\bm{\tau}}, \bm{0}; \bm{\theta}_h) \rightarrow \hat{\bm{w}}_{-D}
-\]</span></li>
-<li>Recompute associated trade flows, price levels, etc</li>
-</ul>
-<p><a href="#/data">Back (Data)</a></p>
-<p><a href="#/toc">Back (TOC)</a></p></section><section id="rcv" class="slide level2">
-<h2>Conquest Values</h2>
-<p><span class="math display">\[
-V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right)
-\]</span></p>
-<p><img src="index_files/figure-revealjs/rcv-1.png" width="768" style="display: block; margin: auto;" /></p>
-<p><a href="#/toc">Back (TOC)</a></p>
+</div>
 <!-- hide references -->
 <hr style="height:30em; visibility:hidden;" />
-<div id="refs" class="references" role="doc-bibliography">
+<div id="refs" class="references">
 <div id="ref-Art1996">
 <p>Art, Robert J. 1996. “American foreign policy and the fungibility of force.” <em>Security Studies</em> 5 (4): 7–42.</p>
 </div>
@@ -1168,7 +652,7 @@ V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right)
 <p>Berger, Daniel, William Easterly, Nathan Nunn, and Shanker Satyanath. 2013. “Commercial imperialism? Political influence and trade during the Cold War.” <em>The American Economic Review</em> 103 (2): 863–96.</p>
 </div>
 <div id="ref-Boulding1962">
-<p>Boulding, Kenneth E. 1962. “Conflict and defense: A general theory.”</p>
+<p>Boulding, Kenneth E. 1962. “Conflict and defense: A general theory.” Harper.</p>
 </div>
 <div id="ref-Brito1985">
 <p>Brito, Dagobert L., and Michael D. Intrilagator. 1985. “Conflict, War, and Redistribution.” <em>American Political Science Review</em> 79 (4).</p>
@@ -1185,14 +669,8 @@ V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right)
 <div id="ref-Dahl1957">
 <p>Dahl, Robert A. 1957. “The Concept of Power.” <em>Behavioral Science</em> 2 (3): 201–15.</p>
 </div>
-<div id="ref-Dekle2007">
-<p>Dekle, Robert, Jonathan Eaton, and Samuel Kortum. 2007. “Unbalanced trade.” <em>AEA Papers and Proceedings</em> 97 (2): 351–55.</p>
-</div>
 <div id="ref-Diehl1985">
 <p>Diehl, Paul F. 1985. “Continuity and Military Escalation in Major Power Rivalries, 1816-1980.” <em>The Journal of Politics</em> 47 (4): 1203–11.</p>
-</div>
-<div id="ref-Eaton2002">
-<p>Eaton, Jonathan, and Samuel Kortum. 2002. “Technology, geography, and trade.” <em>Econometrica</em> 70 (5): 1741–79.</p>
 </div>
 <div id="ref-Fearon1995">
 <p>Fearon, James D. 1995. “Rationalist explanations for war.” <em>International Organization</em> 49 (03): 379–414.</p>
@@ -1219,10 +697,7 @@ V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right)
 <p>Grossman, Gene M, and Elhanan Helpman. 1994. “Protection for Sale.” <em>The American Economic Review</em>, 833–50.</p>
 </div>
 <div id="ref-Grossman2016">
-<p>Grossman, G. M. 2016. “The Purpose of Trade Agreements.” In <em>Handbook of Commercial Policy</em>, 380–434.</p>
-</div>
-<div id="ref-Head2014">
-<p>Head, Keith, and Thierry Mayer. 2014. “Gravity Equations: Workhorse, Toolkit and Cookbook.” In <em>Handbook of International Economics</em>, edited by Elhanan Helpman, G. Gopinath, and K. Rogoff, 4th ed., 131–96.</p>
+<p>Grossman, G.M. 2016. “The Purpose of Trade Agreements.” In <em>Handbook of Commercial Policy</em>, 380–434.</p>
 </div>
 <div id="ref-Kim2017">
 <p>Kim, In Song. 2017. “Political cleavages within industry: firm-level lobbying for trade liberalization.” <em>American Political Science Review</em> 111 (1): 1–20.</p>
@@ -1231,7 +706,7 @@ V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right)
 <p>Kindleberger, Charles P. 1986. <em>The World in Depression, 1929-1939: Revised and enlarged edition</em>. Vol. 4. Univ of California Press.</p>
 </div>
 <div id="ref-Krasner1976">
-<p>Krasner, Stephen D. 1976. “State power and the structure of international trade.” <em>World Politics</em> 28 (03): 317–47.</p>
+<p>Krasner, Stephen D. 1976. “State power and the structure of international trade.” <em>World Politics</em> 28 (03). Cambridge Univ Press: 317–47.</p>
 </div>
 <div id="ref-Lake2013">
 <p>Lake, David A. 2013. “Legitimating Power: The Domestic Politics of U.S. International Hierarchy.” <em>International Security</em> 38 (2): 74–111.</p>
@@ -1246,10 +721,10 @@ V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right)
 <p>Osgood, Iain. 2016. “Differentiated Products, Divided Industries: Firm Preferences over Trade Liberalization.” <em>Economics &amp; Politics</em> 28 (2): 161–80.</p>
 </div>
 <div id="ref-Ossa2011">
-<p>Ossa, Ralph. 2011. “A " New Trade " Theory of GATT/WTO Negotiations.” <em>Journal of Political Economy</em> 119 (1): 122–52.</p>
+<p>Ossa, Ralph. 2011. “A &quot; New Trade &quot; Theory of GATT/WTO Negotiations.” <em>Journal of Political Economy</em> 119 (1): 122–52.</p>
 </div>
 <div id="ref-Ossa2012">
-<p>———. 2012. “Profits in the "New Trade" Approach to Trade Negotiations.” <em>American Economic Review: Papers &amp; Proceedings</em> 102 (3): 466–69.</p>
+<p>———. 2012. “Profits in the &quot;New Trade&quot; Approach to Trade Negotiations.” <em>American Economic Review: Papers &amp; Proceedings</em> 102 (3): 466–69.</p>
 </div>
 <div id="ref-Powell1999">
 <p>Powell, Robert. 1999. <em>In the shadow of power: States and strategies in international politics</em>. Princeton University Press.</p>
@@ -1262,12 +737,6 @@ V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right)
 </div>
 <div id="ref-Rogowski1987">
 <p>Rogowski, Ronald. 1987. “Political Cleavages and Changing Exposure to Trade.” <em>The American Political Science Review</em> 81 (4): 1121.</p>
-</div>
-<div id="ref-Su2012">
-<p>Su, Che Lin, and Kenneth L. Judd. 2012. “Constrained Optimization Approaches to Estimation of Structural Models.” <em>Econometrica</em> 80 (5): 2213–30.</p>
-</div>
-<div id="ref-Weidmann2010">
-<p>Weidmann, Nils B, Doreen Kuse, and Kristian Skrede Gleditsch. 2010. “The geography of the international system: The CShapes dataset.” <em>International Interactions</em> 36 (1): 86–106.</p>
 </div>
 </div>
 </section></section>
@@ -1283,7 +752,7 @@ V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right)
       // https://github.com/hakimel/reveal.js#configuration
       Reveal.initialize({
         // Display controls in the bottom right corner
-        controls: false,
+        controls: true,
         // Display a presentation progress bar
         progress: false,
         // Display the page number of the current slide
@@ -1361,17 +830,6 @@ V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right)
 	});
 </script> -->
 
-<script>
- Reveal.initialize({
-    // Optional reveal.js plugins
-    dependencies: [
-        { src: 'index_files/reveal.js-3.8.0/plugin/zoom-js/zoom.js', async: true },
-        { src: 'index_files/reveal.js-3.8.0/plugin/markdown/marked.js', async: true },
-        { src: 'index_files/reveal.js-3.8.0/plugin/notes/notes.js', async: true },
-        { src: 'index_files/reveal.js-3.8.0/plugin/verticator/verticator.js'}
-    ]
-});
-</script>
 
   </body>
 </html>
