@@ -5,11 +5,11 @@ c_setup <- import_from_path("c_setup", path=paste0("../", code_dir))
 setup <- c_setup$setup("local", size)
 
 source(paste0("../", code_dir, "f_cfct_X.R"))
-fig_height_intro <- 4.5
+fig_height_intro <- 5.
 
 ```
 
-## Power and Preferences {id="introduction"}
+## Power and Preferences
 
 <div class="fragment">
 
@@ -53,9 +53,9 @@ fig_height_intro <- 4.5
 **Conflicts of Interest and Gunboat Diplomacy**
 
 - Powerful governments impose openness on weaker counterparts
-	+ @Findlay2007
+	+ @Viner1948, @Findlay2007
 - Peacetime regimes: empire, hegemony, and hierarchy  	
-	+ @Gallagher1953, @Krasner1976, @Gilpin1981, @Kindleberger1986, @Lake2013
+	+ @Gallagher1953, @Krasner1976, @Gilpin1981, @Kindleberger1986, @Lake2007
 	+ Economic effects: @Berger2013
 
 . . . 
@@ -81,11 +81,11 @@ $$
 - Unobservables ($\bm{\theta}$)
 	+ $\bm{v}$ -- governments' preferences for protectionism
 	+ $\gamma$ -- returns to military force in coercive capacity
-	+ $\alpha$ -- geographic loss of strength gradient [@Boulding1962; @BuenodeMesquita1980; @Diehl1985; @Lemke1995; @Gartzke2011]
+	+ $\alpha$ -- geographic loss of strength gradient [@Boulding1962; @BuenodeMesquita1980; @Diehl1985; @Lemke1995; @Gartzke2011; @Markowitz2013]
 
 . . . 
 
-**Estimation:** $\left\{ \bm{\tau}, \bm{M} \right\} \rightarrow \bm{\theta}$
+**Estimation:** $\left\{ \bm{\tau}, \bm{M} \right\} \rightarrow \tilde{\bm{\theta}}$
 
 . . . 
 
@@ -98,11 +98,7 @@ $$
 
 ## Results: Preview
 
-- Positive military capability ratio reduces costs of war, lends coercive advantage
-
-. . .
-
-**Economic Consequences: Coercion increases value of global trade `r round(((cfct1_trade_ratio**-1)-1)*100, 1)` percent**
+**Economic Consequences of Coercion: Increases value of global trade `r round(((cfct1_trade_ratio**-1)-1)*100, 1)` percent**
 
 ```{r X_diff_pp_dm1, echo=FALSE, warning=FALSE, message=FALSE, dpi=600, fig.align="center", fig.height=fig_height_intro}
 
@@ -112,9 +108,7 @@ X_diff_pp_dm1
 
 ## Results: Preview
 
-- Positive military capability ratio reduces costs of war, lends coercive advantage
-
-**Economic Consequences: Coercion increases value of global trade `r round(((cfct1_trade_ratio**-1)-1)*100, 1)` percent**
+**Economic Consequences of Coercion: Increases value of global trade `r round(((cfct1_trade_ratio**-1)-1)*100, 1)` percent**
 
 ```{r X_diff_pp_dm2, echo=FALSE, warning=FALSE, message=FALSE, dpi=600, fig.align="center", fig.height=fig_height_intro}
 

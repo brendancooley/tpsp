@@ -58,10 +58,12 @@ if (file.exists('references.RData')) load('references.RData')
 
 ```
 
-# Introduction {.aligncenter}
+# Introduction {.aligncenter id="introduction"} 
 
 ```{r, child=paste0(slides_dir, "introduction.rmd")}
 ```
+
+# Data {.aligncenter id="data"}
 
 ## Thank You {.aligncenter}
 
