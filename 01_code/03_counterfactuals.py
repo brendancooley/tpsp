@@ -85,12 +85,13 @@ if run_cfact2 == True:
     print("beginning counterfactual 2...")
     # xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=1.25, tau_buffer_upper=1.25, start_with_resto=True, proximity_weight_off=True)
     # xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=.75, tau_buffer_upper=1.25, start_with_resto=True, proximity_weight_off=True)
-    xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=.75, tau_buffer_upper=1.125, start_with_resto=True, proximity_weight_off=True)
+    # xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=.75, tau_buffer_upper=1.125, start_with_resto=True, proximity_weight_off=True)  # JPN taus at corner here
+    xlhvt_prime_2 = results_2.compute_counterfactual(v_500, theta_x, pecmy_2.m, sv=sv, tau_bounds=True, ge_ones=False, tau_buffer_lower=.75, tau_buffer_upper=1., start_with_resto=True, proximity_weight_off=True)
     np.savetxt(results_2.setup.cfct_china_path + "x.csv", xlhvt_prime_2, delimiter=",")
 
 xlhvt_prime_2 = np.genfromtxt(results_2.setup.cfct_china_path + "x.csv", delimiter=",")
 ge_x_star_2 = pecmy_2.rewrap_xlhvt(xlhvt_prime_2)["ge_x"]
-h_2 = pecmy_1.rewrap_xlhvt(xlhvt_prime_2)["h"]
+h_2 = pecmy_2.rewrap_xlhvt(xlhvt_prime_2)["h"]
 
 tau_2 = pecmy_2.ecmy.rewrap_ge_dict(ge_x_star_2)["tau_hat"] * pecmy_2.ecmy.tau
 X_star_2 = pecmy_2.ecmy.rewrap_ge_dict(ge_x_star_2)["X_hat"] * pecmy_2.ecmy.Xcif  # counterfactual trade flows
