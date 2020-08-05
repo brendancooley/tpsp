@@ -1,17 +1,35 @@
-# Estimated Policy Barriers to Trade {id="barriers"}
+## Bargaining, Trade, and War
 
-```{r tauhm1, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5}
+**Institutionalized Bargaining**
 
-source(paste0("../", figs_dir, "tau.R"))
-tauhm(tau)
+- Models of GATT/WTO: reciprocity and nondiscriminination
+	+ @Grossman1995, @Maggi1999, @Bagwell1999
+- Institutions and incentive compatibility: war as an outside option [@Powell1994]
+
+**Trade as Means**
+
+- Governments pursue "political" ends (e.g. security), trade used as coercive instrument
+	+ @Hirschman1945, @Gowa1993, @Martin2012, @Seitz2015
+- Security and power are themselves means to achieve other ends
+
+**Power and Exchange**
+
+- Prices and power in the marketplace
+	+ @Skaperdas2001, @Piccione2007, @Garfinkel2011, @Carroll2018
+- Trade frictions as choice variable here
+
+## Estimated Trade Frictions {id="epbt_tau"}
+
+```{r tauhm, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5, dpi=600}
+
+source(paste0("../", code_dir, "f_tau_epbt.R"))
+tau_hm
 
 ```
 
-<a href="#/gunboats">Back (Gunboats)</a>
+<a href="#/economy1">Back</a>
 
-<a href="#/toc">Back (TOC)</a>
-
-# Economy (Consumption) {id="economyA"}
+## Economy (Consumption) {id="economyA"}
 
 **Consumer's Problem**
 
@@ -114,36 +132,18 @@ $$
 1 = \sum_i y_i \hat{w}_i
 $$
 
-<a href="#/economyEnd">Back (Economy)</a>
+<a href="#/economy1">Back</a>
 
-<a href="#/toc">Back (TOC)</a>
-
-# Cost Distribution {id="frechet"}
-
-![Fréchet distribution. [Source](https://en.wikipedia.org/wiki/Fr%C3%A9chet_distribution#/media/File:Frechet_pdf.svg) ](02_figs/Frechet.png){ width=75% }
-<a href="#/wars">Back (Wars)</a>
-
-<a href="#/toc">Back (TOC)</a>
-
-# Military Expenditure {id="milex"}
-
-```{r milex, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5}
-
-source(paste0("../", figs_dir, "milex.R"))
-milexFig + theme(aspect.ratio=1)
-
-```
-
-<a href="#/data">Back (Data)</a>
-
-<a href="#/toc">Back (TOC)</a>
-
-# Economy (Calibration I) {id="calibration"}
+## Economy (Calibration I) {id="calibration"}
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 
-theta <- read_csv(paste0(dataPath, "theta.csv"), col_names=FALSE) %>% pull(.)
-beta <- read_csv(paste0(dataPath, "beta.csv"), col_names=FALSE) %>% pull(.)
+use_virtualenv("python3")
+c_setup <- import_from_path("c_setup", path=paste0("../", code_dir))
+setup <- c_setup$setup("local", size)
+
+theta <- read_csv(setup$theta_path, col_names=FALSE) %>% pull(.)
+beta <- read_csv(setup$beta_path, col_names=FALSE) %>% pull(.)
 
 ```
 
@@ -162,7 +162,7 @@ $$
 - $\theta$ -- trade elasticity
 	+ Set to `r theta` [@Head2014]
 
-# Economy (Calibration II)
+## Economy (Calibration II)
 
 **Deficits [@Dekle2007]**
 
@@ -177,21 +177,57 @@ $$
 $$
 - Recompute associated trade flows, price levels, etc
 
-<a href="#/data">Back (Data)</a>
+<a href="#/economy1">Back</a>
 
-<a href="#/toc">Back (TOC)</a>
+## Military Expenditure {id="milex"}
 
-## Conquest Values {id="rcv"}
+```{r milex, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5}
 
-$$
-V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right)
-$$
-
-```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5.5}
-
-source("../02_figs/rcv.R")
-rcvhm(rcv_eq, mint, maxt)
+source(paste0("../", code_dir, "f_milex.R"))
+milexFig + theme(aspect.ratio=1)
 
 ```
 
-<a href="#/toc">Back (TOC)</a>
+<a href="#/cipe_data">Back</a>
+
+## Reduced Form Evidence (Interpretive Model) {id="rf1"}
+
+**Bilateral Nash Bargaining over Trade Policy**
+
+\begin{equation}
+\begin{split}
+x^\star \in \argmax_x & \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( u_2(x) - w_2(M_2 / M_1) \right) \\
+\text{subject to} & \quad u_1(x) \geq w_1(M_1 / M_2) \\
+& \quad u_2(x) \geq w_2(M_2 / M_1) .
+\end{split}
+\end{equation}
+
+**Result:** Government 1's utility increasing in $M_1$
+
+**Empirical Analogue**
+
+$$
+\frac{u_1(x^\star; M_1, M_2)}{u_1(1)} \iff \frac{ V_i \left( h(\bm{\tau}) \right) }{ V_i \left( h(\bm{1}_j; \bm{\tau}_{-j}) \right) }
+$$
+
+**Empirical Conquest Value:** $V_i \left( h(\bm{1}_j; \bm{\tau}_{-j}) \right)$
+
+## Reduced Form Evidence (Data)
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5, dpi=600}
+
+source(paste0("../", code_dir, "f_tau_rf.R"))
+rcvm_plot
+
+```
+
+## Reduced Form Evidence (Data)
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5}
+
+# source(paste0("../", code_dir, "f_tau_rf.R"))
+modelsummary(models_ms, coef_map=cm, add_rows=list(fe_row), gof_omit="AIC|BIC|Log.Lik", title="Inverse Conquest Values and Military Capability Ratios", stars=TRUE)
+
+```
+
+<a href="#/cipe_data">Back</a>

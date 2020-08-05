@@ -608,7 +608,91 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <p><strong>Economic Consequences of Coercion: Increases value of global trade 63 percent</strong></p>
 <p><img src="index_files/figure-revealjs/X_diff_pp_dm2-1.png" style="display: block; margin: auto;" /></p>
 </section></section>
-<section><section id="data" class="title-slide slide level1 aligncenter"><h1>Data</h1></section><section id="thank-you" class="slide level2 aligncenter">
+<section><section id="data" class="title-slide slide level1 aligncenter"><h1>Data</h1></section><section id="economy1" class="slide level2">
+<h2>Economic Effects of Endogenous Trade Frictions</h2>
+<p><strong>Choice variables</strong></p>
+<div id="left">
+<p><span class="math display">\[
+\bm{\tau} = \begin{pmatrix}
+\tau_{11} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{1N} \\
+\vdots &amp; \ddots &amp; \vdots &amp; \iddots &amp; \vdots \\
+\vdots &amp; \cdots &amp; \tau_{ij} &amp; \cdots &amp; \vdots \\
+\vdots &amp; \iddots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\tau_{N1} &amp; \cdots &amp; \cdots &amp; \cdots &amp; \tau_{NN}
+\end{pmatrix}
+\]</span></p>
+</div>
+<div id="right">
+<ul>
+<li><span class="math inline">\(\tau_{ij}\)</span> – tax government <span class="math inline">\(i\)</span> imposes on imports from country <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(\bm{\tau}_i\)</span> – government <span class="math inline">\(i\)</span>’s policy vector</li>
+<li>Measurement: <span class="citation" data-cites="Cooley2019b">Cooley (2019)</span> <a href="#/epbt_tau">(magnitudes)</a></li>
+</ul>
+</div>
+<div class="container_row">
+
+</div>
+<div class="fragment">
+<p><strong>Economy</strong></p>
+<div id="left">
+<p><span class="math display">\[
+h(\bm{\tau}; \bm{Z}_m, \bm{\theta}_m) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \bm{w}
+\]</span></p>
+</div>
+<div id="right">
+<ul>
+<li><a href="#/economyA">Model Details</a></li>
+<li><span class="math inline">\(\bm{Z}_h\)</span> – economic data
+<ul>
+<li>national accounts, price levels, trade flows, freight costs</li>
+</ul></li>
+<li><span class="math inline">\(\bm{\theta}_m\)</span> – economic parameters <a href="#/calibration">(calibration)</a></li>
+</ul>
+</div>
+</div>
+</section><section id="cipe_data" class="slide level2">
+<h2>Coercive International Political Economy: Data</h2>
+<p><strong>Sample Countries</strong></p>
+<div id="left">
+<center>
+<img data-src="02_figs/ccodes_wide.png" style="width:100.0%" />
+</center>
+</div>
+<div id="right">
+<ul>
+<li>Year: 2011</li>
+<li>RoW: Aggregate outside economy
+<ul>
+<li>cannot coerce or be coerced</li>
+<li>Non-ROW countries: 72 percent of world GDP</li>
+</ul></li>
+<li>EU: Aggregate trade policies and military capacities</li>
+</ul>
+</div>
+<div class="container_row">
+
+</div>
+<div class="fragment">
+<p><strong>War Costs</strong></p>
+<p><span class="math display">\[
+c_{ij} \sim F \left( \bm{\theta}_m; \bm{Z}_m \right)
+\]</span></p>
+<ul>
+<li><span class="math inline">\(c_{ij}\)</span> – cost government <span class="math inline">\(i\)</span> pays to attack government <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(\bm{Z}_m\)</span> – observable dyadic features
+<ul>
+<li><span class="math inline">\(M_{i} / M_{j}\)</span> – military expenditure ratio <a href="#/milex">(data)</a></li>
+<li><span class="math inline">\(W_{ij}\)</span> – centroid-centroid distance between <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span></li>
+</ul></li>
+<li><span class="math inline">\(\bm{\theta}_m\)</span> – estimand</li>
+</ul>
+<p><a href="#/rf1">Reduced Form Evidence</a></p>
+</div>
+</section><section id="thank-you" class="slide level2 aligncenter">
 <h2>Thank You</h2>
 <p><a href="http://brendancooley.com">brendancooley.com</a></p>
 <p><a href="mailto:bcooley@princeton.edu">bcooley@princeton.edu</a></p>
@@ -632,6 +716,607 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <li>test</li>
 </ol>
 </div>
+</section></section>
+<section><section id="appendix" class="title-slide slide level1 aligncenter"><h1>Appendix</h1></section><section id="bargaining-trade-and-war" class="slide level2">
+<h2>Bargaining, Trade, and War</h2>
+<p><strong>Institutionalized Bargaining</strong></p>
+<ul>
+<li>Models of GATT/WTO: reciprocity and nondiscriminination
+<ul>
+<li><span class="citation" data-cites="Grossman1995">Grossman and Helpman (1995)</span>, <span class="citation" data-cites="Maggi1999">Maggi (1999)</span>, <span class="citation" data-cites="Bagwell1999">Bagwell and Staiger (1999)</span></li>
+</ul></li>
+<li>Institutions and incentive compatibility: war as an outside option <span class="citation" data-cites="Powell1994">(Powell 1994)</span></li>
+</ul>
+<p><strong>Trade as Means</strong></p>
+<ul>
+<li>Governments pursue “political” ends (e.g. security), trade used as coercive instrument
+<ul>
+<li><span class="citation" data-cites="Hirschman1945">Hirschman (1945)</span>, <span class="citation" data-cites="Gowa1993">Gowa and Mansfield (1993)</span>, <span class="citation" data-cites="Martin2012">Martin, Mayer, and Thoenig (2012)</span>, <span class="citation" data-cites="Seitz2015">Seitz, Tarasov, and Zakharenko (2015)</span></li>
+</ul></li>
+<li>Security and power are themselves means to achieve other ends</li>
+</ul>
+<p><strong>Power and Exchange</strong></p>
+<ul>
+<li>Prices and power in the marketplace
+<ul>
+<li><span class="citation" data-cites="Skaperdas2001">Skaperdas (2001)</span>, <span class="citation" data-cites="Piccione2007">Piccione and Rubinstein (2007)</span>, <span class="citation" data-cites="Garfinkel2011">Garfinkel, Skaperdas, and Syropoulos (2011)</span>, <span class="citation" data-cites="Carroll2018">Carroll (2018)</span></li>
+</ul></li>
+<li>Trade frictions as choice variable here</li>
+</ul>
+</section><section id="epbt_tau" class="slide level2">
+<h2>Estimated Trade Frictions</h2>
+<p><img src="index_files/figure-revealjs/tauhm-1.png" style="display: block; margin: auto;" /></p>
+<p><a href="#/economy1">Back</a></p>
+</section><section id="economyA" class="slide level2">
+<h2>Economy (Consumption)</h2>
+<p><strong>Consumer’s Problem</strong></p>
+<p><span class="math display">\[\begin{equation*}
+\begin{split}
+\max &amp; \quad U_i = Q_i^{\nu_i} S_i^{1 - \nu_i} \\
+\text{subject to} &amp; \quad P_i Q_i + P_i^s S_i \leq w_i L_i
+\end{split}
+\end{equation*}\]</span></p>
+<p><strong>CES Preferences over Tradable Varieties</strong></p>
+<p><span class="math display">\[
+Q_i = \left( \int_{[0,1]} \alpha_{h(\omega)}^{\frac{1}{\sigma}} q_i(\omega)^{\frac{\sigma - 1}{\sigma}} d \omega \right)^{\frac{\sigma}{\sigma - 1}}
+\]</span></p>
+<p><strong>Tradable Price Index</strong></p>
+<p><span class="math display">\[
+P_i = \left( \int_{[0,1]} \alpha_{h(\omega)} p_i(\omega)^{1 - \sigma} d \omega \right)^{\frac{1}{1 - \sigma}}
+\]</span></p>
+<p><strong>Expenditure on Tradables</strong></p>
+<p><span class="math display">\[
+E_i^q = \nu_i I_i + D_i = P_i Q_i^\star
+\]</span></p>
+</section><section id="economy-production" class="slide level2">
+<h2>Economy (Production)</h2>
+<p><strong>Costs</strong></p>
+<p><span class="math display">\[\begin{equation} \label{eq:c}
+c_i = w_i^{1 - \beta} P_i^{\beta}
+\end{equation}\]</span></p>
+<ul>
+<li><span class="math inline">\(w_i\)</span> - cost of labor</li>
+<li><span class="math inline">\(P_i\)</span> - cost of composite intermediate good
+<ul>
+<li>equivalent to composite consumption good</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+E_i^x = \beta X_i
+\]</span></p>
+<p><strong>Local Prices</strong></p>
+<p><span class="math display">\[
+p_{ii}(\omega) = \frac{c_i}{z_i(\omega)}
+\]</span></p>
+<p><strong>Technology (Fréchet)</strong></p>
+<p><span class="math display">\[
+F_i(z) = \text{Pr} \left\{ z_i(\omega) \leq z \right\} = \exp \left\{ - T_i z^{-\theta} \right\}
+\]</span></p>
+</section><section id="economy-equilibrium" class="slide level2">
+<h2>Economy (Equilibrium)</h2>
+<p><strong>Total Expenditure on Tradables</strong></p>
+<p><span class="math display">\[
+X_i = \underbrace{E_i^q + E_i^x}_{E_i} - D_i
+\]</span></p>
+<p><strong>Trade Shares</strong></p>
+<p><span class="math display">\[
+\Omega_{ij}^\star = \left\{ \omega \in [0,1] \left. \right\vert p_{ij}(\omega) \leq \min_{k \neq j} \left\{ p_{ik} \right\} \right\}
+\]</span></p>
+<p><span class="math display">\[
+\lambda_{ij}(\boldsymbol{w}) = \frac{1}{E_i} \int_{\Omega_{ij}^\star} p_{ij}(\omega) q_i \left( p_{ij} (\omega) \right) d \omega
+\]</span></p>
+<p><strong>Market Clearing</strong></p>
+<p><span class="math display">\[
+X_i = \sum_{j=1}^N \lambda_{ji}(\boldsymbol{w}) E_j
+\]</span></p>
+</section><section id="economy-equilibrium-in-changes" class="slide level2">
+<h2>Economy (Equilibrium in Changes)</h2>
+<p><span class="math display">\[
+\hat{r}_i = \frac{1}{r_i} \left( E_i \hat{E}_i(\hat{\bm{w}}) - \sum_j X_{ij}^{\text{cif}} \hat{X}_{ij}^{\text{cif}}(\hat{\bm{w}}) \right)
+\]</span> <span class="math display">\[
+\hat{w}_i = \frac{1}{\nu_i w_i L_i} \left( \sum_j \left( (1 - \beta) X_{ji}^{\text{cif}} \hat{X}_{ji}^{\text{cif}}(\hat{\bm{w}}) \right) + (1 - \nu_i) r_i \hat{r}_i(\hat{\bm{w}}) \right)
+\]</span> <span class="math display">\[
+\hat{E}_i(\hat{\bm{w}}) = \frac{1}{E_i} \left( E_i^q \hat{E}_i^q(\hat{\bm{w}}) + E_i^x \hat{E}_i^x(\hat{\bm{w}}) \right)
+\]</span> <span class="math display">\[
+\hat{x}_{ij}(\hat{\bm{w}}) = \left( \hat{\tau}_{ij} \hat{w}_j^{1 - \beta} \hat{P}_j(\hat{\bm{w}})^\beta \right)^{-\theta} \hat{P}_i(\hat{\bm{w}})^{\theta}
+\]</span> <span class="math display">\[
+\hat{P}_i(\hat{\bm{w}}) = \left( \sum_j x_{ij} \left( \hat{\tau}_{ij} \hat{w}_j^{1 - \beta} \hat{P}_j(\hat{\bm{w}})^\beta \right)^{-\theta} \right)^{-\frac{1}{\theta}}
+\]</span> <span class="math display">\[
+1 = \sum_i y_i \hat{w}_i
+\]</span></p>
+<p><a href="#/economy1">Back</a></p>
+</section><section id="calibration" class="slide level2">
+<h2>Economy (Calibration I)</h2>
+<ul>
+<li>Trade Flows: BACI</li>
+<li>National Accounts: OECD and WIOD</li>
+</ul>
+<p><strong>Parameters</strong></p>
+<p><span class="math display">\[
+\bm{\theta}_h = \left( \bm{\nu}, \beta, \theta \right)
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\nu_i\)</span> – share of consumer expenditure spent on tradables (World Bank ICP)</li>
+<li><span class="math inline">\(\beta\)</span> – share of intermediate goods in imports (WIOD)
+<ul>
+<li>Average across countries in sample (0.86)</li>
+</ul></li>
+<li><span class="math inline">\(\theta\)</span> – trade elasticity
+<ul>
+<li>Set to 6 <span class="citation" data-cites="Head2014">(Head and Mayer 2014)</span></li>
+</ul></li>
+</ul>
+</section><section id="economy-calibration-ii" class="slide level2">
+<h2>Economy (Calibration II)</h2>
+<p><strong>Deficits <span class="citation" data-cites="Dekle2007">(Dekle, Eaton, and Kortum 2007)</span></strong></p>
+<ul>
+<li><span class="math inline">\(\bm{D}\)</span> – trade deficits</li>
+<li>Equilibrium in changes <span class="math display">\[
+\hat{h}(\hat{\bm{\tau}}, \hat{\bm{D}}; \bm{\theta}_h)
+\]</span></li>
+<li>Purge deficits before analysis <span class="math display">\[
+\hat{h}(\hat{\bm{\tau}}, \bm{0}; \bm{\theta}_h) \rightarrow \hat{\bm{w}}_{-D}
+\]</span></li>
+<li>Recompute associated trade flows, price levels, etc</li>
+</ul>
+<p><a href="#/economy1">Back</a></p>
+</section><section id="milex" class="slide level2">
+<h2>Military Expenditure</h2>
+<p><img src="index_files/figure-revealjs/milex-1.png" style="display: block; margin: auto;" /></p>
+<p><a href="#/cipe_data">Back</a></p>
+</section><section id="rf1" class="slide level2">
+<h2>Reduced Form Evidence (Interpretive Model)</h2>
+<p><strong>Bilateral Nash Bargaining over Trade Policy</strong></p>
+<p><span class="math display">\[\begin{equation}
+\begin{split}
+x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( u_2(x) - w_2(M_2 / M_1) \right) \\
+\text{subject to} &amp; \quad u_1(x) \geq w_1(M_1 / M_2) \\
+&amp; \quad u_2(x) \geq w_2(M_2 / M_1) .
+\end{split}
+\end{equation}\]</span></p>
+<p><strong>Result:</strong> Government 1’s utility increasing in <span class="math inline">\(M_1\)</span></p>
+<p><strong>Empirical Analogue</strong></p>
+<p><span class="math display">\[
+\frac{u_1(x^\star; M_1, M_2)}{u_1(1)} \iff \frac{ V_i \left( h(\bm{\tau}) \right) }{ V_i \left( h(\bm{1}_j; \bm{\tau}_{-j}) \right) }
+\]</span></p>
+<p><strong>Empirical Conquest Value:</strong> <span class="math inline">\(V_i \left( h(\bm{1}_j; \bm{\tau}_{-j}) \right)\)</span></p>
+</section><section id="reduced-form-evidence-data" class="slide level2">
+<h2>Reduced Form Evidence (Data)</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /></p>
+</section><section id="reduced-form-evidence-data-1" class="slide level2">
+<h2>Reduced Form Evidence (Data)</h2>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#rgozvzuhuk .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#rgozvzuhuk .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rgozvzuhuk .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#rgozvzuhuk .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#rgozvzuhuk .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rgozvzuhuk .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rgozvzuhuk .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#rgozvzuhuk .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#rgozvzuhuk .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#rgozvzuhuk .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#rgozvzuhuk .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#rgozvzuhuk .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#rgozvzuhuk .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#rgozvzuhuk .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#rgozvzuhuk .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#rgozvzuhuk .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#rgozvzuhuk .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#rgozvzuhuk .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#rgozvzuhuk .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rgozvzuhuk .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#rgozvzuhuk .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rgozvzuhuk .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#rgozvzuhuk .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rgozvzuhuk .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rgozvzuhuk .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#rgozvzuhuk .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rgozvzuhuk .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#rgozvzuhuk .gt_left {
+  text-align: left;
+}
+
+#rgozvzuhuk .gt_center {
+  text-align: center;
+}
+
+#rgozvzuhuk .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#rgozvzuhuk .gt_font_normal {
+  font-weight: normal;
+}
+
+#rgozvzuhuk .gt_font_bold {
+  font-weight: bold;
+}
+
+#rgozvzuhuk .gt_font_italic {
+  font-style: italic;
+}
+
+#rgozvzuhuk .gt_super {
+  font-size: 65%;
+}
+
+#rgozvzuhuk .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="rgozvzuhuk" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="5" class="gt_heading gt_title gt_font_normal" style>Inverse Conquest Values and Military Capability Ratios</th>
+    </tr>
+    <tr>
+      <th colspan="5" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">       </th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">Base</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">Base (Attacker FE)</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">Loss of Strength</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">Loss of Strength (Attacker FE)</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left">Log Mil Capability Ratio</td>
+      <td class="gt_row gt_left">0.016***</td>
+      <td class="gt_row gt_left">0.033***</td>
+      <td class="gt_row gt_left">0.026</td>
+      <td class="gt_row gt_left">0.045</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left"></td>
+      <td class="gt_row gt_left">(0.004)</td>
+      <td class="gt_row gt_left">(0.004)</td>
+      <td class="gt_row gt_left">(0.052)</td>
+      <td class="gt_row gt_left">(0.039)</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Log Distance</td>
+      <td class="gt_row gt_left"></td>
+      <td class="gt_row gt_left"></td>
+      <td class="gt_row gt_left">0.003</td>
+      <td class="gt_row gt_left">0.002</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left"></td>
+      <td class="gt_row gt_left"></td>
+      <td class="gt_row gt_left"></td>
+      <td class="gt_row gt_left">(0.010)</td>
+      <td class="gt_row gt_left">(0.008)</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">(Log Mil Capability Ratio) X (Log Distance)</td>
+      <td class="gt_row gt_left"></td>
+      <td class="gt_row gt_left"></td>
+      <td class="gt_row gt_left">-0.001</td>
+      <td class="gt_row gt_left">-0.001</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;"></td>
+      <td class="gt_row gt_left" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;"></td>
+      <td class="gt_row gt_left" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;"></td>
+      <td class="gt_row gt_left" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;">(0.006)</td>
+      <td class="gt_row gt_left" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;">(0.004)</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Num.Obs.</td>
+      <td class="gt_row gt_left">56</td>
+      <td class="gt_row gt_left">56</td>
+      <td class="gt_row gt_left">56</td>
+      <td class="gt_row gt_left">56</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">R2</td>
+      <td class="gt_row gt_left">0.247</td>
+      <td class="gt_row gt_left">0.676</td>
+      <td class="gt_row gt_left">0.249</td>
+      <td class="gt_row gt_left">0.677</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">R2 Adj.</td>
+      <td class="gt_row gt_left">0.233</td>
+      <td class="gt_row gt_left">0.621</td>
+      <td class="gt_row gt_left">0.205</td>
+      <td class="gt_row gt_left">0.605</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Attacker FE?</td>
+      <td class="gt_row gt_left"> </td>
+      <td class="gt_row gt_left">✓</td>
+      <td class="gt_row gt_left"> </td>
+      <td class="gt_row gt_left">✓</td>
+    </tr>
+  </tbody>
+  <tfoot class="gt_sourcenotes">
+    <tr>
+      <td class="gt_sourcenote" colspan="5">* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01</td>
+    </tr>
+  </tfoot>
+  
+</table></div>
+<p><a href="#/cipe_data">Back</a></p>
 <!-- hide references -->
 <hr style="height:30em; visibility:hidden;" />
 <div id="refs" class="references">
@@ -640,6 +1325,9 @@ document.getElementsByTagName('head')[0].appendChild(style);
 </div>
 <div id="ref-Autor2013">
 <p>Autor, David H, David Dorn, and Gordon H Hanson. 2013. “The China syndrome: Local labor market effects of import competition in the United States.” <em>The American Economic Review</em> 103 (6): 2121–68.</p>
+</div>
+<div id="ref-Bagwell1999">
+<p>Bagwell, Kyle, and Robert W. Staiger. 1999. “An economic theory of GATT.” <em>American Economic Review</em> 89 (1): 215–48.</p>
 </div>
 <div id="ref-Berger2013">
 <p>Berger, Daniel, William Easterly, Nathan Nunn, and Shanker Satyanath. 2013. “Commercial imperialism? Political influence and trade during the Cold War.” <em>The American Economic Review</em> 103 (2): 863–96.</p>
@@ -653,6 +1341,9 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <div id="ref-BuenodeMesquita1980">
 <p>Bruce Bueno de Mesquita. 1980. “An Expected Utility Theory of International Conflict.” <em>The American Political Science Review</em> 74 (4): 917–31.</p>
 </div>
+<div id="ref-Carroll2018">
+<p>Carroll, Robert J. 2018. “War and Peace in the Marketplace.”</p>
+</div>
 <div id="ref-Cooley2019b">
 <p>Cooley, Brendan. 2019. “Estimating Policy Barriers to Trade.”</p>
 </div>
@@ -661,6 +1352,9 @@ document.getElementsByTagName('head')[0].appendChild(style);
 </div>
 <div id="ref-Dahl1957">
 <p>Dahl, Robert A. 1957. “The Concept of Power.” <em>Behavioral Science</em> 2 (3): 201–15.</p>
+</div>
+<div id="ref-Dekle2007">
+<p>Dekle, Robert, Jonathan Eaton, and Samuel Kortum. 2007. “Unbalanced trade.” <em>AEA Papers and Proceedings</em> 97 (2): 351–55.</p>
 </div>
 <div id="ref-Diehl1985">
 <p>Diehl, Paul F. 1985. “Continuity and Military Escalation in Major Power Rivalries, 1816-1980.” <em>The Journal of Politics</em> 47 (4): 1203–11.</p>
@@ -674,6 +1368,9 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <div id="ref-Gallagher1953">
 <p>Gallagher, John, and Ronald Robinson. 1953. “The Imperialism of Free Trade.” <em>The Economic History Review</em> 6 (1): 1–15.</p>
 </div>
+<div id="ref-Garfinkel2011">
+<p>Garfinkel, Michelle R, Stergios Skaperdas, and Constantinos Syropoulos. 2011. “Trade in the Shadow of Power.”</p>
+</div>
 <div id="ref-Gartzke2011">
 <p>Gartzke, Erik, and Alex Braithwaite. 2011. “Power, Parity and Proximity.”</p>
 </div>
@@ -686,11 +1383,23 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <div id="ref-Goldberg2016">
 <p>Goldberg, P K, and N Pavcnik. 2016. “The Effects of Trade Policy.” <em>Handbook of Commercial Policy</em> 1: 161–206.</p>
 </div>
+<div id="ref-Gowa1993">
+<p>Gowa, Joanne, and Edward D Mansfield. 1993. “Power Politics and International Trade.” <em>The American Political Science Review</em> 87 (2): 408–20.</p>
+</div>
 <div id="ref-Grossman1994">
 <p>Grossman, Gene M, and Elhanan Helpman. 1994. “Protection for Sale.” <em>The American Economic Review</em>, 833–50.</p>
 </div>
+<div id="ref-Grossman1995">
+<p>———. 1995. “Trade Wars and Trade Talks.” <em>Journal of Political Economy</em>, 675–708.</p>
+</div>
 <div id="ref-Grossman2016">
 <p>Grossman, G.M. 2016. “The Purpose of Trade Agreements.” In <em>Handbook of Commercial Policy</em>, 380–434.</p>
+</div>
+<div id="ref-Head2014">
+<p>Head, Keith, and Thierry Mayer. 2014. “Gravity Equations: Workhorse, Toolkit and Cookbook.” In <em>Handbook of International Economics</em>, edited by Elhanan Helpman, G. Gopinath, and K. Rogoff, 4th ed., 131–96.</p>
+</div>
+<div id="ref-Hirschman1945">
+<p>Hirschman, Albert O. 1945. <em>National power and the structure of foreign trade</em>. Univ of California Press.</p>
 </div>
 <div id="ref-Kim2017">
 <p>Kim, In Song. 2017. “Political cleavages within industry: firm-level lobbying for trade liberalization.” <em>American Political Science Review</em> 111 (1): 1–20.</p>
@@ -707,8 +1416,14 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <div id="ref-Lemke1995">
 <p>Lemke, Douglas. 1995. “The Tyranny of Distance: Redefining Relevant Dyads.” <em>International Interactions</em> 21 (1): 23–38.</p>
 </div>
+<div id="ref-Maggi1999">
+<p>Maggi, Giovanni. 1999. “The role of multilateral institutions in international trade cooperation.” <em>American Economic Review</em>, 190–214.</p>
+</div>
 <div id="ref-Markowitz2013">
 <p>Markowitz, Jonathan N, and Christopher J Fariss. 2013. “Going the Distance: The Price of Projecting Power.” <em>International Interactions</em> 39: 119–43.</p>
+</div>
+<div id="ref-Martin2012">
+<p>Martin, Philippe, Thierry Mayer, and Mathias Thoenig. 2012. “The Geography of Conflicts and Regional Trade Agreements.” <em>American Economic Journal: Macroeconomics</em> 4 (4): 1–35.</p>
 </div>
 <div id="ref-Mayer1984">
 <p>Mayer, Wolfgang. 1984. “Endogenous Tariff Formation.” <em>The American Economic Review</em> 74 (5): 970–85.</p>
@@ -722,8 +1437,14 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <div id="ref-Ossa2012">
 <p>———. 2012. “Profits in the &quot;New Trade&quot; Approach to Trade Negotiations.” <em>American Economic Review: Papers &amp; Proceedings</em> 102 (3): 466–69.</p>
 </div>
+<div id="ref-Piccione2007">
+<p>Piccione, Michele, and Ariel Rubinstein. 2007. “Equilibrium in the Jungle.” <em>The Economic Journal</em> 117 (522): 883–96.</p>
+</div>
+<div id="ref-Powell1994">
+<p>Powell, Robert. 1994. “Review: Anarchy in International Relations Theory: The Neorealist-Neoliberal Debate.” <em>International Organization</em> 48 (2): 313–44.</p>
+</div>
 <div id="ref-Powell1999">
-<p>Powell, Robert. 1999. <em>In the shadow of power: States and strategies in international politics</em>. Princeton University Press.</p>
+<p>———. 1999. <em>In the shadow of power: States and strategies in international politics</em>. Princeton University Press.</p>
 </div>
 <div id="ref-Queralt2015">
 <p>Queralt, Didac. 2015. “From Mercantilism to Free Trade: A History of Fiscal Capacity Building.” <em>Quarterly Journal of Political Science</em> 10: 221–73.</p>
@@ -733,6 +1454,12 @@ document.getElementsByTagName('head')[0].appendChild(style);
 </div>
 <div id="ref-Rogowski1987">
 <p>Rogowski, Ronald. 1987. “Political Cleavages and Changing Exposure to Trade.” <em>The American Political Science Review</em> 81 (4): 1121.</p>
+</div>
+<div id="ref-Seitz2015">
+<p>Seitz, Michael, Alexander Tarasov, and Roman Zakharenko. 2015. “Trade costs, conflicts, and defense spending.” <em>Journal of International Economics</em> 95 (2): 305–18.</p>
+</div>
+<div id="ref-Skaperdas2001">
+<p>Skaperdas, Stergios. 2001. “The political economy of organized crime: providing protection when the state does not.” <em>Economics of Governance</em> 2 (3). Springer: 173–202.</p>
 </div>
 <div id="ref-Viner1948">
 <p>Viner, Jacob. 1948. “Power Versus Plenty as Objectives of Foreign Policy in the Seventeenth and Eighteenth Centuries.” <em>World Politics</em> 1 (1): 1–29.</p>

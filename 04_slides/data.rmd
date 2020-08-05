@@ -1,8 +1,69 @@
-```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+## Economic Effects of Endogenous Trade Frictions {id="economy1"}
 
-year <- read_csv(paste0(dataPath, "year.csv"), col_names=FALSE) %>% pull(.)
-ccodes <- read_csv(paste0(dataPath, "ccodes.csv"), col_names=FALSE)
-y <- read_csv(paste0(dataPath, "y.csv"), col_names=FALSE)
+**Choice variables**
+
+<div id="left">
+
+$$
+\bm{\tau} = \begin{pmatrix}
+\tau_{11} & \cdots & \cdots & \cdots & \tau_{1N} \\
+\vdots & \ddots & \vdots & \iddots & \vdots \\
+\vdots & \cdots & \tau_{ij} & \cdots & \vdots \\
+\vdots & \iddots & \vdots & \ddots & \vdots \\
+\tau_{N1} & \cdots & \cdots & \cdots & \tau_{NN}
+\end{pmatrix}
+$$
+
+</div>
+
+<div id="right">
+
+- $\tau_{ij}$ -- tax government $i$ imposes on imports from country $j$
+- $\bm{\tau}_i$ -- government $i$'s policy vector
+- Measurement: @Cooley2019b <a href="#/epbt_tau">(magnitudes)</a>
+
+</div>
+
+<div class="container_row">
+</div>
+
+. . . 
+
+**Economy**
+
+<div id="left">
+
+$$
+h(\bm{\tau}; \bm{Z}_m, \bm{\theta}_m) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \bm{w}
+$$
+
+</div>
+
+<div id="right">
+
+- <a href="#/economyA">Model Details</a>
+- $\bm{Z}_h$ -- economic data 
+	+ national accounts, price levels, trade flows, freight costs
+- $\bm{\theta}_m$ -- economic parameters <a href="#/calibration">(calibration)</a>
+
+</div>
+
+## Coercive International Political Economy: Data {id="cipe_data"}
+
+**Sample Countries**
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+use_virtualenv("python3")
+c_setup <- import_from_path("c_setup", path=paste0("../", code_dir))
+setup <- c_setup$setup("local", size)
+
+ccodes <- read_csv(setup$ccodes_path, col_names=FALSE)
+y <- read_csv(setup$Y_path, col_names=FALSE)
 
 yDF <- bind_cols(ccodes, y)
 colnames(yDF) <- c("iso3", "y")
@@ -12,36 +73,39 @@ yROW <- yDF %>% filter(iso3=="RoW") %>% pull(y)
 
 ```
 
-# Data {id="data"}
+<div id="left">
 
-Year: `r year`
+<center>
+![](`r substring(setup$f_ccodes_wide_path, 4, nchar(setup$f_ccodes_wide_path))`){ width=100% }
+</center>
 
-- $\tau_{ij}$ -- aggregate policy barrier to trade imposed by country $i$ on goods from country $j$
-  	+ Measurement: @Cooley2019b (<a href="#/barriers">Barriers</a>)
-- $M_i$ -- military expenditure 
-	+ SIPRI (<a href="#/milex">Milex</a>)
-- $W_{ji}$ -- centroid-centroid distances [@Weidmann2010]
+</div>
 
-<a href="#/calibration">Economy Calibration ($h(\bm{\tau})$)</a>
+<div id="right">
 
-- Trade flows
-- National accounts (gdp, gross consumption)
-- Parameters
-	+ share of intermediates in traded goods
-	+ share of consumer expenditure spend on traded goods
-	+ trade elasticity
+- Year: 2011
+- RoW: Aggregate outside economy 
+	+ cannot coerce or be coerced
+	+ Non-ROW countries: `r round( (yAll - yROW) / yAll * 100 )` percent of world GDP
+- EU: Aggregate trade policies and military capacities
 
-## In-Sample Countries
+</div>
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+<div class="container_row">
+</div>
 
-source(paste0("../", figs_dir, "ccodes.R"))
+. . . 
 
-```
+**War Costs**
 
-![](`r paste0(figs_dir, ccodes_table_path)`)
+$$
+c_{ij} \sim F \left( \bm{\theta}_m; \bm{Z}_m \right)
+$$
 
-- RoW: Aggregate outside economy (cannot coerce or be coerced)
-	+ Non-ROW countriies: `r round( (yAll - yROW) / yAll * 100 )` percent of world GDP
-- EU: Aggregate trade policy and military capacity
-	+ Country-level estimation coming soon
+- $c_{ij}$ -- cost government $i$ pays to attack government $j$
+- $\bm{Z}_m$ -- observable dyadic features
+	+ $M_{i} / M_{j}$ -- military expenditure ratio <a href="#/milex">(data)</a>
+	+ $W_{ij}$ -- centroid-centroid distance between $i$ and $j$
+- $\bm{\theta}_m$ -- estimand
+
+<a href="#/rf1">Reduced Form Evidence</a>

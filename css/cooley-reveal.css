@@ -182,6 +182,11 @@ img[src*='#center'] {
   width:50%;
 }
 
+.container_row{
+  display: grid;
+  width: 100%;
+}
+
 .reveal .cover-top {
   border-left: 4px solid #FFF;
   padding-left: 10px;

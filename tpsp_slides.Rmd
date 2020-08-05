@@ -65,6 +65,9 @@ if (file.exists('references.RData')) load('references.RData')
 
 # Data {.aligncenter id="data"}
 
+```{r, child=paste0(slides_dir, "data.rmd")}
+```
+
 ## Thank You {.aligncenter}
 
 [brendancooley.com](http://brendancooley.com)
@@ -92,6 +95,12 @@ if (file.exists('references.RData')) load('references.RData')
 
 1. test
 </div>
+
+# Appendix {.aligncenter id="appendix"}
+
+```{r, child=paste0(slides_dir, "appendix.rmd")}
+```
+
 
 <!-- hide references -->
 <hr style="height:30em; visibility:hidden;" />

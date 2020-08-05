@@ -1,0 +1,36 @@
+# Estimated Policy Barriers to Trade {id="barriers"}
+
+```{r tauhm1, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5}
+
+source(paste0("../", figs_dir, "tau.R"))
+tauhm(tau)
+
+```
+
+<a href="#/gunboats">Back (Gunboats)</a>
+
+<a href="#/toc">Back (TOC)</a>
+
+# Cost Distribution {id="frechet"}
+
+![Fréchet distribution. [Source](https://en.wikipedia.org/wiki/Fr%C3%A9chet_distribution#/media/File:Frechet_pdf.svg) ](02_figs/Frechet.png){ width=75% }
+<a href="#/wars">Back (Wars)</a>
+
+<a href="#/toc">Back (TOC)</a>
+
+
+
+## Conquest Values {id="rcv"}
+
+$$
+V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right)
+$$
+
+```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5.5}
+
+source("../02_figs/rcv.R")
+rcvhm(rcv_eq, mint, maxt)
+
+```
+
+<a href="#/toc">Back (TOC)</a>
