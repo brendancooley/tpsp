@@ -126,7 +126,7 @@ if (file.exists('references.RData')) load('references.RData')
 ```{r, child=paste0(slides_dir, "05_results_apdx.rmd")}
 ```
 
-# Appendix: Counterfactuals {.aligncenter id="results_apdx"}
+# Appendix: Counterfactuals {.aligncenter id="cfct_apdx"}
 
 ```{r, child=paste0(slides_dir, "06_cfct_apdx.rmd")}
 ```
