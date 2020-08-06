@@ -1,0 +1,27 @@
+## Cost Distribution {id="frechet"}
+
+![Fréchet distribution. [Source](https://en.wikipedia.org/wiki/Fr%C3%A9chet_distribution#/media/File:Frechet_pdf.svg) ](02_figs/img/Frechet.png){ width=75% }
+
+<a href="#/wars2">Back</a>
+
+## Equilibrium in Changes {id="policy_hats"}
+
+**Peace Condition**
+
+$$
+\hat{c}_{ji}^{-1} \leq \left( \hat{V}_j \left( \bm{1}_i; \hat{\tilde{\bm{\tau}}}_{-i} \right) - \hat{V}_j \left( \hat{\tilde{\bm{\tau}}} \right) \right)^{-1}
+$$
+
+**Objective Function**
+
+$$
+\hat{G}_i(\hat{\tilde{\bm{\tau}}}) = \hat{H}_i(\hat{\tilde{\bm{\tau}}}; \bm{Z}, \bm{\theta}_m) \hat{V}_i(\hat{\tilde{\bm{\tau}}}) + \left( 1 - \hat{H}_i(\hat{\tilde{\bm{\tau}}}; \bm{Z}, \bm{\theta}_m) \right) \hat{V}_i(\bm{1}_i; \hat{\tilde{\bm{\tau}}}_{-i})
+$$
+
+**Equilibrium**
+
+$$
+\hat{\tilde{\bm{\tau}}}^\star(\bm{\theta}_m; \bm{Z}_m)
+$$
+
+<a href="#/tau_star">Back</a>

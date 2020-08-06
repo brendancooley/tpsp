@@ -1,0 +1,19 @@
+## Bargaining, Trade, and War
+
+**Institutionalized Bargaining**
+
+- Models of GATT/WTO: reciprocity and nondiscriminination
+	+ @Grossman1995, @Maggi1999, @Bagwell1999
+- Institutions and incentive compatibility: war as an outside option [@Powell1994]
+
+**Trade as Means**
+
+- Governments pursue "political" ends (e.g. security), trade used as coercive instrument
+	+ @Hirschman1945, @Gowa1993, @Martin2012, @Seitz2015
+- Security and power are themselves means to achieve other ends
+
+**Power and Exchange**
+
+- Prices and power in the marketplace
+	+ @Skaperdas2001, @Piccione2007, @Garfinkel2011, @Carroll2018
+- Trade frictions as choice variable here

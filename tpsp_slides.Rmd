@@ -38,7 +38,7 @@ for (i in helperFiles) {
   source(paste0(helperPath, i))
 }
 
-libs <- c("tidyverse", "reticulate")
+libs <- c("tidyverse", "reticulate", "patchwork")
 ipak(libs)
 
 Sys.setenv(KMP_DUPLICATE_LIB_OK="True")
@@ -60,13 +60,40 @@ if (file.exists('references.RData')) load('references.RData')
 
 # Introduction {.aligncenter id="introduction"} 
 
-```{r, child=paste0(slides_dir, "introduction.rmd")}
+```{r, child=paste0(slides_dir, "01_intro.rmd")}
 ```
 
 # Data {.aligncenter id="data"}
 
-```{r, child=paste0(slides_dir, "data.rmd")}
+```{r, child=paste0(slides_dir, "02_data.rmd")}
 ```
+
+# Model {.aligncenter id="model"}
+
+```{r, child=paste0(slides_dir, "03_model.rmd")}
+```
+
+# Estimation {.aligncenter id="estimation"}
+
+```{r, child=paste0(slides_dir, "04_estimation.rmd")}
+```
+
+# Results {.aligncenter id="results"}
+
+```{r, child=paste0(slides_dir, "05_results.rmd")}
+```
+
+# Counterfactuals {.aligncenter id="cfct"}
+
+```{r, child=paste0(slides_dir, "06_cfct.rmd")}
+```
+
+# Conclusions {.aligncenter id="conclusions"}
+
+```{r, child=paste0(slides_dir, "07_conclusion.rmd")}
+```
+
+# Thank You {.aligncenter}
 
 ## Thank You {.aligncenter}
 
@@ -74,33 +101,35 @@ if (file.exists('references.RData')) load('references.RData')
 
 [bcooley@princeton.edu](mailto:bcooley@princeton.edu)
 
-## Table of Contents {id="toc"}
+# Appendix: Introduction {.aligncenter id="intro_apdx"}
 
-<div id="left">
-
-**Sections**
-
-1. <a href="#/introduction">Introduction</a>
-2. <a href="#/model">Model</a>
-3. <a href="#/data">Data</a>
-4. <a href="#/estimation">Estimation</a>
-5. <a href="#/results">Results</a>
-6. <a href="#/counterfactuals">Conterfactuals</a>
-7. <a href="#/conclusion">Conclusion</a>
-</div>
-
-<div id="right">
-
-**Appendix**
-
-1. test
-</div>
-
-# Appendix {.aligncenter id="appendix"}
-
-```{r, child=paste0(slides_dir, "appendix.rmd")}
+```{r, child=paste0(slides_dir, "01_intro_apdx.rmd")}
 ```
 
+# Appendix: Data {.aligncenter id="data_apdx"}
+
+```{r, child=paste0(slides_dir, "02_data_apdx.rmd")}
+```
+
+# Appendix: Model {.aligncenter id="model_apdx"}
+
+```{r, child=paste0(slides_dir, "03_model_apdx.rmd")}
+```
+
+# Appendix: Estimation {.aligncenter id="estimation_apdx"}
+
+```{r, child=paste0(slides_dir, "04_estimation_apdx.rmd")}
+```
+
+# Appendix: Results {.aligncenter id="results_apdx"}
+
+```{r, child=paste0(slides_dir, "05_results_apdx.rmd")}
+```
+
+# Appendix: Counterfactuals {.aligncenter id="results_apdx"}
+
+```{r, child=paste0(slides_dir, "06_cfct_apdx.rmd")}
+```
 
 <!-- hide references -->
 <hr style="height:30em; visibility:hidden;" />

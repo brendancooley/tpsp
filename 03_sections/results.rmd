@@ -1,6 +1,5 @@
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 
-
 use_virtualenv("python3")
 c_setup <- import_from_path("c_setup", path=paste0("../", code_dir))
 setup <- c_setup$setup("local", size)
@@ -61,7 +60,6 @@ It is worth noting that the countries with the highest estimated risk of war wit
 ```{r fit, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Correlation between trade barrier data and model predictions. \\label{fig:fit}"), fig.height=5, dpi=300, fig.pos="t"}
 
 # source(paste0("../", code_dir, "f_fit.R"))
-
 fit
 
 ```

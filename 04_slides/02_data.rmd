@@ -34,7 +34,7 @@ $$
 <div id="left">
 
 $$
-h(\bm{\tau}; \bm{Z}_m, \bm{\theta}_m) \rightarrow \begin{pmatrix}
+h(\bm{\tau}; \bm{Z}_h, \bm{\theta}_h) \rightarrow \begin{pmatrix}
 w_1 \\
 \vdots \\
 w_N
@@ -45,10 +45,10 @@ $$
 
 <div id="right">
 
-- <a href="#/economyA">Model Details</a>
+- <a href="#/economyA">Model: </a> variant of @Eaton2002 workhorse
 - $\bm{Z}_h$ -- economic data 
 	+ national accounts, price levels, trade flows, freight costs
-- $\bm{\theta}_m$ -- economic parameters <a href="#/calibration">(calibration)</a>
+- $\bm{\theta}_h$ -- economic parameters <a href="#/calibration">(calibration)</a>
 
 </div>
 

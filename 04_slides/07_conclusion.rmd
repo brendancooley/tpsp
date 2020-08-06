@@ -1,4 +1,4 @@
-# Conclusion {id="conclusion"}
+## Conclusion {id="conclusion"}
 
 <div class="fragment">
 

@@ -92,7 +92,14 @@ quantiles_tau$ddyad <- fct_reorder(quantiles_tau$ddyad, quantiles_tau$epsilon)
 fit_ddyad <- ggplot(data=quantiles_tau, aes(x=epsilon, y=ddyad)) +
   geom_point() +
   geom_segment(aes(x=epsilon, xend=0, y=ddyad, yend=ddyad)) +
-  geom_vline(xintercept=0, lty=2) +
+  geom_vline(xintercept=0) +
+  labs(x="Barriers to Trade: Absolute Errors (Model Prediction - Data)", y="Importer-Exporter", title="Model Fit", subtitle="Absolute Error") +
+  theme_bw()
+
+fit_ddyad_small <- ggplot(data=quantiles_tau, aes(x=epsilon, y=ddyad)) +
+  geom_point(size=.75) +
+  geom_segment(aes(x=epsilon, xend=0, y=ddyad, yend=ddyad), size=.75) +
+  geom_vline(xintercept=0) +
   labs(x="Barriers to Trade: Absolute Errors (Model Prediction - Data)", y="Importer-Exporter", title="Model Fit", subtitle="Absolute Error") +
   theme_bw()
 

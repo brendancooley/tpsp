@@ -1,0 +1,26 @@
+## Best Response MPEC {id="br_mpec"}
+
+**Choice Variables**
+
+$$
+\hat{\bm{x}}_i = \left( \hat{\tilde{\bm{\tau}}}_i, \hat{\bm{w}} \right)
+$$
+
+**Best Response**
+
+\begin{equation*}
+\begin{split}
+\max_{\hat{\bm{x}}_i} & \quad \hat{G}_i(\hat{\bm{w}}; \bm{\theta}_m) \\
+\text{subject to} & \quad \hat{\bm{w}} = \hat{h}(\hat{\tilde{\bm{\tau}}})
+\end{split}
+\end{equation*}
+
+**Lagrangian:** $\mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i)$
+
+**Optimality Condition**
+
+$$
+\nabla_{\hat{\tilde{\bm{\tau}}}_i} \mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i; \bm{\theta}_m) = \bm{0}
+$$
+
+<a href="#/estimation_main">Back</a>

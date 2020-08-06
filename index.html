@@ -636,7 +636,7 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <p><strong>Economy</strong></p>
 <div id="left">
 <p><span class="math display">\[
-h(\bm{\tau}; \bm{Z}_m, \bm{\theta}_m) \rightarrow \begin{pmatrix}
+h(\bm{\tau}; \bm{Z}_h, \bm{\theta}_h) \rightarrow \begin{pmatrix}
 w_1 \\
 \vdots \\
 w_N
@@ -645,12 +645,12 @@ w_N
 </div>
 <div id="right">
 <ul>
-<li><a href="#/economyA">Model Details</a></li>
+<li><a href="#/economyA">Model: </a> variant of <span class="citation" data-cites="Eaton2002">Eaton and Kortum (2002)</span> workhorse</li>
 <li><span class="math inline">\(\bm{Z}_h\)</span> – economic data
 <ul>
 <li>national accounts, price levels, trade flows, freight costs</li>
 </ul></li>
-<li><span class="math inline">\(\bm{\theta}_m\)</span> – economic parameters <a href="#/calibration">(calibration)</a></li>
+<li><span class="math inline">\(\bm{\theta}_h\)</span> – economic parameters <a href="#/calibration">(calibration)</a></li>
 </ul>
 </div>
 </div>
@@ -692,32 +692,348 @@ c_{ij} \sim F \left( \bm{\theta}_m; \bm{Z}_m \right)
 </ul>
 <p><a href="#/rf1">Reduced Form Evidence</a></p>
 </div>
-</section><section id="thank-you" class="slide level2 aligncenter">
+</section></section>
+<section><section id="model" class="title-slide slide level1 aligncenter"><h1>Model</h1></section><section id="model_overview" class="slide level2">
+<h2>Model (Overview)</h2>
+<ul>
+<li>Governments indexed <span class="math inline">\(i \in \left\{ 1, ..., N \right\}\)</span></li>
+</ul>
+<div class="fragment">
+<p><strong>Sequence</strong></p>
+<ol type="1">
+<li>(<span class="math inline">\(\tilde{\bm{\tau}}\)</span>) Governments make trade policy announcements</li>
+<li>Wars
+<ul>
+<li>Winners impose free trade on conquered governments</li>
+</ul></li>
+<li>(<span class="math inline">\(h(\bm{\tau})\)</span>) Economic consequences of announced/imposed trade policies</li>
+</ol>
+</div>
+<div class="fragment">
+<p><strong>Payoffs</strong></p>
+<p><span class="math display">\[
+V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\color{bcOrange} v_i\)</span> - latent preference for protectionist policies</li>
+</ul>
+</div>
+</section><section id="government-objective" class="slide level2">
+<h2>Government Objective</h2>
+<p><span class="math display">\[
+h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \color{bcOrange} \bm{w}
+\]</span></p>
+<hr style="height:1em; visibility:hidden;" />
+<ul>
+<li><span class="math inline">\(X_{ij}(\color{bcOrange} \bm{w} \color{black})\)</span>: <span class="math inline">\(i\)</span>’s imports of goods from <span class="math inline">\(j\)</span></li>
+</ul>
+<div class="fragment">
+<p><strong>Revenues from Policy Distortions</strong></p>
+<p><span class="math display">\[
+r_i(\color{bcOrange} \bm{w} \color{black}; v_i) = \sum_j (\tau_{ij} - v_i) X_{ij}(\color{bcOrange} \bm{w} \color{black})
+\]</span></p>
+</div>
+</section><section id="government-objective-1" class="slide level2">
+<h2>Government Objective</h2>
+<p><span class="math display">\[
+h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \bm{w}
+\]</span></p>
+<hr style="height:1em; visibility:hidden;" />
+<ul>
+<li><span class="math inline">\(X_{ij}(\bm{w})\)</span>: <span class="math inline">\(i\)</span>’s imports of goods from <span class="math inline">\(j\)</span></li>
+</ul>
+<p><strong>Revenues from Policy Distortions</strong></p>
+<p><span class="math display">\[
+r_i(\bm{w}; \color{bcOrange} v_i \color{black}) = \sum_{j \neq i} (\tau_{ij} - \color{bcOrange} v_i \color{black}) X_{ij}(\bm{w})
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\color{bcOrange} v_i \color{black} &gt; 0\)</span> controls <span class="math inline">\(i\)</span>’s preferences over the level of protection</li>
+</ul>
+<div class="fragment">
+<p><strong>Adjusted Consumer Income</strong></p>
+<p><span class="math display">\[
+\tilde{Y}_i(\bm{w})  = w_i L_i + r_i(\bm{w}; \color{bcOrange} v_i \color{black})
+\]</span></p>
+<p><strong>Indirect Utility</strong></p>
+<p><span class="math display">\[
+V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
+\]</span></p>
+</div>
+</section><section id="wars" class="slide level2">
+<h2>Wars I</h2>
+<ul>
+<li>Directed dyad-specific war costs held as <strong>private information</strong> to prospective attacker
+<ul>
+<li><span class="math inline">\(c_{ji}\)</span> – cost <span class="math inline">\(j\)</span> incurs to invade <span class="math inline">\(i\)</span></li>
+</ul></li>
+<li>Wars fought to impose free trade on target</li>
+</ul>
+<p><span class="math display">\[
+\bm{\tau}_i^\prime = \left( 1, \dots, 1 \right) = \bm{1}_i
+\]</span></p>
+<div class="fragment">
+<p><strong>Conquest Values</strong></p>
+<ul>
+<li><span class="math inline">\(V_j(\bm{1}_i; \tilde{\bm{\tau}}_{-i})\)</span> – <span class="math inline">\(j\)</span>’s value for imposing free trade on <span class="math inline">\(i\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<p><strong>Peace Condition</strong></p>
+<p><span class="math display">\[
+V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right) - c_{ji} \leq V_j \left( \tilde{\bm{\tau}}, v_j \right)
+\]</span></p>
+</div>
+</section><section id="wars-ii" class="slide level2">
+<h2>Wars II</h2>
+<p><strong>Cost Distribution</strong></p>
+<p><span class="math display">\[
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+\]</span></p>
+<p><span class="math display">\[
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} W_{ji}^{-\alpha_1} Y_j^{\alpha_2} \hat{c}^{\eta} \right)
+\]</span></p>
+</section><section id="wars-ii-1" class="slide level2">
+<h2>Wars II</h2>
+<p><strong>Cost Distribution</strong></p>
+<p><span class="math display">\[
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+\]</span></p>
+<p><span class="math display">\[
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \color{bcOrange} \frac{ M_j }{ M_i } \color{black} \right)^{\gamma} W_{ji}^{-\alpha_1} Y_j^{\alpha_2} \hat{c}^{\eta} \right)
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\color{bcOrange} \frac{M_j}{M_i}\)</span> – military capability ratio (<span class="math inline">\(\gamma = 0 \implies\)</span> no cost advantage for military superiority)</li>
+</ul>
+</section><section id="wars-ii-2" class="slide level2">
+<h2>Wars II</h2>
+<p><strong>Cost Distribution</strong></p>
+<p><span class="math display">\[
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+\]</span></p>
+<p><span class="math display">\[
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} \color{bcOrange} W_{ji}^{ \color{black} -\alpha_1} \color{black} Y_j^{\alpha_2} \hat{c}^{\eta} \right)
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\frac{M_j}{M_i}\)</span> – military capability ratio (<span class="math inline">\(\gamma = 0 \implies\)</span> no cost advantage for military superiority)</li>
+<li><span class="math inline">\(\color{bcOrange} W_{ji}\)</span> – geographic distance between <span class="math inline">\(j\)</span> and <span class="math inline">\(i\)</span> (<span class="math inline">\(\alpha=0 \implies\)</span> no loss of strength gradient)</li>
+</ul>
+</section><section id="wars2" class="slide level2">
+<h2>Wars II</h2>
+<p><strong>Cost Distribution</strong></p>
+<p><span class="math display">\[
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+\]</span></p>
+<p><span class="math display">\[
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} W_{ji}^{-\alpha_1} \color{bcOrange} Y_j^{ \color{black} \alpha_2} \color{black} \hat{c}^{\eta} \right)
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\frac{M_j}{M_i}\)</span> – military capability ratio (<span class="math inline">\(\gamma = 0 \implies\)</span> no cost advantage for military superiority)</li>
+<li><span class="math inline">\(W_{ji}\)</span> – geographic distance between <span class="math inline">\(j\)</span> and <span class="math inline">\(i\)</span> (<span class="math inline">\(\alpha_1=0 \implies\)</span> no loss of strength gradient)</li>
+<li><span class="math inline">\(\color{bcOrange} Y_j\)</span> – attacker gdp (<span class="math inline">\(\alpha_2=0 \implies\)</span> no advantage for larger countries)</li>
+</ul>
+<div class="fragment">
+<p><strong>Probability of Peace</strong></p>
+<p><span class="math display">\[
+\hat{H}_i \left( \hat{\tilde{\bm{\tau}}}; \bm{Z}_m, \bm{\theta}_m \right) = \prod_{j \neq i} \hat{F}_{ji} \left( \left( \hat{V}_j \left( \bm{1}_i; \tilde{\bm{\tau}}_{-i} \right) - \hat{V}_j \left( \hat{\tilde{\bm{\tau}}} \right) \right)^{-1} \right)
+\]</span></p>
+</div>
+<div class="fragment">
+<p><a href="#/frechet">Fréchet Distribution</a></p>
+</div>
+</section><section id="tau_star" class="slide level2">
+<h2>Optimal Policies</h2>
+<ul>
+<li>Risk-return tradeoff: ideal policies balance policy optimality against threat of war
+<ul>
+<li>Lower tariffs on goods from countries that pose military threats</li>
+</ul></li>
+</ul>
+<div class="fragment">
+<p><strong>Best Response</strong></p>
+<p><span class="math display">\[
+\max_{\bm{\tau}_i} \quad \underbrace{\hat{H}_i(\hat{\tilde{\bm{\tau}}}; \bm{Z}_m, \bm{\theta}_m) \hat{V}_i(\hat{\tilde{\bm{\tau}}})}_{\text{peace}} + \underbrace{\left( 1 - \hat{H}_i(\hat{\tilde{\bm{\tau}}}; \bm{Z}_m, \bm{\theta}_m) \right) \hat{V}_i(\bm{1}_i; \hat{\tilde{\bm{\tau}}}_{-i})}_{\text{war}}
+\]</span></p>
+</div>
+<div class="fragment">
+<p><strong>Equilibrium <a href="#/policy_hats">(in changes)</a></strong></p>
+<p><span class="math display">\[
+\bm{\tau}^\star(\bm{\theta}_m, \bm{Z}_m)
+\]</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li><span class="math inline">\(\bm{\theta}_m = \left( \bm{v}, \gamma, \alpha_1, \alpha_2 \right)\)</span> – estimand
+<ul>
+<li><span class="math inline">\(\bm{v}\)</span> – revenue thresholds (preference for protectionism)</li>
+<li><span class="math inline">\(\gamma\)</span> – returns to military advantage (if <span class="math inline">\(\gamma &gt; 0\)</span>)</li>
+<li><span class="math inline">\(\alpha_1\)</span> – loss of strength gradient (if <span class="math inline">\(\alpha_1 &gt; 0\)</span>)</li>
+<li><span class="math inline">\(\alpha_2\)</span> – returns to gdp (if <span class="math inline">\(\alpha_2 &gt; 0\)</span>)</li>
+</ul></li>
+<li><span class="math inline">\(\bm{Z}_m\)</span> – data</li>
+</ul>
+</div>
+<div class="fragment">
+<p><strong>Calibration</strong></p>
+<ul>
+<li><span class="math inline">\(\hat{C}=\)</span> 25</li>
+<li><span class="math inline">\(\eta=\)</span> 1.5</li>
+</ul>
+</div>
+</section><section id="identification-intuition" class="slide level2">
+<h2>Identification (Intuition)</h2>
+<p><strong>Preferences (<span class="math inline">\(\bm{v}\)</span>)</strong></p>
+<ul>
+<li>Holding military technology fixed, <span class="math inline">\(i\)</span>’s overall level of protectionism informs about <span class="math inline">\(v_i\)</span></li>
+<li>Governments with higher trade policies (more protectionist) have higher <span class="math inline">\(v_i\)</span></li>
+</ul>
+<div class="fragment">
+<p><strong>Military Technology</strong></p>
+<ul>
+<li>Holding preferences fixed, heterogeneity in observed policies informs about military parameters</li>
+<li><span class="math inline">\(\alpha_1\)</span> – does policy favoritism covary with distance from trade partner?</li>
+<li><span class="math inline">\(\gamma\)</span> – does policy favoritism covary with military capability ratio?</li>
+</ul>
+</div>
+</section></section>
+<section><section id="estimation" class="title-slide slide level1 aligncenter"><h1>Estimation</h1></section><section id="estimation_main" class="slide level2">
+<h2>Estimation</h2>
+<p><strong>Measurement Error:</strong> <span class="math inline">\(\tau_{ij} = \tau_{ij}^\star(\bm{\theta}_m, \bm{Z}) + \epsilon_{ij}\)</span></p>
+<div class="fragment">
+<p><strong>Moment Estimator</strong></p>
+<p><span class="math display">\[
+\min_{\bm{\theta}_m} \quad \sum_i \sum_j \left( \epsilon_{ij}(\bm{\theta}_m, \bm{Z}) \right)^2
+\]</span></p>
+</div>
+<div class="fragment">
+<p><strong>Mathematical Program with Equilibrium Constraints (MPEC) <span class="citation" data-cites="Su2012">(Su and Judd 2012)</span></strong></p>
+<p><span class="math display">\[\begin{equation*}
+\begin{split}
+\min_{ \bm{\theta}_m, \hat{\tilde{\bm{\tau}}}, \hat{\bm{w}}, \hat{\bm{w}}^\prime, \bm{\lambda} } &amp; \quad \sum_i \sum_j \left( \epsilon_{ij} \right)^2 &amp; \quad \text{} \\
+\text{subject to} &amp; \quad \nabla_{\hat{\tilde{\bm{\tau}}}_i} \mathcal{L}_i(\hat{\tilde{\bm{\tau}}}, \hat{\bm{w}}, \bm{\lambda}_i; \bm{\theta}_m) = \bm{0} \text{ for all } i &amp; \quad \text{Policy Optimality} \\
+&amp; \quad \hat{\bm{w}} = \hat{h} \left( \hat{\tilde{\bm{\tau}}} \right) &amp; \quad \text{GE (Proposed Policies)} \\
+&amp; \quad \hat{\bm{w}}_i^\prime = \hat{h} \left( \bm{1}_i, \hat{\tilde{\bm{\tau}}}_{-i} \right) \text{ for all } i &amp; \quad \text{GE (Imposed Policies)}
+\end{split}
+\end{equation*}\]</span></p>
+<p><a href="#/br_mpec">Best Response MPEC</a></p>
+</div>
+<div class="fragment">
+<p><strong>Uncertainty</strong></p>
+<ul>
+<li>Nonparametric bootstrap: sample policy estimates (<span class="math inline">\(\tau_{ij}\)</span>) and recompute <span class="math inline">\(\bm{\theta}_m\)</span></li>
+</ul>
+</div>
+</section></section>
+<section><section id="results" class="title-slide slide level1 aligncenter"><h1>Results</h1></section><section id="results_main" class="slide level2">
+<h2>Parameters</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-18-1.png" style="display: block; margin: auto;" /></p>
+<p><a href="#/fit">Model Fit</a>     <a href="#/errors">Errors</a>     <a href="#/nce">Non-Coercive Model</a>     <a href="#/nce_fit">Non-Coercive Model Fit</a></p>
+</section><section id="war-costs" class="slide level2">
+<h2>War Costs</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-19-1.png" style="display: block; margin: auto;" /></p>
+</section><section id="conquest-values" class="slide level2">
+<h2>Conquest Values</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-20-1.png" style="display: block; margin: auto;" /></p>
+</section><section id="war-probabilities" class="slide level2">
+<h2>War Probabilities</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-21-1.png" style="display: block; margin: auto;" /></p>
+</section></section>
+<section><section id="cfct" class="title-slide slide level1 aligncenter"><h1>Counterfactuals</h1></section><section id="cfct_main" class="slide level2">
+<h2>Counterfactuals (Overview)</h2>
+<p><strong>Counterfactual Policies</strong> <span class="math inline">\(\tilde{\bm{\tau}}^\star(\bm{\theta}_m^\prime; \bm{Z}_m^\prime)\)</span></p>
+<ul>
+<li><span class="math inline">\(\bm{\theta}_m^\prime\)</span> – counterfactual parameters (e.g. preferences)</li>
+<li><span class="math inline">\(\bm{Z}_m^\prime\)</span> – counterfactual data (e.g. military expenditure)</li>
+</ul>
+<div class="fragment">
+<p><strong>Economic Effects of Counterfactual Policies</strong></p>
+<p><span class="math display">\[
+h \left( \tilde{\bm{\tau}}^\star(\bm{\theta}_m^\prime; \bm{Z}_m^\prime) \right)
+\]</span></p>
+</div>
+<div class="fragment">
+<p><strong>Scenarios</strong></p>
+<ol type="1">
+<li>A Coercion-Free World</li>
+<li><a href="#/cfct2">Multipolarity, Trade Policy, and International Trade</a></li>
+<li><a href="#/cfct3">Chinese Preference Liberalization and the Risk of War</a></li>
+</ol>
+</div>
+</section><section id="coercion-free-world-policies" class="slide level2">
+<h2>Coercion-Free World: Policies</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-23-1.png" style="display: block; margin: auto;" /></p>
+</section><section id="coercion-free-world-policies-1" class="slide level2">
+<h2>Coercion-Free World: Policies</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-24-1.png" style="display: block; margin: auto;" /></p>
+</section><section id="coercion-free-world-policies-2" class="slide level2">
+<h2>Coercion-Free World: Policies</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-25-1.png" style="display: block; margin: auto;" /></p>
+</section><section id="coercion-free-world-trade" class="slide level2">
+<h2>Coercion-Free World: Trade</h2>
+<ul>
+<li>Moving from pacifism to 2011 military expenditure levels <span class="math inline">\(\rightarrow\)</span> 63 percent increase in value of world trade</li>
+</ul>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-26-1.png" style="display: block; margin: auto;" /></p>
+</section><section id="coercion-free-world-trade-1" class="slide level2">
+<h2>Coercion-Free World: Trade</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-27-1.png" style="display: block; margin: auto;" /></p>
+</section><section id="coercion-free-world-welfare" class="slide level2">
+<h2>Coercion-Free World: Welfare</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-28-1.png" style="display: block; margin: auto;" /></p>
+</section></section>
+<section><section id="conclusions" class="title-slide slide level1 aligncenter"><h1>Conclusions</h1></section><section id="conclusion" class="slide level2">
+<h2>Conclusion</h2>
+<div class="fragment">
+<p><strong>Shadow of Power in International Political Economy</strong></p>
+<ul>
+<li>Quantify governments’ welfare under counterfactual imposition of free trade abroad
+<ul>
+<li>Use difference between factual welfare and welfare under this counterfactual to identify parameters governing technology of coercion in international relations</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Results
+<ul>
+<li>[x] Returns to military advantage</li>
+<li>[ ] Loss of strength gradient</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<p><strong>The Persistence of Hegemony/Hierarchy in International Relations</strong></p>
+<ul>
+<li>Power politics of international trade regime
+<ul>
+<li>Hegemon compels openness from recalcitrant followers</li>
+<li><span class="citation" data-cites="Gallagher1953">Gallagher and Robinson (1953)</span>, <span class="citation" data-cites="Krasner1976">Krasner (1976)</span>, <span class="citation" data-cites="Gilpin1981">Gilpin (1981)</span>, <span class="citation" data-cites="Kindleberger1986">Kindleberger (1986)</span>, <span class="citation" data-cites="Lake2013">Lake (2013)</span></li>
+<li>Largely theoretical literature due to difficulty in constructing counterfactual</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>What policies would governments adopt in anarchy’s absence?
+<ul>
+<li><strong>Significantly more protectionist world</strong></li>
+</ul></li>
+</ul>
+</div>
+</section></section>
+<section><section id="thank-you" class="title-slide slide level1 aligncenter"><h1>Thank You</h1></section><section id="thank-you-1" class="slide level2 aligncenter">
 <h2>Thank You</h2>
 <p><a href="http://brendancooley.com">brendancooley.com</a></p>
 <p><a href="mailto:bcooley@princeton.edu">bcooley@princeton.edu</a></p>
-</section><section id="toc" class="slide level2">
-<h2>Table of Contents</h2>
-<div id="left">
-<p><strong>Sections</strong></p>
-<ol type="1">
-<li><a href="#/introduction">Introduction</a></li>
-<li><a href="#/model">Model</a></li>
-<li><a href="#/data">Data</a></li>
-<li><a href="#/estimation">Estimation</a></li>
-<li><a href="#/results">Results</a></li>
-<li><a href="#/counterfactuals">Conterfactuals</a></li>
-<li><a href="#/conclusion">Conclusion</a></li>
-</ol>
-</div>
-<div id="right">
-<p><strong>Appendix</strong></p>
-<ol type="1">
-<li>test</li>
-</ol>
-</div>
 </section></section>
-<section><section id="appendix" class="title-slide slide level1 aligncenter"><h1>Appendix</h1></section><section id="bargaining-trade-and-war" class="slide level2">
+<section><section id="intro_apdx" class="title-slide slide level1 aligncenter"><h1>Appendix: Introduction</h1></section><section id="bargaining-trade-and-war" class="slide level2">
 <h2>Bargaining, Trade, and War</h2>
 <p><strong>Institutionalized Bargaining</strong></p>
 <ul>
@@ -743,7 +1059,8 @@ c_{ij} \sim F \left( \bm{\theta}_m; \bm{Z}_m \right)
 </ul></li>
 <li>Trade frictions as choice variable here</li>
 </ul>
-</section><section id="epbt_tau" class="slide level2">
+</section></section>
+<section><section id="data_apdx" class="title-slide slide level1 aligncenter"><h1>Appendix: Data</h1></section><section id="epbt_tau" class="slide level2">
 <h2>Estimated Trade Frictions</h2>
 <p><img src="index_files/figure-revealjs/tauhm-1.png" style="display: block; margin: auto;" /></p>
 <p><a href="#/economy1">Back</a></p>
@@ -882,14 +1199,14 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
 <p><strong>Empirical Conquest Value:</strong> <span class="math inline">\(V_i \left( h(\bm{1}_j; \bm{\tau}_{-j}) \right)\)</span></p>
 </section><section id="reduced-form-evidence-data" class="slide level2">
 <h2>Reduced Form Evidence (Data)</h2>
-<p><img src="index_files/figure-revealjs/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-30-1.png" style="display: block; margin: auto;" /></p>
 </section><section id="reduced-form-evidence-data-1" class="slide level2">
 <h2>Reduced Form Evidence (Data)</h2>
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#rgozvzuhuk .gt_table {
+#vrrmgfdcvx .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -912,7 +1229,7 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   border-left-color: #D3D3D3;
 }
 
-#rgozvzuhuk .gt_heading {
+#vrrmgfdcvx .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -924,7 +1241,7 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   border-right-color: #D3D3D3;
 }
 
-#rgozvzuhuk .gt_title {
+#vrrmgfdcvx .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -934,7 +1251,7 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   border-bottom-width: 0;
 }
 
-#rgozvzuhuk .gt_subtitle {
+#vrrmgfdcvx .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -944,13 +1261,13 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   border-top-width: 0;
 }
 
-#rgozvzuhuk .gt_bottom_border {
+#vrrmgfdcvx .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#rgozvzuhuk .gt_col_headings {
+#vrrmgfdcvx .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -965,7 +1282,7 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   border-right-color: #D3D3D3;
 }
 
-#rgozvzuhuk .gt_col_heading {
+#vrrmgfdcvx .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -985,7 +1302,7 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   overflow-x: hidden;
 }
 
-#rgozvzuhuk .gt_column_spanner_outer {
+#vrrmgfdcvx .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -997,15 +1314,15 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   padding-right: 4px;
 }
 
-#rgozvzuhuk .gt_column_spanner_outer:first-child {
+#vrrmgfdcvx .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#rgozvzuhuk .gt_column_spanner_outer:last-child {
+#vrrmgfdcvx .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#rgozvzuhuk .gt_column_spanner {
+#vrrmgfdcvx .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1017,7 +1334,7 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   width: 100%;
 }
 
-#rgozvzuhuk .gt_group_heading {
+#vrrmgfdcvx .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1039,7 +1356,7 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   vertical-align: middle;
 }
 
-#rgozvzuhuk .gt_empty_group_heading {
+#vrrmgfdcvx .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1054,19 +1371,19 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   vertical-align: middle;
 }
 
-#rgozvzuhuk .gt_striped {
+#vrrmgfdcvx .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#rgozvzuhuk .gt_from_md > :first-child {
+#vrrmgfdcvx .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#rgozvzuhuk .gt_from_md > :last-child {
+#vrrmgfdcvx .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#rgozvzuhuk .gt_row {
+#vrrmgfdcvx .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1085,7 +1402,7 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   overflow-x: hidden;
 }
 
-#rgozvzuhuk .gt_stub {
+#vrrmgfdcvx .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1097,7 +1414,7 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   padding-left: 12px;
 }
 
-#rgozvzuhuk .gt_summary_row {
+#vrrmgfdcvx .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1107,7 +1424,7 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   padding-right: 5px;
 }
 
-#rgozvzuhuk .gt_first_summary_row {
+#vrrmgfdcvx .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1117,7 +1434,7 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   border-top-color: #D3D3D3;
 }
 
-#rgozvzuhuk .gt_grand_summary_row {
+#vrrmgfdcvx .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1127,7 +1444,7 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   padding-right: 5px;
 }
 
-#rgozvzuhuk .gt_first_grand_summary_row {
+#vrrmgfdcvx .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1137,7 +1454,7 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   border-top-color: #D3D3D3;
 }
 
-#rgozvzuhuk .gt_table_body {
+#vrrmgfdcvx .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1146,7 +1463,7 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   border-bottom-color: #D3D3D3;
 }
 
-#rgozvzuhuk .gt_footnotes {
+#vrrmgfdcvx .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1160,13 +1477,13 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   border-right-color: #D3D3D3;
 }
 
-#rgozvzuhuk .gt_footnote {
+#vrrmgfdcvx .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#rgozvzuhuk .gt_sourcenotes {
+#vrrmgfdcvx .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1180,46 +1497,46 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   border-right-color: #D3D3D3;
 }
 
-#rgozvzuhuk .gt_sourcenote {
+#vrrmgfdcvx .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#rgozvzuhuk .gt_left {
+#vrrmgfdcvx .gt_left {
   text-align: left;
 }
 
-#rgozvzuhuk .gt_center {
+#vrrmgfdcvx .gt_center {
   text-align: center;
 }
 
-#rgozvzuhuk .gt_right {
+#vrrmgfdcvx .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#rgozvzuhuk .gt_font_normal {
+#vrrmgfdcvx .gt_font_normal {
   font-weight: normal;
 }
 
-#rgozvzuhuk .gt_font_bold {
+#vrrmgfdcvx .gt_font_bold {
   font-weight: bold;
 }
 
-#rgozvzuhuk .gt_font_italic {
+#vrrmgfdcvx .gt_font_italic {
   font-style: italic;
 }
 
-#rgozvzuhuk .gt_super {
+#vrrmgfdcvx .gt_super {
   font-size: 65%;
 }
 
-#rgozvzuhuk .gt_footnote_marks {
+#vrrmgfdcvx .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="rgozvzuhuk" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="vrrmgfdcvx" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   <thead class="gt_header">
     <tr>
       <th colspan="5" class="gt_heading gt_title gt_font_normal" style>Inverse Conquest Values and Military Capability Ratios</th>
@@ -1317,6 +1634,84 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
   
 </table></div>
 <p><a href="#/cipe_data">Back</a></p>
+</section></section>
+<section><section id="model_apdx" class="title-slide slide level1 aligncenter"><h1>Appendix: Model</h1></section><section id="frechet" class="slide level2">
+<h2>Cost Distribution</h2>
+<figure>
+<img data-src="02_figs/img/Frechet.png" alt="Fréchet distribution. Source" style="width:75.0%" /><figcaption>Fréchet distribution. <a href="https://en.wikipedia.org/wiki/Fr%C3%A9chet_distribution#/media/File:Frechet_pdf.svg">Source</a></figcaption>
+</figure>
+<p><a href="#/wars2">Back</a></p>
+</section><section id="policy_hats" class="slide level2">
+<h2>Equilibrium in Changes</h2>
+<p><strong>Peace Condition</strong></p>
+<p><span class="math display">\[
+\hat{c}_{ji}^{-1} \leq \left( \hat{V}_j \left( \bm{1}_i; \hat{\tilde{\bm{\tau}}}_{-i} \right) - \hat{V}_j \left( \hat{\tilde{\bm{\tau}}} \right) \right)^{-1}
+\]</span></p>
+<p><strong>Objective Function</strong></p>
+<p><span class="math display">\[
+\hat{G}_i(\hat{\tilde{\bm{\tau}}}) = \hat{H}_i(\hat{\tilde{\bm{\tau}}}; \bm{Z}, \bm{\theta}_m) \hat{V}_i(\hat{\tilde{\bm{\tau}}}) + \left( 1 - \hat{H}_i(\hat{\tilde{\bm{\tau}}}; \bm{Z}, \bm{\theta}_m) \right) \hat{V}_i(\bm{1}_i; \hat{\tilde{\bm{\tau}}}_{-i})
+\]</span></p>
+<p><strong>Equilibrium</strong></p>
+<p><span class="math display">\[
+\hat{\tilde{\bm{\tau}}}^\star(\bm{\theta}_m; \bm{Z}_m)
+\]</span></p>
+<p><a href="#/tau_star">Back</a></p>
+</section></section>
+<section><section id="estimation_apdx" class="title-slide slide level1 aligncenter"><h1>Appendix: Estimation</h1></section><section id="br_mpec" class="slide level2">
+<h2>Best Response MPEC</h2>
+<p><strong>Choice Variables</strong></p>
+<p><span class="math display">\[
+\hat{\bm{x}}_i = \left( \hat{\tilde{\bm{\tau}}}_i, \hat{\bm{w}} \right)
+\]</span></p>
+<p><strong>Best Response</strong></p>
+<p><span class="math display">\[\begin{equation*}
+\begin{split}
+\max_{\hat{\bm{x}}_i} &amp; \quad \hat{G}_i(\hat{\bm{w}}; \bm{\theta}_m) \\
+\text{subject to} &amp; \quad \hat{\bm{w}} = \hat{h}(\hat{\tilde{\bm{\tau}}})
+\end{split}
+\end{equation*}\]</span></p>
+<p><strong>Lagrangian:</strong> <span class="math inline">\(\mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i)\)</span></p>
+<p><strong>Optimality Condition</strong></p>
+<p><span class="math display">\[
+\nabla_{\hat{\tilde{\bm{\tau}}}_i} \mathcal{L}_i(\hat{\bm{x}}_i, \bm{\lambda}_i; \bm{\theta}_m) = \bm{0}
+\]</span></p>
+<p><a href="#/estimation_main">Back</a></p>
+</section></section>
+<section><section id="results_apdx" class="title-slide slide level1 aligncenter"><h1>Appendix: Results</h1></section><section id="fit" class="slide level2">
+<h2>Model Fit</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-32-1.png" style="display: block; margin: auto;" /></p>
+<p><a href="#/results_main">Back</a></p>
+</section><section id="errors" class="slide level2">
+<h2>Errors</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-33-1.png" style="display: block; margin: auto;" /></p>
+<p><a href="#/results_main">Back</a></p>
+</section><section id="nce" class="slide level2">
+<h2>Non-Coercive Model</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-34-1.png" style="display: block; margin: auto;" /></p>
+<p><a href="#/results_main">Back</a></p>
+</section><section id="nce_fit" class="slide level2">
+<h2>Non-Coercive Model Fit</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-35-1.png" style="display: block; margin: auto;" /></p>
+<p><a href="#/results_main">Back</a></p>
+</section></section>
+<section><section id="results_apdx" class="title-slide slide level1 aligncenter"><h1>Appendix: Counterfactuals</h1></section><section id="cfct2" class="slide level2">
+<h2>Multipolarity, Trade Policy, and International Trade (I)</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-37-1.png" style="display: block; margin: auto;" /></p>
+</section><section id="multipolarity-trade-policy-and-international-trade-ii" class="slide level2">
+<h2>Multipolarity, Trade Policy, and International Trade (II)</h2>
+<ul>
+<li>Value of global trade under multipolarization is 110.3 percent its baseline value</li>
+</ul>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-38-1.png" style="display: block; margin: auto;" /></p>
+<p><a href="#/cfct_main">Back</a></p>
+</section><section id="cfct3" class="slide level2">
+<h2>Chinese Preference Liberalization and the Risk of War</h2>
+<ul>
+<li><span class="math inline">\(\hat{v}_{\text{CHN}}=\)</span> 2.77, <span class="math inline">\(v_{\text{CHN}}^\prime=\)</span> 1.52</li>
+<li>Reduces probability of U.S.-China war from 33.3 percent to 5.9 percent</li>
+</ul>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-39-1.png" style="display: block; margin: auto;" /></p>
+<p><a href="#/cfct_main">Back</a></p>
 <!-- hide references -->
 <hr style="height:30em; visibility:hidden;" />
 <div id="refs" class="references">
@@ -1358,6 +1753,9 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
 </div>
 <div id="ref-Diehl1985">
 <p>Diehl, Paul F. 1985. “Continuity and Military Escalation in Major Power Rivalries, 1816-1980.” <em>The Journal of Politics</em> 47 (4): 1203–11.</p>
+</div>
+<div id="ref-Eaton2002">
+<p>Eaton, Jonathan, and Samuel Kortum. 2002. “Technology, geography, and trade.” <em>Econometrica</em> 70 (5): 1741–79.</p>
 </div>
 <div id="ref-Fearon1995">
 <p>Fearon, James D. 1995. “Rationalist explanations for war.” <em>International Organization</em> 49 (03): 379–414.</p>
@@ -1413,6 +1811,9 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
 <div id="ref-Lake2007">
 <p>Lake, David A. 2007. “Escape from the State of Nature: Authority and Hierarchy in World Politics.” <em>International Security</em> 32 (2): 47–79.</p>
 </div>
+<div id="ref-Lake2013">
+<p>———. 2013. “Legitimating Power: The Domestic Politics of U.S. International Hierarchy.” <em>International Security</em> 38 (2): 74–111.</p>
+</div>
 <div id="ref-Lemke1995">
 <p>Lemke, Douglas. 1995. “The Tyranny of Distance: Redefining Relevant Dyads.” <em>International Interactions</em> 21 (1): 23–38.</p>
 </div>
@@ -1460,6 +1861,9 @@ x^\star \in \argmax_x &amp; \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( 
 </div>
 <div id="ref-Skaperdas2001">
 <p>Skaperdas, Stergios. 2001. “The political economy of organized crime: providing protection when the state does not.” <em>Economics of Governance</em> 2 (3). Springer: 173–202.</p>
+</div>
+<div id="ref-Su2012">
+<p>Su, Che Lin, and Kenneth L. Judd. 2012. “Constrained Optimization Approaches to Estimation of Structural Models.” <em>Econometrica</em> 80 (5): 2213–30.</p>
 </div>
 <div id="ref-Viner1948">
 <p>Viner, Jacob. 1948. “Power Versus Plenty as Objectives of Foreign Policy in the Seventeenth and Eighteenth Centuries.” <em>World Politics</em> 1 (1): 1–29.</p>
