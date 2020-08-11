@@ -106,7 +106,7 @@ Estimating the magnitude of these trade policies and tracing their impact on gov
 
 In the coercive political economy developed below, governments' relative directed war costs are modeled as a function of the military capability ratio between the attacker and defender, the geographic distance between the belligerents, and the gross domestic product of the attacking country. I store these observable features in the vector $\bm{Z}_m$. To measure military capability ratios, I employ [SIPRI](https://www.sipri.org/)'s data on military expenditure to measure governments' military capacity. These values are displayed in Figure \ref{fig:milex}. I use data from @Weidmann2010 to calculate centroid-centroid geographic distance between all countries in my sample. Data on gross domestic production comes from the [World Input-Output Database (WIOD)](http://www.wiod.org/home) [@Timmer2015]. 
 
-![Military expenditure for in-sample governments. Values for ROW and EU are obtained by summing expenditure of all member countries. \label{fig:milex}](figure/milex-1.png)
+![Military expenditure for in-sample governments. Values for ROW and EU are obtained by summing expenditure of all member countries. \label{fig:milex}](figure/milex-1.pdf)
 
 ## Reduced Form Evidence on Coercion and Trade Policy
 
@@ -132,7 +132,7 @@ In other words, the distance between government 1's equilibrium utility and the 
 
 Suppose that governments endeavor to maximize the welfare of the representative consumer.^[I will relax this assumption in the structural model developed below.] With the economy, $h$, calibrated, I can calculate the change in utility each representative consumer would experience when each other government adopts free trade, relative to their utility at the baseline set of policies. Taking this as a empirical measure of the ratio $u_1(x^\star; M_1, M_2) / u_1(1)$, the model implies this quantity will be increasing in $M_1$, country 1's military capacity. I will refer to this quantity as government 1's inverse *conquest value* vis-à-vis government 2.
 
-![Correlation between military capability ratios and inverse conquest values, all pairs of in-sample countries. \label{fig:rcvm}](figure/rcvm-1.png)
+![Correlation between military capability ratios and inverse conquest values, all pairs of in-sample countries. \label{fig:rcvm}](figure/rcvm-1.pdf)
 
 Figure \ref{fig:rcvm} plots the empirical relationship between military capability ratios and inverse conquest values. Each potential "attacking" country's military capability ratio vis-à-vis every "defending" country is plotted on the x-axis. On the y-axis is the attacking inverse country's value for conquering each defending country. Consistent with the predictions of this simple model, government's inverse conquest values correlate positively with their relative military power. Table \ref{fig:rcvm_reg_tex} and Figure \ref{fig:rcvm_reg_dw} display the results of a series of linear models that estimate the conditional correlations between the inverse conquest value and the military capability ratio, distance between the countries, and country-specific constants. 
 
@@ -161,7 +161,7 @@ Attacker FE? &  & ✓ &  & ✓\\
 \end{tabular}}
 \end{table}
 
-![Conditional correlations between inverse conquest values and military capability ratios, geographic distance, and country-specific constants. \label{fig:rcvm_reg_dw}](figure/rcv_reg_dw-1.png)
+![Conditional correlations between inverse conquest values and military capability ratios, geographic distance, and country-specific constants. \label{fig:rcvm_reg_dw}](figure/rcv_reg_dw-1.pdf)
 
 The first model confirms the statistical significance of the correlation shown in Figure \ref{fig:rcvm}. The second model estimates this correlation within potential "attacking" countries. Here, inverse conquest values continue to rise as military advantage rises. The final two models interact the military capability ratio with a measure of distance between the attacker and defender. The estimated correlation between military capbility is not attenuated, but does lose statistical significance in these specifications. Distance and the interaction of distance with military capability does not covary with the inverse conquest values, whether or not country-specific factors are included. These raw correlations are informative about the role of coercion in the formation of trade policy but suggestive at best. Trade policy bargaining is a multilateral endeavor in which third party externalities loom large. Moreover, governments may vary in their preferences for protectionism, changing their ideal policies and their valuations for conquering others. The model developed below accounts explicitly for these features of trade policy bargaining, delivering interpretable estimates of the effects of military capability and geographic distance on trade policy outcomes.
 
@@ -307,33 +307,33 @@ This procedure produces point estimates $\tilde{\bm{\theta}}_m$. I then construc
 
 
 
-![Model parameter estimates and 95 percent confidence intervals. The top panel shows protectionism preference parameter estimates ($v_i$) for each country. The bottom panel shows parameter estimates for observables affecting costs of war ($\gamma, \alpha_1, \alpha_2$). \label{fig:ests}](figure/ests-1.png)
+![Model parameter estimates and 95 percent confidence intervals. The top panel shows protectionism preference parameter estimates ($v_i$) for each country. The bottom panel shows parameter estimates for observables affecting costs of war ($\gamma, \alpha_1, \alpha_2$). \label{fig:ests}](figure/ests-1.pdf)
 
 Figure \ref{fig:ests} displays results from the estimation. Recall that $v_i$ governs the ease with which governments can extract revenues from trade policy distortions. When $v_i$ is higher government $i$ prefers higher barriers to trade, all else equal. When $v_i=1$ the government acts as a classical social welfare maximizer. There is considerable heterogeneity in governments' estimated preferences for protectionism. The United States and Russia are estimated to be relatively liberal, while Australia and Canada are quite protectionist. 
 
 An attacking country's military advantage and g.d.p. are estimated to reduce war costs, facilitating coercion. There are increasing returns to both of these features in reducing the average costs of war ($\gamma, \alpha_2 > 1$). Economically large and military powerful countries are the most effective at coercion, holding the distance of their adversary constant. Figure \ref{fig:war_costs} displays estimated average war costs, relative to those of the United States, holding the distance to the adversary constant. Given its large economy and military, the United States is estimated to enjoy the smallest averge war costs. The European Union, China, and Russia pay between 3 and 6 times the costs of the United States to prosecute wars on average. Wars are estimated to cost at least an order of magnitude more than U.S. wars for other countries in the sample.
 
-![Estimated relative war costs against fixed adversary. United States' costs serve as baseline ($c=1$). \label{fig:war_costs}](figure/war_costs-1.png)
+![Estimated relative war costs against fixed adversary. United States' costs serve as baseline ($c=1$). \label{fig:war_costs}](figure/war_costs-1.pdf)
 
 War costs are estimated to depend on the distance between the attacker and potential adversay. Attackers that are more distant from their adversaries are estimated to enjoy smaller war costs. In other words, model estimates imply an inverse loss of strength gradient. This may emerge due to the peculiarities of military technology in 2011, a period in which geographic distance respresents a uniquely small impediment to the projection of force.
 
 The model estimates can be readily transformed to deliver empirical quantities that measure the salience of military coercion in international relations. Figure \ref{fig:rcv} plots the estimated conquest value for each potential attacking country vis-à-vis each potential defending country. These quantities differ from those analyzed in the reduced form section above in that they account explicitly for the attacking government's preferences for protectionism. Russia's conquest values are estimated to be among the highest in the sample. This reflects the relatively poor market access conditions it enjoys at the estimated equilibrium. Because their economies are the largest in the sample, the gains that accrue from successfuly conquering the United States, China and the European Union tend to be larger than the gains from conquering other countries. Australia, Canada, and China benefit little from conquering others. This result obtains because of their governments' estimated preferences for protectionism. Conquest stimulates trade that is disadvantageous for a government $i$ when $v_i$ is high and $i$'s trade barriers are lowered below the revenue threshold due to the effects of coercion. This variation in conquest values highlights the dependence of the coercive environment on the underlying international economy and government preferences.
 
-![Estimated conquest value for each potential attacking country vis-à-vis each potential defending country. Darker colors indicate higher conquest values. \label{fig:rcv}](figure/rcv-1.png)
+![Estimated conquest value for each potential attacking country vis-à-vis each potential defending country. Darker colors indicate higher conquest values. \label{fig:rcv}](figure/rcv-1.pdf)
 
 It is also straightforward to calculate the equilibrium probability of war once the model has been estimated by simply plugging parameter estimates back into the inverse cost distribution given in Equation \ref{eq:inv_costs}.^[These estimated probabilities of war should be interpreted only in relative terms. The overall probability of war is governed by the calibrated parameter $\hat{C}$. Higher values of this parameter would scale down each probability of war but would not shift their relative values.] Figure \ref{fig:pr_peace} plots point estimates and uncertainty intervals surrounding the likelihood of war between all pairs of countries in the sample. In general, governments run very small risks of invasion from other governments. However, the threat of war with the United States looms large in the sample. The probabilities the United States attacks each other country in the sample are highlighted in orange in the Figure. The European Union is also estimated to impose substantial threats.
 
-![Estimated equilibrium probabilities of war, point estimates and 95 percent confidence intervals. Probabilities the United States attacks each other country highlighted in orange. \label{fig:pr_peace}](figure/war_probs-1.png)
+![Estimated equilibrium probabilities of war, point estimates and 95 percent confidence intervals. Probabilities the United States attacks each other country highlighted in orange. \label{fig:pr_peace}](figure/war_probs-1.pdf)
 
 It is worth noting that the countries with the highest estimated risk of war with the United States, Japan and Australia, happen to be U.S. allies. The security guarantees encapsulated in these allliances are not explicitly modeled. One way to interpret these results is that Australian and Japanese security would deteriorate rapidly in the absence of U.S. military protection, representing an implicit threat the United States can leverage to affect trade policy.^[@Lake2007 would label these relationships "hierarchical" and based on the authority of the United States to dictate the policy of its subordinates. Still, in Lake's conceptualization, "authority is buttressed by the capacity for coercion" (p. 53).]
 
 ## Model Fit and Inferences about Policy Preferences
 
-![Correlation between trade barrier data and model predictions. \label{fig:fit}](figure/fit-1.png)
+![Correlation between trade barrier data and model predictions. \label{fig:fit}](figure/fit-1.pdf)
 
 Figure \ref{fig:fit} evaluates the ability of the estimated model to predict the level of trade barriers. The model's mean absolute error is 0.27, equivalent to a 27 percent ad valorem tariff. The model's predictions are fairly well correlated with the trade barrier data ($\rho=$ 0.68). In Appendix C I plot the model's predictive error for each directed dyad in the sample, higlighting which observations are well explained by the model and which are not. Of note, Russia faces uniquely poor market access conditions in the data that the model does not fully replicate.
 
-![Effect of modeling military coercion on inferences about governments' preferences for protectionism. Figure plots point estimates and 95 percent confidence intervals for preference parameters under baseline model and model in which coercion is impossible. \label{fig:ests_mil_off}](figure/ests_mil_off-1.png)
+![Effect of modeling military coercion on inferences about governments' preferences for protectionism. Figure plots point estimates and 95 percent confidence intervals for preference parameters under baseline model and model in which coercion is impossible. \label{fig:ests_mil_off}](figure/ests_mil_off-1.pdf)
 
 Modeling coercion explicitly both improves model fit and alters inferences about government's underlying preferences for protectionism. I re-estimate the model under the assumption that coercion is impossible. In this model, equilibrium policies reflect only governments' underlying preferences, $v_i$. Estimated preferences for protectionism under this model are shown in Figure \ref{fig:ests_mil_off}. The estimated preferences of militarily powerful countries are largely unchanged across models. This is not true for less powerful countries. The estimated preferences of Australia, Canada, and China move dramatically when coercion is prohibited. The model developed here rationalizes their trade barriers as the result of highly protectionist latent preferences tempered by the effects of international coercion. The coercion-free model instead infers instead that they are relatively liberal in their preferences. Leaving coercion out of the model exerts downward bias on estimates of governments' welfare-mindedness. A large literature employs the equilibrium trade policies of @Grossman1994 or @Grossman1995 to estimate the weight governments place on the welfare of special interests relative to that of society at large [@Goldberg1999; @Mitra2006; @Gawande2009; @Gawande2012; @Ossa2014; @Gawande2015]. Because the "protection for sale" model incorporates no theory of international coercion, these studies over-estimate governments' social welfare conciousness. 
 
@@ -351,11 +351,11 @@ How does the shadow of coercion affect the functioning of the world economy? How
 
 First, I calculate the net economic effects of coercion by calculating the equilibrium to a game in which coercion is impossible, holding governments' preferences at their estimated values. The shadow of coercion is a substantial force for trade liberalization. Moving from this counterfactual "pacifist" world to the coercive equilibrium delivers a 63 percent increase in the value of total global trade. Figure \ref{fig:cfct1_X} disaggregates these changes in trade flows, showing the change in imports induced by demilitarization for each importer-exporter pair. It also shows the changes in equilibrium trade policy that generate these changes in trade flows. 
 
-![Changes in trade flows and trade policy when military coercion is counterfactually prohibited. Top plot shows changes in the (log) value of imports for each country in the sample, disaggregated by trade partner. Bottom plot shows changes in equilibrium trade policies for each country in the sample, again disaggregated by trade partner. Counterfactual import values and trade policies are shown in orange. \label{fig:cfct1_X}](figure/cfct1_X-1.png)
+![Changes in trade flows and trade policy when military coercion is counterfactually prohibited. Top plot shows changes in the (log) value of imports for each country in the sample, disaggregated by trade partner. Bottom plot shows changes in equilibrium trade policies for each country in the sample, again disaggregated by trade partner. Counterfactual import values and trade policies are shown in orange. \label{fig:cfct1_X}](figure/cfct1_X-1.pdf)
 
 U.S. and Russian trade policies remain largely unchanged. Yet their trade patterns are still affected by others' changes in trade policy behavior. Australia, Canada, China, and South Korea become substantially more protectionist, reducing their own trade volumes and shifting patterns of international exchange elsewhere. Trade policies in the coercion-free world are largely homogenous within adopting countries, reflecting the model's ex-ante incentives against policy discrimination. The exception to this rule is for large countries like the United States and European Union, whose counterfactual trade policies reflect dependence on the size of their trading partners, consistent with optimal taxation [@Johnson1953; @Ossa2014].
 
-![Changes in government welfare and consumer welfare (calculated by setting $v_i=1$ for all $i$) induced by moving from coercion-free equilibrium to baseline equilibrium. \label{fig:cfct1_welfare}](figure/cfct1_welfare-1.png)
+![Changes in government welfare and consumer welfare (calculated by setting $v_i=1$ for all $i$) induced by moving from coercion-free equilibrium to baseline equilibrium. \label{fig:cfct1_welfare}](figure/cfct1_welfare-1.pdf)
 
 Figure \ref{fig:cfct1_welfare} plots the changes in government and consumer welfare due to coercion, calculated as the difference between the coercion-free equilibrium and the baseline equilibrium. The measure of consumer welfare is calculated by setting $v_i=1$ for all governments and evaluating the representative consumer's indirect utility at equilibrium policies, consistent with the interpretation of $v_i$ as a political economy parameter capturing government incentives to deviate from socially optimal trade policies. Consumers benefit substantially from the trade liberalization induced by military coercion, but highly protectionist governments suffer. Australia, Canada, China, and South Korea suffer welfare losses when military coercion is permitted, relative to the counterfactual "pacifist" world. The United States government gains the most from coercion among non-RoW countries. 
 
@@ -363,17 +363,17 @@ Figure \ref{fig:cfct1_welfare} plots the changes in government and consumer welf
 
 Military power in 2011 was highly concentrated in the hands of the United States (see Figure \ref{fig:milex}). Since 2011, other countries, China in particular, have begun to close this military capability gap with the United States. How would the continued diffusion of military power affect trade policy and patterns of international economic exchange? To answer this question I project each in-sample government's military spending in 2030, assuming military budgets grow (shrink) at their average rate between 2011 and 2018. Projected military spending for 2030 is shown in Figure \ref{fig:milex_2030}. The largest change is the shift in relative military power from the United States and European Union toward China. 
 
-![Projected military spending in 2030, assuming military budgets grow at observed average growth rate between 2011 and 2018. \label{fig:milex_2030}](figure/milex_2030-1.png)
+![Projected military spending in 2030, assuming military budgets grow at observed average growth rate between 2011 and 2018. \label{fig:milex_2030}](figure/milex_2030-1.pdf)
 
 Multipolarization impacts globalization in two ways. On the one hand, newly militarily powerful countries can resist others' demands to liberalize, leading to a less-integrated global economy. On the other hand, the diffusion of military power increases the coercive capacity of some states in the system, allowing them to make greater liberalization demands of others and contributing to global economic integration. These effects are mediated by governments' preferences for protectionism, which determine governments' ideal policies and the returns to coercion. In this "multipolarization" scenario, China leverages these increases in military might to adopt more restrictive trade policies. Figure \ref{fig:cfct2_tau} displays the changes in Chinese trade policies that result under multipolarization. On net, multipolarization is a force for liberalization. The value of global trade under multipolarization is 110.3 percent its baseline value.
 
-![Changes in Chinese trade policies under multipolarization. \label{fig:cfct2_tau}](figure/cfct2_tau-1.png)
+![Changes in Chinese trade policies under multipolarization. \label{fig:cfct2_tau}](figure/cfct2_tau-1.pdf)
 
 ## Chinese Preference Liberalization and the Risk of War
 
 Reducing governments' incentives for protectionism can also decrease the risk of war. By reducing governments incentives to adopt high trade barriers, preference liberalization reduces others' incentives for conquest, in turn, reducing the probability of war. To quantify these effects, I consider a liberalization of Chinese policy preferences, setting their revenue collection parameter to that of the United States ($\hat{v}_{\text{CHN}}=$ 2.77, $v_{\text{CHN}}^\prime=$ 1.52). Figure \ref{fig:war_probs_pp4} shows the change in the probability of war against China that occurs as the result of this change in preferences. The United States still poses a threat of war, but the probability the United States launches a war against China is reduced substantially from 33.3 percent to 5.9 percent. The probability China faces attack from another source is virtually eliminated.
 
-![Changes in probability of war against China after Chinese preference liberalization. \label{fig:war_probs_pp4}](figure/war_probs_pp4-1.png)
+![Changes in probability of war against China after Chinese preference liberalization. \label{fig:war_probs_pp4}](figure/war_probs_pp4-1.pdf)
 
 
 # Conclusion
@@ -597,7 +597,7 @@ As noted by @Ossa2014, the assumption of exogenous and fixed trade imbalances ge
 
 ### Trade Barrier Estimates
 
-![Distribution of policy barriers to trade. Each cell reports the magnitude of the policy barrier each importing country (y-axis) imposes on every exporting country (x-axis). \label{fig:tauhm}](figure/tauhm-1.png)
+![Distribution of policy barriers to trade. Each cell reports the magnitude of the policy barrier each importing country (y-axis) imposes on every exporting country (x-axis). \label{fig:tauhm}](figure/tauhm-1.pdf)
 
 
 
@@ -606,9 +606,9 @@ As noted by @Ossa2014, the assumption of exogenous and fixed trade imbalances ge
 
 
 
-![Absolute errors for each directed dyad in the sample. Positive values indicate that the model predicts a higher trade barrier than is observed in the data (point estimate). \label{fig:fit_ddyad}](figure/fit_ddyad-1.png)
+![Absolute errors for each directed dyad in the sample. Positive values indicate that the model predicts a higher trade barrier than is observed in the data (point estimate). \label{fig:fit_ddyad}](figure/fit_ddyad-1.pdf)
 
-![Correlation between trade barrier data and coercion-free model predictions. \label{fig:fit_mo}](figure/fit_mo-1.png)
+![Correlation between trade barrier data and coercion-free model predictions. \label{fig:fit_mo}](figure/fit_mo-1.pdf)
 
 \clearpage
 
