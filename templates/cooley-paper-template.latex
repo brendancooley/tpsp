@@ -295,8 +295,10 @@ $endif$
 
 $for(include-before)$
 $include-before$
-
 $endfor$
+
+\newpage
+
 $if(toc)$
 {
 $if(colorlinks)$

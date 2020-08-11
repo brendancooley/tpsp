@@ -69,8 +69,6 @@ options(scipen=999)
 
 ```
 
-\newpage
-
 # Introduction
 
 ```{r, child = paste0(sections_dir, "introduction.rmd")}
