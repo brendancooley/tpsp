@@ -26,7 +26,7 @@ How does the shadow of coercion affect the functioning of the world economy? How
 
 First, I calculate the net economic effects of coercion by calculating the equilibrium to a game in which coercion is impossible, holding governments' preferences at their estimated values. The shadow of coercion is a substantial force for trade liberalization. Moving from this counterfactual "pacifist" world to the coercive equilibrium delivers a `r round(((cfct1_trade_ratio**-1)-1)*100, 1)` percent increase in the value of total global trade. Figure \ref{fig:cfct1_X} disaggregates these changes in trade flows, showing the change in imports induced by demilitarization for each importer-exporter pair. It also shows the changes in equilibrium trade policy that generate these changes in trade flows. 
 
-```{r cfct1_X, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Changes in trade flows and trade policy when military coercion is counterfactually prohibited. Top plot shows changes in the (log) value of imports for each country in the sample, disaggregated by trade partner. Bottom plot shows changes in equilibrium trade policies for each country in the sample, again disaggregated by trade partner. Counterfactual import values and trade policies are shown in orange. \\label{fig:cfct1_X}"), fig.height=8, dpi=300, fig.pos="t"}
+```{r cfct1_X, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Changes in trade flows and trade policy when military coercion is counterfactually prohibited. Top plot shows changes in the (log) value of imports for each country in the sample, disaggregated by trade partner. Bottom plot shows changes in equilibrium trade policies for each country in the sample, again disaggregated by trade partner. Counterfactual import values and trade policies are shown in orange. \\label{fig:cfct1_X}"), fig.height=7, fig.width=6, dpi=300, fig.pos="t"}
 
 # source(paste0("../", code_dir, "f_cfct_X.R"))
 source(paste0("../", code_dir, "f_cfct_tau.R"))
@@ -37,7 +37,7 @@ X_diff_pp_dm2 / tau_pp_demilitarization
 
 U.S. and Russian trade policies remain largely unchanged. Yet their trade patterns are still affected by others' changes in trade policy behavior. Australia, Canada, China, and South Korea become substantially more protectionist, reducing their own trade volumes and shifting patterns of international exchange elsewhere. Trade policies in the coercion-free world are largely homogenous within adopting countries, reflecting the model's ex-ante incentives against policy discrimination. The exception to this rule is for large countries like the United States and European Union, whose counterfactual trade policies reflect dependence on the size of their trading partners, consistent with optimal taxation [@Johnson1953; @Ossa2014].
 
-```{r cfct1_welfare, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Changes in government welfare and consumer welfare (calculated by setting $v_i=1$ for all $i$) induced by moving from coercion-free equilibrium to baseline equilibrium. \\label{fig:cfct1_welfare}"), fig.height=5, dpi=300, fig.pos="t"}
+```{r cfct1_welfare, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Changes in government welfare and consumer welfare (calculated by setting $v_i=1$ for all $i$) induced by moving from coercion-free equilibrium to baseline equilibrium. \\label{fig:cfct1_welfare}"), fig.height=4.5, fig.width=6, dpi=300, fig.pos="t"}
 
 source(paste0("../", code_dir, "f_cfct_welfare.R"))
 deltaG1 + deltaU1
@@ -50,7 +50,7 @@ Figure \ref{fig:cfct1_welfare} plots the changes in government and consumer welf
 
 Military power in 2011 was highly concentrated in the hands of the United States (see Figure \ref{fig:milex}). Since 2011, other countries, China in particular, have begun to close this military capability gap with the United States. How would the continued diffusion of military power affect trade policy and patterns of international economic exchange? To answer this question I project each in-sample government's military spending in 2030, assuming military budgets grow (shrink) at their average rate between 2011 and 2018. Projected military spending for 2030 is shown in Figure \ref{fig:milex_2030}. The largest change is the shift in relative military power from the United States and European Union toward China. 
 
-```{r milex_2030, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Projected military spending in 2030, assuming military budgets grow at observed average growth rate between 2011 and 2018. \\label{fig:milex_2030}"), fig.height=5, dpi=300, fig.pos="t"}
+```{r milex_2030, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Projected military spending in 2030, assuming military budgets grow at observed average growth rate between 2011 and 2018. \\label{fig:milex_2030}"), fig.height=4.5, fig.width=5.5, dpi=300, fig.pos="t"}
 
 source(paste0("../", code_dir, "f_milex.R"))
 milex2030Fig
@@ -59,7 +59,7 @@ milex2030Fig
 
 Multipolarization impacts globalization in two ways. On the one hand, newly militarily powerful countries can resist others' demands to liberalize, leading to a less-integrated global economy. On the other hand, the diffusion of military power increases the coercive capacity of some states in the system, allowing them to make greater liberalization demands of others and contributing to global economic integration. These effects are mediated by governments' preferences for protectionism, which determine governments' ideal policies and the returns to coercion. In this "multipolarization" scenario, China leverages these increases in military might to adopt more restrictive trade policies. Figure \ref{fig:cfct2_tau} displays the changes in Chinese trade policies that result under multipolarization. On net, multipolarization is a force for liberalization. The value of global trade under multipolarization is `r round(cfct2_trade_ratio*100, 1)` percent its baseline value.
 
-```{r cfct2_tau, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Changes in Chinese trade policies under multipolarization. \\label{fig:cfct2_tau}"), fig.height=4, dpi=300, fig.pos="t"}
+```{r cfct2_tau, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Changes in Chinese trade policies under multipolarization. \\label{fig:cfct2_tau}"), fig.height=4.5, dpi=300, fig.pos="t"}
 
 # source(paste0("../", code_dir, "f_cfct_tau.R"))
 tau_pp_china
@@ -70,7 +70,7 @@ tau_pp_china
 
 Reducing governments' incentives for protectionism can also decrease the risk of war. By reducing governments incentives to adopt high trade barriers, preference liberalization reduces others' incentives for conquest, in turn, reducing the probability of war. To quantify these effects, I consider a liberalization of Chinese policy preferences, setting their revenue collection parameter to that of the United States ($\hat{v}_{\text{CHN}}=$ `r round(v_hat_CHN, 2)`, $v_{\text{CHN}}^\prime=$ `r round(v_hat_USA, 2)`). Figure \ref{fig:war_probs_pp4} shows the change in the probability of war against China that occurs as the result of this change in preferences. The United States still poses a threat of war, but the probability the United States launches a war against China is reduced substantially from `r round(pw_USA*100, 1)` percent to `r round(pw4_USA*100, 1)` percent. The probability China faces attack from another source is virtually eliminated.
 
-```{r war_probs_pp4, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Changes in probability of war against China after Chinese preference liberalization. \\label{fig:war_probs_pp4}"), fig.height=4, dpi=300, fig.pos="t"}
+```{r war_probs_pp4, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Changes in probability of war against China after Chinese preference liberalization. \\label{fig:war_probs_pp4}"), fig.height=4.5, dpi=300, fig.pos="t"}
 
 # source(paste0("../", code_dir, "f_pr_peace.R"))
 war_probs_pp4

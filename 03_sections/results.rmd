@@ -11,7 +11,7 @@ source(paste0("../", code_dir, "f_fit.R"))
 
 ```
 
-```{r ests, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Model parameter estimates and 95 percent confidence intervals. The top panel shows protectionism preference parameter estimates ($v_i$) for each country. The bottom panel shows parameter estimates for observables affecting costs of war ($\\gamma, \\alpha_1, \\alpha_2$). \\label{fig:ests}"), fig.height=6, dpi=300, fig.pos="t"}
+```{r ests, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Model parameter estimates and 95 percent confidence intervals. The top panel shows protectionism preference parameter estimates ($v_i$) for each country. The bottom panel shows parameter estimates for observables affecting costs of war ($\\gamma, \\alpha_1, \\alpha_2$). \\label{fig:ests}"), fig.height=5, fig.width=6, dpi=300, fig.pos="t"}
 
 source(paste0("../", code_dir, "f_estimates.R"))
 
@@ -23,7 +23,7 @@ Figure \ref{fig:ests} displays results from the estimation. Recall that $v_i$ go
 
 An attacking country's military advantage and g.d.p. are estimated to reduce war costs, facilitating coercion. There are increasing returns to both of these features in reducing the average costs of war ($\gamma, \alpha_2 > 1$). Economically large and military powerful countries are the most effective at coercion, holding the distance of their adversary constant. Figure \ref{fig:war_costs} displays estimated average war costs, relative to those of the United States, holding the distance to the adversary constant. Given its large economy and military, the United States is estimated to enjoy the smallest averge war costs. The European Union, China, and Russia pay between `r round(costs$c_mean[costs$iso3=="EU"], 1)` and `r round(costs$c_mean[costs$iso3=="RUS"], 1)` times the costs of the United States to prosecute wars on average. Wars are estimated to cost at least an order of magnitude more than U.S. wars for other countries in the sample.
 
-```{r war_costs, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Estimated relative war costs against fixed adversary. United States' costs serve as baseline ($c=1$). \\label{fig:war_costs}"), fig.height=5, dpi=300, fig.pos="t"}
+```{r war_costs, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Estimated relative war costs against fixed adversary. United States' costs serve as baseline ($c=1$). \\label{fig:war_costs}"), fig.height=4.5, fig.width=4.5, dpi=300, fig.pos="t"}
 
 # source(paste0("../", code_dir, "f_estimates.R"))
 
@@ -45,7 +45,7 @@ rcv_hm
 
 It is also straightforward to calculate the equilibrium probability of war once the model has been estimated by simply plugging parameter estimates back into the inverse cost distribution given in Equation \ref{eq:inv_costs}.^[These estimated probabilities of war should be interpreted only in relative terms. The overall probability of war is governed by the calibrated parameter $\hat{C}$. Higher values of this parameter would scale down each probability of war but would not shift their relative values.] Figure \ref{fig:pr_peace} plots point estimates and uncertainty intervals surrounding the likelihood of war between all pairs of countries in the sample. In general, governments run very small risks of invasion from other governments. However, the threat of war with the United States looms large in the sample. The probabilities the United States attacks each other country in the sample are highlighted in orange in the Figure. The European Union is also estimated to impose substantial threats.
 
-```{r war_probs, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Estimated equilibrium probabilities of war, point estimates and 95 percent confidence intervals. Probabilities the United States attacks each other country highlighted in orange. \\label{fig:pr_peace}"), fig.height=5, dpi=300, fig.pos="t"}
+```{r war_probs, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Estimated equilibrium probabilities of war, point estimates and 95 percent confidence intervals. Probabilities the United States attacks each other country highlighted in orange. \\label{fig:pr_peace}"), fig.height=4.5, fig.width=4.5, dpi=300, fig.pos="t"}
 
 source(paste0("../", code_dir, "f_pr_peace.R"))
 
@@ -57,7 +57,7 @@ It is worth noting that the countries with the highest estimated risk of war wit
 
 ## Model Fit and Inferences about Policy Preferences
 
-```{r fit, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Correlation between trade barrier data and model predictions. \\label{fig:fit}"), fig.height=5, dpi=300, fig.pos="t"}
+```{r fit, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Correlation between trade barrier data and model predictions. \\label{fig:fit}"), fig.height=4.5, fig.width=4.5, dpi=300, fig.pos="t"}
 
 # source(paste0("../", code_dir, "f_fit.R"))
 fit
@@ -66,7 +66,7 @@ fit
 
 Figure \ref{fig:fit} evaluates the ability of the estimated model to predict the level of trade barriers. The model's mean absolute error is `r round(fit_mae, 2)`, equivalent to a `r round(fit_mae*100, 0)` percent ad valorem tariff. The model's predictions are fairly well correlated with the trade barrier data ($\rho=$ `r round(fit_rho, 2)`). In Appendix `r Afit` I plot the model's predictive error for each directed dyad in the sample, higlighting which observations are well explained by the model and which are not. Of note, Russia faces uniquely poor market access conditions in the data that the model does not fully replicate.
 
-```{r ests_mil_off, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Effect of modeling military coercion on inferences about governments' preferences for protectionism. Figure plots point estimates and 95 percent confidence intervals for preference parameters under baseline model and model in which coercion is impossible. \\label{fig:ests_mil_off}"), fig.height=4, dpi=300, fig.pos="t"}
+```{r ests_mil_off, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Effect of modeling military coercion on inferences about governments' preferences for protectionism. Figure plots point estimates and 95 percent confidence intervals for preference parameters under baseline model and model in which coercion is impossible. \\label{fig:ests_mil_off}"), fig.height=4, fig.width=6, dpi=300, fig.pos="t"}
 
 # source(paste0("../", code_dir, "f_estimates.R"))
 pref_plot_mil_off
