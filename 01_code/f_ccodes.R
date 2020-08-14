@@ -21,5 +21,9 @@ ccodesT$`Country Name` <- ifelse(ccodesT$iso3=="EU", "European Union", ccodesT$`
 ccodesT$`Country Name` <- ifelse(ccodesT$iso3=="RoW", "Rest of World", ccodesT$`Country Name`)
 
 ccodes_table <- kable(ccodesT, "latex", booktabs = T, caption = "In-Sample Countries \\label{tab:ccodes}", escape = FALSE) %>% kable_styling(position = "center", latex_options=c("striped"))
+ccodes_table_wide <- kable(list(ccodesT[1:5,],  
+                                matrix(numeric(), nrow=0, ncol=1),
+                                ccodesT[6:9,]), "latex", booktabs = T, caption = "In-Sample Countries \\label{tab:ccodes}", escape = FALSE) %>% kable_styling(position = "center", latex_options=c("striped"))
 
 save_kable(ccodes_table, setup$f_ccodes_path)
+save_kable(ccodes_table_wide, setup$f_ccodes_wide_path)

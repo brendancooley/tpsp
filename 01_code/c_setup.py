@@ -106,6 +106,7 @@ class setup:
         # FIGURE PATHS
 
         self.f_ccodes_path = self.figs_path_0 + "ccodes.png"
+        self.f_ccodes_wide_path = self.figs_path_0 + "ccodes_wide.png"
         self.f_cfact_demilitarization_Xprime_path = self.figs_path_0 + "cfact_demilitarization_Xprime.png"
         self.f_cfact_demilitarization_G_path = self.figs_path_0 + "cfact_demilitarization_G.png"
         self.f_cfact_demilitarization_U_path = self.figs_path_0 + "cfact_demilitarization_U.png"

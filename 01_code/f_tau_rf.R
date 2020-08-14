@@ -94,9 +94,10 @@ cm <- c("log(m_frac_ij)"="Log Mil Capability Ratio",
         "log(W)"="Log Distance",
         "log(m_frac_ij):log(W)"="(Log Mil Capability Ratio) X (Log Distance)")
 fe_row <- c("Attacker FE?", " ", "\U2713", " ", "\U2713")
+models_ms <- models
 
-table_tex <- modelsummary(models, coef_map=cm, add_rows=list(fe_row), gof_omit="AIC|BIC|Log.Lik", title="Inverse Conquest Values and Military Capability Ratios", stars=TRUE, output="latex") %>% kable_styling(latex_options=c("scale_down"))
-table_png <- modelsummary(models, coef_map=cm, add_rows=list(fe_row), gof_omit="AIC|BIC|Log.Lik", title="Inverse Conquest Values and Military Capability Ratios", stars=TRUE, output=setup$f_tau_rf_table_path)
+table_tex <- modelsummary(models_ms, coef_map=cm, add_rows=list(fe_row), gof_omit="AIC|BIC|Log.Lik", title="Inverse Conquest Values and Military Capability Ratios \\label{fig:rcvm_reg_tex}", stars=TRUE, output="latex") %>% kable_styling(latex_options=c("scale_down"))
+table_png <- modelsummary(models_ms, coef_map=cm, add_rows=list(fe_row), gof_omit="AIC|BIC|Log.Lik", title="Inverse Conquest Values and Military Capability Ratios", stars=TRUE, output=setup$f_tau_rf_table_path)
 
 for (i in names(models)) {
   models[[i]] <- models[[i]] %>% tidy() %>% filter(term %in% c("log(m_frac_ij)", "log(W)", "log(m_frac_ij):log(W)")) %>% mutate(model=i)
@@ -113,7 +114,6 @@ dw <- dwplot(models) %>%
   theme_classic()
 
 ggsave(setup$f_tau_rf_dw_path, width=7, height=3.5)
-
 
 ### Raw Bivaritate Correlation 
 

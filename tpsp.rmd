@@ -27,20 +27,22 @@ output:
 
 ```{r libs, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 
+knitr::opts_chunk$set(dev = 'pdf')
+
 helperPath <- "~/Dropbox (Princeton)/14_Software/R/"
 helperFiles <- list.files(helperPath)
 for (i in helperFiles) {
   source(paste0(helperPath, i))
 }
 
-libs <- c("knitr", "tidyverse", "countrycode", "kableExtra", "latex2exp", "patchwork", "ggpubr", "reticulate")
+libs <- c("knitr", "tidyverse", "countrycode", "kableExtra", "latex2exp", "patchwork", "ggpubr", "reticulate", "rdrop2")
 ipak(libs)
 
 Sys.setenv(KMP_DUPLICATE_LIB_OK="True")
 
 # setup bib
 mkdir("bib/")
-download.file("https://www.dropbox.com/s/2q37ht2zfsrfyls/library.bib?dl=1", "bib/library.bib")
+file.copy("~/Dropbox (Princeton)/References/library.bib", "bib/library.bib")
 
 # not available
 AwarEntry <- "NA"
@@ -69,14 +71,12 @@ options(scipen=999)
 
 ```
 
-\newpage
-
 # Introduction
 
 ```{r, child = paste0(sections_dir, "introduction.rmd")}
 ```
 
-## Literature
+# Literature
 
 ```{r, child = paste0(sections_dir, "literature.md")}
 ```

@@ -1,0 +1,84 @@
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+use_virtualenv("python3")
+c_setup <- import_from_path("c_setup", path=paste0("../", code_dir))
+setup <- c_setup$setup("local", size)
+
+```
+
+## Counterfactuals (Overview) {id="cfct_main"}
+
+**Counterfactual Policies** $\tilde{\bm{\tau}}^\star(\bm{\theta}_m^\prime; \bm{Z}_m^\prime)$
+
+- $\bm{\theta}_m^\prime$ -- counterfactual parameters (e.g. preferences)
+- $\bm{Z}_m^\prime$ -- counterfactual data (e.g. military expenditure)
+
+. . .
+
+**Economic Effects of Counterfactual Policies**
+
+$$
+h \left( \tilde{\bm{\tau}}^\star(\bm{\theta}_m^\prime; \bm{Z}_m^\prime) \right)
+$$
+
+. . .
+
+**Scenarios**
+
+1. A Coercion-Free World
+2. <a href="#/cfct2">Multipolarity, Trade Policy, and International Trade</a>
+3. <a href="#/cfct3">Chinese Preference Liberalization and the Risk of War</a>
+
+## Coercion-Free World: Policies
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, dpi=600, fig.align="center", fig.height=5.}
+
+source(paste0("../", code_dir, "f_cfct_X.R"))
+source(paste0("../", code_dir, "f_cfct_tau.R"))
+tau_pp_demilitarization_base
+
+```
+
+## Coercion-Free World: Policies
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, dpi=600, fig.align="center", fig.height=5.}
+
+source(paste0("../", code_dir, "f_cfct_X.R"))
+source(paste0("../", code_dir, "f_cfct_tau.R"))
+tau_pp_demilitarization
+
+```
+
+## Coercion-Free World: Trade
+
+- Moving from pacifism to 2011 military expenditure levels $\rightarrow$ `r round(((cfct1_trade_ratio**-1)-1)*100, 1)` percent increase in value of world trade
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, dpi=600, fig.align="center", fig.height=4.5}
+
+# source(paste0("../", code_dir, "f_cfct_X.R"))
+# source(paste0("../", code_dir, "f_cfct_tau.R"))
+X_diff_pp_dm1
+
+```
+
+## Coercion-Free World: Trade
+
+- Moving from pacifism to 2011 military expenditure levels $\rightarrow$ `r round(((cfct1_trade_ratio**-1)-1)*100, 1)` percent increase in value of world trade
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, dpi=600, fig.align="center", fig.height=4.5}
+
+# source(paste0("../", code_dir, "f_cfct_X.R"))
+# source(paste0("../", code_dir, "f_cfct_tau.R"))
+X_diff_pp_dm2
+
+```
+
+## Coercion-Free World: Welfare
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, dpi=600, fig.align="center", fig.height=5.}
+
+source(paste0("../", code_dir, "f_cfct_welfare.R"))
+deltaG1 + deltaU1
+
+```

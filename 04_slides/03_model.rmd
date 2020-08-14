@@ -1,0 +1,233 @@
+## Model (Overview) {id="model_overview"}
+
+- Governments indexed $i \in \left\{ 1, ..., N \right\}$
+
+. . .
+
+**Sequence**
+
+1. ($\tilde{\bm{\tau}}$) Governments make trade policy announcements
+2. Wars
+    + Winners impose free trade on conquered governments
+3. ($h(\bm{\tau})$) Economic consequences of announced/imposed trade policies
+
+. . . 
+
+**Payoffs**
+
+$$
+V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
+$$
+
+- $\color{bcOrange} v_i$ - latent preference for protectionist policies
+
+## Government Objective
+
+$$
+h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \color{bcOrange} \bm{w}
+$$
+
+<hr style="height:1em; visibility:hidden;" />
+
+- $X_{ij}(\color{bcOrange} \bm{w} \color{black})$: $i$'s imports of goods from $j$
+
+. . . 
+
+**Revenues from Policy Distortions**
+
+$$
+r_i(\color{bcOrange} \bm{w} \color{black}; v_i) = \sum_j (\tau_{ij} - v_i) X_{ij}(\color{bcOrange} \bm{w} \color{black})
+$$
+
+## Government Objective
+
+$$
+h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \bm{w}
+$$
+
+<hr style="height:1em; visibility:hidden;" />
+
+- $X_{ij}(\bm{w})$: $i$'s imports of goods from $j$
+
+**Revenues from Policy Distortions**
+
+$$
+r_i(\bm{w}; \color{bcOrange} v_i \color{black}) = \sum_{j \neq i} (\tau_{ij} - \color{bcOrange} v_i \color{black}) X_{ij}(\bm{w})
+$$
+
+- $\color{bcOrange} v_i \color{black} > 0$ controls $i$'s preferences over the level of protection
+
+. . . 
+
+**Adjusted Consumer Income**
+
+$$
+\tilde{Y}_i(\bm{w})  = w_i L_i + r_i(\bm{w}; \color{bcOrange} v_i \color{black})
+$$
+
+**Indirect Utility**
+
+$$
+V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
+$$
+
+## Wars I {id="wars"}
+
+- Directed dyad-specific war costs held as **private information** to prospective attacker
+	+ $c_{ji}$ -- cost $j$ incurs to invade $i$
+- Wars fought to impose free trade on target
+
+$$
+\bm{\tau}_i^\prime = \left( 1, \dots, 1 \right) = \bm{1}_i
+$$
+
+. . .
+
+**Conquest Values**
+
+- $V_j(\bm{1}_i; \tilde{\bm{\tau}}_{-i})$ -- $j$'s value for imposing free trade on $i$
+
+. . .
+
+**Peace Condition**
+
+$$
+V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right) - c_{ji} \leq V_j \left( \tilde{\bm{\tau}}, v_j \right)
+$$
+
+## Wars II
+
+**Cost Distribution**
+
+$$
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+$$
+
+$$
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} W_{ji}^{-\alpha_1} Y_j^{\alpha_2} \hat{c}^{\eta} \right)
+$$
+
+## Wars II
+
+**Cost Distribution**
+
+$$
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+$$
+
+$$
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \color{bcOrange} \frac{ M_j }{ M_i } \color{black} \right)^{\gamma} W_{ji}^{-\alpha_1} Y_j^{\alpha_2} \hat{c}^{\eta} \right)
+$$
+
+- $\color{bcOrange} \frac{M_j}{M_i}$ -- military capability ratio ($\gamma = 0 \implies$ no cost advantage for military superiority)
+
+## Wars II
+
+**Cost Distribution**
+
+$$
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+$$
+
+$$
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} \color{bcOrange} W_{ji}^{ \color{black} -\alpha_1} \color{black} Y_j^{\alpha_2} \hat{c}^{\eta} \right)
+$$
+
+- $\frac{M_j}{M_i}$ -- military capability ratio ($\gamma = 0 \implies$ no cost advantage for military superiority)
+- $\color{bcOrange} W_{ji}$ -- geographic distance between $j$ and $i$ ($\alpha=0 \implies$ no loss of strength gradient)
+
+## Wars II {id="wars2"}
+
+**Cost Distribution**
+
+$$
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+$$
+
+$$
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} W_{ji}^{-\alpha_1} \color{bcOrange} Y_j^{ \color{black} \alpha_2} \color{black} \hat{c}^{\eta} \right)
+$$
+
+- $\frac{M_j}{M_i}$ -- military capability ratio ($\gamma = 0 \implies$ no cost advantage for military superiority)
+- $W_{ji}$ -- geographic distance between $j$ and $i$ ($\alpha_1=0 \implies$ no loss of strength gradient)
+- $\color{bcOrange} Y_j$ -- attacker gdp ($\alpha_2=0 \implies$ no advantage for larger countries)
+
+. . . 
+
+**Probability of Peace**
+
+$$
+\hat{H}_i \left( \hat{\tilde{\bm{\tau}}}; \bm{Z}_m, \bm{\theta}_m \right) = \prod_{j \neq i} \hat{F}_{ji} \left( \left( \hat{V}_j \left( \bm{1}_i; \tilde{\bm{\tau}}_{-i} \right) - \hat{V}_j \left( \hat{\tilde{\bm{\tau}}} \right) \right)^{-1} \right)
+$$
+
+. . . 
+
+<a href="#/frechet">Fréchet Distribution</a>
+
+## Optimal Policies {id="tau_star"}
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+use_virtualenv("python3")
+c_setup <- import_from_path("c_setup", path=paste0("../", code_dir))
+setup <- c_setup$setup("local", size)
+
+```
+
+- Risk-return tradeoff: ideal policies balance policy optimality against threat of war
+	+ Lower tariffs on goods from countries that pose military threats
+
+. . .
+
+**Best Response**
+
+$$
+\max_{\bm{\tau}_i} \quad \underbrace{\hat{H}_i(\hat{\tilde{\bm{\tau}}}; \bm{Z}_m, \bm{\theta}_m) \hat{V}_i(\hat{\tilde{\bm{\tau}}})}_{\text{peace}} + \underbrace{\left( 1 - \hat{H}_i(\hat{\tilde{\bm{\tau}}}; \bm{Z}_m, \bm{\theta}_m) \right) \hat{V}_i(\bm{1}_i; \hat{\tilde{\bm{\tau}}}_{-i})}_{\text{war}}
+$$
+
+. . .
+
+**Equilibrium <a href="#/policy_hats">(in changes)</a>**
+
+$$
+\bm{\tau}^\star(\bm{\theta}_m, \bm{Z}_m)
+$$
+
+. . .
+
+- $\bm{\theta}_m = \left( \bm{v}, \gamma, \alpha_1, \alpha_2 \right)$ -- estimand
+	+ $\bm{v}$ -- revenue thresholds (preference for protectionism)
+	+ $\gamma$ -- returns to military advantage (if $\gamma > 0$) 
+	+ $\alpha_1$ -- loss of strength gradient (if $\alpha_1 > 0$)
+	+ $\alpha_2$ -- returns to gdp (if $\alpha_2 > 0$)
+- $\bm{Z}_m$ -- data
+
+. . . 
+
+**Calibration**
+
+- $\hat{C}=$ `r setup$c_hat` 
+- $\eta=$ `r setup$eta`
+
+## Identification (Intuition)
+
+**Preferences ($\bm{v}$)**
+
+- Holding military technology fixed, $i$'s overall level of protectionism informs about $v_i$
+- Governments with higher trade policies (more protectionist) have higher $v_i$
+
+. . .
+
+**Military Technology**
+
+- Holding preferences fixed, heterogeneity in observed policies informs about military parameters
+- $\alpha_1$ -- does policy favoritism covary with distance from trade partner?
+- $\gamma$ -- does policy favoritism covary with military capability ratio?

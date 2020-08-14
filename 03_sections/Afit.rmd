@@ -7,14 +7,14 @@ setup <- c_setup$setup("local", size)
 
 ```
 
-```{r fit_ddyad, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Absolute errors for each directed dyad in the sample. Positive values indicate that the model predicts a higher trade barrier than is observed in the data (point estimate). \\label{fig:fit_ddyad}"), fig.height=8, dpi=300, fig.pos="t"}
+```{r fit_ddyad, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Absolute errors for each directed dyad in the sample. Positive values indicate that the model predicts a higher trade barrier than is observed in the data (point estimate). \\label{fig:fit_ddyad}"), fig.height=8, fig.width=6, dpi=300, fig.pos="t"}
 
 source(paste0("../", code_dir, "f_fit.R"))
 fit_ddyad
 
 ```
 
-```{r fit_mo, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Correlation between trade barrier data and coercion-free model predictions. \\label{fig:fit_mo}"), fig.height=5, dpi=300, fig.pos="t"}
+```{r fit_mo, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.cap = paste0("Correlation between trade barrier data and coercion-free model predictions. \\label{fig:fit_mo}"), fig.height=4.5, fig.width=4.5, dpi=300, fig.pos="t"}
 
 # source(paste0("../", code_dir, "f_fit.R"))
 fit_mo

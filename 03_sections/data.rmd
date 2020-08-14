@@ -36,7 +36,7 @@ Estimating the magnitude of these trade policies and tracing their impact on gov
 
 In the coercive political economy developed below, governments' relative directed war costs are modeled as a function of the military capability ratio between the attacker and defender, the geographic distance between the belligerents, and the gross domestic product of the attacking country. I store these observable features in the vector $\bm{Z}_m$. To measure military capability ratios, I employ [SIPRI](https://www.sipri.org/)'s data on military expenditure to measure governments' military capacity. These values are displayed in Figure \ref{fig:milex}. I use data from @Weidmann2010 to calculate centroid-centroid geographic distance between all countries in my sample. Data on gross domestic production comes from the [World Input-Output Database (WIOD)](http://www.wiod.org/home) [@Timmer2015]. 
 
-```{r milex, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste("Military expenditure for in-sample governments. Values for ROW and EU are obtained by summing expenditure of all member countries. \\label{fig:milex}"), fig.height=5, dpi=300, fig.pos="t"}
+```{r milex, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste("Military expenditure for in-sample governments. Values for ROW and EU are obtained by summing expenditure of all member countries. \\label{fig:milex}"), fig.height=4.5, fig.width=4.5, dpi=300, fig.pos="t"}
 
 source(paste0("../", code_dir, "f_milex.R"))
 milexFig + theme(aspect.ratio=1)
@@ -67,7 +67,7 @@ In other words, the distance between government 1's equilibrium utility and the 
 
 Suppose that governments endeavor to maximize the welfare of the representative consumer.^[I will relax this assumption in the structural model developed below.] With the economy, $h$, calibrated, I can calculate the change in utility each representative consumer would experience when each other government adopts free trade, relative to their utility at the baseline set of policies. Taking this as a empirical measure of the ratio $u_1(x^\star; M_1, M_2) / u_1(1)$, the model implies this quantity will be increasing in $M_1$, country 1's military capacity. I will refer to this quantity as government 1's inverse *conquest value* vis-à-vis government 2.
 
-```{r rcvm, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Correlation between military capability ratios and inverse conquest values, all pairs of in-sample countries. \\label{fig:rcvm}"), fig.height=4, dpi=300, fig.pos="t"}
+```{r rcvm, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Correlation between military capability ratios and inverse conquest values, all pairs of in-sample countries. \\label{fig:rcvm}"), fig.height=4.5, fig.width=4.5, dpi=300, fig.pos="t"}
 
 source(paste0("../", code_dir, "f_tau_rf.R"))
 rcvm_plot
@@ -76,14 +76,14 @@ rcvm_plot
 
 Figure \ref{fig:rcvm} plots the empirical relationship between military capability ratios and inverse conquest values. Each potential "attacking" country's military capability ratio vis-à-vis every "defending" country is plotted on the x-axis. On the y-axis is the attacking inverse country's value for conquering each defending country. Consistent with the predictions of this simple model, government's inverse conquest values correlate positively with their relative military power. Table \ref{fig:rcvm_reg_tex} and Figure \ref{fig:rcvm_reg_dw} display the results of a series of linear models that estimate the conditional correlations between the inverse conquest value and the military capability ratio, distance between the countries, and country-specific constants. 
 
-```{r rcvm_reg_tex, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("\\label{fig:rcvm_reg_tex}"), fig.height=3, dpi=300, fig.pos="t"}
+```{r rcvm_reg_tex, echo=FALSE, warning=FALSE, message=FALSE, fig.height=3, dpi=300, fig.pos="t"}
 
 # source(paste0("../", code_dir, "f_tau_rf.R"))
 table_tex
 
 ```
 
-```{r rcv_reg_dw, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Conditional correlations between inverse conquest values and military capability ratios, geographic distance, and country-specific constants. \\label{fig:rcvm_reg_dw}"), fig.height=3, fig.width=7, dpi=300, fig.pos="t"}
+```{r rcv_reg_dw, echo=FALSE, warning=FALSE, message=FALSE, fig.cap = paste0("Conditional correlations between inverse conquest values and military capability ratios, geographic distance, and country-specific constants. \\label{fig:rcvm_reg_dw}"), fig.height=3, fig.width=6.5, dpi=300, fig.pos="t"}
 
 # source(paste0("../", code_dir, "f_tau_rf.R"))
 dw

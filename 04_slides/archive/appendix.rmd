@@ -1,0 +1,233 @@
+## Bargaining, Trade, and War
+
+**Institutionalized Bargaining**
+
+- Models of GATT/WTO: reciprocity and nondiscriminination
+	+ @Grossman1995, @Maggi1999, @Bagwell1999
+- Institutions and incentive compatibility: war as an outside option [@Powell1994]
+
+**Trade as Means**
+
+- Governments pursue "political" ends (e.g. security), trade used as coercive instrument
+	+ @Hirschman1945, @Gowa1993, @Martin2012, @Seitz2015
+- Security and power are themselves means to achieve other ends
+
+**Power and Exchange**
+
+- Prices and power in the marketplace
+	+ @Skaperdas2001, @Piccione2007, @Garfinkel2011, @Carroll2018
+- Trade frictions as choice variable here
+
+## Estimated Trade Frictions {id="epbt_tau"}
+
+```{r tauhm, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5, dpi=600}
+
+source(paste0("../", code_dir, "f_tau_epbt.R"))
+tau_hm
+
+```
+
+<a href="#/economy1">Back</a>
+
+## Economy (Consumption) {id="economyA"}
+
+**Consumer's Problem**
+
+\begin{equation*}
+\begin{split}
+\max & \quad U_i = Q_i^{\nu_i} S_i^{1 - \nu_i} \\
+\text{subject to} & \quad P_i Q_i + P_i^s S_i \leq w_i L_i
+\end{split}
+\end{equation*}
+
+**CES Preferences over Tradable Varieties**
+
+$$
+Q_i = \left( \int_{[0,1]} \alpha_{h(\omega)}^{\frac{1}{\sigma}} q_i(\omega)^{\frac{\sigma - 1}{\sigma}} d \omega \right)^{\frac{\sigma}{\sigma - 1}}
+$$
+
+**Tradable Price Index**
+
+$$
+P_i = \left( \int_{[0,1]} \alpha_{h(\omega)} p_i(\omega)^{1 - \sigma} d \omega \right)^{\frac{1}{1 - \sigma}}
+$$
+
+**Expenditure on Tradables**
+
+$$
+E_i^q = \nu_i I_i + D_i = P_i Q_i^\star
+$$
+
+
+## Economy (Production)
+
+**Costs**
+
+\begin{equation} \label{eq:c}
+c_i = w_i^{1 - \beta} P_i^{\beta}
+\end{equation}
+
+- $w_i$ - cost of labor
+- $P_i$ - cost of composite intermediate good
+  + equivalent to composite consumption good
+
+$$
+E_i^x = \beta X_i
+$$
+
+**Local Prices**
+
+$$
+p_{ii}(\omega) = \frac{c_i}{z_i(\omega)}
+$$
+
+**Technology (Fréchet)**
+
+$$
+F_i(z) = \text{Pr} \left\{ z_i(\omega) \leq z \right\} = \exp \left\{ - T_i z^{-\theta} \right\}
+$$
+
+## Economy (Equilibrium)
+
+**Total Expenditure on Tradables**
+
+$$
+X_i = \underbrace{E_i^q + E_i^x}_{E_i} - D_i
+$$
+
+**Trade Shares**
+
+$$
+\Omega_{ij}^\star = \left\{ \omega \in [0,1] \left. \right\vert p_{ij}(\omega) \leq \min_{k \neq j} \left\{ p_{ik} \right\} \right\}
+$$
+
+$$
+\lambda_{ij}(\boldsymbol{w}) = \frac{1}{E_i} \int_{\Omega_{ij}^\star} p_{ij}(\omega) q_i \left( p_{ij} (\omega) \right) d \omega
+$$
+
+**Market Clearing**
+
+$$
+X_i = \sum_{j=1}^N \lambda_{ji}(\boldsymbol{w}) E_j
+$$
+
+## Economy (Equilibrium in Changes)
+
+$$
+\hat{r}_i = \frac{1}{r_i} \left( E_i \hat{E}_i(\hat{\bm{w}}) - \sum_j X_{ij}^{\text{cif}} \hat{X}_{ij}^{\text{cif}}(\hat{\bm{w}}) \right)
+$$
+$$
+\hat{w}_i = \frac{1}{\nu_i w_i L_i} \left( \sum_j \left( (1 - \beta) X_{ji}^{\text{cif}} \hat{X}_{ji}^{\text{cif}}(\hat{\bm{w}}) \right) + (1 - \nu_i) r_i \hat{r}_i(\hat{\bm{w}}) \right)
+$$
+$$
+\hat{E}_i(\hat{\bm{w}}) = \frac{1}{E_i} \left( E_i^q \hat{E}_i^q(\hat{\bm{w}}) + E_i^x \hat{E}_i^x(\hat{\bm{w}}) \right)
+$$
+$$
+\hat{x}_{ij}(\hat{\bm{w}}) = \left( \hat{\tau}_{ij} \hat{w}_j^{1 - \beta} \hat{P}_j(\hat{\bm{w}})^\beta \right)^{-\theta} \hat{P}_i(\hat{\bm{w}})^{\theta}
+$$
+$$
+\hat{P}_i(\hat{\bm{w}}) = \left( \sum_j x_{ij} \left( \hat{\tau}_{ij} \hat{w}_j^{1 - \beta} \hat{P}_j(\hat{\bm{w}})^\beta \right)^{-\theta} \right)^{-\frac{1}{\theta}}
+$$
+$$
+1 = \sum_i y_i \hat{w}_i
+$$
+
+<a href="#/economy1">Back</a>
+
+## Economy (Calibration I) {id="calibration"}
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+use_virtualenv("python3")
+c_setup <- import_from_path("c_setup", path=paste0("../", code_dir))
+setup <- c_setup$setup("local", size)
+
+theta <- read_csv(setup$theta_path, col_names=FALSE) %>% pull(.)
+beta <- read_csv(setup$beta_path, col_names=FALSE) %>% pull(.)
+
+```
+
+- Trade Flows: BACI
+- National Accounts: OECD and WIOD
+
+**Parameters**
+
+$$
+\bm{\theta}_h = \left( \bm{\nu}, \beta, \theta \right)
+$$
+
+- $\nu_i$ -- share of consumer expenditure spent on tradables (World Bank ICP)
+- $\beta$ -- share of intermediate goods in imports (WIOD)
+	+ Average across countries in sample (`r round(beta, 2)`)
+- $\theta$ -- trade elasticity
+	+ Set to `r theta` [@Head2014]
+
+## Economy (Calibration II)
+
+**Deficits [@Dekle2007]**
+
+- $\bm{D}$ -- trade deficits
+- Equilibrium in changes
+$$
+\hat{h}(\hat{\bm{\tau}}, \hat{\bm{D}}; \bm{\theta}_h)
+$$
+- Purge deficits before analysis
+$$
+\hat{h}(\hat{\bm{\tau}}, \bm{0}; \bm{\theta}_h) \rightarrow \hat{\bm{w}}_{-D}
+$$
+- Recompute associated trade flows, price levels, etc
+
+<a href="#/economy1">Back</a>
+
+## Military Expenditure {id="milex"}
+
+```{r milex, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5}
+
+source(paste0("../", code_dir, "f_milex.R"))
+milexFig + theme(aspect.ratio=1)
+
+```
+
+<a href="#/cipe_data">Back</a>
+
+## Reduced Form Evidence (Interpretive Model) {id="rf1"}
+
+**Bilateral Nash Bargaining over Trade Policy**
+
+\begin{equation}
+\begin{split}
+x^\star \in \argmax_x & \quad \left( u_1(x) - w_1(M_1 / M_2) \right) \left( u_2(x) - w_2(M_2 / M_1) \right) \\
+\text{subject to} & \quad u_1(x) \geq w_1(M_1 / M_2) \\
+& \quad u_2(x) \geq w_2(M_2 / M_1) .
+\end{split}
+\end{equation}
+
+**Result:** Government 1's utility increasing in $M_1$
+
+**Empirical Analogue**
+
+$$
+\frac{u_1(x^\star; M_1, M_2)}{u_1(1)} \iff \frac{ V_i \left( h(\bm{\tau}) \right) }{ V_i \left( h(\bm{1}_j; \bm{\tau}_{-j}) \right) }
+$$
+
+**Empirical Conquest Value:** $V_i \left( h(\bm{1}_j; \bm{\tau}_{-j}) \right)$
+
+## Reduced Form Evidence (Data)
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5, dpi=600}
+
+source(paste0("../", code_dir, "f_tau_rf.R"))
+rcvm_plot
+
+```
+
+## Reduced Form Evidence (Data)
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5}
+
+# source(paste0("../", code_dir, "f_tau_rf.R"))
+modelsummary(models_ms, coef_map=cm, add_rows=list(fe_row), gof_omit="AIC|BIC|Log.Lik", title="Inverse Conquest Values and Military Capability Ratios", stars=TRUE)
+
+```
+
+<a href="#/cipe_data">Back</a>

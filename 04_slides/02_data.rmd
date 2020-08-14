@@ -1,0 +1,111 @@
+## Economic Effects of Endogenous Trade Frictions {id="economy1"}
+
+**Choice variables**
+
+<div id="left">
+
+$$
+\bm{\tau} = \begin{pmatrix}
+\tau_{11} & \cdots & \cdots & \cdots & \tau_{1N} \\
+\vdots & \ddots & \vdots & \iddots & \vdots \\
+\vdots & \cdots & \tau_{ij} & \cdots & \vdots \\
+\vdots & \iddots & \vdots & \ddots & \vdots \\
+\tau_{N1} & \cdots & \cdots & \cdots & \tau_{NN}
+\end{pmatrix}
+$$
+
+</div>
+
+<div id="right">
+
+- $\tau_{ij}$ -- tax government $i$ imposes on imports from country $j$
+- $\bm{\tau}_i$ -- government $i$'s policy vector
+- Measurement: @Cooley2019b <a href="#/epbt_tau">(magnitudes)</a>
+
+</div>
+
+<div class="container_row">
+</div>
+
+. . . 
+
+**Economy**
+
+<div id="left">
+
+$$
+h(\bm{\tau}; \bm{Z}_h, \bm{\theta}_h) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \bm{w}
+$$
+
+</div>
+
+<div id="right">
+
+- <a href="#/economyA">Model: </a> variant of @Eaton2002 workhorse
+- $\bm{Z}_h$ -- economic data 
+	+ national accounts, price levels, trade flows, freight costs
+- $\bm{\theta}_h$ -- economic parameters <a href="#/calibration">(calibration)</a>
+
+</div>
+
+## Coercive International Political Economy: Data {id="cipe_data"}
+
+**Sample Countries**
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+use_virtualenv("python3")
+c_setup <- import_from_path("c_setup", path=paste0("../", code_dir))
+setup <- c_setup$setup("local", size)
+
+ccodes <- read_csv(setup$ccodes_path, col_names=FALSE)
+y <- read_csv(setup$Y_path, col_names=FALSE)
+
+yDF <- bind_cols(ccodes, y)
+colnames(yDF) <- c("iso3", "y")
+
+yAll <- sum(yDF$y)
+yROW <- yDF %>% filter(iso3=="RoW") %>% pull(y)
+
+```
+
+<div id="left">
+
+<center>
+![](`r substring(setup$f_ccodes_wide_path, 4, nchar(setup$f_ccodes_wide_path))`){ width=100% }
+</center>
+
+</div>
+
+<div id="right">
+
+- Year: 2011
+- RoW: Aggregate outside economy 
+	+ cannot coerce or be coerced
+	+ Non-ROW countries: `r round( (yAll - yROW) / yAll * 100 )` percent of world GDP
+- EU: Aggregate trade policies and military capacities
+
+</div>
+
+<div class="container_row">
+</div>
+
+. . . 
+
+**War Costs**
+
+$$
+c_{ij} \sim F \left( \bm{\theta}_m; \bm{Z}_m \right)
+$$
+
+- $c_{ij}$ -- cost government $i$ pays to attack government $j$
+- $\bm{Z}_m$ -- observable dyadic features
+	+ $M_{i} / M_{j}$ -- military expenditure ratio <a href="#/milex">(data)</a>
+	+ $W_{ij}$ -- centroid-centroid distance between $i$ and $j$
+- $\bm{\theta}_m$ -- estimand
+
+<a href="#/rf1">Reduced Form Evidence</a>

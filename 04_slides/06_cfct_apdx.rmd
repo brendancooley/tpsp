@@ -1,0 +1,56 @@
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+
+use_virtualenv("python3")
+c_setup <- import_from_path("c_setup", path=paste0("../", code_dir))
+setup <- c_setup$setup("local", size)
+
+ccodes <- read_csv(setup$ccodes_path, col_names=FALSE)
+quantiles_v <- read_csv(setup$quantiles_v_path, col_names=F)
+
+pref_params <- quantiles_v %>% t() %>% as_tibble()
+colnames(pref_params) <- c("q025", "q500", "q975")
+pref_params$iso3 <- ccodes %>% pull()
+
+v_hat_CHN <- pref_params$q500[pref_params$iso3=="CHN"]
+v_hat_USA <- pref_params$q500[pref_params$iso3=="USA"]
+
+source(paste0("../", code_dir, "f_cfct_X.R"))
+source(paste0("../", code_dir, "f_pr_peace.R"))
+
+```
+
+## Multipolarity, Trade Policy, and International Trade (I) {id="cfct2"}
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, dpi=600, fig.align="center", fig.height=5.}
+
+source(paste0("../", code_dir, "f_milex.R"))
+milex2030Fig
+
+```
+
+## Multipolarity, Trade Policy, and International Trade (II)
+
+- Value of global trade under multipolarization is `r round(cfct2_trade_ratio*100, 1)` percent its baseline value
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, dpi=600, fig.align="center", fig.height=4.5}
+
+# source(paste0("../", code_dir, "f_cfct_tau.R"))
+tau_pp_china
+
+```
+
+<a href="#/cfct_main">Back</a>
+
+## Chinese Preference Liberalization and the Risk of War {id="cfct3"}
+
+- $\hat{v}_{\text{CHN}}=$ `r round(v_hat_CHN, 2)`, $v_{\text{CHN}}^\prime=$ `r round(v_hat_USA, 2)`
+- Reduces probability of U.S.-China war from `r round(pw_USA*100, 1)` percent to `r round(pw4_USA*100, 1)` percent
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, dpi=600, fig.align="center", fig.height=4.}
+
+# source(paste0("../", code_dir, "f_cfct_tau.R"))
+war_probs_pp4
+
+```
+
+<a href="#/cfct_main">Back</a>

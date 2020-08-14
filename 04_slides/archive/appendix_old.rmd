@@ -1,0 +1,16 @@
+
+
+## Conquest Values {id="rcv"}
+
+$$
+V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right)
+$$
+
+```{r rcv, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5.5}
+
+source("../02_figs/rcv.R")
+rcvhm(rcv_eq, mint, maxt)
+
+```
+
+<a href="#/toc">Back (TOC)</a>
