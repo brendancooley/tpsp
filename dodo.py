@@ -45,6 +45,8 @@ def task_source():
                     "cp -a " + templatePath + "cooley-paper-template.latex " + "templates/",
                     "cp -a " + templatePath + "cooley-plain.latex " + "templates/",
                     "cp -a " + templatePath + "cooley-latex-beamer.tex " + "templates/",
+                    "mkdir -p bib/",
+                    "cp -a " + templatePath + "python.bib " + "bib/",
                     "mkdir -p source/",
                     "cp -a " + source_path_esc + " source/"]
     }

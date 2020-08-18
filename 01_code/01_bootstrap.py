@@ -7,6 +7,7 @@ import os
 import numpy as np
 from scipy import optimize as opt
 import copy
+import makecite
 
 import c_results as results
 import c_policies as policies

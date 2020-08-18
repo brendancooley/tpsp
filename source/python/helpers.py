@@ -5,9 +5,10 @@ def mkdir(dir):
         os.makedirs(dir)
 	
 def files(path):
-    for file in os.listdir(path):
-        if os.path.isfile(os.path.join(path, file)):
-            yield file
+	if os.path.exists(path):
+	    for file in os.listdir(path):
+	        if os.path.isfile(os.path.join(path, file)):
+	            yield file
 
 def getFiles(folder, full=True):
 	allF = files(folder)

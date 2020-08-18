@@ -35,14 +35,14 @@ for (i in helperFiles) {
   source(paste0(helperPath, i))
 }
 
-libs <- c("knitr", "tidyverse", "countrycode", "kableExtra", "latex2exp", "patchwork", "ggpubr", "reticulate", "rdrop2")
+libs <- c("knitr", "tidyverse", "countrycode", "kableExtra", "latex2exp", "patchwork", "ggpubr", "reticulate", "rdrop2", "knitcitations", "bibtex")
 ipak(libs)
 
 Sys.setenv(KMP_DUPLICATE_LIB_OK="True")
 
 # setup bib
 mkdir("bib/")
-file.copy("~/Dropbox (Princeton)/References/library.bib", "bib/library.bib")
+file.copy("~/Dropbox (Princeton)/References/library.bib", "bib/library.bib", overwrite=TRUE)
 
 # not available
 AwarEntry <- "NA"
@@ -164,8 +164,25 @@ Afit <- LETTERS[Appdx_tick]
 
 # References
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+<div id="refs"></div>
+
+# Software
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results="asis"}
 
 save.image('references.RData')
+# libs_all <- (.packages())
+write_bib(file="bib/Rpackages.bib")
+r_bib <- read.bib("bib/Rpackages.bib")
+python_bib <- read.bib("bib/python.bib")
+
+c(r_bib, python_bib) %>% sort()
+
+```
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results="hide"}
+
+gc()
 
 ```
