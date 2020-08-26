@@ -2,7 +2,7 @@ The economy is a variant of that of @Eaton2002. I present the model here for cla
 
 ### Consumption
 
-Within each country resides a representative consumer which values tradeable goods and nontradable services which are aggregated in Cobb-Douglas utility function, $U_i$.
+Within each country resides a representative consumer which values tradable goods and nontradable services which are aggregated in Cobb-Douglas utility function, $U_i$.
 
 Consumer utility is Cobb-Douglas in a tradable goods aggregate $Q_i$ and non-tradable services
 \begin{equation} \label{eq:CD}
@@ -178,7 +178,7 @@ DeeqHatText <- knit_child("../results/DeeqHat.md")
 
 ### Welfare in Changes
 
-Now changes in consumer welfare can be calculated for any set of trade policy changes $\hat{\bm{\tau}}$. Manipuating \ref{eq:V}, changes in consumer indirect utility are
+Now changes in consumer welfare can be calculated for any set of trade policy changes $\hat{\bm{\tau}}$. Manipulating \ref{eq:V}, changes in consumer indirect utility are
 \begin{equation} \label{eq:VHat}
 \hat{V}_i(\bm{w}) = \frac{\hat{\tilde{E}}_i(\hat{\bm{w}})}{\hat{P}_i(\hat{\bm{w}})}
 \end{equation}

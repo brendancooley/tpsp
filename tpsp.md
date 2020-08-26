@@ -34,7 +34,7 @@ output:
 
 Military power holds a central position in international relations (IR) theory. Governments exist in a state of anarchy — there is no world authority tasked with preventing the use of violence in settling policies disputes between them. As a result, powerful governments can employ force against others to secure more favorable policy outcomes. This does not necessarily imply that international relations are uniquely violent, however. Threatened governments can adjust their policy choices to accommodate the interests of the powerful, avoiding costly conflict [@Brito1985; @Fearon1995]. This setting raises an inference problem — do observed policies reflect the preferences of the governments that adopted them, or the military constraints of the anarchic international system?
 
-In this paper, I propose and implement a method to assess the effect of military power on trade policy choices. Trade is a natural issue area in which undertake such an investigation. For a variety of reasons, governments' endeavor to protect their home market to some extent. Governments also seek access to foreign markets [@Grossman2016]. These preferences put governments into conflict with one another -- each would like to erect some barriers to imports while dismantling barriers to trade abroad. Given dictatorial power, governments would protect their home market and enforce openness elsewhere. Moreover, aggregate policy-induced trade frictions are large [@Cooley2019b] and have large effects on the distribution and level of welfare within and across countries [@Autor2013; @Costinot2015; @Goldberg2016]. These effects may be particularly salient for politically influential groups [@Grossman1994; @Osgood2017]. Governments therefore have incentives to use force to shape trade policy abroad to their liking. Historically, they have been willing to fight wars to realize such goals [@Findlay2007].
+In this paper, I propose and implement a method to assess the effect of military power on trade policy choices. Trade is a natural issue area in which to undertake such an investigation. For a variety of reasons, governments' endeavor to protect their home market to some extent. Governments also seek access to foreign markets [@Grossman2016]. These preferences put governments into conflict with one another -- each would like to erect some barriers to imports while dismantling barriers to trade abroad. Given dictatorial power, governments would protect their home market and enforce openness elsewhere. Moreover, aggregate policy-induced trade frictions are large [@Cooley2019b] and have large effects on the distribution and level of welfare within and across countries [@Autor2013; @Costinot2015; @Goldberg2016]. These effects may be particularly salient for politically influential groups [@Grossman1994; @Osgood2017]. Governments therefore have incentives to use force to shape trade policy abroad to their liking. Historically, they have been willing to fight wars to realize such goals [@Findlay2007].
 
 Assessing the effect of military power on trade policy requires imagining what policy choices governments would have made in the absence of coercion. Uncoerced policies can be taken as a measure of the government's ideal point, representing its true underlying preferences. When coercion is possible, however, weaker governments must consider the effect of their policy choices on the powerful. If a particular policy choice harms a threatening government enough, it can choose to impose an alternative policy by force. Recognizing this threat, weaker governments adjust their policies to avoid war. In an anarchic world, policies are jointly determined by both power and preferences.  
 
@@ -42,26 +42,26 @@ I proceed in three steps to untangle power and preferences as determinants of tr
 
 I find that there are increasing returns to military advantage in international trade policy bargaining. Governments that are militarily powerful are estimated to enjoy lower costs of war, which they exploit to coerce policy concessions from their trade partners. In this sense, military might is a force for trade liberalization, inducing reductions in barriers to trade that governments would be unwilling to undertake in the absence of coercion. These reductions in barriers to trade stimulate international economic exchange. Counterfactually eliminating militaries reduces the value of global trade to 61.4 percent of its model-estimated value. I estimate that the effectiveness of military coercion does not degrade across space -- in fact, governments are estimated to enjoy lower average costs of war against geographically distant adversaries. This may reflect the peculiarities of the technology of war in the era under study, in which geographic distance represents a minimal impediment to the projection of power. 
 
-In the model, governments choose trade policies to maximize a country-specific social welfare function. Each government's trade policy is a set of taxes, one for each importing country, imposed on imports. Notably, trade policies can be discriminatory, affecting certain source countries disproportionately. A model of the international economy connects trade policy choices to social welfare.^[The model of the international economy is a variant of the workhorse model of @Eaton2002. @Costinot2015 study a broader class of structural gravity models that connect trade frictions (such as trade policy) to trade and welfare outcomes.] After observing trade policies, governments may choose to fight wars against other governments in order to impose free trade. The threat of war constrains threatened governments and affects their trade policy choices. The dyadic costs of war, held as private information to potential attackers, depend on observable features of the attacking and defending countries, including the potential bellligerents' relative military strengths' and the geographic distance between them. Governments' ideal policies depend on a country-specific parameter governing the ease with which policy distortions are converted into revenues. I show that these preference parameters and the elasticities that convert military strength and geographic distance into war costs can be estimated given data on directed policy barriers to trade -- or the magnitude of policy distortion each government imposes on imposes on imports from each other country.^[I use data on aggregate directed trade policy distortions from @Cooley2019b, a companion paper to this study. These data are discussed in more detail below.]
+In the model, governments choose trade policies to maximize a country-specific social welfare function. Each government's trade policy is a set of taxes, one for each importing country, imposed on imports. Notably, trade policies can be discriminatory, affecting certain source countries disproportionately. A model of the international economy connects trade policy choices to social welfare.^[The model of the international economy is a variant of the workhorse model of @Eaton2002. @Costinot2015 study a broader class of structural gravity models that connect trade frictions (such as trade policy) to trade and welfare outcomes.] After observing trade policies, governments may choose to fight wars against other governments in order to impose free trade. The threat of war constrains threatened governments and affects their trade policy choices. The dyadic costs of war, held as private information to potential attackers, depend on observable features of the attacking and defending countries, including the potential belligerents' relative military strengths' and the geographic distance between them. Governments' ideal policies depend on a country-specific parameter governing the ease with which policy distortions are converted into revenues. I show that these preference parameters and the elasticities that convert military strength and geographic distance into war costs can be estimated given data on directed policy barriers to trade -- or the magnitude of policy distortion each government imposes on imposes on imports from each other country.^[I use data on aggregate directed trade policy distortions from @Cooley2019b, a companion paper to this study. These data are discussed in more detail below.]
 
 Within-country variation in trade policy identifies the model. Consider the ideal set of trade policies of a government whose preferences are known. The policies that achieve this objective can be readily calculated given knowledge of parameters governing international economic relations. Policies adopted toward imports from countries that pose no military threat will reflect this objective. Conversely, the imports of threatening countries will encounter lower barriers to trade, in order to satisfy the threatener's war constraint. This favoritism is informative about the effectiveness of military threats. The level of barriers toward non-threatening countries is informative about the government's preferences. Differential responses to the same level of threat from different geographic locations identifies parameters governing the effectiveness of power projection across space.
 
 The identified model enables two classes of counterfactuals. First, it allows me to quantify the "shadow of power" by comparing factual policies to those that would prevail if governments' counterfactually possessed zero military capability. These policies can then be fed into the model of the international economy to calculate the effect on trade flows, prices, and wages around the world. Would different trade blocs emerge in a coercion-free world? Which governments would benefit the most? In the model, consumers benefit from the liberalizing effect of foreign military coercion [@Antras2011; @Cooley2019a]. How large are these benefits? Whose citizens benefit the most from international power politics? How would relative changes to U.S. and Chinese military strength affect the functioning of the international economy?
 
-I also examine how domestic political economic changes (changes to government preferences) affect the salience of military coercion. Governments that value the welfare of consumers prefer to adopt lower barriers to trade. The returns to coercing these governments are smaller, because their ideal policies impose relatively small externalities on potential threatening governments. Military coercion plays a smaller role in influencing trade policy when governments are relatively liberal. Domestic political institutions are believed to effect trade policy preferences [@Rodrik1995; @Milner1999; @Milner2005]. The model facilitates exploration of how domestic political change affects the quality of international relations and governments' propensity to threaten, display, and use military force against one another. 
+I also examine how domestic political economic changes (changes to government preferences) affect the salience of military coercion. Governments that value the welfare of consumers prefer to adopt lower barriers to trade. The returns to coercing these governments are smaller, because their ideal policies impose relatively small externalities on potential threatening governments. Military coercion plays a smaller role in influencing trade policy when governments are relatively liberal. Domestic political institutions are believed to affect trade policy preferences [@Rodrik1995; @Milner1999; @Milner2005]. The model facilitates exploration of how domestic political change affects the quality of international relations and governments' propensity to threaten, display, and use military force against one another. 
 
 # Literature
 
 
 Conflicts of interest and the specter of coercive diplomacy emerge in the model due to governments' protectionist preferences. Trade theory reserves a role for small trade policy distortions for governments that seek to maximize aggregate societal wealth [@Johnson1953; @Broda2008]. Empirically, governments implement larger trade distortions than predicted in theory, however. This regularity motivated the study of the political economics of trade policy. While nearly free trade may be good for a society as a whole, owners of specific factors of production may prefer protectionism. If these groups have better access to the policymaking process, trade policy may be more protectionist than is optimal for society [@Mayer1984; @Rogowski1987; @Grossman1994]. A family of studies uses these theoretical insights to estimate governments' sensitivity to narrow versus diffuse interests [@Goldberg1999; @Mitra2006; @Gawande2009; @Gawande2012; @Ossa2014; @Gawande2015]. Because these models incorporate no theory of international military coercion, these estimates reflect the assumption that policy choices reflect the outcome of non-cooperative policy choice or non-militarized bargaining. Fiscal pressures might also drive protectionism. Some governments are constrained in their ability to raise revenue through taxes on domestic economic activities. Tariffs and other trade distortions may substitute as a revenue-raising strategy in these cases [@Rodrik2008; @Queralt2015]. 
 
-I take no stance on the domestic political origins of protectionist preferences. I induce these by varying the ease with which governments can collect revenues from trade distortions. Each government is characterized by a revenue threshold parameter. Trade distoritions above the level of this threshold generate revenue while distortions below this level require subsidies. Governments with higher threshold parameters therefore prefer higher barriers to trade, all else equal. This simple formulation induces heterogeneity in the governments' ideal levels of protectionism and the magnitude of the externalities they would impose on other governments when choosing individually optimal policies.
+I take no stance on the domestic political origins of protectionist preferences. I induce these by varying the ease with which governments can collect revenues from trade distortions. Each government is characterized by a revenue threshold parameter. Trade distortions above the level of this threshold generate revenue while distortions below this level require subsidies. Governments with higher threshold parameters therefore prefer higher barriers to trade, all else equal. This simple formulation induces heterogeneity in the governments' ideal levels of protectionism and the magnitude of the externalities they would impose on other governments when choosing individually optimal policies.
 
 These externalities motivate the lobbying efforts of domestic special interests and structure international negotiations over trade policy. In contemporary political economic accounts, large and productive firms pressure their own governments to secure market access abroad in order to increase profit opportunities [@Ossa2012; @Osgood2016; @Kim2017]. By contrast, in my model, lower barriers to trade abroad increase wages at home (helping consumers) and stimulate trade (increasing revenue). Modeling government preferences in this manner captures market access incentives tractably while avoiding ascribing a particular domestic political process to their origin.
 
 Because of these preferences for foreign trade liberalization, governments have incentives to influence others' policy choices. Analyzing governments' foreign policy in the 17th and 18th centuries, @Viner1948 concludes "important sources of national wealth...were available...only to countries with the ability to acquire or retain them by means of the possession and readiness to use military strength." Powerful governments established colonies and threatened independent governments in order to shape policy abroad to their liking [@Gallagher1953]. While formal empires died quickly after World War II, softer forms of influence remained. @Lake2013 terms the resulting order a "hierarchy" in which weaker countries exchanged sovereignty for international political order, provided by a hegemonic United States. @Berger2013 show that this hierarchy has not always been benevolent — U.S. political influence was used to open markets abroad, a form of "commercial imperialism." An earlier literature ascribed international economic openness to the presence of such a hegemon [@Krasner1976; @Gilpin1981; @Kindleberger1986]. In conceptualizing openness as a public good, these theories made stark predictions about the distribution of military power and the international economy. In reality, the benefits of changes to trade policy are quite excludable. The model developed here reflects this reality by allowing governments to adopt discriminatory trade policies. Power can therefore be exercised to secure benefits not shared by other governments. The resulting international economic orders defy characterization as "open" or "closed." In a stylized version of the model developed here, I show that latent coercive threats can be used to open foreign markets. Militarily weak countries adopt lower barriers to trade than their powerful counterparts, all else equal [@Cooley2019a]. @Antras2011 consider a similar model in which governments influence elections abroad. Again, this influence has a liberalizing effect on the foreign government's trade policy.
 
-Nevertheless, debate persists about the efficacy of military power in achieving economic benefits [@Mastanduno2009; @Drezner2013; @Bove2014; @Stokes2017]. These studies all confront the inference problem discussed here — does economic policy reflect governments' underlying preferences or the shadow of foreign military power? When redistribution is an alternative to war and bargaining is frictionless, war is not necessary to achieve coercive effects [@Brito1985; @Fearon1995; @Art1996]. I assume that the effectiveness of military coercion depends governments' relative military advantage and the geographic distance between an attacking and defending country. Existing studies examine wars and militarized disputes to estimate the relationship between military spending and geographic distance on coercive capacity.^[On the relationship between military expenditure and military power, see @Kadera2004, @Beckley2010, @Beckley2018, @Carroll2019, and @Markowitz2020. On the loss of strength gradient, see @Boulding1962, @BuenodeMesquita1980, @Diehl1985, @Lemke1995, @Gartzke2011, and @Markowitz2013.] The number of disputes used to fit these models is relatively small and the nature of military technology changes over time. This dynamic technology and strategic selection into wars and disputes may confound estimates of these relationships. While I study a small sample of countries in a single year in this paper, I expand the universe of cases that can be used to estimate coercive capability by examining the responsiveness of policy to foreign threats.
+Nevertheless, debate persists about the efficacy of military power in achieving economic benefits [@Mastanduno2009; @Drezner2013; @Bove2014; @Stokes2017]. These studies all confront the inference problem discussed here — does economic policy reflect governments' underlying preferences or the shadow of foreign military power? When redistribution is an alternative to war and bargaining is frictionless, war is not necessary to achieve coercive effects [@Brito1985; @Fearon1995; @Art1996]. I assume that the effectiveness of military coercion depends on governments' relative military advantage and the geographic distance between an attacking and defending country. Existing studies examine wars and militarized disputes to estimate the relationship between military spending and geographic distance on coercive capacity.^[On the relationship between military expenditure and military power, see @Kadera2004, @Beckley2010, @Beckley2018, @Carroll2019, and @Markowitz2020. On the loss of strength gradient, see @Boulding1962, @BuenodeMesquita1980, @Diehl1985, @Lemke1995, @Gartzke2011, and @Markowitz2013.] The number of disputes used to fit these models is relatively small and the nature of military technology changes over time. This dynamic technology and strategic selection into wars and disputes may confound estimates of these relationships. While I study a small sample of countries in a single year in this paper, I expand the universe of cases that can be used to estimate coercive capability by examining the responsiveness of policy to foreign threats.
 
 Several studies have examined trade policy bargaining theoretically and empirically. @Grossman1995 extend the protection for sale model to a two-country bargaining setting. @Maggi1999 and @Bagwell1999 focus on the effect of the institutional context in which trade policy negotiations take place, relative to an un-institutionalized baseline. @Ossa2014 and @Bagwell2018a quantify these theories in structural models. Of course, the continued functioning of international institutions requires either a) that complying with the rules of the institution be incentive compatible for each member state, given others' strategies or b) that an external authority punish deviations from the institutions' rules sufficiently to induce compliance [@Powell1994]. Given the absence of such an external authority and the stark international distributional implications of alternative trade policy regimes, it is natural to consider how the ability to employ military force colors trade policy bargaining. 
 
@@ -106,6 +106,15 @@ Estimating the magnitude of these trade policies and tracing their impact on gov
 
 In the coercive political economy developed below, governments' relative directed war costs are modeled as a function of the military capability ratio between the attacker and defender, the geographic distance between the belligerents, and the gross domestic product of the attacking country. I store these observable features in the vector $\bm{Z}_m$. To measure military capability ratios, I employ [SIPRI](https://www.sipri.org/)'s data on military expenditure to measure governments' military capacity. These values are displayed in Figure \ref{fig:milex}. I use data from @Weidmann2010 to calculate centroid-centroid geographic distance between all countries in my sample. Data on gross domestic production comes from the [World Input-Output Database (WIOD)](http://www.wiod.org/home) [@Timmer2015]. 
 
+
+```
+## Error: Argument 1 must have names
+```
+
+```
+## Error in valid.units(units): Invalid unit
+```
+
 ![Military expenditure for in-sample governments. Values for ROW and EU are obtained by summing expenditure of all member countries. \label{fig:milex}](figure/milex-1.pdf)
 
 ## Reduced Form Evidence on Coercion and Trade Policy
@@ -130,7 +139,16 @@ $$
 $$
 In other words, the distance between government 1's equilibrium utility and the utility it receives at its ideal point is decreasing in its relative military advantage.
 
-Suppose that governments endeavor to maximize the welfare of the representative consumer.^[I will relax this assumption in the structural model developed below.] With the economy, $h$, calibrated, I can calculate the change in utility each representative consumer would experience when each other government adopts free trade, relative to their utility at the baseline set of policies. Taking this as a empirical measure of the ratio $u_1(x^\star; M_1, M_2) / u_1(1)$, the model implies this quantity will be increasing in $M_1$, country 1's military capacity. I will refer to this quantity as government 1's inverse *conquest value* vis-à-vis government 2.
+Suppose that governments endeavor to maximize the welfare of the representative consumer.^[I will relax this assumption in the structural model developed below.] With the economy, $h$, calibrated, I can calculate the change in utility each representative consumer would experience when each other government adopts free trade, relative to their utility at the baseline set of policies. Taking this as an empirical measure of the ratio $u_1(x^\star; M_1, M_2) / u_1(1)$, the model implies this quantity will be increasing in $M_1$, country 1's military capacity. I will refer to this quantity as government 1's inverse *conquest value* vis-à-vis government 2.
+
+
+```
+## Error in factory(tab, align = align, fmt = fmt, hrule = hrule, notes = notes, : Assertion on 'add_rows' failed: Must be of type 'data.frame', not 'list'.
+```
+
+```
+## Error in valid.units(units): Invalid unit
+```
 
 ![Correlation between military capability ratios and inverse conquest values, all pairs of in-sample countries. \label{fig:rcvm}](figure/rcvm-1.pdf)
 
@@ -161,9 +179,14 @@ Attacker FE? &  & ✓ &  & ✓\\
 \end{tabular}}
 \end{table}
 
+
+```
+## Error in valid.units(units): Invalid unit
+```
+
 ![Conditional correlations between inverse conquest values and military capability ratios, geographic distance, and country-specific constants. \label{fig:rcvm_reg_dw}](figure/rcv_reg_dw-1.pdf)
 
-The first model confirms the statistical significance of the correlation shown in Figure \ref{fig:rcvm}. The second model estimates this correlation within potential "attacking" countries. Here, inverse conquest values continue to rise as military advantage rises. The final two models interact the military capability ratio with a measure of distance between the attacker and defender. The estimated correlation between military capbility is not attenuated, but does lose statistical significance in these specifications. Distance and the interaction of distance with military capability does not covary with the inverse conquest values, whether or not country-specific factors are included. These raw correlations are informative about the role of coercion in the formation of trade policy but suggestive at best. Trade policy bargaining is a multilateral endeavor in which third party externalities loom large. Moreover, governments may vary in their preferences for protectionism, changing their ideal policies and their valuations for conquering others. The model developed below accounts explicitly for these features of trade policy bargaining, delivering interpretable estimates of the effects of military capability and geographic distance on trade policy outcomes.
+The first model confirms the statistical significance of the correlation shown in Figure \ref{fig:rcvm}. The second model estimates this correlation within potential "attacking" countries. Here, inverse conquest values continue to rise as military advantage rises. The final two models interact the military capability ratio with a measure of distance between the attacker and defender. The estimated correlation between military capability is not attenuated, but does lose statistical significance in these specifications. Distance and the interaction of distance with military capability does not covary with the inverse conquest values, whether or not country-specific factors are included. These raw correlations are informative about the role of coercion in the formation of trade policy but suggestive at best. Trade policy bargaining is a multilateral endeavor in which third party externalities loom large. Moreover, governments may vary in their preferences for protectionism, changing their ideal policies and their valuations for conquering others. The model developed below accounts explicitly for these features of trade policy bargaining, delivering interpretable estimates of the effects of military capability and geographic distance on trade policy outcomes.
 
 
 
@@ -176,7 +199,7 @@ The first model confirms the statistical significance of the correlation shown i
 
 
 
-There are $N$ governments, indexed $i \in \left\{ 1, ..., N \right\}$. Governments choose trade policies $\bm{\tau}_i = \left( \tau_{i1}, ..., \tau_{iN} \right) \in [1, \bar{\tau}]^N$ which affect their welfare indirectly through changes in the international economy.^[$\bar{\tau}$ is an arbitarily large but finite value sufficient to shut down trade between any pair of countries.] An entry of the trade policy vector, $\tau_{ij}$ is the tax country $i$ imposes on imports from $j$.^[Costs enter in an "iceberg" fashion, and I normalize $\tau_{ii} = 1$. Then, if the price of a good in country $j$ is $p_{jj}$, its cost (less freight) in country $i$ is $\tau_{ij} p_{jj}$. The ad valorem tariff equivalent of the trade policy is $t_{ij} = \tau_{ij} - 1$. I employ structural estimates of these costs from @Cooley2019b to estimate the model, which are described in more detail in Appendix A.] The economy, detailed in Appendix A, can be succinctly characterized by a function $h: \bm{\tau} \rightarrow \mathbb{R}_{++}^N$ mapping trade policies to wages in each country, denoted $\bm{w} = \left( w_1, ..., w_N \right)$. These in turn determine trade flows between pairs of countries and price levels around the world.^[The economy is a variant of the workhorse model of @Eaton2002.]
+There are $N$ governments, indexed $i \in \left\{ 1, ..., N \right\}$. Governments choose trade policies $\bm{\tau}_i = \left( \tau_{i1}, ..., \tau_{iN} \right) \in [1, \bar{\tau}]^N$ which affect their welfare indirectly through changes in the international economy.^[$\bar{\tau}$ is an arbitrarily large but finite value sufficient to shut down trade between any pair of countries.] An entry of the trade policy vector, $\tau_{ij}$ is the tax country $i$ imposes on imports from $j$.^[Costs enter in an "iceberg" fashion, and I normalize $\tau_{ii} = 1$. Then, if the price of a good in country $j$ is $p_{jj}$, its cost (less freight) in country $i$ is $\tau_{ij} p_{jj}$. The ad valorem tariff equivalent of the trade policy is $t_{ij} = \tau_{ij} - 1$. I employ structural estimates of these costs from @Cooley2019b to estimate the model, which are described in more detail in Appendix A.] The economy, detailed in Appendix A, can be succinctly characterized by a function $h: \bm{\tau} \rightarrow \mathbb{R}_{++}^N$ mapping trade policies to wages in each country, denoted $\bm{w} = \left( w_1, ..., w_N \right)$. These in turn determine trade flows between pairs of countries and price levels around the world.^[The economy is a variant of the workhorse model of @Eaton2002.]
 
 Throughout, I will use $\bm{\theta}_m$ to denote the vector of all non-economic parameters to be estimated and $\bm{Z}_m$ to denote the vector of all non-economic data observed by the researcher. $\bm{\theta}_h$ denotes parameters associated with the economy, $h$, which will be calibrated. $\bm{Z}_h$ denotes data associated with the economy. I will explicate the elements of these vectors in the proceeding sections and the Appendix.
 
@@ -192,11 +215,11 @@ r_i(h(\bm{\tau}), v_i) = \sum_j (\tau_{ij} - v_i) X_{ij}(h(\bm{\tau}))
 \end{equation}
 and $X_{ij}(h(\bm{\tau}))$ are country $i$'s imports from country $j$.^[This object does not correspond empirically to governments' factual tariff revenues, as $\tau_{ij}$ incorporates a larger set of trade policy distortions than tariffs alone. Yet, non-tariff barriers to trade also generate rents that do not accrue directly to the government's accounts (see, for example, @Anderson1992 for the case of quotas). This revenue function is designed to capture this broader set of rents.] When $v_i$ is close to one, small policy distortions are sufficient to generate revenue for the government. Conversely when $v_i$ is high, the government must erect large barriers to trade before revenues begin entering government coffers and returning to the pockets of the consumer. Because consumers' consumption possibilities depend on revenue generation, increasing $v_i$ induces governments' to become more protectionist. This formulation provides substantial flexibility in rationalizing various levels of protectionism, while avoiding assuming specific political economic motivations for its genesis. From the perspective of the consumers, rents extracted from imports are valued equally, regardless of their source. Ex ante, governments are not discriminatory in their trade policy preferences. Optimal policies for government $i$ maximize $V_i \left( h(\bm{\tau}_i; \bm{\tau}_{-i}); v_i \right)$.
 
-These optimal policies impose externalities on other governments. By controlling the degree of market access afforded to foreign producers, trade policies affect the wages of foreign workers and the welfare of the governments that represent them. They also partially determine trade flows, which affect other governments' ability to collect rents. In this sense, protectionism is "beggar they neighbor." Governments' joint policy proposals are denoted $\tilde{\bm{\tau}}$.
+These optimal policies impose externalities on other governments. By controlling the degree of market access afforded to foreign producers, trade policies affect the wages of foreign workers and the welfare of the governments that represent them. They also partially determine trade flows, which affect other governments' ability to collect rents. In this sense, protectionism is "beggar thy neighbor." Governments' joint policy proposals are denoted $\tilde{\bm{\tau}}$.
 
 Wars are fought in order to impose free trade abroad. After observing policy proposals, governments decide whether or not to launch wars against one another. Wars are offensive and *directed*. If government $j$ decides to launch a war against $i$ it pays a dyad-specific cost, $c_{ji}$, and imposes free trade on the target. These war costs are modeled as realizations of a random variable from a known family of distributions and are held as private information to the prospective attacker. The shape of these distributions is affected by the governments' relative power resources, denoted $\frac{M_j}{M_i}$, as well as the geographic distance between them, $W_{ji}$. These inverse value of these costs are distributed with c.d.f. $F_{ji}$ which is described in more detail below. I normalize the cost of defending against aggression to zero.
 
-If $i$ is not attacked by any other government its announced policies are implemented. Otherwise, free trade is imposed, setting $\bm{\tau}_i = \left( 1, \dots, 1 \right) = \bm{1}_i$. Substituting these policies into $j$'s utility function gives $V_j(\bm{1}_i; \tilde{\bm{\tau}}_{-i})$ as $j$'s *conquest value* vis-à-vis $i$. Note that I prohibit governments from imposing discriminatory policies on conquered states. Substantively, this assumption reflects the difficulty in enforcing sub-optimal policies on prospective client states, relative to reorienting their political institutions to favor free trade. This also ensures that the benefits of conquest are public. However, it does not guarantee non-discrimination in times of peace. Governments that pose most credible threat of conquest can extract larger policy concessions from their targets in the form of directed trade liberalization. 
+If $i$ is not attacked by any other government its announced policies are implemented. Otherwise, free trade is imposed, setting $\bm{\tau}_i = \left( 1, \dots, 1 \right) = \bm{1}_i$. Substituting these policies into $j$'s utility function gives $V_j(\bm{1}_i; \tilde{\bm{\tau}}_{-i})$ as $j$'s *conquest value* vis-à-vis $i$. Note that I prohibit governments from imposing discriminatory policies on conquered states. Substantively, this assumption reflects the difficulty in enforcing sub-optimal policies on prospective client states, relative to reorienting their political institutions to favor free trade. This also ensures that the benefits of conquest are public. However, it does not guarantee non-discrimination in times of peace. Governments that pose the most credible threat of conquest can extract larger policy concessions from their targets in the form of directed trade liberalization. 
 
 Government $j$ therefore prefers not to attack $i$ so long as
 \begin{align*}
@@ -272,7 +295,7 @@ Following the assumption that measurement error is mean-zero, I seek an estimato
 \min_{\bm{\theta}_m} \sum_i \sum_j \left( \epsilon_{ij}(\bm{\theta}_m, \bm{Z}_m) \right)^2 .
 \end{equation}
 
-Solving this problem presents two computational challenges. First, computing government welfare changes for any given $\hat{\bm{\tau}}$ requires solving system of equations characterizing the equilibrium of the international economy, $\hat{h}(\hat{\bm{\tau}})$. These changes must be computed for both the proposed policies and for policies imposed by each potential war. Second, computing $\tilde{\bm{\tau}}^\star(\bm{\theta}_m)$ requires iteratively solving each government's best response problem until covergence at a Nash equilibrium. I sidestep both of these by recasting the best response problem and estimation problem as mathematical programs with equilibrium constraints (MPECs) [@Su2012; @Ossa2014; @Ossa2016].
+Solving this problem presents two computational challenges. First, computing government welfare changes for any given $\hat{\bm{\tau}}$ requires solving the system of equations characterizing the equilibrium of the international economy, $\hat{h}(\hat{\bm{\tau}})$. These changes must be computed for both the proposed policies and for policies imposed by each potential war. Second, computing $\tilde{\bm{\tau}}^\star(\bm{\theta}_m)$ requires iteratively solving each government's best response problem until convergence at a Nash equilibrium. I sidestep both of these by recasting the best response problem and estimation problem as mathematical programs with equilibrium constraints (MPECs) [@Su2012; @Ossa2014; @Ossa2016].
 
 To reformulate the best response problem, I consider an equivalent formulation in which each government chooses trade policies and wages, subject to the additional constraint that chosen wages are consistent with the general equilibrium of the international economy ($\hat{h}(\hat{\tilde{\bm{\tau}}}) = \hat{w}$). Let $\hat{\bm{x}}_i = \left( \hat{\tilde{\bm{\tau}}}_i, \hat{\bm{w}} \right)$ store $i$'s choice variables in this problem. Then, this problem can be rewritten as follows, noting explicitly dependencies on $\bm{\theta}_m$
 \begin{equation} \label{eq:tauTildeHatMPEC}
@@ -311,13 +334,13 @@ This procedure produces point estimates $\tilde{\bm{\theta}}_m$. I then construc
 
 Figure \ref{fig:ests} displays results from the estimation. Recall that $v_i$ governs the ease with which governments can extract revenues from trade policy distortions. When $v_i$ is higher government $i$ prefers higher barriers to trade, all else equal. When $v_i=1$ the government acts as a classical social welfare maximizer. There is considerable heterogeneity in governments' estimated preferences for protectionism. The United States and Russia are estimated to be relatively liberal, while Australia and Canada are quite protectionist. 
 
-An attacking country's military advantage and g.d.p. are estimated to reduce war costs, facilitating coercion. There are increasing returns to both of these features in reducing the average costs of war ($\gamma, \alpha_2 > 1$). Economically large and military powerful countries are the most effective at coercion, holding the distance of their adversary constant. Figure \ref{fig:war_costs} displays estimated average war costs, relative to those of the United States, holding the distance to the adversary constant. Given its large economy and military, the United States is estimated to enjoy the smallest averge war costs. The European Union, China, and Russia pay between 3 and 6 times the costs of the United States to prosecute wars on average. Wars are estimated to cost at least an order of magnitude more than U.S. wars for other countries in the sample.
+An attacking country's military advantage and g.d.p. are estimated to reduce war costs, facilitating coercion. There are increasing returns to both of these features in reducing the average costs of war ($\gamma, \alpha_2 > 1$). Economically large and military powerful countries are the most effective at coercion, holding the distance of their adversary constant. Figure \ref{fig:war_costs} displays estimated average war costs, relative to those of the United States, holding the distance to the adversary constant. Given its large economy and military, the United States is estimated to enjoy the smallest average war costs. The European Union, China, and Russia pay between 3 and 6 times the costs of the United States to prosecute wars on average. Wars are estimated to cost at least an order of magnitude more than U.S. wars for other countries in the sample.
 
-![Estimated relative war costs against fixed adversary. United States' costs serve as baseline ($c=1$). \label{fig:war_costs}](figure/war_costs-1.pdf)
+![Estimated relative war costs against a fixed adversary. The United States' costs serve as baseline ($c=1$). \label{fig:war_costs}](figure/war_costs-1.pdf)
 
-War costs are estimated to depend on the distance between the attacker and potential adversay. Attackers that are more distant from their adversaries are estimated to enjoy smaller war costs. In other words, model estimates imply an inverse loss of strength gradient. This may emerge due to the peculiarities of military technology in 2011, a period in which geographic distance respresents a uniquely small impediment to the projection of force.
+War costs are estimated to depend on the distance between the attacker and potential adversary. Attackers that are more distant from their adversaries are estimated to enjoy smaller war costs. In other words, model estimates imply an inverse loss of strength gradient. This may emerge due to the peculiarities of military technology in 2011, a period in which geographic distance represents a uniquely small impediment to the projection of force.
 
-The model estimates can be readily transformed to deliver empirical quantities that measure the salience of military coercion in international relations. Figure \ref{fig:rcv} plots the estimated conquest value for each potential attacking country vis-à-vis each potential defending country. These quantities differ from those analyzed in the reduced form section above in that they account explicitly for the attacking government's preferences for protectionism. Russia's conquest values are estimated to be among the highest in the sample. This reflects the relatively poor market access conditions it enjoys at the estimated equilibrium. Because their economies are the largest in the sample, the gains that accrue from successfuly conquering the United States, China and the European Union tend to be larger than the gains from conquering other countries. Australia, Canada, and China benefit little from conquering others. This result obtains because of their governments' estimated preferences for protectionism. Conquest stimulates trade that is disadvantageous for a government $i$ when $v_i$ is high and $i$'s trade barriers are lowered below the revenue threshold due to the effects of coercion. This variation in conquest values highlights the dependence of the coercive environment on the underlying international economy and government preferences.
+The model estimates can be readily transformed to deliver empirical quantities that measure the salience of military coercion in international relations. Figure \ref{fig:rcv} plots the estimated conquest value for each potential attacking country vis-à-vis each potential defending country. These quantities differ from those analyzed in the reduced form section above in that they account explicitly for the attacking government's preferences for protectionism. Russia's conquest values are estimated to be among the highest in the sample. This reflects the relatively poor market access conditions it enjoys at the estimated equilibrium. Because their economies are the largest in the sample, the gains that accrue from successfully conquering the United States, China and the European Union tend to be larger than the gains from conquering other countries. Australia, Canada, and China benefit little from conquering others. This result obtains because of their governments' estimated preferences for protectionism. Conquest stimulates trade that is disadvantageous for a government $i$ when $v_i$ is high and $i$'s trade barriers are lowered below the revenue threshold due to the effects of coercion. This variation in conquest values highlights the dependence of the coercive environment on the underlying international economy and government preferences.
 
 ![Estimated conquest value for each potential attacking country vis-à-vis each potential defending country. Darker colors indicate higher conquest values. \label{fig:rcv}](figure/rcv-1.pdf)
 
@@ -325,17 +348,17 @@ It is also straightforward to calculate the equilibrium probability of war once 
 
 ![Estimated equilibrium probabilities of war, point estimates and 95 percent confidence intervals. Probabilities the United States attacks each other country highlighted in orange. \label{fig:pr_peace}](figure/war_probs-1.pdf)
 
-It is worth noting that the countries with the highest estimated risk of war with the United States, Japan and Australia, happen to be U.S. allies. The security guarantees encapsulated in these allliances are not explicitly modeled. One way to interpret these results is that Australian and Japanese security would deteriorate rapidly in the absence of U.S. military protection, representing an implicit threat the United States can leverage to affect trade policy.^[@Lake2007 would label these relationships "hierarchical" and based on the authority of the United States to dictate the policy of its subordinates. Still, in Lake's conceptualization, "authority is buttressed by the capacity for coercion" (p. 53).]
+It is worth noting that the countries with the highest estimated risk of war with the United States, Japan and Australia, happen to be U.S. allies. The security guarantees encapsulated in these alliances are not explicitly modeled. One way to interpret these results is that Australian and Japanese security would deteriorate rapidly in the absence of U.S. military protection, representing an implicit threat the United States can leverage to affect trade policy.^[@Lake2007 would label these relationships "hierarchical" and based on the authority of the United States to dictate the policy of its subordinates. Still, in Lake's conceptualization, "authority is buttressed by the capacity for coercion" (p. 53).]
 
 ## Model Fit and Inferences about Policy Preferences
 
 ![Correlation between trade barrier data and model predictions. \label{fig:fit}](figure/fit-1.pdf)
 
-Figure \ref{fig:fit} evaluates the ability of the estimated model to predict the level of trade barriers. The model's mean absolute error is 0.27, equivalent to a 27 percent ad valorem tariff. The model's predictions are fairly well correlated with the trade barrier data ($\rho=$ 0.68). In Appendix C I plot the model's predictive error for each directed dyad in the sample, higlighting which observations are well explained by the model and which are not. Of note, Russia faces uniquely poor market access conditions in the data that the model does not fully replicate.
+Figure \ref{fig:fit} evaluates the ability of the estimated model to predict the level of trade barriers. The model's mean absolute error is 0.27, equivalent to a 27 percent ad valorem tariff. The model's predictions are fairly well correlated with the trade barrier data ($\rho=$ 0.68). In Appendix C I plot the model's predictive error for each directed dyad in the sample, highlighting which observations are well explained by the model and which are not. Of note, Russia faces uniquely poor market access conditions in the data that the model does not fully replicate.
 
 ![Effect of modeling military coercion on inferences about governments' preferences for protectionism. Figure plots point estimates and 95 percent confidence intervals for preference parameters under baseline model and model in which coercion is impossible. \label{fig:ests_mil_off}](figure/ests_mil_off-1.pdf)
 
-Modeling coercion explicitly both improves model fit and alters inferences about government's underlying preferences for protectionism. I re-estimate the model under the assumption that coercion is impossible. In this model, equilibrium policies reflect only governments' underlying preferences, $v_i$. Estimated preferences for protectionism under this model are shown in Figure \ref{fig:ests_mil_off}. The estimated preferences of militarily powerful countries are largely unchanged across models. This is not true for less powerful countries. The estimated preferences of Australia, Canada, and China move dramatically when coercion is prohibited. The model developed here rationalizes their trade barriers as the result of highly protectionist latent preferences tempered by the effects of international coercion. The coercion-free model instead infers instead that they are relatively liberal in their preferences. Leaving coercion out of the model exerts downward bias on estimates of governments' welfare-mindedness. A large literature employs the equilibrium trade policies of @Grossman1994 or @Grossman1995 to estimate the weight governments place on the welfare of special interests relative to that of society at large [@Goldberg1999; @Mitra2006; @Gawande2009; @Gawande2012; @Ossa2014; @Gawande2015]. Because the "protection for sale" model incorporates no theory of international coercion, these studies over-estimate governments' social welfare conciousness. 
+Modeling coercion explicitly both improves model fit and alters inferences about government's underlying preferences for protectionism. I re-estimate the model under the assumption that coercion is impossible. In this model, equilibrium policies reflect only governments' underlying preferences, $v_i$. Estimated preferences for protectionism under this model are shown in Figure \ref{fig:ests_mil_off}. The estimated preferences of militarily powerful countries are largely unchanged across models. This is not true for less powerful countries. The estimated preferences of Australia, Canada, and China move dramatically when coercion is prohibited. The model developed here rationalizes their trade barriers as the result of highly protectionist latent preferences tempered by the effects of international coercion. The coercion-free model instead infers instead that they are relatively liberal in their preferences. Leaving coercion out of the model exerts downward bias on estimates of governments' welfare-mindedness. A large literature employs the equilibrium trade policies of @Grossman1994 or @Grossman1995 to estimate the weight governments place on the welfare of special interests relative to that of society at large [@Goldberg1999; @Mitra2006; @Gawande2009; @Gawande2012; @Ossa2014; @Gawande2015]. Because the "protection for sale" model incorporates no theory of international coercion, these studies over-estimate governments' social welfare consciousness. 
 
 Modeling coercion explicitly also improves model fit substantially. The correlation coefficient between model predictions and observed trade barriers falls to 0.45 when coercion is prohibited. The mean absolute error increases 19.9 percent to 0.32. In Appendix C I replicate Figure \ref{fig:fit} for the coercion-free model. 
 
@@ -345,7 +368,7 @@ Modeling coercion explicitly also improves model fit substantially. The correlat
 
 
 
-How does the shadow of coercion affect the functioning of the world economy? How would patterns of trade and trade protectionism change if governments' power resources or preferences were modified? With model estimates computed, this class of questions can be addressed through recomputing the model's equilibrium at alternative sets of parameters or data. In other words, compute $\tilde{\bm{\tau}}^\star(\bm{\theta}_m^\prime; \bm{Z}_m^\prime)$ where $\bm{\theta}_m^\prime$ and $\bm{Z}_m^\prime$ are alternative arrangements of parameters and observable model primitives, respectively. Changes to the economy can then be computed by substituting these counterfactual equilibrium policies into the model of the world economy, solving $h \left( \tilde{\bm{\tau}}^\star(\bm{\theta}_m^\prime; \bm{Z}_m^\prime) \right)$. I consider three counterfactual scenarios here. First, I quantify the aggregate affects of military coercion by conducting a counterfactual in which military coercion is prohibited. Second, I quantify the effects of the diffusion of military power on trade policy and the international economy by recomputing the model's equilibrium at projected levels of military spending in 2030. Finally, I quantify the effects of liberalizing Chinese trade policy preferences on the probability of various wars.
+How does the shadow of coercion affect the functioning of the world economy? How would patterns of trade and trade protectionism change if governments' power resources or preferences were modified? With model estimates computed, this class of questions can be addressed through recomputing the model's equilibrium at alternative sets of parameters or data. In other words, compute $\tilde{\bm{\tau}}^\star(\bm{\theta}_m^\prime; \bm{Z}_m^\prime)$ where $\bm{\theta}_m^\prime$ and $\bm{Z}_m^\prime$ are alternative arrangements of parameters and observable model primitives, respectively. Changes to the economy can then be computed by substituting these counterfactual equilibrium policies into the model of the world economy, solving $h \left( \tilde{\bm{\tau}}^\star(\bm{\theta}_m^\prime; \bm{Z}_m^\prime) \right)$. I consider three counterfactual scenarios here. First, I quantify the aggregate effects of military coercion by conducting a counterfactual in which military coercion is prohibited. Second, I quantify the effects of the diffusion of military power on trade policy and the international economy by recomputing the model's equilibrium at projected levels of military spending in 2030. Finally, I quantify the effects of liberalizing Chinese trade policy preferences on the probability of various wars.
 
 ## A Coercion-Free World
 
@@ -362,6 +385,15 @@ Figure \ref{fig:cfct1_welfare} plots the changes in government and consumer welf
 ## Multipolarity, Trade Policy, and International Trade
 
 Military power in 2011 was highly concentrated in the hands of the United States (see Figure \ref{fig:milex}). Since 2011, other countries, China in particular, have begun to close this military capability gap with the United States. How would the continued diffusion of military power affect trade policy and patterns of international economic exchange? To answer this question I project each in-sample government's military spending in 2030, assuming military budgets grow (shrink) at their average rate between 2011 and 2018. Projected military spending for 2030 is shown in Figure \ref{fig:milex_2030}. The largest change is the shift in relative military power from the United States and European Union toward China. 
+
+
+```
+## Error: Argument 1 must have names
+```
+
+```
+## Error in valid.units(units): Invalid unit
+```
 
 ![Projected military spending in 2030, assuming military budgets grow at observed average growth rate between 2011 and 2018. \label{fig:milex_2030}](figure/milex_2030-1.pdf)
 
@@ -398,7 +430,7 @@ The economy is a variant of that of @Eaton2002. I present the model here for cla
 
 ### Consumption
 
-Within each country resides a representative consumer which values tradeable goods and nontradable services which are aggregated in Cobb-Douglas utility function, $U_i$.
+Within each country resides a representative consumer which values tradable goods and nontradable services which are aggregated in Cobb-Douglas utility function, $U_i$.
 
 Consumer utility is Cobb-Douglas in a tradable goods aggregate $Q_i$ and non-tradable services
 \begin{equation} \label{eq:CD}
@@ -566,7 +598,7 @@ An *international economic equilibrium in changes* is a mapping $\hat{h} : \left
 
 ### Welfare in Changes
 
-Now changes in consumer welfare can be calculated for any set of trade policy changes $\hat{\bm{\tau}}$. Manipuating \ref{eq:V}, changes in consumer indirect utility are
+Now changes in consumer welfare can be calculated for any set of trade policy changes $\hat{\bm{\tau}}$. Manipulating \ref{eq:V}, changes in consumer indirect utility are
 \begin{equation} \label{eq:VHat}
 \hat{V}_i(\bm{w}) = \frac{\hat{\tilde{E}}_i(\hat{\bm{w}})}{\hat{P}_i(\hat{\bm{w}})}
 \end{equation}
@@ -618,152 +650,137 @@ As noted by @Ossa2014, the assumption of exogenous and fixed trade imbalances ge
 
 # Software
 
-Arel-Bundock V (2020). _countrycode: Convert Country Names and Country
-Codes_. R package version 1.2.0, <URL:
+Arel-Bundock V (2018). _countrycode: Convert Country Names and
+Country Codes_. R package version 1.1.0, <URL:
 https://CRAN.R-project.org/package=countrycode>.
 
-Arel-Bundock V (2020). _modelsummary: Summary Tables for Statistical
-Models: Beautiful, Customizable, and Publication-Ready_. R package
-version 0.4.1, <URL: https://CRAN.R-project.org/package=modelsummary>.
+Arel-Bundock V (2020). _modelsummary: Summary Tables and Plots for
+Statistical Models and Data: Beautiful, Customizable, and
+Publication-Ready_. R package version 0.5.0, <URL:
+https://CRAN.R-project.org/package=modelsummary>.
 
-Arel-Bundock V, Enevoldsen N, Yetman C (2018). "countrycode: An R
-package to convert country names and country codes." _Journal of Open
-Source Software_, *3*(28), 848. <URL:
-https://doi.org/10.21105/joss.00848>.
+Bache SM, Wickham H (2014). _magrittr: A Forward-Pipe Operator for
+R_. R package version 1.5, <URL:
+https://CRAN.R-project.org/package=magrittr>.
 
-Boettiger C (2019). _knitcitations: Citations for 'Knitr' Markdown
+Boettiger C (2020). _knitcitations: Citations for 'Knitr' Markdown
 Files_. R package version 1.0.10, <URL:
-https://CRAN.R-project.org/package=knitcitations>.
+https://github.com/cboettig/knitcitations>.
 
-Francois R (2020). _bibtex: Bibtex Parser_. R package version 0.4.2.2,
-<URL: https://CRAN.R-project.org/package=bibtex>.
+Francois R (2020). _bibtex: Bibtex Parser_. R package version
+0.4.2.2, <URL: https://CRAN.R-project.org/package=bibtex>.
 
-Henry L, Wickham H (2020). _purrr: Functional Programming Tools_. R
-package version 0.3.4, <URL: https://CRAN.R-project.org/package=purrr>.
+Henry L, Wickham H (2019). _purrr: Functional Programming Tools_.
+R package version 0.3.3, <URL:
+https://CRAN.R-project.org/package=purrr>.
 
-Kassambara A (2020). _ggpubr: 'ggplot2' Based Publication Ready Plots_.
-R package version 0.4.0, <URL:
+Kassambara A (2019). _ggpubr: 'ggplot2' Based Publication Ready
+Plots_. R package version 0.2.4, <URL:
 https://CRAN.R-project.org/package=ggpubr>.
 
 Meschiari S (2015). _latex2exp: Use LaTeX Expressions in Plots_. R
 package version 0.4.0, <URL:
 https://CRAN.R-project.org/package=latex2exp>.
 
-Müller K, Wickham H (2020). _tibble: Simple Data Frames_. R package
-version 3.0.3, <URL: https://CRAN.R-project.org/package=tibble>.
+Müller K, Wickham H (2020). _tibble: Simple Data Frames_. R
+package version 3.0.1, <URL:
+https://CRAN.R-project.org/package=tibble>.
 
-Oliphant TE (2006). _A guide to NumPy_, volume 1. Trelgol Publishing
-USA.
+Murdoch D (2020). _tables: Formula-Driven Table Generation_. R
+package version 0.9.3, <URL:
+https://CRAN.R-project.org/package=tables>.
 
-Ooms J (2020). _magick: Advanced Graphics and Image-Processing in R_. R
-package version 2.4.0, <URL:
+Oliphant TE (2006). _A guide to NumPy_, volume 1. Trelgol
+Publishing USA.
+
+Ooms J (2019). _magick: Advanced Graphics and Image-Processing in
+R_. R package version 2.2, <URL:
 https://CRAN.R-project.org/package=magick>.
 
-Pedersen TL (2020). _patchwork: The Composer of Plots_. R package
-version 1.0.1, <URL: https://CRAN.R-project.org/package=patchwork>.
+Pedersen TL (2019). _patchwork: The Composer of ggplots_. R
+package version 0.0.1.9000, <URL:
+https://github.com/thomasp85/patchwork>.
 
-R Core Team (2020). _R: A Language and Environment for Statistical
-Computing_. R Foundation for Statistical Computing, Vienna, Austria.
-<URL: https://www.R-project.org/>.
+R Core Team (2019). _R: A Language and Environment for Statistical
+Computing_. R Foundation for Statistical Computing, Vienna,
+Austria. <URL: https://www.R-project.org/>.
 
 Ram K, Yochum C (2020). _rdrop2: Programmatic Interface to the
-'Dropbox' API_. R package version 0.8.2.
+'Dropbox' API_. R package version 0.8.2.1, <URL:
+https://CRAN.R-project.org/package=rdrop2>.
 
-Robinson D, Hayes A (2020). _broom: Convert Statistical Analysis
-Objects into Tidy Tibbles_. R package version 0.5.6, <URL:
+Robinson D, Hayes A (2019). _broom: Convert Statistical Analysis
+Objects into Tidy Tibbles_. R package version 0.5.2, <URL:
 https://CRAN.R-project.org/package=broom>.
 
-Slowikowski K (2020). _ggrepel: Automatically Position Non-Overlapping
-Text Labels with 'ggplot2'_. R package version 0.8.2, <URL:
-https://CRAN.R-project.org/package=ggrepel>.
+Slowikowski K (2019). _ggrepel: Automatically Position
+Non-Overlapping Text Labels with 'ggplot2'_. R package version
+0.8.1, <URL: https://CRAN.R-project.org/package=ggrepel>.
 
-Solt F, Hu Y (2018). _dotwhisker: Dot-and-Whisker Plots of Regression
-Results_. R package version 0.5.0, <URL:
+Solt F, Hu Y (2018). _dotwhisker: Dot-and-Whisker Plots of
+Regression Results_. R package version 0.5.0, <URL:
 https://CRAN.R-project.org/package=dotwhisker>.
 
-Ushey K, Allaire J, Tang Y (2020). _reticulate: Interface to 'Python'_.
-R package version 1.16, <URL:
-https://CRAN.R-project.org/package=reticulate>.
+Ushey K, Allaire J, Tang Y (2020). _reticulate: Interface to
+'Python'_. R package version 1.16-9000, <URL:
+https://github.com/rstudio/reticulate>.
 
 Van Rossum G, Drake FL (2009). _Python 3 Reference Manual_.
 CreateSpace, Scotts Valley, CA. ISBN 1441412697.
 
-Virtanen P, Gommers R, Oliphant TE, Haberland M, Reddy T, Cournapeau D,
-Burovski E, Peterson P, Weckesser W, Bright J, van der Walt SJ, Brett
-M, Wilson J, Jarrod Millman K, Mayorov N, Nelson AR, Jones E, Kern R,
-Larson E, Carey C, Polat İ, Feng Y, Moore EW, Vand erPlas J, Laxalde D,
-Perktold J, Cimrman R, Henriksen I, Quintero E, Harris CR, Archibald
-AM, Ribeiro AH, Pedregosa F, van Mulbregt P, Contributors S10 (2020).
-"SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python."
+Virtanen P, Gommers R, Oliphant TE, Haberland M, Reddy T,
+Cournapeau D, Burovski E, Peterson P, Weckesser W, Bright J, van
+der Walt SJ, Brett M, Wilson J, Jarrod Millman K, Mayorov N,
+Nelson AR, Jones E, Kern R, Larson E, Carey C, Polat İ, Feng Y,
+Moore EW, Vand erPlas J, Laxalde D, Perktold J, Cimrman R,
+Henriksen I, Quintero E, Harris CR, Archibald AM, Ribeiro AH,
+Pedregosa F, van Mulbregt P, Contributors S10 (2020). "SciPy 1.0:
+Fundamental Algorithms for Scientific Computing in Python."
 _Nature Methods_. doi: 10.1038/s41592-019-0686-2 (URL:
 https://doi.org/10.1038/s41592-019-0686-2).
 
-Wickham H (2020). _forcats: Tools for Working with Categorical
-Variables (Factors)_. R package version 0.5.0, <URL:
+Wickham H (2019). _forcats: Tools for Working with Categorical
+Variables (Factors)_. R package version 0.4.0, <URL:
 https://CRAN.R-project.org/package=forcats>.
 
-Wickham H (2020). _reshape2: Flexibly Reshape Data: A Reboot of the
-Reshape Package_. R package version 1.4.4, <URL:
+Wickham H (2017). _reshape2: Flexibly Reshape Data: A Reboot of
+the Reshape Package_. R package version 1.4.3, <URL:
 https://CRAN.R-project.org/package=reshape2>.
 
 Wickham H (2019). _stringr: Simple, Consistent Wrappers for Common
 String Operations_. R package version 1.4.0, <URL:
 https://CRAN.R-project.org/package=stringr>.
 
-Wickham H (2019). _tidyverse: Easily Install and Load the 'Tidyverse'_.
-R package version 1.3.0, <URL:
+Wickham H (2017). _tidyverse: Easily Install and Load the
+'Tidyverse'_. R package version 1.2.1, <URL:
 https://CRAN.R-project.org/package=tidyverse>.
 
-Wickham H (2016). _ggplot2: Elegant Graphics for Data Analysis_.
-Springer-Verlag New York. ISBN 978-3-319-24277-4, <URL:
-https://ggplot2.tidyverse.org>.
+Wickham H, Chang W, Henry L, Pedersen TL, Takahashi K, Wilke C,
+Woo K, Yutani H, Dunnington D (2020). _ggplot2: Create Elegant
+Data Visualisations Using the Grammar of Graphics_. R package
+version 3.3.0, <URL: https://CRAN.R-project.org/package=ggplot2>.
 
-Wickham H (2007). "Reshaping Data with the reshape Package." _Journal
-of Statistical Software_, *21*(12), 1-20. <URL:
-http://www.jstatsoft.org/v21/i12/>.
-
-Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R,
-Grolemund G, Hayes A, Henry L, Hester J, Kuhn M, Pedersen TL, Miller E,
-Bache SM, Müller K, Ooms J, Robinson D, Seidel DP, Spinu V, Takahashi
-K, Vaughan D, Wilke C, Woo K, Yutani H (2019). "Welcome to the
-tidyverse." _Journal of Open Source Software_, *4*(43), 1686. doi:
-10.21105/joss.01686 (URL: https://doi.org/10.21105/joss.01686).
-
-Wickham H, Chang W, Henry L, Pedersen TL, Takahashi K, Wilke C, Woo K,
-Yutani H, Dunnington D (2020). _ggplot2: Create Elegant Data
-Visualisations Using the Grammar of Graphics_. R package version 3.3.2,
-<URL: https://CRAN.R-project.org/package=ggplot2>.
-
-Wickham H, François R, Henry L, Müller K (2020). _dplyr: A Grammar of
-Data Manipulation_. R package version 1.0.0, <URL:
+Wickham H, François R, Henry L, Müller K (2020). _dplyr: A Grammar
+of Data Manipulation_. R package version 0.8.5, <URL:
 https://CRAN.R-project.org/package=dplyr>.
 
-Wickham H, Henry L (2020). _tidyr: Tidy Messy Data_. R package version
-1.1.0, <URL: https://CRAN.R-project.org/package=tidyr>.
+Wickham H, Henry L (2019). _tidyr: Tidy Messy Data_. R package
+version 1.0.0, <URL: https://CRAN.R-project.org/package=tidyr>.
 
-Wickham H, Hester J, Francois R (2018). _readr: Read Rectangular Text
-Data_. R package version 1.3.1, <URL:
+Wickham H, Hester J, Francois R (2018). _readr: Read Rectangular
+Text Data_. R package version 1.3.1, <URL:
 https://CRAN.R-project.org/package=readr>.
 
 Xiao N (2018). _ggsci: Scientific Journal and Sci-Fi Themed Color
 Palettes for 'ggplot2'_. R package version 2.9, <URL:
 https://CRAN.R-project.org/package=ggsci>.
 
-Xie Y (2020). _knitr: A General-Purpose Package for Dynamic Report
-Generation in R_. R package version 1.29, <URL:
+Xie Y (2019). _knitr: A General-Purpose Package for Dynamic Report
+Generation in R_. R package version 1.25, <URL:
 https://CRAN.R-project.org/package=knitr>.
 
-Xie Y (2015). _Dynamic Documents with R and knitr_, 2nd edition.
-Chapman and Hall/CRC, Boca Raton, Florida. ISBN 978-1498716963, <URL:
-https://yihui.org/knitr/>.
-
-Xie Y (2014). "knitr: A Comprehensive Tool for Reproducible Research in
-R." In Stodden V, Leisch F, Peng RD (eds.), _Implementing Reproducible
-Computational Research_. Chapman and Hall/CRC. ISBN 978-1466561595,
-<URL: http://www.crcpress.com/product/isbn/9781466561595>.
-
-Zhu H (2019). _kableExtra: Construct Complex Table with 'kable' and
-Pipe Syntax_. R package version 1.1.0, <URL:
+Zhu H (2019). _kableExtra: Construct Complex Table with 'kable'
+and Pipe Syntax_. R package version 1.1.0, <URL:
 https://CRAN.R-project.org/package=kableExtra>.
 
 
