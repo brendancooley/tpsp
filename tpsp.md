@@ -132,11 +132,6 @@ In other words, the distance between government 1's equilibrium utility and the 
 
 Suppose that governments endeavor to maximize the welfare of the representative consumer.^[I will relax this assumption in the structural model developed below.] With the economy, $h$, calibrated, I can calculate the change in utility each representative consumer would experience when each other government adopts free trade, relative to their utility at the baseline set of policies. Taking this as an empirical measure of the ratio $u_1(x^\star; M_1, M_2) / u_1(1)$, the model implies this quantity will be increasing in $M_1$, country 1's military capacity. I will refer to this quantity as government 1's inverse *conquest value* vis-à-vis government 2.
 
-
-```
-## Error in factory(tab, align = align, fmt = fmt, hrule = hrule, notes = notes, : Assertion on 'add_rows' failed: Must be of type 'data.frame', not 'list'.
-```
-
 ![Correlation between military capability ratios and inverse conquest values, all pairs of in-sample countries. \label{fig:rcvm}](figure/rcvm-1.pdf)
 
 Figure \ref{fig:rcvm} plots the empirical relationship between military capability ratios and inverse conquest values. Each potential "attacking" country's military capability ratio vis-à-vis every "defending" country is plotted on the x-axis. On the y-axis is the attacking inverse country's value for conquering each defending country. Consistent with the predictions of this simple model, government's inverse conquest values correlate positively with their relative military power. Table \ref{fig:rcvm_reg_tex} and Figure \ref{fig:rcvm_reg_dw} display the results of a series of linear models that estimate the conditional correlations between the inverse conquest value and the military capability ratio, distance between the countries, and country-specific constants. 
@@ -148,7 +143,7 @@ Figure \ref{fig:rcvm} plots the empirical relationship between military capabili
 \resizebox{\linewidth}{!}{
 \begin{tabular}[t]{lllll}
 \toprule
-        & Base & Base (Attacker FE) & Loss of Strength & Loss of Strength (Attacker FE)\\
+  & Base & Base (Attacker FE) & Loss of Strength & Loss of Strength (Attacker FE)\\
 \midrule
 Log Mil Capability Ratio & 0.016*** & 0.033*** & 0.026 & 0.045\\
  & (0.004) & (0.004) & (0.052) & (0.039)\\
@@ -160,6 +155,7 @@ Log Distance &  &  & 0.003 & 0.002\\
 Num.Obs. & 56 & 56 & 56 & 56\\
 R2 & 0.247 & 0.676 & 0.249 & 0.677\\
 R2 Adj. & 0.233 & 0.621 & 0.205 & 0.605\\
+F & 17.720 & 12.251 & 5.739 & 9.421\\
 Attacker FE? &  & ✓ &  & ✓\\
 \bottomrule
 \multicolumn{5}{l}{\textsuperscript{} * p < 0.1, ** p < 0.05, *** p < 0.01}\\
@@ -629,8 +625,8 @@ https://CRAN.R-project.org/package=countrycode>.
 
 Arel-Bundock V (2020). _modelsummary: Summary Tables and Plots for
 Statistical Models and Data: Beautiful, Customizable, and
-Publication-Ready_. R package version 0.6.0, <URL:
-https://CRAN.R-project.org/package=modelsummary>.
+Publication-Ready_. R package version 0.6.0.9000, <URL:
+https://vincentarelbundock.github.io/modelsummary/>.
 
 Arel-Bundock V, Enevoldsen N, Yetman C (2018). "countrycode: An R
 package to convert country names and country codes." _Journal of Open
