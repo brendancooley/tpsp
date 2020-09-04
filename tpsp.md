@@ -84,16 +84,16 @@ I estimate the model on a set of 9 governments in the year 2011.^[Focusing on a 
 \toprule
 iso3 & Country Name\\
 \midrule
-\rowcolor{gray!6}  AUS & Australia\\
+\cellcolor{gray!6}{AUS} & \cellcolor{gray!6}{Australia}\\
 CAN & Canada\\
-\rowcolor{gray!6}  CHN & China\\
+\cellcolor{gray!6}{CHN} & \cellcolor{gray!6}{China}\\
 EU & European Union\\
-\rowcolor{gray!6}  JPN & Japan\\
+\cellcolor{gray!6}{JPN} & \cellcolor{gray!6}{Japan}\\
 \addlinespace
 KOR & South Korea\\
-\rowcolor{gray!6}  RoW & Rest of World\\
+\cellcolor{gray!6}{RoW} & \cellcolor{gray!6}{Rest of World}\\
 RUS & Russia\\
-\rowcolor{gray!6}  USA & United States\\
+\cellcolor{gray!6}{USA} & \cellcolor{gray!6}{United States}\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -105,15 +105,6 @@ I take these estimated trade policies as the equilibrium output of the model dev
 Estimating the magnitude of these trade policies and tracing their impact on government welfare requires specifying a model of the international economy. This model, which follows closely that of @Eaton2002, can be represented succinctly as a mapping $h(\bm{\tau}, \bm{Z}_h; \bm{\theta}_h) = \bm{w}$ where $\bm{\tau}$ is a vector of trade policies, $\bm{Z}_h$ is a vector of economic data (including information on national accounts, price levels, trade flows, and freight costs), and $\bm{\theta}_h$ is a vector of parameters to be calibrated to match empirical analogues or taken from extant literature. $\bm{w}$ is a vector of wage levels, one for every country, from which equilibrium trade flows and price levels can be calculated. Government welfare is modeled below as a function of the outputs of this economy. I employ the same model of the international economy used to estimate trade policies in @Cooley2019b to calculate the welfare effects of trade policies in this study. The economy, the data required to calibrate it, and parameter calibration are discussed in more detail in Appendix B.
 
 In the coercive political economy developed below, governments' relative directed war costs are modeled as a function of the military capability ratio between the attacker and defender, the geographic distance between the belligerents, and the gross domestic product of the attacking country. I store these observable features in the vector $\bm{Z}_m$. To measure military capability ratios, I employ [SIPRI](https://www.sipri.org/)'s data on military expenditure to measure governments' military capacity. These values are displayed in Figure \ref{fig:milex}. I use data from @Weidmann2010 to calculate centroid-centroid geographic distance between all countries in my sample. Data on gross domestic production comes from the [World Input-Output Database (WIOD)](http://www.wiod.org/home) [@Timmer2015]. 
-
-
-```
-## Error: Argument 1 must have names
-```
-
-```
-## Error in valid.units(units): Invalid unit
-```
 
 ![Military expenditure for in-sample governments. Values for ROW and EU are obtained by summing expenditure of all member countries. \label{fig:milex}](figure/milex-1.pdf)
 
@@ -146,10 +137,6 @@ Suppose that governments endeavor to maximize the welfare of the representative 
 ## Error in factory(tab, align = align, fmt = fmt, hrule = hrule, notes = notes, : Assertion on 'add_rows' failed: Must be of type 'data.frame', not 'list'.
 ```
 
-```
-## Error in valid.units(units): Invalid unit
-```
-
 ![Correlation between military capability ratios and inverse conquest values, all pairs of in-sample countries. \label{fig:rcvm}](figure/rcvm-1.pdf)
 
 Figure \ref{fig:rcvm} plots the empirical relationship between military capability ratios and inverse conquest values. Each potential "attacking" country's military capability ratio vis-à-vis every "defending" country is plotted on the x-axis. On the y-axis is the attacking inverse country's value for conquering each defending country. Consistent with the predictions of this simple model, government's inverse conquest values correlate positively with their relative military power. Table \ref{fig:rcvm_reg_tex} and Figure \ref{fig:rcvm_reg_dw} display the results of a series of linear models that estimate the conditional correlations between the inverse conquest value and the military capability ratio, distance between the countries, and country-specific constants. 
@@ -178,11 +165,6 @@ Attacker FE? &  & ✓ &  & ✓\\
 \multicolumn{5}{l}{\textsuperscript{} * p < 0.1, ** p < 0.05, *** p < 0.01}\\
 \end{tabular}}
 \end{table}
-
-
-```
-## Error in valid.units(units): Invalid unit
-```
 
 ![Conditional correlations between inverse conquest values and military capability ratios, geographic distance, and country-specific constants. \label{fig:rcvm_reg_dw}](figure/rcv_reg_dw-1.pdf)
 
@@ -385,15 +367,6 @@ Figure \ref{fig:cfct1_welfare} plots the changes in government and consumer welf
 ## Multipolarity, Trade Policy, and International Trade
 
 Military power in 2011 was highly concentrated in the hands of the United States (see Figure \ref{fig:milex}). Since 2011, other countries, China in particular, have begun to close this military capability gap with the United States. How would the continued diffusion of military power affect trade policy and patterns of international economic exchange? To answer this question I project each in-sample government's military spending in 2030, assuming military budgets grow (shrink) at their average rate between 2011 and 2018. Projected military spending for 2030 is shown in Figure \ref{fig:milex_2030}. The largest change is the shift in relative military power from the United States and European Union toward China. 
-
-
-```
-## Error: Argument 1 must have names
-```
-
-```
-## Error in valid.units(units): Invalid unit
-```
 
 ![Projected military spending in 2030, assuming military budgets grow at observed average growth rate between 2011 and 2018. \label{fig:milex_2030}](figure/milex_2030-1.pdf)
 
@@ -650,137 +623,158 @@ As noted by @Ossa2014, the assumption of exogenous and fixed trade imbalances ge
 
 # Software
 
-Arel-Bundock V (2018). _countrycode: Convert Country Names and
-Country Codes_. R package version 1.1.0, <URL:
+Arel-Bundock V (2020). _countrycode: Convert Country Names and Country
+Codes_. R package version 1.2.0, <URL:
 https://CRAN.R-project.org/package=countrycode>.
 
 Arel-Bundock V (2020). _modelsummary: Summary Tables and Plots for
 Statistical Models and Data: Beautiful, Customizable, and
-Publication-Ready_. R package version 0.5.0, <URL:
+Publication-Ready_. R package version 0.6.0, <URL:
 https://CRAN.R-project.org/package=modelsummary>.
 
-Bache SM, Wickham H (2014). _magrittr: A Forward-Pipe Operator for
-R_. R package version 1.5, <URL:
-https://CRAN.R-project.org/package=magrittr>.
+Arel-Bundock V, Enevoldsen N, Yetman C (2018). "countrycode: An R
+package to convert country names and country codes." _Journal of Open
+Source Software_, *3*(28), 848. <URL:
+https://doi.org/10.21105/joss.00848>.
 
-Boettiger C (2020). _knitcitations: Citations for 'Knitr' Markdown
+Boettiger C (2019). _knitcitations: Citations for 'Knitr' Markdown
 Files_. R package version 1.0.10, <URL:
-https://github.com/cboettig/knitcitations>.
+https://CRAN.R-project.org/package=knitcitations>.
 
-Francois R (2020). _bibtex: Bibtex Parser_. R package version
-0.4.2.2, <URL: https://CRAN.R-project.org/package=bibtex>.
+Francois R (2020). _bibtex: Bibtex Parser_. R package version 0.4.2.2,
+<URL: https://CRAN.R-project.org/package=bibtex>.
 
-Henry L, Wickham H (2019). _purrr: Functional Programming Tools_.
-R package version 0.3.3, <URL:
-https://CRAN.R-project.org/package=purrr>.
+Henry L, Wickham H (2020). _purrr: Functional Programming Tools_. R
+package version 0.3.4, <URL: https://CRAN.R-project.org/package=purrr>.
 
-Kassambara A (2019). _ggpubr: 'ggplot2' Based Publication Ready
-Plots_. R package version 0.2.4, <URL:
+Kassambara A (2020). _ggpubr: 'ggplot2' Based Publication Ready Plots_.
+R package version 0.4.0, <URL:
 https://CRAN.R-project.org/package=ggpubr>.
 
 Meschiari S (2015). _latex2exp: Use LaTeX Expressions in Plots_. R
 package version 0.4.0, <URL:
 https://CRAN.R-project.org/package=latex2exp>.
 
-Müller K, Wickham H (2020). _tibble: Simple Data Frames_. R
-package version 3.0.1, <URL:
-https://CRAN.R-project.org/package=tibble>.
+Müller K, Wickham H (2020). _tibble: Simple Data Frames_. R package
+version 3.0.3, <URL: https://CRAN.R-project.org/package=tibble>.
 
-Murdoch D (2020). _tables: Formula-Driven Table Generation_. R
-package version 0.9.3, <URL:
-https://CRAN.R-project.org/package=tables>.
+Oliphant TE (2006). _A guide to NumPy_, volume 1. Trelgol Publishing
+USA.
 
-Oliphant TE (2006). _A guide to NumPy_, volume 1. Trelgol
-Publishing USA.
-
-Ooms J (2019). _magick: Advanced Graphics and Image-Processing in
-R_. R package version 2.2, <URL:
+Ooms J (2020). _magick: Advanced Graphics and Image-Processing in R_. R
+package version 2.4.0, <URL:
 https://CRAN.R-project.org/package=magick>.
 
-Pedersen TL (2019). _patchwork: The Composer of ggplots_. R
-package version 0.0.1.9000, <URL:
-https://github.com/thomasp85/patchwork>.
+Pedersen TL (2020). _patchwork: The Composer of Plots_. R package
+version 1.0.1, <URL: https://CRAN.R-project.org/package=patchwork>.
 
-R Core Team (2019). _R: A Language and Environment for Statistical
-Computing_. R Foundation for Statistical Computing, Vienna,
-Austria. <URL: https://www.R-project.org/>.
+R Core Team (2020). _R: A Language and Environment for Statistical
+Computing_. R Foundation for Statistical Computing, Vienna, Austria.
+<URL: https://www.R-project.org/>.
 
 Ram K, Yochum C (2020). _rdrop2: Programmatic Interface to the
 'Dropbox' API_. R package version 0.8.2.1, <URL:
 https://CRAN.R-project.org/package=rdrop2>.
 
-Robinson D, Hayes A (2019). _broom: Convert Statistical Analysis
-Objects into Tidy Tibbles_. R package version 0.5.2, <URL:
+Robinson D, Hayes A, Couch S (2020). _broom: Convert Statistical
+Objects into Tidy Tibbles_. R package version 0.7.0, <URL:
 https://CRAN.R-project.org/package=broom>.
 
-Slowikowski K (2019). _ggrepel: Automatically Position
-Non-Overlapping Text Labels with 'ggplot2'_. R package version
-0.8.1, <URL: https://CRAN.R-project.org/package=ggrepel>.
+Slowikowski K (2020). _ggrepel: Automatically Position Non-Overlapping
+Text Labels with 'ggplot2'_. R package version 0.8.2, <URL:
+https://CRAN.R-project.org/package=ggrepel>.
 
-Solt F, Hu Y (2018). _dotwhisker: Dot-and-Whisker Plots of
-Regression Results_. R package version 0.5.0, <URL:
+Solt F, Hu Y (2018). _dotwhisker: Dot-and-Whisker Plots of Regression
+Results_. R package version 0.5.0, <URL:
 https://CRAN.R-project.org/package=dotwhisker>.
 
-Ushey K, Allaire J, Tang Y (2020). _reticulate: Interface to
-'Python'_. R package version 1.16-9000, <URL:
-https://github.com/rstudio/reticulate>.
+Ushey K, Allaire J, Tang Y (2020). _reticulate: Interface to 'Python'_.
+R package version 1.16, <URL:
+https://CRAN.R-project.org/package=reticulate>.
 
 Van Rossum G, Drake FL (2009). _Python 3 Reference Manual_.
 CreateSpace, Scotts Valley, CA. ISBN 1441412697.
 
-Virtanen P, Gommers R, Oliphant TE, Haberland M, Reddy T,
-Cournapeau D, Burovski E, Peterson P, Weckesser W, Bright J, van
-der Walt SJ, Brett M, Wilson J, Jarrod Millman K, Mayorov N,
-Nelson AR, Jones E, Kern R, Larson E, Carey C, Polat İ, Feng Y,
-Moore EW, Vand erPlas J, Laxalde D, Perktold J, Cimrman R,
-Henriksen I, Quintero E, Harris CR, Archibald AM, Ribeiro AH,
-Pedregosa F, van Mulbregt P, Contributors S10 (2020). "SciPy 1.0:
-Fundamental Algorithms for Scientific Computing in Python."
+Virtanen P, Gommers R, Oliphant TE, Haberland M, Reddy T, Cournapeau D,
+Burovski E, Peterson P, Weckesser W, Bright J, van der Walt SJ, Brett
+M, Wilson J, Jarrod Millman K, Mayorov N, Nelson AR, Jones E, Kern R,
+Larson E, Carey C, Polat İ, Feng Y, Moore EW, Vand erPlas J, Laxalde D,
+Perktold J, Cimrman R, Henriksen I, Quintero E, Harris CR, Archibald
+AM, Ribeiro AH, Pedregosa F, van Mulbregt P, Contributors S10 (2020).
+"SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python."
 _Nature Methods_. doi: 10.1038/s41592-019-0686-2 (URL:
 https://doi.org/10.1038/s41592-019-0686-2).
 
-Wickham H (2019). _forcats: Tools for Working with Categorical
-Variables (Factors)_. R package version 0.4.0, <URL:
+Wächter A, Biegler LT (2006). "On the implementation of an
+interior-point filter line-search algorithm for large-scale nonlinear
+programming." _Mathematical Programming_, *106*(1), 25-57.
+
+Wickham H (2020). _forcats: Tools for Working with Categorical
+Variables (Factors)_. R package version 0.5.0, <URL:
 https://CRAN.R-project.org/package=forcats>.
 
-Wickham H (2017). _reshape2: Flexibly Reshape Data: A Reboot of
-the Reshape Package_. R package version 1.4.3, <URL:
+Wickham H (2020). _reshape2: Flexibly Reshape Data: A Reboot of the
+Reshape Package_. R package version 1.4.4, <URL:
 https://CRAN.R-project.org/package=reshape2>.
 
 Wickham H (2019). _stringr: Simple, Consistent Wrappers for Common
 String Operations_. R package version 1.4.0, <URL:
 https://CRAN.R-project.org/package=stringr>.
 
-Wickham H (2017). _tidyverse: Easily Install and Load the
-'Tidyverse'_. R package version 1.2.1, <URL:
+Wickham H (2020). _tidyr: Tidy Messy Data_. R package version 1.1.2,
+<URL: https://CRAN.R-project.org/package=tidyr>.
+
+Wickham H (2019). _tidyverse: Easily Install and Load the 'Tidyverse'_.
+R package version 1.3.0, <URL:
 https://CRAN.R-project.org/package=tidyverse>.
 
-Wickham H, Chang W, Henry L, Pedersen TL, Takahashi K, Wilke C,
-Woo K, Yutani H, Dunnington D (2020). _ggplot2: Create Elegant
-Data Visualisations Using the Grammar of Graphics_. R package
-version 3.3.0, <URL: https://CRAN.R-project.org/package=ggplot2>.
+Wickham H (2016). _ggplot2: Elegant Graphics for Data Analysis_.
+Springer-Verlag New York. ISBN 978-3-319-24277-4, <URL:
+https://ggplot2.tidyverse.org>.
 
-Wickham H, François R, Henry L, Müller K (2020). _dplyr: A Grammar
-of Data Manipulation_. R package version 0.8.5, <URL:
+Wickham H (2007). "Reshaping Data with the reshape Package." _Journal
+of Statistical Software_, *21*(12), 1-20. <URL:
+http://www.jstatsoft.org/v21/i12/>.
+
+Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R,
+Grolemund G, Hayes A, Henry L, Hester J, Kuhn M, Pedersen TL, Miller E,
+Bache SM, Müller K, Ooms J, Robinson D, Seidel DP, Spinu V, Takahashi
+K, Vaughan D, Wilke C, Woo K, Yutani H (2019). "Welcome to the
+tidyverse." _Journal of Open Source Software_, *4*(43), 1686. doi:
+10.21105/joss.01686 (URL: https://doi.org/10.21105/joss.01686).
+
+Wickham H, Chang W, Henry L, Pedersen TL, Takahashi K, Wilke C, Woo K,
+Yutani H, Dunnington D (2020). _ggplot2: Create Elegant Data
+Visualisations Using the Grammar of Graphics_. R package version 3.3.2,
+<URL: https://CRAN.R-project.org/package=ggplot2>.
+
+Wickham H, François R, Henry L, Müller K (2020). _dplyr: A Grammar of
+Data Manipulation_. R package version 1.0.2, <URL:
 https://CRAN.R-project.org/package=dplyr>.
 
-Wickham H, Henry L (2019). _tidyr: Tidy Messy Data_. R package
-version 1.0.0, <URL: https://CRAN.R-project.org/package=tidyr>.
-
-Wickham H, Hester J, Francois R (2018). _readr: Read Rectangular
-Text Data_. R package version 1.3.1, <URL:
+Wickham H, Hester J, Francois R (2018). _readr: Read Rectangular Text
+Data_. R package version 1.3.1, <URL:
 https://CRAN.R-project.org/package=readr>.
 
 Xiao N (2018). _ggsci: Scientific Journal and Sci-Fi Themed Color
 Palettes for 'ggplot2'_. R package version 2.9, <URL:
 https://CRAN.R-project.org/package=ggsci>.
 
-Xie Y (2019). _knitr: A General-Purpose Package for Dynamic Report
-Generation in R_. R package version 1.25, <URL:
+Xie Y (2020). _knitr: A General-Purpose Package for Dynamic Report
+Generation in R_. R package version 1.29, <URL:
 https://CRAN.R-project.org/package=knitr>.
 
-Zhu H (2019). _kableExtra: Construct Complex Table with 'kable'
-and Pipe Syntax_. R package version 1.1.0, <URL:
+Xie Y (2015). _Dynamic Documents with R and knitr_, 2nd edition.
+Chapman and Hall/CRC, Boca Raton, Florida. ISBN 978-1498716963, <URL:
+https://yihui.org/knitr/>.
+
+Xie Y (2014). "knitr: A Comprehensive Tool for Reproducible Research in
+R." In Stodden V, Leisch F, Peng RD (eds.), _Implementing Reproducible
+Computational Research_. Chapman and Hall/CRC. ISBN 978-1466561595,
+<URL: http://www.crcpress.com/product/isbn/9781466561595>.
+
+Zhu H (2020). _kableExtra: Construct Complex Table with 'kable' and
+Pipe Syntax_. R package version 1.2.1, <URL:
 https://CRAN.R-project.org/package=kableExtra>.
 
 

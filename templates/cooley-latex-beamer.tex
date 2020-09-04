@@ -244,6 +244,16 @@ $if(institute)$\institute{$institute$}$endif$
 % -----------------------------------------------------------------------------------------------------
 $if(titlegraphic)$\titlegraphic{\includegraphics[width=0.3\paperwidth]{\string~$titlegraphic$}}$endif$
 
+% https://github.com/rstudio/rmarkdown/issues/1649
+$if(csl-refs)$
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newenvironment{cslreferences}%
+  {$if(csl-hanging-indent)$\setlength{\parindent}{0pt}%
+  \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces$endif$}%
+  {\par}
+$endif$
+
 % Some additional title page adjustments.
 %----------------------------------------
 \setbeamertemplate{title page}[empty]
@@ -342,34 +352,12 @@ $if(toc)$
 %\begin{frame}
 %\tableofcontents[hideallsubsections]
 %\end{frame}
-
 $endif$
+
 $body$
 
-$if(natbib)$
-$if(bibliography)$
-$if(biblio-title)$
-$if(book-class)$
-\renewcommand\bibname{$biblio-title$}
-$else$
-\renewcommand\refname{$biblio-title$}
-$endif$
-$endif$
-\begin{frame}[allowframebreaks]{$biblio-title$}
-\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
-\end{frame}
-
-$endif$
-$endif$
-$if(biblatex)$
-\begin{frame}[allowframebreaks]{$biblio-title$}
-\printbibliography[heading=none]
-\end{frame}
-
-$endif$
 $for(include-after)$
 $include-after$
-
 $endfor$
 
 %\section[]{}
