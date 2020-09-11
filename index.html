@@ -740,57 +740,7 @@ V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
 <ul>
 <li><span class="math inline">\(\color{bcOrange} v_i\)</span> - latent preference for protectionist policies</li>
 </ul>
-</div>
-</section>
-<section id="government-objective" class="slide level2">
-<h2>Government Objective</h2>
-<p><span class="math display">\[
-h(\bm{\tau}) \rightarrow \begin{pmatrix}
-w_1 \\
-\vdots \\
-w_N
-\end{pmatrix} = \color{bcOrange} \bm{w}
-\]</span></p>
-<hr style="height:1em; visibility:hidden;" />
-<ul>
-<li><span class="math inline">\(X_{ij}(\color{bcOrange} \bm{w} \color{black})\)</span>: <span class="math inline">\(i\)</span>’s imports of goods from <span class="math inline">\(j\)</span></li>
-</ul>
-<div class="fragment">
-<p><strong>Revenues from Policy Distortions</strong></p>
-<p><span class="math display">\[
-r_i(\color{bcOrange} \bm{w} \color{black}; v_i) = \sum_j (\tau_{ij} - v_i) X_{ij}(\color{bcOrange} \bm{w} \color{black})
-\]</span></p>
-</div>
-</section>
-<section id="government-objective-1" class="slide level2">
-<h2>Government Objective</h2>
-<p><span class="math display">\[
-h(\bm{\tau}) \rightarrow \begin{pmatrix}
-w_1 \\
-\vdots \\
-w_N
-\end{pmatrix} = \bm{w}
-\]</span></p>
-<hr style="height:1em; visibility:hidden;" />
-<ul>
-<li><span class="math inline">\(X_{ij}(\bm{w})\)</span>: <span class="math inline">\(i\)</span>’s imports of goods from <span class="math inline">\(j\)</span></li>
-</ul>
-<p><strong>Revenues from Policy Distortions</strong></p>
-<p><span class="math display">\[
-r_i(\bm{w}; \color{bcOrange} v_i \color{black}) = \sum_{j \neq i} (\tau_{ij} - \color{bcOrange} v_i \color{black}) X_{ij}(\bm{w})
-\]</span></p>
-<ul>
-<li><span class="math inline">\(\color{bcOrange} v_i \color{black} &gt; 0\)</span> controls <span class="math inline">\(i\)</span>’s preferences over the level of protection</li>
-</ul>
-<div class="fragment">
-<p><strong>Adjusted Consumer Income</strong></p>
-<p><span class="math display">\[
-\tilde{Y}_i(\bm{w})  = w_i L_i + r_i(\bm{w}; \color{bcOrange} v_i \color{black})
-\]</span></p>
-<p><strong>Indirect Utility</strong></p>
-<p><span class="math display">\[
-V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
-\]</span></p>
+<p><a href="#/gov_objective">Government Objective</a></p>
 </div>
 </section>
 <section id="wars" class="slide level2">
@@ -1498,6 +1448,55 @@ Attacker FE?
 <section id="model_apdx" class="title-slide slide level1 aligncenter">
 <h1 class="aligncenter">Appendix: Model</h1>
 
+</section>
+<section id="gov_objective" class="slide level2">
+<h2>Government Objective</h2>
+<p><span class="math display">\[
+h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \color{bcOrange} \bm{w}
+\]</span></p>
+<hr style="height:1em; visibility:hidden;" />
+<ul>
+<li><span class="math inline">\(X_{ij}(\color{bcOrange} \bm{w} \color{black})\)</span>: <span class="math inline">\(i\)</span>’s imports of goods from <span class="math inline">\(j\)</span></li>
+</ul>
+<div class="fragment">
+<p><strong>Revenues from Policy Distortions</strong></p>
+<p><span class="math display">\[
+r_i(\color{bcOrange} \bm{w} \color{black}; v_i) = \sum_j (\tau_{ij} - v_i) X_{ij}(\color{bcOrange} \bm{w} \color{black})
+\]</span></p>
+</div>
+</section>
+<section id="government-objective" class="slide level2">
+<h2>Government Objective</h2>
+<p><span class="math display">\[
+h(\bm{\tau}) \rightarrow \begin{pmatrix}
+w_1 \\
+\vdots \\
+w_N
+\end{pmatrix} = \bm{w}
+\]</span></p>
+<hr style="height:1em; visibility:hidden;" />
+<ul>
+<li><span class="math inline">\(X_{ij}(\bm{w})\)</span>: <span class="math inline">\(i\)</span>’s imports of goods from <span class="math inline">\(j\)</span></li>
+</ul>
+<p><strong>Revenues from Policy Distortions</strong></p>
+<p><span class="math display">\[
+r_i(\bm{w}; \color{bcOrange} v_i \color{black}) = \sum_{j \neq i} (\tau_{ij} - \color{bcOrange} v_i \color{black}) X_{ij}(\bm{w})
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\color{bcOrange} v_i \color{black} &gt; 0\)</span> controls <span class="math inline">\(i\)</span>’s preferences over the level of protection</li>
+</ul>
+<div class="fragment">
+<p><strong>Adjusted Consumer Income:</strong> <span class="math inline">\(\tilde{Y}_i(\bm{w}) = w_i L_i + r_i(\bm{w}; \color{bcOrange} v_i \color{black})\)</span></p>
+<p><strong>Indirect Utility</strong></p>
+<p><span class="math display">\[
+V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
+\]</span></p>
+<p><a href="#/model_overview">Back</a></p>
+</div>
 </section>
 <section id="frechet" class="slide level2">
 <h2>Cost Distribution</h2>

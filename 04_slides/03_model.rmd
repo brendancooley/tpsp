@@ -21,63 +21,7 @@ $$
 
 - $\color{bcOrange} v_i$ - latent preference for protectionist policies
 
-## Government Objective
-
-$$
-h(\bm{\tau}) \rightarrow \begin{pmatrix}
-w_1 \\
-\vdots \\
-w_N
-\end{pmatrix} = \color{bcOrange} \bm{w}
-$$
-
-<hr style="height:1em; visibility:hidden;" />
-
-- $X_{ij}(\color{bcOrange} \bm{w} \color{black})$: $i$'s imports of goods from $j$
-
-. . . 
-
-**Revenues from Policy Distortions**
-
-$$
-r_i(\color{bcOrange} \bm{w} \color{black}; v_i) = \sum_j (\tau_{ij} - v_i) X_{ij}(\color{bcOrange} \bm{w} \color{black})
-$$
-
-## Government Objective
-
-$$
-h(\bm{\tau}) \rightarrow \begin{pmatrix}
-w_1 \\
-\vdots \\
-w_N
-\end{pmatrix} = \bm{w}
-$$
-
-<hr style="height:1em; visibility:hidden;" />
-
-- $X_{ij}(\bm{w})$: $i$'s imports of goods from $j$
-
-**Revenues from Policy Distortions**
-
-$$
-r_i(\bm{w}; \color{bcOrange} v_i \color{black}) = \sum_{j \neq i} (\tau_{ij} - \color{bcOrange} v_i \color{black}) X_{ij}(\bm{w})
-$$
-
-- $\color{bcOrange} v_i \color{black} > 0$ controls $i$'s preferences over the level of protection
-
-. . . 
-
-**Adjusted Consumer Income**
-
-$$
-\tilde{Y}_i(\bm{w})  = w_i L_i + r_i(\bm{w}; \color{bcOrange} v_i \color{black})
-$$
-
-**Indirect Utility**
-
-$$
-V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
-$$
+<a href="#/gov_objective">Government Objective</a>
 
 ## Wars I {id="wars"}
 
