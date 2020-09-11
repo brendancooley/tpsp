@@ -138,3 +138,4 @@ X_diff_pp_china_v <- cfct_X_L[["cfct_china_v_path"]] %>% filter(i_iso3!=j_iso3) 
   scale_x_continuous(limits=c(min_val, max_val)) +
   geom_point(aes(x=X_prime_log, y=i_iso3, color="red"), size=point_size) +
   geom_segment(aes(x=X_prime_log, xend=X_star_log, y=i_iso3, yend=i_iso3))
+

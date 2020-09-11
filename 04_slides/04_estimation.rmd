@@ -27,7 +27,5 @@ $$
 
 . . . 
 
-**Uncertainty**
-
-- Nonparametric bootstrap: sample policy estimates ($\tau_{ij}$) and recompute $\bm{\theta}_m$
+**Uncertainty:** Nonparametric bootstrap (sample policy estimates ($\tau_{ij}$) and recompute $\bm{\theta}_m$)
 

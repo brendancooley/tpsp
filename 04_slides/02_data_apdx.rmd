@@ -206,7 +206,7 @@ rcvm_plot
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.height=5}
 
 # source(paste0("../", code_dir, "f_tau_rf.R"))
-modelsummary(models_ms, coef_map=cm, add_rows=list(fe_row), gof_omit="AIC|BIC|Log.Lik", title="Inverse Conquest Values and Military Capability Ratios", stars=TRUE)
+modelsummary(models_ms, coef_map=cm, add_rows=data.frame(t(fe_row)), gof_omit="AIC|BIC|Log.Lik", title="Inverse Conquest Values and Military Capability Ratios", stars=TRUE)
 
 ```
 
