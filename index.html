@@ -744,7 +744,7 @@ V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
 </div>
 </section>
 <section id="wars" class="slide level2">
-<h2>Wars I</h2>
+<h2>Wars</h2>
 <ul>
 <li>Directed dyad-specific war costs held as <strong>private information</strong> to prospective attacker
 <ul>
@@ -767,66 +767,12 @@ V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
 V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right) - c_{ji} \leq V_j \left( \tilde{\bm{\tau}}, v_j \right)
 \]</span></p>
 </div>
-</section>
-<section id="wars-ii" class="slide level2">
-<h2>Wars II</h2>
-<p><strong>Cost Distribution</strong></p>
-<p><span class="math display">\[
-\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
-\]</span></p>
-<p><span class="math display">\[
-\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} W_{ji}^{-\alpha_1} Y_j^{\alpha_2} \hat{c}^{\eta} \right)
-\]</span></p>
-</section>
-<section id="wars-ii-1" class="slide level2">
-<h2>Wars II</h2>
-<p><strong>Cost Distribution</strong></p>
-<p><span class="math display">\[
-\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
-\]</span></p>
-<p><span class="math display">\[
-\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \color{bcOrange} \frac{ M_j }{ M_i } \color{black} \right)^{\gamma} W_{ji}^{-\alpha_1} Y_j^{\alpha_2} \hat{c}^{\eta} \right)
-\]</span></p>
-<ul>
-<li><span class="math inline">\(\color{bcOrange} \frac{M_j}{M_i}\)</span> – military capability ratio (<span class="math inline">\(\gamma = 0 \implies\)</span> no cost advantage for military superiority)</li>
-</ul>
-</section>
-<section id="wars-ii-2" class="slide level2">
-<h2>Wars II</h2>
-<p><strong>Cost Distribution</strong></p>
-<p><span class="math display">\[
-\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
-\]</span></p>
-<p><span class="math display">\[
-\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} \color{bcOrange} W_{ji}^{ \color{black} -\alpha_1} \color{black} Y_j^{\alpha_2} \hat{c}^{\eta} \right)
-\]</span></p>
-<ul>
-<li><span class="math inline">\(\frac{M_j}{M_i}\)</span> – military capability ratio (<span class="math inline">\(\gamma = 0 \implies\)</span> no cost advantage for military superiority)</li>
-<li><span class="math inline">\(\color{bcOrange} W_{ji}\)</span> – geographic distance between <span class="math inline">\(j\)</span> and <span class="math inline">\(i\)</span> (<span class="math inline">\(\alpha=0 \implies\)</span> no loss of strength gradient)</li>
-</ul>
-</section>
-<section id="wars2" class="slide level2">
-<h2>Wars II</h2>
-<p><strong>Cost Distribution</strong></p>
-<p><span class="math display">\[
-\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
-\]</span></p>
-<p><span class="math display">\[
-\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} W_{ji}^{-\alpha_1} \color{bcOrange} Y_j^{ \color{black} \alpha_2} \color{black} \hat{c}^{\eta} \right)
-\]</span></p>
-<ul>
-<li><span class="math inline">\(\frac{M_j}{M_i}\)</span> – military capability ratio (<span class="math inline">\(\gamma = 0 \implies\)</span> no cost advantage for military superiority)</li>
-<li><span class="math inline">\(W_{ji}\)</span> – geographic distance between <span class="math inline">\(j\)</span> and <span class="math inline">\(i\)</span> (<span class="math inline">\(\alpha_1=0 \implies\)</span> no loss of strength gradient)</li>
-<li><span class="math inline">\(\color{bcOrange} Y_j\)</span> – attacker gdp (<span class="math inline">\(\alpha_2=0 \implies\)</span> no advantage for larger countries)</li>
-</ul>
 <div class="fragment">
 <p><strong>Probability of Peace</strong></p>
 <p><span class="math display">\[
-\hat{H}_i \left( \hat{\tilde{\bm{\tau}}}; \bm{Z}_m, \bm{\theta}_m \right) = \prod_{j \neq i} \hat{F}_{ji} \left( \left( \hat{V}_j \left( \bm{1}_i; \tilde{\bm{\tau}}_{-i} \right) - \hat{V}_j \left( \hat{\tilde{\bm{\tau}}} \right) \right)^{-1} \right)
+\text{Pr}\left( \frac{1}{c_{ji}} \leq \frac{1}{V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right) - V_j \left( \tilde{\bm{\tau}}, v_j \right)} \right) = F_{ji} \left( \frac{1}{V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right) - V_j \left( \tilde{\bm{\tau}}, v_j \right)} \right)
 \]</span></p>
-</div>
-<div class="fragment">
-<p><a href="#/frechet">Fréchet Distribution</a></p>
+<p><a href="#/wars_ii">Cost Distribution, Functional Form</a></p>
 </div>
 </section>
 <section id="tau_star" class="slide level2">
@@ -860,29 +806,7 @@ V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right) - c_{ji} \leq V_j \left
 </ul></li>
 <li><span class="math inline">\(\bm{Z}_m\)</span> – data</li>
 </ul>
-</div>
-<div class="fragment">
-<p><strong>Calibration</strong></p>
-<ul>
-<li><span class="math inline">\(\hat{C}=\)</span> 25</li>
-<li><span class="math inline">\(\eta=\)</span> 1.5</li>
-</ul>
-</div>
-</section>
-<section id="identification-intuition" class="slide level2">
-<h2>Identification (Intuition)</h2>
-<p><strong>Preferences (<span class="math inline">\(\bm{v}\)</span>)</strong></p>
-<ul>
-<li>Holding military technology fixed, <span class="math inline">\(i\)</span>’s overall level of protectionism informs about <span class="math inline">\(v_i\)</span></li>
-<li>Governments with higher trade policies (more protectionist) have higher <span class="math inline">\(v_i\)</span></li>
-</ul>
-<div class="fragment">
-<p><strong>Military Technology</strong></p>
-<ul>
-<li>Holding preferences fixed, heterogeneity in observed policies informs about military parameters</li>
-<li><span class="math inline">\(\alpha_1\)</span> – does policy favoritism covary with distance from trade partner?</li>
-<li><span class="math inline">\(\gamma\)</span> – does policy favoritism covary with military capability ratio?</li>
-</ul>
+<p><a href="#/identification">Calibration and Identification</a></p>
 </div>
 </section></section>
 <section>
@@ -912,7 +836,7 @@ V_j \left( \bm{1}_i, \tilde{\bm{\tau}}_{-i}; v_j \right) - c_{ji} \leq V_j \left
 <p><a href="#/br_mpec">Best Response MPEC</a></p>
 </div>
 <div class="fragment">
-<p><strong>Uncertainty:</strong> Nonparametric bootstrap (sample policy estimates (<span class="math inline">\(\tau_{ij}\)</span>) and recompute <span class="math inline">\(\bm{\theta}_m\)</span>)</p>
+<p><strong>Uncertainty:</strong> Nonparametric bootstrap (sample policy estimates (<span class="math inline">\(\tau_{ij}\)</span>) and recompute <span class="math inline">\(\tilde{\bm{\theta}}_m\)</span>)</p>
 </div>
 </section></section>
 <section>
@@ -1498,13 +1422,6 @@ V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
 <p><a href="#/model_overview">Back</a></p>
 </div>
 </section>
-<section id="frechet" class="slide level2">
-<h2>Cost Distribution</h2>
-<figure>
-<img data-src="02_figs/img/Frechet.png" style="width:75.0%" alt="Fréchet distribution. Source" /><figcaption aria-hidden="true">Fréchet distribution. <a href="https://en.wikipedia.org/wiki/Fr%C3%A9chet_distribution#/media/File:Frechet_pdf.svg">Source</a></figcaption>
-</figure>
-<p><a href="#/wars2">Back</a></p>
-</section>
 <section id="policy_hats" class="slide level2">
 <h2>Equilibrium in Changes</h2>
 <p><strong>Peace Condition</strong></p>
@@ -1520,6 +1437,95 @@ V_i \left( h(\bm{\tau}); \color{bcOrange} v_i \color{black} \right)
 \hat{\tilde{\bm{\tau}}}^\star(\bm{\theta}_m; \bm{Z}_m)
 \]</span></p>
 <p><a href="#/tau_star">Back</a></p>
+</section>
+<section id="wars_ii" class="slide level2">
+<h2>Wars II</h2>
+<p><strong>Cost Distribution</strong></p>
+<p><span class="math display">\[
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+\]</span></p>
+<p><span class="math display">\[
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} W_{ji}^{-\alpha_1} Y_j^{\alpha_2} \hat{c}^{\eta} \right)
+\]</span></p>
+</section>
+<section id="wars-ii" class="slide level2">
+<h2>Wars II</h2>
+<p><strong>Cost Distribution</strong></p>
+<p><span class="math display">\[
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+\]</span></p>
+<p><span class="math display">\[
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \color{bcOrange} \frac{ M_j }{ M_i } \color{black} \right)^{\gamma} W_{ji}^{-\alpha_1} Y_j^{\alpha_2} \hat{c}^{\eta} \right)
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\color{bcOrange} \frac{M_j}{M_i}\)</span> – military capability ratio (<span class="math inline">\(\gamma = 0 \implies\)</span> no cost advantage for military superiority)</li>
+</ul>
+</section>
+<section id="wars-ii-1" class="slide level2">
+<h2>Wars II</h2>
+<p><strong>Cost Distribution</strong></p>
+<p><span class="math display">\[
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+\]</span></p>
+<p><span class="math display">\[
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} \color{bcOrange} W_{ji}^{ \color{black} -\alpha_1} \color{black} Y_j^{\alpha_2} \hat{c}^{\eta} \right)
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\frac{M_j}{M_i}\)</span> – military capability ratio (<span class="math inline">\(\gamma = 0 \implies\)</span> no cost advantage for military superiority)</li>
+<li><span class="math inline">\(\color{bcOrange} W_{ji}\)</span> – geographic distance between <span class="math inline">\(j\)</span> and <span class="math inline">\(i\)</span> (<span class="math inline">\(\alpha=0 \implies\)</span> no loss of strength gradient)</li>
+</ul>
+</section>
+<section id="wars2" class="slide level2">
+<h2>Wars II</h2>
+<p><strong>Cost Distribution</strong></p>
+<p><span class="math display">\[
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+\]</span></p>
+<p><span class="math display">\[
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} W_{ji}^{-\alpha_1} \color{bcOrange} Y_j^{ \color{black} \alpha_2} \color{black} \hat{c}^{\eta} \right)
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\frac{M_j}{M_i}\)</span> – military capability ratio (<span class="math inline">\(\gamma = 0 \implies\)</span> no cost advantage for military superiority)</li>
+<li><span class="math inline">\(W_{ji}\)</span> – geographic distance between <span class="math inline">\(j\)</span> and <span class="math inline">\(i\)</span> (<span class="math inline">\(\alpha_1=0 \implies\)</span> no loss of strength gradient)</li>
+<li><span class="math inline">\(\color{bcOrange} Y_j\)</span> – attacker gdp (<span class="math inline">\(\alpha_2=0 \implies\)</span> no advantage for larger countries)</li>
+</ul>
+<div class="fragment">
+<p><strong>Probability of Peace</strong></p>
+<p><span class="math display">\[
+\hat{H}_i \left( \hat{\tilde{\bm{\tau}}}; \bm{Z}_m, \bm{\theta}_m \right) = \prod_{j \neq i} \hat{F}_{ji} \left( \left( \hat{V}_j \left( \bm{1}_i; \tilde{\bm{\tau}}_{-i} \right) - \hat{V}_j \left( \hat{\tilde{\bm{\tau}}} \right) \right)^{-1} \right)
+\]</span></p>
+<p><a href="#/frechet">Fréchet Distribution</a></p>
+<p><a href="#/wars">Back</a></p>
+</div>
+</section>
+<section id="frechet" class="slide level2">
+<h2>Cost Distribution</h2>
+<figure>
+<img data-src="02_figs/img/Frechet.png" style="width:75.0%" alt="Fréchet distribution. Source" /><figcaption aria-hidden="true">Fréchet distribution. <a href="https://en.wikipedia.org/wiki/Fr%C3%A9chet_distribution#/media/File:Frechet_pdf.svg">Source</a></figcaption>
+</figure>
+<p><a href="#/wars2">Back</a></p>
+</section>
+<section id="identification" class="slide level2">
+<h2>Calibration and Identification (Intuition)</h2>
+<p><strong>Calibration</strong></p>
+<ul>
+<li><span class="math inline">\(\hat{C}=\)</span> 25</li>
+<li><span class="math inline">\(\eta=\)</span> 1.5</li>
+</ul>
+<p><strong>Preferences (<span class="math inline">\(\bm{v}\)</span>)</strong></p>
+<ul>
+<li>Holding military technology fixed, <span class="math inline">\(i\)</span>’s overall level of protectionism informs about <span class="math inline">\(v_i\)</span></li>
+<li>Governments with higher trade policies (more protectionist) have higher <span class="math inline">\(v_i\)</span></li>
+</ul>
+<div class="fragment">
+<p><strong>Military Technology</strong></p>
+<ul>
+<li>Holding preferences fixed, heterogeneity in observed policies informs about military parameters</li>
+<li><span class="math inline">\(\alpha_1\)</span> – does policy favoritism covary with distance from trade partner?</li>
+<li><span class="math inline">\(\gamma\)</span> – does policy favoritism covary with military capability ratio?</li>
+</ul>
+<p><a href="#/tau_star">Back</a></p>
+</div>
 </section></section>
 <section>
 <section id="estimation_apdx" class="title-slide slide level1 aligncenter">

@@ -54,12 +54,6 @@ $$
 
 <a href="#/model_overview">Back</a>
 
-## Cost Distribution {id="frechet"}
-
-![Fréchet distribution. [Source](https://en.wikipedia.org/wiki/Fr%C3%A9chet_distribution#/media/File:Frechet_pdf.svg) ](02_figs/img/Frechet.png){ width=75% }
-
-<a href="#/wars2">Back</a>
-
 ## Equilibrium in Changes {id="policy_hats"}
 
 **Peace Condition**
@@ -79,5 +73,102 @@ $$
 $$
 \hat{\tilde{\bm{\tau}}}^\star(\bm{\theta}_m; \bm{Z}_m)
 $$
+
+<a href="#/tau_star">Back</a>
+
+## Wars II {id="wars_ii"}
+
+**Cost Distribution**
+
+$$
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+$$
+
+$$
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} W_{ji}^{-\alpha_1} Y_j^{\alpha_2} \hat{c}^{\eta} \right)
+$$
+
+## Wars II
+
+**Cost Distribution**
+
+$$
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+$$
+
+$$
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \color{bcOrange} \frac{ M_j }{ M_i } \color{black} \right)^{\gamma} W_{ji}^{-\alpha_1} Y_j^{\alpha_2} \hat{c}^{\eta} \right)
+$$
+
+- $\color{bcOrange} \frac{M_j}{M_i}$ -- military capability ratio ($\gamma = 0 \implies$ no cost advantage for military superiority)
+
+## Wars II
+
+**Cost Distribution**
+
+$$
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+$$
+
+$$
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} \color{bcOrange} W_{ji}^{ \color{black} -\alpha_1} \color{black} Y_j^{\alpha_2} \hat{c}^{\eta} \right)
+$$
+
+- $\frac{M_j}{M_i}$ -- military capability ratio ($\gamma = 0 \implies$ no cost advantage for military superiority)
+- $\color{bcOrange} W_{ji}$ -- geographic distance between $j$ and $i$ ($\alpha=0 \implies$ no loss of strength gradient)
+
+## Wars II {id="wars2"}
+
+**Cost Distribution**
+
+$$
+\hat{c}_{ji} = \frac{c_{ji}}{V_j \left( \bm{\tau}; v_j \right)}
+$$
+
+$$
+\text{Pr}\left( \frac{1}{\hat{c}_{ji}} \leq \frac{1}{\hat{c}} \right) = \hat{F}_{ji} \left( \frac{1}{\hat{c}} \right) = \exp \left( -\frac{1}{\hat{C}} \left( \frac{M_j}{M_i} \right)^{\gamma} W_{ji}^{-\alpha_1} \color{bcOrange} Y_j^{ \color{black} \alpha_2} \color{black} \hat{c}^{\eta} \right)
+$$
+
+- $\frac{M_j}{M_i}$ -- military capability ratio ($\gamma = 0 \implies$ no cost advantage for military superiority)
+- $W_{ji}$ -- geographic distance between $j$ and $i$ ($\alpha_1=0 \implies$ no loss of strength gradient)
+- $\color{bcOrange} Y_j$ -- attacker gdp ($\alpha_2=0 \implies$ no advantage for larger countries)
+
+. . . 
+
+**Probability of Peace**
+
+$$
+\hat{H}_i \left( \hat{\tilde{\bm{\tau}}}; \bm{Z}_m, \bm{\theta}_m \right) = \prod_{j \neq i} \hat{F}_{ji} \left( \left( \hat{V}_j \left( \bm{1}_i; \tilde{\bm{\tau}}_{-i} \right) - \hat{V}_j \left( \hat{\tilde{\bm{\tau}}} \right) \right)^{-1} \right)
+$$
+
+<a href="#/frechet">Fréchet Distribution</a>
+
+<a href="#/wars">Back</a>
+
+## Cost Distribution {id="frechet"}
+
+![Fréchet distribution. [Source](https://en.wikipedia.org/wiki/Fr%C3%A9chet_distribution#/media/File:Frechet_pdf.svg) ](02_figs/img/Frechet.png){ width=75% }
+
+<a href="#/wars2">Back</a>
+
+## Calibration and Identification (Intuition) {id="identification"}
+
+**Calibration**
+
+- $\hat{C}=$ `r setup$c_hat` 
+- $\eta=$ `r setup$eta`
+
+**Preferences ($\bm{v}$)**
+
+- Holding military technology fixed, $i$'s overall level of protectionism informs about $v_i$
+- Governments with higher trade policies (more protectionist) have higher $v_i$
+
+. . .
+
+**Military Technology**
+
+- Holding preferences fixed, heterogeneity in observed policies informs about military parameters
+- $\alpha_1$ -- does policy favoritism covary with distance from trade partner?
+- $\gamma$ -- does policy favoritism covary with military capability ratio?
 
 <a href="#/tau_star">Back</a>
